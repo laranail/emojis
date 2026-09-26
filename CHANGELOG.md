@@ -7,6 +7,13 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/),
 
 ## [Unreleased]
 
+### Added
+
+- `Laravel\ConsoleEmojiCatalogue`, implementing laranail/console's `EmojiCatalogue` contract. Console
+  discovers it by class name, so installing this package is enough for `Console::emoji()` to resolve
+  every shortcode and for console's width measurement to recognise emoji newer than its own table.
+  Requires laranail/console 0.1.2 or later, which ships the contract; an older console never loads the class.
+
 ## [0.1.0] - 2026-09-26
 
 ### Added

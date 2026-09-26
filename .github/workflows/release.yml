@@ -45,14 +45,25 @@ jobs:
 
       - name: Extract this version's changelog section
         id: changelog
+        # Whatever sits under [Unreleased] when the tag is pushed ships in this release, yet the notes come from
+        # the version's own section. Fail rather than publish notes that omit it.
         run: |
           version="${GITHUB_REF_NAME#v}"
+          unreleased=$(awk '
+            /^## \[Unreleased\]/ { f=1; next }
+            f && /^## \[/ { exit }
+            f && NF && !/^### / { print }
+          ' CHANGELOG.md)
+          if [ -n "$unreleased" ]; then
+            echo "::error::CHANGELOG.md still has entries under [Unreleased]; move them into [$version] before tagging." >&2
+            exit 1
+          fi
           notes=$(awk -v v="$version" '
             $0 ~ "^## \\[" v "\\]" { f=1; next }
             f && /^## \[/ { exit }
             f { print }
           ' CHANGELOG.md)
-          if [ -z "$notes" ]; then
+          if [ -z "$(printf '%s' "$notes" | tr -d '[:space:]')" ]; then
             echo "CHANGELOG.md has no section for $version; a release without real notes is incomplete." >&2
             exit 1
           fi
