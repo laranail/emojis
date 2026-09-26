@@ -1,0 +1,21 @@
+{
+    "about": "Curated extra shortcodes (code → fully-qualified hexcode) that no upstream preset carries, plus names that were renamed upstream so shortcodes stored in databases keep resolving after a dataset upgrade. The index gives upstream presets priority; an entry here only fills a gap.",
+    "aliases": {
+        "slight_smile": "1F642",
+        "slightly_smiling": "1F642",
+        "thumbs_up": "1F44D",
+        "thumbs_down": "1F44E",
+        "thumbsup": "1F44D",
+        "thumbsdown": "1F44E",
+        "heart_eyes": "1F60D",
+        "laughing": "1F606",
+        "satisfied": "1F606",
+        "tada": "1F389",
+        "party_popper": "1F389",
+        "shrug": "1F937",
+        "facepalm": "1F926",
+        "rolling_eyes": "1F644",
+        "flag_eu": "1F1EA-1F1FA",
+        "flag_un": "1F1FA-1F1F3"
+    }
+}

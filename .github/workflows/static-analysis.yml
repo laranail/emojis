@@ -1,0 +1,73 @@
+name: Static analysis
+
+on:
+  pull_request:
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+concurrency:
+  group: static-${{ github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  static:
+    name: Pint · PHPStan · deptrac · Rector · sync-check · core isolation
+    runs-on: ubuntu-latest
+    # Pint verifies ~14 MB of generated shards; uncached that takes a couple of minutes.
+    timeout-minutes: 25
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v7
+
+      - name: Setup PHP
+        uses: shivammathur/setup-php@f3e473d116dcccaddc5834248c87452386958240 # 2.37.2
+        with:
+          php-version: '8.5'
+          extensions: dom, curl, libxml, mbstring, zip, fileinfo, intl
+          coverage: none
+
+      - name: Cache Composer files
+        uses: actions/cache@v6
+        with:
+          path: ~/.cache/composer/files
+          key: composer-static-${{ hashFiles('composer.json') }}
+          restore-keys: composer-static-
+
+      - name: Drop cached laranail archives
+        # laranail/* resolve through a single moving v0.1.0 tag, so a restored archive can be stale while
+        # composer reports success. Everything else is immutable per version and stays cached.
+        shell: bash
+        run: rm -rf "$(composer config cache-files-dir)/laranail"
+
+      - name: Install dependencies
+        env:
+          COMPOSER_AUTH: '{"github-oauth":{"github.com":"${{ secrets.GITHUB_TOKEN }}"}}'
+        run: composer update --prefer-stable --no-interaction --no-progress
+
+      - name: Lint (parse errors)
+        run: composer parallel-lint
+
+      - name: Pint (code style, generated shards included)
+        run: composer pint
+
+      # Level 8 with larastan for the Laravel shell; level 10 with strict rules and no baseline for src/Core.
+      - name: PHPStan
+        run: composer phpstan
+
+      # Through tools/deptrac-guard.php: deptrac exits 0 when it cannot parse a file.
+      - name: Architecture boundary
+        run: composer deptrac
+
+      - name: Rector (dry run)
+        run: composer rector
+
+      # CI=true makes sync-check download the pinned upstream sources (sha256-verified against
+      # tools/sources.lock.json) and fail rather than skip, so the dataset comparison always really runs.
+      - name: Generated data is still generated
+        run: composer sync-check
+
+      - name: Core runs without Laravel
+        run: composer core-isolation

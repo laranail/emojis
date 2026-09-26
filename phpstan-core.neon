@@ -1,0 +1,10 @@
+# src/Core is framework-free domain code, held to level 10 plus strict rules with no baseline.
+includes:
+    - vendor/phpstan/phpstan-strict-rules/rules.neon
+
+parameters:
+    level: 10
+    paths:
+        - src/Core
+    treatPhpDocTypesAsCertain: true
+    reportUnmatchedIgnoredErrors: true

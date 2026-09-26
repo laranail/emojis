@@ -1,0 +1,16 @@
+# The Laravel shell. src/Core has its own, stricter config — see phpstan-core.neon.
+includes:
+    - vendor/larastan/larastan/extension.neon
+
+parameters:
+    level: 8
+    paths:
+        - src
+        - helpers
+        - tests/TestCase.php
+    excludePaths:
+        - src/Core
+        - vendor
+        # Generated: tools/build-dataset.php --check asserts these byte for byte.
+        - resources/data
+    treatPhpDocTypesAsCertain: false

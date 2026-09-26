@@ -1,0 +1,23 @@
+name: Hygiene
+
+on:
+  schedule:
+    - cron: '37 6 * * 1'
+  workflow_dispatch:
+  pull_request:
+    paths:
+      - '.github/workflows/**'
+      - 'composer.json'
+      - '.gitattributes'
+
+permissions:
+  contents: read
+
+concurrency:
+  group: hygiene-${{ github.ref }}
+  cancel-in-progress: true
+
+# Action pins, tag currency, trait copies and dist integrity, from the shared definition.
+jobs:
+  hygiene:
+    uses: laranail/.github/.github/workflows/hygiene.yml@main

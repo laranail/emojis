@@ -1,0 +1,66 @@
+name: Tests
+
+on:
+  pull_request:
+    branches: [main]
+    paths-ignore:
+      - '**.md'
+  workflow_dispatch:
+
+concurrency:
+  group: ${{ github.workflow }}-${{ github.ref }}
+  cancel-in-progress: true
+
+# The shared definition in laranail/.github owns the PHP matrix (8.4 / 8.5), Linux and Windows on every PR,
+# the composer cache and its laranail eviction, and prefer-lowest.
+jobs:
+  pest:
+    uses: laranail/.github/.github/workflows/tests.yml@main
+    with:
+      # Resolve whatever composer.json allows; the shared default rewrites composer.json to pin Laravel.
+      laravel-versions: '["*"]'
+      php-extensions: 'dom, curl, libxml, mbstring, zip, pdo, sqlite3, pdo_sqlite, intl'
+
+  # The scanner must not depend on PCRE JIT, and emoji clusters must not depend on ICU. These legs run the
+  # scanner and whole-dataset suites with JIT off and with ext-intl absent, the two environments a green
+  # default run cannot vouch for.
+  portability:
+    name: Portability (${{ matrix.leg }})
+    runs-on: ubuntu-latest
+    timeout-minutes: 20
+    strategy:
+      fail-fast: false
+      matrix:
+        include:
+          - leg: pcre.jit=0
+            extensions: dom, curl, libxml, mbstring, intl
+            ini: pcre.jit=0
+          - leg: without intl
+            extensions: dom, curl, libxml, mbstring, :intl
+            ini: ''
+
+    steps:
+      - uses: actions/checkout@v7
+
+      - name: Setup PHP
+        uses: shivammathur/setup-php@f3e473d116dcccaddc5834248c87452386958240 # 2.37.2
+        with:
+          php-version: '8.4'
+          extensions: ${{ matrix.extensions }}
+          ini-values: ${{ matrix.ini }}
+          coverage: none
+
+      - name: Drop cached laranail archives
+        shell: bash
+        run: rm -rf "$(composer config cache-files-dir)/laranail"
+
+      - name: Install dependencies
+        env:
+          COMPOSER_AUTH: '{"github-oauth":{"github.com":"${{ secrets.GITHUB_TOKEN }}"}}'
+        run: composer update --prefer-stable --no-interaction --no-progress
+
+      - name: Scanner, conversion and whole-dataset suites
+        run: vendor/bin/pest tests/Unit tests/Datasets --no-coverage
+
+      - name: Core without Laravel
+        run: php tools/core-isolation.php

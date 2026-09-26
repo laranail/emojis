@@ -1,0 +1,131 @@
+<?php
+
+declare(strict_types=1);
+
+use Illuminate\Support\HtmlString;
+use Illuminate\Support\Facades\Blade;
+use Illuminate\Database\Eloquent\Model;
+use Simtabi\Laranail\Emojis\Core\Emojis;
+use Illuminate\Support\Facades\Validator;
+
+use function Simtabi\Laranail\Emojis\emoji;
+
+use Simtabi\Laranail\Emojis\Core\Enums\Mode;
+use Simtabi\Laranail\Emojis\Laravel\Casts\AsEmoji;
+use Simtabi\Laranail\Emojis\Laravel\Rules\NoEmoji;
+use Simtabi\Laranail\Emojis\Laravel\Rules\MaxEmojis;
+use Simtabi\Laranail\Emojis\Laravel\Rules\OnlyEmoji;
+use Simtabi\Laranail\Emojis\Laravel\Casts\AsEmojiText;
+use Simtabi\Laranail\Emojis\Laravel\Rules\SingleEmoji;
+use Simtabi\Laranail\Emojis\Core\Contracts\EmojisFluent;
+use Simtabi\Laranail\Emojis\Laravel\Rules\ContainsEmoji;
+use Simtabi\Laranail\Emojis\Core\Contracts\TerminalProbe;
+use Simtabi\Laranail\Emojis\Core\Terminal\EnvTerminalProbe;
+use Simtabi\Laranail\Emojis\Facades\Emojis as EmojisFacade;
+use Simtabi\Laranail\Package\Tools\Services\Boot\BootReport;
+use Simtabi\Laranail\Emojis\Core\Exceptions\InvalidCustomEmoji;
+
+it('binds one instance behind the class, the contract, the facade and the helper', function (): void {
+    expect(app(Emojis::class))->toBe(app(EmojisFluent::class))
+        ->and(EmojisFacade::getFacadeRoot())->toBe(app(Emojis::class))
+        ->and(emoji())->toBe(app(Emojis::class))
+        ->and((string) emoji('wave'))->toBe('👋')
+        ->and(EmojisFacade::text(':rocket:')->toEmoji())->toBe('🚀');
+});
+
+it('returns HtmlString so Blade does not escape images twice', function (): void {
+    $html = app(Emojis::class)->text('<b> 🚀')->toHtml();
+
+    expect($html)->toBeInstanceOf(HtmlString::class)
+        ->and(Blade::render('{{ $html }}', ['html' => $html]))->toContain('&lt;b&gt; <img ');
+});
+
+it('renders the Blade component accessibly', function (): void {
+    expect(Blade::render('<x-laranail-emojis::emoji name="wave" skin-tone="medium" />'))->toBe('<span role="img" aria-label="waving hand: medium skin tone">👋🏽</span>')
+        ->and(Blade::render('<x-laranail-emojis::emoji name="rocket" mode="image" set="openmoji" />'))->toContain('openmoji@17.0.0/color/svg/1F680.svg');
+});
+
+it('follows the application locale on every call', function (): void {
+    app()->setLocale('fr');
+    expect(app(Emojis::class)->get('rocket')->name())->toBe('fusée');
+
+    app()->setLocale('de');
+    expect(app(Emojis::class)->get('rocket')->name())->toBe('Rakete');
+});
+
+it('validates with the emoji rules', function (mixed $value, object $rule, bool $passes): void {
+    expect(Validator::make(['v' => $value], ['v' => [$rule]])->passes())->toBe($passes);
+})->with([
+    'no emoji, clean'          => ['hello', new NoEmoji, true],
+    'no emoji, dirty'          => ['hello 👋', new NoEmoji, false],
+    'no emoji, stray modifier' => ["x \u{1F3FD}", new NoEmoji, false],
+    'no emoji, non-string'     => [['a'], new NoEmoji, false],
+    'contains'                 => ['hi 🚀', new ContainsEmoji, true],
+    'contains, none'           => ['hi', new ContainsEmoji, false],
+    'only'                     => [' 🚀👋 ', new OnlyEmoji, true],
+    'only, with text'          => ['🚀 go', new OnlyEmoji, false],
+    'single'                   => ['👍🏽', new SingleEmoji, true],
+    'single, two'              => ['👍👍', new SingleEmoji, false],
+    'max 2, three'             => ['😀😀😀', new MaxEmojis(2), false],
+    'max 2, two'               => ['😀 x 😀', new MaxEmojis(2), true],
+]);
+
+it('translates rule messages from its own namespace', function (): void {
+    $errors = Validator::make(['bio' => 'hi 🚀'], ['bio' => [new NoEmoji]])->errors();
+
+    expect($errors->first('bio'))->toBe('The bio field must not contain emoji.');
+});
+
+it('casts one emoji to its hexcode and free text to shortcodes', function (): void {
+    $model = new class extends Model {};
+
+    expect((new AsEmoji)->set($model, 'r', '👋🏽', []))->toBe('1F44B-1F3FD')
+        ->and((string) (new AsEmoji)->get($model, 'r', '1F44B-1F3FD', []))->toBe('👋🏽')
+        ->and((new AsEmojiText)->set($model, 'bio', 'Ship it 🚀', []))->toBe('Ship it :rocket:')
+        ->and((new AsEmojiText)->get($model, 'bio', 'Ship it :rocket:', []))->toBe('Ship it 🚀');
+});
+
+it('boots healthy', function (): void {
+    expect(app(BootReport::class)->isHealthy())->toBeTrue(json_encode(app(BootReport::class)->degraded()) ?: '');
+});
+
+it('reads config only at its registered key', function (): void {
+    $this->assertReadsConfigAtRegisteredKey(dirname(__DIR__, 2) . '/src', 'emojis');
+});
+
+it('freezes registrations once the application has booted', function (): void {
+    app(Emojis::class)->addShortcode('shipit', 'rocket');
+})->throws(InvalidCustomEmoji::class);
+
+it('runs its commands', function (): void {
+    $this->artisan('laranail::emojis.convert', ['text' => 'Hi :) 🚀', '--to' => 'ascii', '--from' => 'unicode,emoticon'])
+        ->expectsOutput('Hi :slightly_smiling_face: :rocket:')
+        ->assertSuccessful();
+
+    $this->artisan('laranail::emojis.show', ['emoji' => 'nope-nope'])->assertFailed();
+    $this->artisan('laranail::emojis.search', ['term' => 'rocket'])->assertSuccessful();
+    $this->artisan('laranail::emojis.convert', ['text' => 'x', '--to' => 'bogus'])->assertExitCode(2);
+});
+
+it('exports a versioned JSON catalogue', function (): void {
+    $path = sys_get_temp_dir() . '/laranail-emojis-export-' . bin2hex(random_bytes(4)) . '.json';
+
+    try {
+        $this->artisan('laranail::emojis.export', ['path' => $path, '--locale' => 'fr'])->assertSuccessful();
+        $document = json_decode((string) file_get_contents($path), true, flags: JSON_THROW_ON_ERROR);
+
+        expect($document['schemaVersion'])->toBe(1)
+            ->and($document['locale'])->toBe('fr')
+            ->and(count($document['emojis']))->toBeGreaterThan(1800)
+            ->and($document['emojis'][0])->toHaveKeys(['emoji', 'hexcode', 'name', 'keywords', 'shortcodes', 'skins']);
+    } finally {
+        @unlink($path);
+    }
+});
+
+it('resolves its collaborators from the container, so an application can replace them', function (): void {
+    app()->forgetInstance(Emojis::class);
+    app()->singleton(TerminalProbe::class, static fn (): EnvTerminalProbe => new EnvTerminalProbe(override: false));
+
+    expect(app(Emojis::class)->text('🚀')->to(Mode::Auto))->toBe(':rocket:');
+});

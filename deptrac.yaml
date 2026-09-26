@@ -1,0 +1,55 @@
+# The boundary, gated in CI through tools/deptrac-guard.php (deptrac exits 0 when it cannot parse a file, so
+# the guard also fails on parse errors).
+#
+# One rule, absolute: src/Core is framework-free. It may not reference Illuminate, Symfony or any other
+# laranail package; it may use psr/log (three interfaces) for its FailureReporter default. Everything outside
+# src/Core is the Laravel shell, which may reach anything. Core is one cohesive layer rather than a stack of
+# sub-layers: its contracts name Emoji, and Emoji reaches back through Emojis, so an internal DAG would be
+# a diagram, not a fact.
+#
+# Requires deptrac ^4.7 for PHP 8.4/8.5 syntax.
+
+deptrac:
+  paths:
+    - ./src
+
+  layers:
+    - name: Core
+      collectors:
+        - type: directory
+          value: src/Core/.*
+
+    - name: Shell
+      collectors:
+        - type: directory
+          value: src/(Providers|Facades|Console|Laravel)/.*
+
+    - name: Psr
+      collectors:
+        - type: classNameRegex
+          value: '#^Psr\\Log\\#'
+
+    - name: Illuminate
+      collectors:
+        - type: classNameRegex
+          value: '#^Illuminate\\#'
+
+    - name: Symfony
+      collectors:
+        - type: classNameRegex
+          value: '#^Symfony\\#'
+
+    - name: Laranail
+      collectors:
+        - type: classNameRegex
+          value: '#^Simtabi\\Laranail\\(?!Emojis)#'
+
+  ruleset:
+    Core:
+      - Psr
+    Shell:
+      - Core
+      - Psr
+      - Illuminate
+      - Symfony
+      - Laranail

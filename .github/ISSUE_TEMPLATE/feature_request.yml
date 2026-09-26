@@ -1,0 +1,16 @@
+name: Feature request
+description: A mode, preset, image set, locale or API you need.
+labels: [enhancement]
+body:
+  - type: textarea
+    id: problem
+    attributes:
+      label: What are you trying to do?
+      description: The outcome, not the API. Many additions (image sets, shortcodes, emoticons, custom emoji) are already possible through Emojis::addImageSet(), addShortcode(), addEmoticon() and addCustom().
+    validations:
+      required: true
+  - type: textarea
+    id: proposal
+    attributes:
+      label: What would you like the API to look like?
+      render: php

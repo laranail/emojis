@@ -1,0 +1,5 @@
+# Lets `vendor/bin/testbench laranail::emojis.convert "Hi :)" --to=emoji` boot this package the way a
+# consuming application would. The Pest suite does not need it: tests/TestCase.php registers the provider.
+
+providers:
+  - Simtabi\Laranail\Emojis\Providers\EmojisServiceProvider
