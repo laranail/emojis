@@ -54,6 +54,9 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/),
 
 ### Fixed
 
+- `laranail/console` is required at `^0.1.2`, the first release carrying the `EmojiCatalogue` contract that
+  `Laravel\ConsoleEmojiCatalogue` implements. `^0.1` let a lowest-version install resolve console 0.1.0,
+  where the adapter's contract does not exist.
 - **Every `Emojis` instance loaded its own copy of the dataset.** `DatasetStore::packaged()` built a new
   store per call and the service provider built one per booted application, so wherever opcache is off —
   every CLI process by default — each instance re-parsed about 7.5 MB of shards. The shipped store is now
