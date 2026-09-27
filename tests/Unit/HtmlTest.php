@@ -65,7 +65,7 @@ it('pins every CDN URL to a version', function (string $set): void {
 })->with(['twemoji', 'noto', 'openmoji', 'fluent']);
 
 it('lets a consumer register and self-host image sets', function (): void {
-    $emojis = Emojis::create(['image_base_urls' => ['twemoji' => 'https://cdn.example.com/tw']]);
+    $emojis = Emojis::create(['images' => ['base_urls' => ['twemoji' => 'https://cdn.example.com/tw']]]);
     $emojis->addImageSet(new TemplateImageSet('mine', 'https://img.example.com/{hex_lower}.png'));
 
     expect($emojis->get('😀')->imageUrl())->toBe('https://cdn.example.com/tw/1f600.svg')

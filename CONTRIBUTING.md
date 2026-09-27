@@ -30,8 +30,9 @@ Requires PHP `^8.4.1 || ^8.5` with `ext-mbstring`. `ext-intl` is optional.
 
 Two generators, chained:
 
-1. `tools/build-dataset.php` builds every shard in `resources/data/` from the upstream sources pinned in
-   `tools/sources.lock.json` (URL + sha256) and the hand-curated JSON in `resources/overlays/`.
+1. `tools/build-dataset.php` builds every shard in `database/generated/` (and `docs/licences.md`) from the
+   upstream sources pinned in `database/sources/upstream.lock.json` (URL + sha256), the hand-curated JSON in
+   `database/sources/curated/` and the image margins in `database/sources/measured/`.
 2. `tools/generate-enums.php` builds `src/Core/Enums/{Group,Subgroup,EmojiVersion,EmojiId}.php` from the
    committed catalogue.
 
@@ -49,13 +50,19 @@ it fetches and never skips.
 
 ### Bumping a source
 
-1. Change the URL and `version` in `tools/sources.lock.json`.
+1. Change the URL and `version` in `database/sources/upstream.lock.json`.
 2. `php tools/build-dataset.php --fetch`, then `php tools/build-dataset.php --lock` to record the new sha256.
 3. `php tools/build-dataset.php && php tools/generate-enums.php`.
 4. Read `build/dataset-report.txt` for new shortcode collisions and drops, and review the diff of
-   `resources/data/` like code.
+   `database/generated/` like code.
 
 `EmojiId` case names are public API: the generator keeps every existing case and only adds new ones.
+
+## Front-end assets
+
+`resources/assets/styles/*.scss` is the source; `public/assets/` is the committed Vite build, so Composer
+installs need no Node. After changing the source run `npm install && npm run build` and commit both.
+`npm run assets-check` (the `Assets` workflow) fails when they disagree. No `package-lock.json` is committed.
 
 ## The scanner
 

@@ -32,7 +32,7 @@ it('shows flags as letters on Windows', function (): void {
 });
 
 it('resolves Mode::Auto through the probe and the configured fallback', function (): void {
-    $plain = Emojis::create(['auto_fallback' => 'shortcode'], terminal: new EnvTerminalProbe(override: false));
+    $plain = Emojis::create(['output' => ['auto_fallback' => 'shortcode']], terminal: new EnvTerminalProbe(override: false));
     $rich = Emojis::create(terminal: new EnvTerminalProbe(override: true));
 
     expect($plain->text('🚀')->to(Mode::Auto))->toBe(':rocket:')
@@ -74,7 +74,7 @@ it('degrades, records and continues when a shipped locale shard is broken', func
     $dir = sys_get_temp_dir() . '/laranail-emojis-' . bin2hex(random_bytes(4));
     mkdir($dir . '/locales', 0o775, true);
 
-    foreach (glob(dirname(__DIR__, 2) . '/resources/data/*.php') ?: [] as $file) {
+    foreach (glob(dirname(__DIR__, 2) . '/database/generated/*.php') ?: [] as $file) {
         copy($file, $dir . '/' . basename($file));
     }
 
@@ -96,6 +96,17 @@ it('fails fast when a core shard is missing', function (): void {
     Emojis::create(data: new DatasetStore(sys_get_temp_dir() . '/no-such-emoji-dataset'))->get('rocket');
 })->throws(DatasetException::class);
 
+it('shares the packaged dataset between instances', function (): void {
+    // One store per process: without opcache (the CLI default) each fresh store re-parses ~7.5 MB.
+    expect(DatasetStore::packaged())->toBe(DatasetStore::packaged());
+
+    $before = memory_get_usage();
+    $second = Emojis::create();
+    $second->text('ship 🚀')->toAscii();
+
+    expect(memory_get_usage() - $before)->toBeLessThan(1_000_000);
+});
+
 it('guards reporting: a throwing logger never breaks a conversion', function (): void {
     $logger = new class extends AbstractLogger
     {
@@ -112,4 +123,28 @@ it('guards reporting: a throwing logger never breaks a conversion', function ():
     } finally {
         ini_set('error_log', (string) $previous);
     }
+});
+
+it('refuses the 0.1.0 flat config layout with directions instead of silently using defaults', function (array $legacy, string $moved): void {
+    Emojis::create($legacy);
+})->with([
+    'flat key'                    => [['image_set' => 'noto'], 'image_set → images.set'],
+    'string locale'               => [['locale' => 'fr'], 'locale → locale.default'],
+    'extra shortcodes at the top' => [['shortcodes' => ['shipit' => '1F680']], 'shortcodes → extend.shortcodes'],
+])->throws(InvalidArgumentException::class);
+
+it('reads every group of the config', function (): void {
+    $options = Emojis::create([
+        'locale'     => ['default' => 'fr', 'fallback' => 'de'],
+        'shortcodes' => ['preset' => 'slack', 'delimiters' => ['{', '}']],
+        'images'     => ['set' => 'noto', 'fit' => 'tight', 'class' => 'e', 'base_urls' => ['noto' => 'https://x.test']],
+        'output'     => ['name_template' => '<{name}>', 'auto_fallback' => 'shortcode', 'degradation' => ['text' => ['name']]],
+        'input'      => ['max_bytes' => 99],
+        'policy'     => ['max_emojis' => 3],
+    ])->options();
+
+    expect([$options->locale, $options->fallbackLocale, $options->preset->value, $options->shortcodeOpen . $options->shortcodeClose])->toBe(['fr', 'de', 'slack', '{}'])
+        ->and([$options->imageSet, $options->imageFit->value, $options->imageClass, $options->imageBaseUrls])->toBe(['noto', 'tight', 'e', ['noto' => 'https://x.test']])
+        ->and([$options->nameTemplate, $options->autoFallback->value, $options->degradationFor(Mode::Text)[0]->value, $options->maxInputBytes])->toBe(['<{name}>', 'shortcode', 'name', 99])
+        ->and($options->policy->maxEmojis)->toBe(3);
 });

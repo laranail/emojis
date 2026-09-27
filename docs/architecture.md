@@ -13,8 +13,11 @@ A framework-free core that owns the catalogue, the scanner and every conversion,
 | `src/Core/Render/` | `Renderer` (one emoji into one mode, with degradation) and the image sets. |
 | `src/Core/Locale/`, `Terminal/`, `Extension/` | CLDR names, terminal detection, custom emoji. |
 | `src/Providers/`, `src/Laravel/`, `src/Facades/`, `src/Console/` | The Laravel shell. |
-| `resources/data/` | Generated shards — never edit by hand. |
-| `resources/overlays/` | Curated JSON merged into the shards: emoticons, extra shortcodes. |
+| `database/generated/` | The shipped dataset: generated PHP shards and `VERSION` — never edit by hand. |
+| `database/sources/` | Generator inputs, not shipped: `upstream.lock.json`, `curated/` JSON, `measured/` image bounds. |
+| `resources/assets/` | Front-end source: `styles/*.scss` (and `scripts/`), built by Vite. |
+| `public/assets/` | The committed build: `css/emojis.css`. Read by `Emojis::stylesheet()`, published to `public/vendor/laranail/emojis`. |
+| `resources/lang/` | Translations. |
 | `tools/` | The generators, the source lock, and the gates. |
 
 The boundary is enforced three ways: deptrac statically (`tools/deptrac-guard.php`), a Pest arch test, and
@@ -41,7 +44,8 @@ does not know, for `strip()` and the validation rules.
 ## Why a generated dataset?
 
 The data comes from pinned, checksummed upstream files (Unicode, CLDR, emojibase, gemoji, Google's
-emoji metadata, iamcal), merged with curated overlays, and is emitted as PHP. PHP files are cached by
+emoji metadata, iamcal), merged with the curated inputs in `database/sources/curated/`, and is emitted as PHP into
+`database/generated/`. PHP files are cached by
 opcache as immutable arrays, so loading the catalogue costs a pointer copy; nothing is fetched at runtime.
 The generator is the only writer, `--check` byte-compares in CI, and every count it asserts is read from the
 source's own footer. See [data sources](tools/data-sources.md).
@@ -57,7 +61,7 @@ Failures are classified by what continuing would leave behind, never by environm
 | A caller asks for an emoji, image set or skin tone that does not exist | caller error | `EmojiNotFound`, `ImageSetNotFound` |
 | A shipped locale shard fails to load | degradable | English names; reported once and recorded (`reporter()->degradations()`, doctor) |
 | A requested locale is not shipped | tolerated | fallback chain; logged once as a warning |
-| Input is not UTF-8 or is over `max_input_bytes` | caller error | `InvalidInput`, without echoing the input |
+| Input is not UTF-8 or is over `input.max_bytes` | caller error | `InvalidInput`, without echoing the input |
 
 No exception message or log context ever includes the caller's text. In Laravel, degradable failures go
 through `laranail/package-tools`' `FailurePolicy`, so they reach the exception handler and `BootReport`.

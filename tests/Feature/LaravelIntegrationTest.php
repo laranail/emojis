@@ -5,6 +5,7 @@ declare(strict_types=1);
 use Illuminate\Support\HtmlString;
 use Illuminate\Support\Facades\Blade;
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Support\ServiceProvider;
 use Simtabi\Laranail\Emojis\Core\Emojis;
 use Illuminate\Support\Facades\Validator;
 
@@ -15,14 +16,17 @@ use Simtabi\Laranail\Emojis\Laravel\Casts\AsEmoji;
 use Simtabi\Laranail\Emojis\Laravel\Rules\NoEmoji;
 use Simtabi\Laranail\Emojis\Laravel\Rules\MaxEmojis;
 use Simtabi\Laranail\Emojis\Laravel\Rules\OnlyEmoji;
+use Simtabi\Laranail\Emojis\Core\Security\EmojiPolicy;
 use Simtabi\Laranail\Emojis\Laravel\Casts\AsEmojiText;
 use Simtabi\Laranail\Emojis\Laravel\Rules\SingleEmoji;
 use Simtabi\Laranail\Emojis\Core\Contracts\EmojisFluent;
 use Simtabi\Laranail\Emojis\Laravel\Rules\ContainsEmoji;
 use Simtabi\Laranail\Emojis\Core\Contracts\TerminalProbe;
+use Simtabi\Laranail\Emojis\Laravel\Rules\EmojiPolicyRule;
 use Simtabi\Laranail\Emojis\Core\Terminal\EnvTerminalProbe;
 use Simtabi\Laranail\Emojis\Facades\Emojis as EmojisFacade;
 use Simtabi\Laranail\Package\Tools\Services\Boot\BootReport;
+use Simtabi\Laranail\Emojis\Laravel\Rules\NoHiddenCharacters;
 use Simtabi\Laranail\Emojis\Core\Exceptions\InvalidCustomEmoji;
 
 it('binds one instance behind the class, the contract, the facade and the helper', function (): void {
@@ -41,7 +45,7 @@ it('returns HtmlString so Blade does not escape images twice', function (): void
 });
 
 it('renders the Blade component accessibly', function (): void {
-    expect(Blade::render('<x-laranail-emojis::emoji name="wave" skin-tone="medium" />'))->toBe('<span role="img" aria-label="waving hand: medium skin tone">👋🏽</span>')
+    expect(Blade::render('<x-laranail-emojis::emoji name="wave" skin-tone="medium" />'))->toBe('<span class="laranail-emoji" role="img" aria-label="waving hand: medium skin tone">👋🏽</span>')
         ->and(Blade::render('<x-laranail-emojis::emoji name="rocket" mode="image" set="openmoji" />'))->toContain('openmoji@17.0.0/color/svg/1F680.svg');
 });
 
@@ -128,4 +132,49 @@ it('resolves its collaborators from the container, so an application can replace
     app()->singleton(TerminalProbe::class, static fn (): EnvTerminalProbe => new EnvTerminalProbe(override: false));
 
     expect(app(Emojis::class)->text('🚀')->to(Mode::Auto))->toBe(':rocket:');
+});
+
+it('rejects hidden characters and enforces the emoji policy', function (): void {
+    $tags = implode('', array_map(static fn (string $c): string => mb_chr(0xE0000 + ord($c), 'UTF-8'), str_split('hi')));
+
+    expect(Validator::make(['v' => 'plain name'], ['v' => [new NoHiddenCharacters]])->passes())->toBeTrue()
+        ->and(Validator::make(['v' => 'name' . $tags], ['v' => [new NoHiddenCharacters]])->passes())->toBeFalse()
+        ->and(Validator::make(['v' => '👍'], ['v' => [new EmojiPolicyRule(EmojiPolicy::only('1F44D'))]])->passes())->toBeTrue()
+        ->and(Validator::make(['v' => '🚀'], ['v' => [new EmojiPolicyRule(EmojiPolicy::only('1F44D'))]])->errors()->first('v'))->toBe('The v field contains emoji that are not allowed here.');
+});
+
+it('reads the default policy from config', function (): void {
+    config()->set('laranail.emojis.policy', ['deny_groups' => ['flags']]);
+    app()->forgetInstance(Emojis::class);
+
+    expect(app(Emojis::class)->sanitize('go 🇰🇪 🚀')->clean())->toBe('go  🚀');
+});
+
+it('sanitizes from the command line and gates with --check', function (): void {
+    $this->artisan('laranail::emojis.sanitize', ['text' => "ok \u{202E}x"])->expectsOutput('ok x')->assertSuccessful();
+    $this->artisan('laranail::emojis.sanitize', ['text' => "ok \u{202E}x", '--check' => true])->assertFailed();
+    $this->artisan('laranail::emojis.sanitize', ['text' => 'clean 🚀', '--check' => true])->assertSuccessful();
+});
+
+it('inlines the stylesheet with a nonce', function (): void {
+    $html = Blade::render('<x-laranail-emojis::styles nonce="abc123" />');
+
+    expect($html)->toStartWith('<style nonce="abc123">')
+        ->and($html)->toContain('.laranail-emoji-box')
+        ->and(Blade::render('<x-laranail-emojis::styles />'))->toStartWith('<style>');
+});
+
+it('links the published stylesheet instead of inlining it', function (): void {
+    $html = Blade::render('<x-laranail-emojis::styles link nonce="abc123" />');
+
+    expect($html)->toBe('<link rel="stylesheet" href="' . asset('vendor/laranail/emojis/css/emojis.css') . '" nonce="abc123">');
+});
+
+it('publishes the built assets to public/vendor/laranail/emojis', function (): void {
+    $paths = ServiceProvider::pathsToPublish(null, 'laranail::emojis-assets');
+
+    expect($paths)->toHaveCount(1)
+        ->and(array_key_first($paths))->toEndWith('public/assets')
+        ->and(array_values($paths)[0])->toBe(public_path('vendor/laranail/emojis'))
+        ->and(is_file(array_key_first($paths) . '/css/emojis.css'))->toBeTrue();
 });

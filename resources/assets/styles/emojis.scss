@@ -1,0 +1,58 @@
+/*!
+ * laranail/emojis — layout for emoji in running text and UI.
+ *
+ * Images: the class set by config('laranail.emojis.images.class') (default "emoji") on the <img> or fitted
+ * <svg> the package renders. Fitted output (Fit::Balanced, Fit::Tight) has no built-in padding, so 1em reads
+ * as the size of a capital letter's box; Fit::None keeps the publisher's padding.
+ *
+ * Native emoji: the .laranail-emoji span the Blade component renders. Colour-emoji fonts carry wide side
+ * bearings and a tall line box; this pins the font, the presentation and the box so a native emoji sits in
+ * the line like a letter instead of pushing it apart.
+ *
+ * Inline it with <x-laranail-emojis::styles /> (strict-CSP friendly), link the published file with
+ * <x-laranail-emojis::styles link />, or import resources/assets/styles/emojis.scss into your own build.
+ */
+
+@use 'tokens' as *;
+@use 'mixins' as *;
+
+.emoji {
+  display: inline-block;
+  width: $image-size;
+  height: $image-size;
+  margin: 0 $image-gap;
+  vertical-align: $image-baseline;
+  object-fit: contain;
+  overflow: hidden;
+  flex-shrink: 0;
+}
+
+.laranail-emoji {
+  @include flush-inline;
+
+  font-family: $font-stack;
+  font-style: normal;
+  font-weight: normal;
+  font-variant-emoji: emoji;
+  vertical-align: $native-baseline;
+}
+
+.laranail-emoji-box {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: box-size();
+  height: box-size();
+  line-height: 1;
+
+  > .emoji {
+    width: 100%;
+    height: 100%;
+    margin: 0;
+    vertical-align: top;
+  }
+
+  > .laranail-emoji {
+    font-size: calc(#{box-size()} * #{$box-glyph-scale});
+  }
+}

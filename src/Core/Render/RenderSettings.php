@@ -4,7 +4,9 @@ declare(strict_types=1);
 
 namespace Simtabi\Laranail\Emojis\Core\Render;
 
+use Simtabi\Laranail\Emojis\Core\Enums\Fit;
 use Simtabi\Laranail\Emojis\Core\Enums\Mode;
+use Simtabi\Laranail\Emojis\Core\Enums\Carrier;
 use Simtabi\Laranail\Emojis\Core\Enums\SkinTone;
 use Simtabi\Laranail\Emojis\Core\Enums\EmojiVersion;
 use Simtabi\Laranail\Emojis\Core\Enums\EscapeFormat;
@@ -23,6 +25,8 @@ final readonly class RenderSettings
         public EscapeFormat $escapeFormat = EscapeFormat::Php,
         public ?SkinTone $skinTone = null,
         public array $chains = [],
+        public Carrier $carrier = Carrier::Google,
+        public ?Fit $fit = null,
     ) {}
 
     /**
@@ -37,6 +41,6 @@ final readonly class RenderSettings
 
     public function withoutSkinTone(): self
     {
-        return new self($this->preset, $this->locale, $this->imageSet, $this->versionCap, $this->strict, $this->escapeFormat, null, $this->chains);
+        return new self($this->preset, $this->locale, $this->imageSet, $this->versionCap, $this->strict, $this->escapeFormat, null, $this->chains, $this->carrier, $this->fit);
     }
 }

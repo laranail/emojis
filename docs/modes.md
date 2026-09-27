@@ -1,6 +1,6 @@
 # Modes and conversion
 
-Twelve `Mode` cases describe every form an emoji takes, and a converter reads some of them and writes any of them.
+Thirteen `Mode` cases describe every form an emoji takes, and a converter reads some of them and writes any of them.
 
 ## The modes
 
@@ -16,8 +16,9 @@ Twelve `Mode` cases describe every form an emoji takes, and a converter reads so
 | `HtmlEntity` | `&#x1F44B;&#x1F3FD;` | ✓ | ✓ |
 | `Escaped` | `\u{1F44B}\u{1F3FD}` and the JavaScript, Python and CSS forms | ✓ | ✓ |
 | `Codepoint` | `U+1F44B U+1F3FD` | ✓ | ✓ |
+| `Carrier` | a docomo, au, SoftBank or Google private-use code — see [Japanese emoji](tools/japanese.md) | ✓ | ✓ |
 | `Name` | `[waving hand: medium skin tone]`, localized | — | ✓ |
-| `Auto` | `Emoji` on a capable terminal, `auto_fallback` otherwise | — | ✓ |
+| `Auto` | `Emoji` on a capable terminal, `output.auto_fallback` otherwise | — | ✓ |
 
 `Name` and `Ascii` are targets only: a name inside prose cannot be found reliably, and ASCII output is read
 back as a shortcode. Passing a target-only mode to `from()` throws `UnsupportedConversion`.
@@ -39,6 +40,7 @@ fallback chain:
 | `Text` | `Unicode` |
 | `Emoticon` | `Shortcode` |
 | `Image` | `Unicode` |
+| `Carrier` | `Unicode` |
 | `Emoji` (above a version cap) | decompose, then `Shortcode` |
 
 Every chain ends in a form that always exists. Override per call or in config:

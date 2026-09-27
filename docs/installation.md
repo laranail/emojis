@@ -46,6 +46,15 @@ php artisan vendor:publish --tag=laranail::emojis-config
 It lands in `config/laranail/emojis.php` and is read as `config('laranail.emojis.*')`. See
 [configuration](configuration.md).
 
+The stylesheet is inlined by `<x-laranail-emojis::styles />` and needs no publishing. To serve it as a file
+instead, publish the built assets to `public/vendor/laranail/emojis/` and use `<x-laranail-emojis::styles link />`:
+
+```bash
+php artisan vendor:publish --tag=laranail::emojis-assets
+```
+
+See [styles](tools/styles.md).
+
 Check the install:
 
 ```bash
@@ -63,7 +72,7 @@ No container is needed:
 use Simtabi\Laranail\Emojis\Core\Emojis;
 
 $emojis = Emojis::create();                        // defaults
-$emojis = Emojis::create(['locale' => 'fr']);      // the same keys as the Laravel config
+$emojis = Emojis::create(['locale' => ['default' => 'fr']]);   // the same keys as the Laravel config
 ```
 
 ---

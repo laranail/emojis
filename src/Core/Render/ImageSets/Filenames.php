@@ -36,6 +36,6 @@ final class Filenames
     /** OpenMoji: uppercase hexcode as emojibase writes it (FE0F kept only inside sequences). */
     public static function openmoji(Emoji $emoji): string
     {
-        return count($emoji->codepoints) === 2 && $emoji->codepoints[1] === 0xFE0F ? sprintf('%X', $emoji->codepoints[0]) : $emoji->hexcode;
+        return count($emoji->codepoints) === 2 && $emoji->codepoints[1] === 0xFE0F ? sprintf('%04X', $emoji->codepoints[0]) : $emoji->hexcode;
     }
 }

@@ -1,0 +1,19 @@
+{
+  "name": "@laranail/emojis-assets",
+  "private": true,
+  "description": "Front-end build for laranail/emojis: compiles resources/assets into public/assets.",
+  "license": "MIT",
+  "type": "module",
+  "engines": {
+    "node": ">=20.19"
+  },
+  "scripts": {
+    "build": "vite build",
+    "watch": "vite build --watch",
+    "assets-check": "node tools/assets-check.mjs"
+  },
+  "devDependencies": {
+    "sass": "^1.105",
+    "vite": "^8.3"
+  }
+}

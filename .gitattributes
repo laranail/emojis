@@ -1,8 +1,13 @@
 * text=auto eol=lf
 
-# resources/ and helpers/ ship: the dataset, overlays, NOTICE, views and the helper file are runtime inputs.
+# database/generated/, public/assets/, resources/lang/ and helpers/ ship: the dataset, the built CSS/JS,
+# translations and the helper file are runtime inputs. resources/assets/ is the Vite source (SCSS/JS) and
+# ships too, so an application can @use the SCSS in its own build; the Node tooling does not. database/sources/ only feeds the generator. docs/ is hosted, not shipped — except
+# docs/licences.md, the notices the data's licences require to travel with the data.
 /.github            export-ignore
-/docs               export-ignore
+/docs/**            export-ignore
+/docs/licences.md   -export-ignore
+/database/sources   export-ignore
 /tests              export-ignore
 /tools              export-ignore
 /.editorconfig      export-ignore
@@ -17,3 +22,5 @@
 /phpunit.xml        export-ignore
 /rector.php         export-ignore
 /testbench.yaml     export-ignore
+/package.json       export-ignore
+/vite.config.mjs    export-ignore

@@ -3,6 +3,7 @@
 declare(strict_types=1);
 
 use Simtabi\Laranail\Emojis\Core\Enums\Mode;
+use Simtabi\Laranail\Emojis\Core\Enums\Carrier;
 use Simtabi\Laranail\Emojis\Core\Enums\SkinTone;
 use Simtabi\Laranail\Emojis\Core\Enums\EmojiVersion;
 
@@ -76,5 +77,11 @@ it('shows outputs the code really produces', function (string $actual, string $d
     'localisation: names'                       => fn (): array => [emojis()->text('🚀 👋🏽')->locale('fr')->toNames(), '[fusée] [signe de la main: peau légèrement mate]'],
     'recipe: console'                           => fn (): array => [emojis()->text(':white_check_mark: Deployed :rocket:')->to(Mode::Emoji), '✅ Deployed 🚀'],
     'recipe: utf8mb3'                           => fn (): array => [emojis()->text('Coffee first ☕🚀')->toAscii(), 'Coffee first :coffee::rocket:'],
+    'images: fitted OpenMoji viewBox'           => fn (): array => [(string) preg_replace('/^.*?(viewBox="[^"]+").*$/s', '$1', emojis()->text('😀')->imageSet('openmoji')->toImages()), 'viewBox="95 95 810 810"'],
+    'japanese: carrier sun'                     => fn (): array => [emojis()->text(mb_chr(0xE63E, 'UTF-8'))->carrier(Carrier::Docomo)->from(Mode::Carrier)->toEmoji(), '☀️'],
+    'japanese: name'                            => fn (): array => [emojis()->get('🈁')->name('ja'), 'ココのマーク'],
+    'japanese: search'                          => fn (): array => [(string) emojis()->search('寿司', 'ja')->first(), '🍣'],
+    'japanese: collection size'                 => fn (): array => [(string) emojis()->collection('japanese')->count(), '55'],
+    'kaomoji: total'                            => fn (): array => [(string) count(emojis()->kaomoji()), '2092'],
     'recipe: older platforms'                   => fn (): array => [emojis()->text('❤️‍🔥 🫩 🚀')->supportedUpTo(EmojiVersion::V13_0)->toEmoji(), '❤️🔥 :face_with_eye_bags: 🚀'],
 ]);

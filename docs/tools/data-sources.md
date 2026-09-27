@@ -1,6 +1,6 @@
 # Data sources
 
-Seven upstream sources, pinned by URL and sha256 in `tools/sources.lock.json`, build every shard in `resources/data/`.
+Upstream sources, pinned by URL and sha256 in `database/sources/upstream.lock.json`, build every shard in `database/generated/`.
 
 ## Sources
 
@@ -10,14 +10,32 @@ Seven upstream sources, pinned by URL and sha256 in `tools/sources.lock.json`, b
 | Unicode CLDR annotations and derived annotations | 48.2.0 | Unicode License V3 | names and keywords in 24 locales |
 | emojibase-data | 17.0.0 | MIT | shortcode presets (GitHub, emojibase, Slack, JoyPixels, CLDR), emoticons |
 | github/gemoji | pinned commit | MIT | GitHub shortcode aliases |
-| googlefonts/emoji-metadata | pinned commit | Apache-2.0 | emoticons, the 470 kaomoji |
-| iamcal/emoji-data | 16.0.0 | MIT | emoticons |
+| googlefonts/emoji-metadata | pinned commit | Apache-2.0 | emoticons, 468 kaomoji |
+| iamcal/emoji-data | 16.0.0 | MIT | emoticons, Japanese carrier codes |
+| Unicode `EmojiSources.txt`, `StandardizedVariants.txt` | 18.0 | Unicode License V3 | canonical carrier mappings; which characters take a variation selector |
+| kaomojikan/kaomoji-data | pinned commit | MIT | 1,624 Japanese kaomoji with tags and kana readings |
 | image-set file listings (Twemoji, Noto, OpenMoji, Fluent) | pinned releases | listings only | per-set coverage, so no URL points at a missing file |
 
-Plus two curated overlays in `resources/overlays/`: `emoticons.json` (the everyday emoticons, which win over
+Plus curated inputs in `database/sources/curated/`: `emoticons.json` (the everyday emoticons, which win over
 every source, and the "risky" list) and `aliases.json` (common shortcodes no preset carries).
 
-The licences travel with the data in `resources/data/NOTICE.md`.
+The licences travel with the data in [licences](../licences.md), the one docs page the Composer archive
+includes.
+
+## Layout
+
+```
+database/
+├── generated/                 the shipped dataset — written by tools/build-dataset.php, never edited
+│   ├── emojis.php  scanner.php  shortcodes.php  emoticons.php  kaomoji.php
+│   ├── images.php  carriers.php  collections.php
+│   ├── locales/{locale}.php
+│   └── VERSION
+└── sources/                   generator inputs — not shipped
+    ├── upstream.lock.json     every upstream file: URL, version, licence, sha256
+    ├── curated/               aliases.json, collections.json, emoticons.json
+    └── measured/bounds/       per-image margins from tools/measure
+```
 
 ## What the generator adds
 

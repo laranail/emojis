@@ -19,13 +19,13 @@ Emojis::text('🚀 👋🏽')->locale('fr')->toNames();      // "[fusée] [signe
 Emojis::search('fusée', 'fr');
 ```
 
-In Laravel, with `locale` left `null` in config, every call follows `app()->getLocale()` at the moment of
+In Laravel, with `locale.default` left `null` in config, every call follows `app()->getLocale()` at the moment of
 the call.
 
 ## Resolution
 
 A requested tag resolves through: the exact tag (`pt-BR`), the script (`zh-TW` and `zh-HK` → `zh-Hant`),
-the language (`pt`), `fallback_locale`, then English. Underscores are accepted (`pt_BR`).
+the language (`pt`), `locale.fallback`, then English. Underscores are accepted (`pt_BR`).
 
 An unshipped locale is expected and is logged once as a warning. A shipped locale file that fails to load
 is a degradable failure: names fall back to English, the failure is reported once, and it shows in

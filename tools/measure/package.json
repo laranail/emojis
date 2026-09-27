@@ -1,0 +1,12 @@
+{
+  "name": "laranail-emojis-measure",
+  "private": true,
+  "description": "Maintainer tool: measures the transparent margins of every pinned emoji image so Fit::Balanced and Fit::Tight can crop padding without clipping artwork.",
+  "type": "module",
+  "scripts": {
+    "measure": "node measure-bounds.mjs"
+  },
+  "dependencies": {
+    "@resvg/resvg-js": "^2.6"
+  }
+}

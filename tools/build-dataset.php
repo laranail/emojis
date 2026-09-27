@@ -3,13 +3,15 @@
 declare(strict_types=1);
 
 /**
- * Builds resources/data/ from pinned, sha256-verified upstream sources plus the curated overlays in
- * resources/overlays/.
+ * Builds database/generated/ — the shipped dataset — from the upstream sources pinned in
+ * database/sources/upstream.lock.json (sha256-verified), the hand-maintained inputs in database/sources/curated/
+ * and the image margins in database/sources/measured/. Also writes docs/licences.md, the notices the data's
+ * licences require to travel with it.
  *
  *   php tools/build-dataset.php            verify sources, regenerate every shard
  *   php tools/build-dataset.php --check    regenerate in memory and byte-compare; exit 1 on drift
  *   php tools/build-dataset.php --fetch    download any missing source into build/cache/sources first
- *   php tools/build-dataset.php --lock     rewrite tools/sources.lock.json from the cached files
+ *   php tools/build-dataset.php --lock     rewrite database/sources/upstream.lock.json from the cached files
  *                                          (maintainer action when bumping a source, never in CI)
  *
  * Sources are cached under build/cache/sources (gitignored). When they are absent and --fetch is not
@@ -24,9 +26,11 @@ require __DIR__ . '/lib/PhpEmitter.php';
 
 const ROOT = __DIR__ . '/..';
 const CACHE = ROOT . '/build/cache/sources';
-const LOCK = __DIR__ . '/sources.lock.json';
-const DATA = ROOT . '/resources/data';
-const OVERLAYS = ROOT . '/resources/overlays';
+const LOCK = ROOT . '/database/sources/upstream.lock.json';
+const DATA = ROOT . '/database/generated';
+const OVERLAYS = ROOT . '/database/sources/curated';
+const MEASURED = ROOT . '/database/sources/measured';
+const LICENCES = ROOT . '/docs/licences.md';
 
 const Q_FULLY = 0;
 const Q_MINIMALLY = 1;
@@ -296,6 +300,16 @@ foreach (explode("\n", $read('emoji-variation-sequences')) as $line) {
 }
 
 count($textVs) > 300 || $fail('emoji-variation-sequences.txt parsed ' . count($textVs) . ' text sequences');
+
+$standardizedBases = [];
+
+foreach (explode("\n", $read('standardized-variants')) as $line) {
+    if (preg_match('/^([0-9A-F]+) (FE0[0-9A-D]);/', $line, $m) === 1) {
+        $standardizedBases[] = [hexdec($m[1]), hexdec($m[1])];
+    }
+}
+
+count($standardizedBases) > 1000 || $fail('StandardizedVariants.txt parsed only ' . count($standardizedBases) . ' sequences');
 
 // ---------------------------------------------------------------------------------------------------
 // 3. Per-record derived facts: type, base, tones, region, variation, slug
@@ -574,11 +588,106 @@ foreach ($json('googlefonts-emoticons') as $group) {
             continue;
         }
 
-        $kaomoji[] = ['value' => $value, 'group' => $slug, 'description' => strtolower(trim((string) $item['description'])), 'ascii' => preg_match('/^[\x20-\x7E]+$/', $value) === 1];
+        $kaomoji[$value] ??= ['value' => $value, 'group' => $slug, 'description' => strtolower(trim((string) $item['description'])), 'ascii' => preg_match('/^[\x20-\x7E]+$/', $value) === 1, 'tags' => '', 'reading' => ''];
     }
 }
 
-count($kaomoji) > 400 || $fail('kaomoji: parsed only ' . count($kaomoji));
+// Japanese kaomoji (顔文字) from kaomojikan/kaomoji-data (MIT): one-line faces only — its multi-line ASCII art
+// cannot sit in running text. Tags and kana readings are kept, joined with " | ", for Japanese search. A face
+// already in Google's set keeps Google's group and description.
+$categories = $json('kaomojikan-categories');
+
+foreach ($json('kaomojikan') as $item) {
+    $value = trim((string) $item['text']);
+
+    if ($value === '' || preg_match('/[\r\n\t]/', $value) === 1 || isset($kaomoji[$value])) {
+        continue;
+    }
+
+    $group = 'ja_' . str_replace('-', '_', (string) ($item['categories'][0] ?? 'other'));
+    $kaomojiGroups[$group] ??= (string) ($categories[$item['categories'][0] ?? '']['name'] ?? $group);
+    $kaomoji[$value] = [
+        'value'       => $value,
+        'group'       => $group,
+        'description' => (string) (($item['tags'] ?? [])[0] ?? ''),
+        'ascii'       => preg_match('/^[\x20-\x7E]+$/', $value) === 1,
+        'tags'        => implode(' | ', array_map('strval', $item['tags'] ?? [])),
+        'reading'     => implode(' | ', array_map('strval', $item['reading'] ?? [])),
+    ];
+}
+
+$kaomoji = array_values($kaomoji);
+count($kaomoji) > 2000 || $fail('kaomoji: parsed only ' . count($kaomoji));
+
+// ---------------------------------------------------------------------------------------------------
+// 5b. Japanese carrier emoji: the docomo, au (KDDI) and SoftBank private-use code points, and Google's
+//     plane-15 PUA. iamcal gives each emoji's code per carrier (many emoji share a docomo code). Which emoji a
+//     shared code *reads as* comes from Unicode's EmojiSources.txt, the one-to-one carrier table (docomo's
+//     U+E63E is the sun, not the sunrise that shares it); codes it does not list fall back to CLDR order.
+// ---------------------------------------------------------------------------------------------------
+
+$carriers = ['docomo' => [], 'au' => [], 'softbank' => [], 'google' => []];
+
+foreach ($json('iamcal') as $entry) {
+    $hex = $resolve($entry['unified']);
+
+    foreach (array_keys($carriers) as $carrier) {
+        $code = $entry[$carrier] ?? null;
+
+        if ($hex === null || ! is_string($code) || preg_match('/^[0-9A-F]{4,5}$/', $code) !== 1) {
+            continue;
+        }
+
+        $carriers[$carrier]['codes'][$hex] = $code;
+        $existing = $carriers[$carrier]['reads'][$code] ?? null;
+
+        if ($existing === null || $records[$hex]['order'] < $records[$existing]['order']) {
+            $carriers[$carrier]['reads'][$code] = $hex;
+        }
+    }
+}
+
+// EmojiSources.txt columns: unicode ; docomo ; kddi ; softbank (Shift-JIS). A code listed there is canonical
+// for its Unicode emoji, so that emoji wins the read for the carrier's private-use code point.
+foreach (explode("\n", $read('emoji-sources')) as $line) {
+    if ($line === '' || $line[0] === '#') {
+        continue;
+    }
+
+    $fields = explode(';', $line);
+    $hex = $resolve(hexOf(cps($fields[0])));
+
+    foreach ([1 => 'docomo', 2 => 'au', 3 => 'softbank'] as $column => $carrier) {
+        $code = $hex === null || trim($fields[$column] ?? '') === '' ? null : ($carriers[$carrier]['codes'][$hex] ?? null);
+
+        if ($code !== null) {
+            $carriers[$carrier]['reads'][$code] = $hex;
+        }
+    }
+}
+
+foreach ($carriers as $carrier => &$maps) {
+    count($maps['codes'] ?? []) > 300 || $fail("carrier {$carrier}: only " . count($maps['codes'] ?? []) . ' mappings');
+    ksort($maps['codes'], SORT_STRING);
+    ksort($maps['reads'], SORT_STRING);
+}
+
+unset($maps);
+
+// ---------------------------------------------------------------------------------------------------
+// 5c. Curated collections (database/sources/curated/collections.json)
+// ---------------------------------------------------------------------------------------------------
+
+$collections = [];
+
+foreach ($overlay('collections')['collections'] as $name => $members) {
+    foreach ($members as $hex) {
+        isset($records[$hex]) || $fail("overlay collections.json: {$name} lists unknown {$hex}");
+    }
+
+    count(array_unique($members)) === count($members) || $fail("overlay collections.json: {$name} lists an emoji twice");
+    $collections[$name] = implode(' ', $members);
+}
 
 // ---------------------------------------------------------------------------------------------------
 // 6. Image-set coverage
@@ -636,7 +745,11 @@ foreach ($records as $hex => &$record) {
     $fluentName = strtolower(preg_replace('/[^A-Za-z0-9]+/', ' ', (string) iconv('UTF-8', 'ASCII//TRANSLIT', $records[$record['base'] ?? $hex]['name'])));
     $fluentName = trim($fluentName);
 
-    if (isset($fluentFolders[$fluentName]) && (! isset($record['tones']) || count($record['tones']) === 1)) {
+    // Fluent has tone folders only for single-person emoji, so a two-person base (handshake, couples) is
+    // covered untoned and its tone variants are not covered at all.
+    $twoPerson = str_contains(implode(' ', array_map('strval', array_keys($records[$record['base'] ?? $hex]['skins'] ?? []))), '-');
+
+    if (isset($fluentFolders[$fluentName]) && (! isset($record['tones']) || (count($record['tones']) === 1 && ! $twoPerson))) {
         $bits |= IMG_FLUENT;
         $fluent[$hex] = $fluentFolders[$fluentName];
     }
@@ -647,6 +760,50 @@ foreach ($records as $hex => &$record) {
 }
 
 unset($record);
+
+// ---------------------------------------------------------------------------------------------------
+// 6b. Image crops, from the margins measured by tools/measure/measure-bounds.mjs (database/sources/measured/bounds).
+//     Balanced removes the set's common padding: an inset of min(set median margin, this emoji's smallest
+//     margin), so it never clips and a small symbol keeps its smallness. Tight is the square around the
+//     artwork. Both in permille of the canvas; margins were rounded down, so neither cuts into a pixel.
+// ---------------------------------------------------------------------------------------------------
+
+$crops = [];
+$imageVersions = ['twemoji' => 'twemoji-listing', 'noto' => 'noto-listing', 'openmoji' => 'openmoji-data', 'fluent' => 'fluent-listing'];
+
+foreach ($imageVersions as $set => $lockId) {
+    $file = MEASURED . "/bounds/{$set}.json";
+
+    if (! is_file($file)) {
+        continue;
+    }
+
+    $bounds = json_decode((string) file_get_contents($file), true, flags: JSON_THROW_ON_ERROR);
+    $bounds['version'] === $lock[$lockId]['version'] || $fail("bounds/{$set}.json measured {$bounds['version']}, but the lock pins {$lock[$lockId]['version']}: re-measure");
+    count($bounds['entries']) > 2500 || $fail("bounds/{$set}.json has only " . count($bounds['entries']) . ' entries');
+
+    $minima = array_map(static fn (array $m): int => min($m), $bounds['entries']);
+    sort($minima);
+    $safeArea = $minima[intdiv(count($minima), 2)];
+
+    foreach ($bounds['entries'] as $hex => [$left, $top, $right, $bottom]) {
+        $hex = (string) $hex;
+
+        if (! isset($records[$hex])) {
+            continue;
+        }
+
+        $inset = min($safeArea, $left, $top, $right, $bottom);
+        $width = 1000 - $left - $right;
+        $height = 1000 - $top - $bottom;
+        $size = max($width, $height, 1);
+        $x = max(0, min(1000 - $size, intdiv(2 * $left + $width - $size, 2)));
+        $y = max(0, min(1000 - $size, intdiv(2 * $top + $height - $size, 2)));
+        $crops[$set][$hex] = "{$inset} {$x} {$y} {$size}";
+    }
+
+    ksort($crops[$set], SORT_STRING);
+}
 
 // ---------------------------------------------------------------------------------------------------
 // 7. Locales: CLDR names and keywords for base emoji and components
@@ -733,8 +890,12 @@ $scanner = [
     'lengths'      => $lengths,
     'start'        => charClass($startRanges),
     'pictographic' => charClass(array_merge($props['Extended_Pictographic'], [[0x1F1E6, 0x1F1FF]])),
-    'components'   => charClass([[0xFE0E, 0xFE0F], [0x20E3, 0x20E3], [0x1F3FB, 0x1F3FF], [0x1F9B0, 0x1F9B3], [0xE0020, 0xE007F]]),
-    'sequences'    => $sequences,
+    // Which characters may legitimately take a variation selector: VS15/VS16 per emoji-variation-sequences.txt,
+    // VS1–VS14 per StandardizedVariants.txt. Any other selector is payload (see Security\\Sanitizer).
+    'emojiVsBases'        => charClass(array_map(static fn (int $cp): array => [$cp, $cp], array_keys($textVs))),
+    'standardizedVsBases' => charClass($standardizedBases),
+    'components'          => charClass([[0xFE0E, 0xFE0F], [0x20E3, 0x20E3], [0x1F3FB, 0x1F3FF], [0x1F9B0, 0x1F9B3], [0xE0020, 0xE007F]]),
+    'sequences'           => $sequences,
 ];
 
 // ---------------------------------------------------------------------------------------------------
@@ -742,7 +903,7 @@ $scanner = [
 // ---------------------------------------------------------------------------------------------------
 
 $sourceLine = sprintf('Unicode Emoji %s (%s) · CLDR %s · emojibase-data %s · gemoji %s · googlefonts/emoji-metadata %s', $emojiVersion, $unicodeDate, $lock['cldr-en']['version'], $lock['emojibase-data']['version'], substr($lock['gemoji']['version'], 0, 12), substr($lock['googlefonts-ordering']['version'], 0, 12));
-$header = static fn (string $what): string => "GENERATED by tools/build-dataset.php — do not edit.\n\n{$what}\n\nSources: {$sourceLine}\nLicences: resources/data/NOTICE.md";
+$header = static fn (string $what): string => "GENERATED by tools/build-dataset.php — do not edit.\n\n{$what}\n\nSources: {$sourceLine}\nLicences: docs/licences.md";
 
 // One positional list per record, on one line. A map per record made this shard 50,000 lines that Pint
 // needed two minutes to verify; the field order is written into the shard and checked against
@@ -785,40 +946,47 @@ foreach (array_keys(PRESETS) as $preset) {
 }
 
 $files = [
-    'emojis.php'     => PhpEmitter::file(['fields' => FIELDS, 'groups' => $groups, 'subgroups' => $subgroups, 'emojis' => $emojis], $header("The catalogue: every fully-qualified emoji and component, keyed by hexcode, in CLDR order.\nEach record is a list in the order given by 'fields'. tones: \"3\" or \"1-5\"; skins: \"1=HEX 1-2=HEX …\".")),
-    'scanner.php'    => PhpEmitter::file($scanner, $header("Scanner tables: every emoji sequence (fully-, minimally-, unqualified, component) → [hexcode, quality],\nthe byte lengths to probe longest-first, and the generated character classes. 'components' holds the\ncharacters that are meaningless outside an emoji sequence (VS15/16, keycap, modifiers, hair, tags);\nZWJ is deliberately absent because Indic and Persian scripts use it in ordinary words. No PCRE Unicode\nproperty is used at runtime; these classes are the portable replacement.")),
-    'shortcodes.php' => PhpEmitter::file(['presets' => $shortcodes, 'index' => $index], $header('Shortcodes per preset (hexcode → codes, primary first) and the merged reverse index (code → hexcode).')),
-    'emoticons.php'  => PhpEmitter::file(['map' => $emoticons, 'risky' => array_keys($risky), 'primary' => $primaryEmoticon], $header('ASCII emoticons → hexcode, the opt-in "risky" subset, and each emoji\'s primary emoticon.')),
-    'kaomoji.php'    => PhpEmitter::file(['groups' => $kaomojiGroups, 'items' => $kaomoji], $header('Kaomoji and text faces, grouped (googlefonts/emoji-metadata emoticon_ordering.json).')),
-    'images.php'     => PhpEmitter::file(['bits' => ['twemoji' => IMG_TWEMOJI, 'noto' => IMG_NOTO, 'openmoji' => IMG_OPENMOJI, 'fluent' => IMG_FLUENT], 'versions' => ['twemoji' => $lock['twemoji-listing']['version'], 'noto' => $lock['noto-listing']['version'], 'openmoji' => $lock['openmoji-data']['version'], 'fluent' => $lock['fluent-listing']['version']], 'fluent' => $fluent], $header('Image-set coverage bits, pinned CDN versions, and Fluent folder names.')),
+    'emojis.php'      => PhpEmitter::file(['fields' => FIELDS, 'groups' => $groups, 'subgroups' => $subgroups, 'emojis' => $emojis], $header("The catalogue: every fully-qualified emoji and component, keyed by hexcode, in CLDR order.\nEach record is a list in the order given by 'fields'. tones: \"3\" or \"1-5\"; skins: \"1=HEX 1-2=HEX …\".")),
+    'scanner.php'     => PhpEmitter::file($scanner, $header("Scanner tables: every emoji sequence (fully-, minimally-, unqualified, component) → [hexcode, quality],\nthe byte lengths to probe longest-first, and the generated character classes. 'components' holds the\ncharacters that are meaningless outside an emoji sequence (VS15/16, keycap, modifiers, hair, tags);\nZWJ is deliberately absent because Indic and Persian scripts use it in ordinary words. No PCRE Unicode\nproperty is used at runtime; these classes are the portable replacement.")),
+    'shortcodes.php'  => PhpEmitter::file(['presets' => $shortcodes, 'index' => $index], $header('Shortcodes per preset (hexcode → codes, primary first) and the merged reverse index (code → hexcode).')),
+    'emoticons.php'   => PhpEmitter::file(['map' => $emoticons, 'risky' => array_keys($risky), 'primary' => $primaryEmoticon], $header('ASCII emoticons → hexcode, the opt-in "risky" subset, and each emoji\'s primary emoticon.')),
+    'kaomoji.php'     => PhpEmitter::file(['groups' => $kaomojiGroups, 'items' => $kaomoji], $header("Kaomoji and text faces, grouped: googlefonts/emoji-metadata emoticon_ordering.json, then kaomojikan/kaomoji-data\n(groups prefixed ja_, with Japanese tags and kana readings).")),
+    'collections.php' => PhpEmitter::file($collections, $header('Curated named collections: name => space-joined hexcodes, in display order.')),
+    'carriers.php'    => PhpEmitter::file($carriers, $header("Japanese carrier emoji: per carrier, 'codes' (hexcode -> private-use code point) and 'reads'\n(code point -> hexcode; shared codes read as the first emoji in CLDR order).")),
+    'images.php'      => PhpEmitter::file(['bits' => ['twemoji' => IMG_TWEMOJI, 'noto' => IMG_NOTO, 'openmoji' => IMG_OPENMOJI, 'fluent' => IMG_FLUENT], 'versions' => ['twemoji' => $lock['twemoji-listing']['version'], 'noto' => $lock['noto-listing']['version'], 'openmoji' => $lock['openmoji-data']['version'], 'fluent' => $lock['fluent-listing']['version']], 'fluent' => $fluent, 'crops' => $crops], $header('Image-set coverage bits, pinned CDN versions, Fluent folder names, and measured crops ("inset x y size", permille).')),
 ];
 
 foreach ($locales as $locale => $data) {
     $files["locales/{$locale}.php"] = PhpEmitter::file($data, $header("CLDR annotations for {$locale}: names (non-en only; en uses emoji-test names) and keywords."));
 }
 
-$files['dataset-version.txt'] = $sourceLine . "\n";
+$files['VERSION'] = $sourceLine . "\n";
 
 // The licences travel with the data they cover (Unicode License V3 requires it; Apache-2.0 and MIT too).
-$notice = "# Third-party data notices\n\nThe files in `resources/data/` are generated by `tools/build-dataset.php` from the sources below and\nare redistributed under their licences. The package's own code is MIT (see `LICENSE`).\n\n| Source | Version | Licence | Used for |\n|---|---|---|---|\n"
+$notice = "# Licences\n\nThe notices for the third-party data in `database/generated/`, which the data's licences require to travel with it.\n\n"
+    . "The dataset is generated by `tools/build-dataset.php` from the sources below and redistributed under their\nlicences. The package's own code is MIT (see `LICENSE`). This page ships inside the Composer archive for that\nreason, unlike the rest of `docs/`.\n\n## Sources\n\n"
+    . "| Source | Version | Licence | Used for |\n|---|---|---|---|\n"
     . "| Unicode emoji data files | {$emojiVersion} | Unicode License V3 | catalogue, order, groups, names, properties |\n"
     . "| Unicode CLDR annotations | {$lock['cldr-en']['version']} | Unicode License V3 | localized names and keywords |\n"
     . "| emojibase-data | {$lock['emojibase-data']['version']} | MIT | shortcode presets, emoticons |\n"
     . "| github/gemoji | {$lock['gemoji']['version']} | MIT | GitHub shortcodes |\n"
     . "| googlefonts/emoji-metadata | {$lock['googlefonts-ordering']['version']} | Apache License 2.0 | emoticons, kaomoji |\n"
-    . "| iamcal/emoji-data | {$lock['iamcal']['version']} | MIT | emoticons |\n\n"
-    . "Image sets are never bundled; image URLs point at the publisher's CDN and carry the publisher's licence\n(see docs/tools/images.md).\n";
+    . "| iamcal/emoji-data | {$lock['iamcal']['version']} | MIT | emoticons, Japanese carrier codes |\n"
+    . "| kaomojikan/kaomoji-data | {$lock['kaomojikan']['version']} | MIT | Japanese kaomoji, tags, readings |\n"
+    . "| Unicode EmojiSources.txt | {$lock['emoji-sources']['version']} | Unicode License V3 | canonical carrier mappings |\n\n"
+    . "Image sets are never bundled; image URLs point at the publisher's CDN and carry the publisher's licence\n(see [images](tools/images.md#attribution)).\n";
 
-foreach (['unicode-license' => 'Unicode License V3 (Unicode data files and CLDR)', 'emojibase-license' => 'emojibase-data (MIT)', 'gemoji-license' => 'github/gemoji (MIT)', 'googlefonts-license' => 'googlefonts/emoji-metadata (Apache License 2.0)', 'iamcal-license' => 'iamcal/emoji-data (MIT)'] as $id => $title) {
+foreach (['unicode-license' => 'Unicode License V3 (Unicode data files and CLDR)', 'emojibase-license' => 'emojibase-data (MIT)', 'gemoji-license' => 'github/gemoji (MIT)', 'googlefonts-license' => 'googlefonts/emoji-metadata (Apache License 2.0)', 'iamcal-license' => 'iamcal/emoji-data (MIT)', 'kaomojikan-license' => 'kaomojikan/kaomoji-data (MIT)'] as $id => $title) {
     $notice .= "\n## {$title}\n\n```text\n" . rtrim(str_replace("\r\n", "\n", $read($id))) . "\n```\n";
 }
 
-$files['NOTICE.md'] = $notice;
+$files[LICENCES] = $notice . "\n---\n\n[← Docs index](../README.md#documentation)\n";
 
 $drift = [];
 
 foreach ($files as $name => $contents) {
-    $path = DATA . '/' . $name;
+    $path = str_starts_with($name, '/') ? $name : DATA . '/' . $name;
+    $name = str_starts_with($name, '/') ? substr($name, strlen(ROOT) + 1) : $name;
 
     if ($check) {
         if (! is_file($path) || file_get_contents($path) !== $contents) {

@@ -7,6 +7,7 @@ namespace Simtabi\Laranail\Emojis\Core\Render;
 use Stringable;
 use Simtabi\Laranail\Emojis\Core\Emoji;
 use Simtabi\Laranail\Emojis\Core\Emojis;
+use Simtabi\Laranail\Emojis\Core\Enums\Fit;
 use Simtabi\Laranail\Emojis\Core\Enums\Mode;
 use Simtabi\Laranail\Emojis\Core\Text\Token;
 use Simtabi\Laranail\Emojis\Core\Enums\SkinTone;
@@ -62,11 +63,13 @@ final readonly class Renderer
         return $this->degrade($emoji, $target, $settings, $original, skipSelf: false);
     }
 
-    public function image(Emoji $emoji, string $set, ?string $locale = null): Stringable
+    public function image(Emoji $emoji, string $set, ?string $locale = null, ?Fit $fit = null): Stringable
     {
         $url = $this->emojis->images()->get($set)->url($emoji);
 
-        return $this->emojis->htmlFactory()->make($url === null ? htmlspecialchars($emoji->char, ENT_QUOTES | ENT_HTML5) : $this->imgTag($emoji->char, $emoji->name($locale), $url, $emoji->hexcode));
+        return $this->emojis->htmlFactory()->make($url === null
+            ? htmlspecialchars($emoji->char, ENT_QUOTES | ENT_HTML5)
+            : $this->imageMarkup($emoji, $emoji->name($locale), $url, $set, $fit ?? $this->emojis->options()->imageFit));
     }
 
     private function isDisplayTarget(Mode $target): bool
@@ -124,15 +127,62 @@ final readonly class Renderer
             Mode::Codepoint  => $text(implode(' ', array_map(static fn (int $cp): string => sprintf('U+%04X', $cp), $emoji->codepoints))),
             Mode::Name       => $text(strtr($this->emojis->options()->nameTemplate, ['{name}' => $emoji->name($settings->locale)])),
             Mode::Image      => $this->imagePiece($emoji, $settings),
+            Mode::Carrier    => $text($emoji->carrierCode($settings->carrier)),
             Mode::Auto       => $this->attempt($emoji, $this->emojis->resolveAuto(), $settings, $original),
         };
     }
 
     private function imagePiece(Emoji $emoji, RenderSettings $settings): ?Piece
     {
-        $url = $this->emojis->images()->get($settings->imageSet ?? $this->emojis->options()->imageSet)->url($emoji);
+        $set = $settings->imageSet ?? $this->emojis->options()->imageSet;
+        $url = $this->emojis->images()->get($set)->url($emoji);
 
-        return $url === null ? null : new Piece($this->imgTag($emoji->char, $emoji->name($settings->locale), $url, $emoji->hexcode), true);
+        return $url === null ? null : new Piece($this->imageMarkup($emoji, $emoji->name($settings->locale), $url, $set, $settings->fit ?? $this->emojis->options()->imageFit), true);
+    }
+
+    /**
+     * A plain <img> for Fit::None (or when the crop would remove nothing), otherwise an <svg> whose viewBox is
+     * the crop, wrapping the image in a 0–1000 coordinate space. The viewBox does the clipping, so there is no
+     * inline style for a Content-Security-Policy to block, and it works for SVG and bitmap sources alike.
+     */
+    private function imageMarkup(Emoji $emoji, string $label, string $url, string $set, Fit $fit): string
+    {
+        $box = $fit === Fit::None ? null : $this->cropBox($emoji, $set, $fit);
+
+        if ($box === null) {
+            return $this->imgTag($emoji->char, $label, $url, $emoji->hexcode);
+        }
+
+        $e = static fn (string $v): string => htmlspecialchars($v, ENT_QUOTES | ENT_SUBSTITUTE | ENT_HTML5);
+
+        return sprintf(
+            '<svg class="%s" viewBox="%d %d %d %d" width="1em" height="1em" role="img" aria-label="%s" data-laranail-emoji="%s" data-laranail-fit="%s"><title>%s</title><image href="%s" width="1000" height="1000" preserveAspectRatio="none"/></svg>',
+            $e($this->emojis->options()->imageClass),
+            $box[0],
+            $box[1],
+            $box[2],
+            $box[2],
+            $e($label),
+            $e($emoji->hexcode),
+            $fit->value,
+            $e($label),
+            $e($url),
+        );
+    }
+
+    /** @return array{0: int, 1: int, 2: int}|null x, y, size in permille; null when nothing would be cropped */
+    private function cropBox(Emoji $emoji, string $set, Fit $fit): ?array
+    {
+        $crop = $this->emojis->images()->crop($emoji, $set);
+
+        if ($crop === null) {
+            return null;
+        }
+
+        [$inset, $x, $y, $size] = $crop;
+        $box = $fit === Fit::Tight ? [$x, $y, $size] : [$inset, $inset, 1000 - 2 * $inset];
+
+        return $box[2] >= 1000 ? null : $box;
     }
 
     /**

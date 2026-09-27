@@ -6,3 +6,6 @@ composer.lock
 .phpunit.result.cache
 .deptrac.cache
 .DS_Store
+/node_modules
+/tools/measure/node_modules
+package-lock.json

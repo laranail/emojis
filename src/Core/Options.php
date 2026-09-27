@@ -5,7 +5,9 @@ declare(strict_types=1);
 namespace Simtabi\Laranail\Emojis\Core;
 
 use InvalidArgumentException;
+use Simtabi\Laranail\Emojis\Core\Enums\Fit;
 use Simtabi\Laranail\Emojis\Core\Enums\Mode;
+use Simtabi\Laranail\Emojis\Core\Security\EmojiPolicy;
 use Simtabi\Laranail\Emojis\Core\Enums\ShortcodePreset;
 
 /**
@@ -16,6 +18,23 @@ use Simtabi\Laranail\Emojis\Core\Enums\ShortcodePreset;
  */
 final readonly class Options
 {
+    /** The 0.1.0 flat keys and where each moved, so an old published config fails with directions. */
+    private const array LEGACY_KEYS = [
+        'fallback_locale'      => 'locale.fallback',
+        'shortcode_preset'     => 'shortcodes.preset',
+        'shortcode_delimiters' => 'shortcodes.delimiters',
+        'image_set'            => 'images.set',
+        'image_base_urls'      => 'images.base_urls',
+        'image_class'          => 'images.class',
+        'image_fit'            => 'images.fit',
+        'name_template'        => 'output.name_template',
+        'auto_fallback'        => 'output.auto_fallback',
+        'degradation'          => 'output.degradation',
+        'max_input_bytes'      => 'input.max_bytes',
+        'custom'               => 'extend.custom',
+        'emoticons'            => 'extend.emoticons',
+    ];
+
     /**
      * @param array<string, list<Mode>> $degradation target mode value => ordered fallback modes
      * @param array<string, string> $imageBaseUrls image set name => base URL override (self-hosting)
@@ -33,6 +52,8 @@ final readonly class Options
         public array $degradation = [],
         public Mode $autoFallback = Mode::Ascii,
         public int $maxInputBytes = 1_048_576,
+        public EmojiPolicy $policy = new EmojiPolicy,
+        public Fit $imageFit = Fit::Balanced,
     ) {
         if ($maxInputBytes < 1) {
             throw new InvalidArgumentException('maxInputBytes must be positive.');
@@ -44,44 +65,75 @@ final readonly class Options
     }
 
     /**
-     * Build from a config array (the shape of config/emojis.php). Unknown keys are ignored so a published
-     * config from an older version keeps working; wrong types throw, because a typo there is a bug.
+     * Build from a config array — the shape of config/emojis.php: `locale`, `shortcodes`, `images`, `output`,
+     * `input` and `policy` groups (the `extend` group is registration, not options, and is read by the
+     * Laravel provider). Unknown keys are ignored so a newer published config keeps working on an older
+     * package; wrong types throw, because a typo there is a bug.
+     *
+     * The flat 0.1.0 layout (`image_set`, `shortcode_preset`, …) is refused rather than silently read as
+     * defaults: a published config that no longer applies should stop boot, not quietly change output.
      *
      * @param array<string, mixed> $config
+     *
+     * @throws InvalidArgumentException naming each 0.1.0 key found and where it moved
      */
     public static function fromArray(array $config): self
     {
-        $string = static fn (string $key, string $default): string => is_string($config[$key] ?? null) && $config[$key] !== '' ? $config[$key] : $default;
+        $legacy = array_intersect_key(self::LEGACY_KEYS, $config);
+
+        // Two 0.1.0 keys kept their names but changed shape: `locale` was a string, and `shortcodes` held extra
+        // codes (now `extend.shortcodes`) rather than the preset and delimiters.
+        if (is_string($config['locale'] ?? null)) {
+            $legacy['locale'] = 'locale.default';
+        }
+
+        if (is_array($config['shortcodes'] ?? null) && array_diff(array_keys($config['shortcodes']), ['preset', 'delimiters']) !== []) {
+            $legacy['shortcodes'] = 'extend.shortcodes';
+        }
+
+        if ($legacy !== []) {
+            throw new InvalidArgumentException('laranail/emojis config uses the 0.1.0 layout; republish it (vendor:publish --tag=laranail::emojis-config --force) or move: '
+                . implode(', ', array_map(static fn (string $old, string $new): string => "{$old} → {$new}", array_keys($legacy), $legacy)) . '.');
+        }
+
+        $group = static fn (string $name): array => self::stringKeyed($config[$name] ?? null);
+        $locale = $group('locale');
+        $shortcodes = $group('shortcodes');
+        $images = $group('images');
+        $output = $group('output');
+        $input = $group('input');
+        $string = static fn (array $in, string $key, string $default): string => is_string($in[$key] ?? null) && $in[$key] !== '' ? $in[$key] : $default;
 
         $degradation = [];
 
-        foreach ((array) ($config['degradation'] ?? []) as $target => $chain) {
-            $target = Mode::from((string) $target)->value;
-            $degradation[$target] = array_values(array_map(static fn (mixed $mode): Mode => $mode instanceof Mode ? $mode : Mode::from(is_string($mode) ? $mode : ''), (array) $chain));
+        foreach (self::stringKeyed($output['degradation'] ?? null) as $target => $chain) {
+            $degradation[Mode::from($target)->value] = array_values(array_map(
+                static fn (mixed $mode): Mode => $mode instanceof Mode ? $mode : Mode::from(is_string($mode) ? $mode : ''),
+                is_array($chain) ? $chain : [$chain],
+            ));
         }
 
-        $delimiters = (array) ($config['shortcode_delimiters'] ?? [':', ':']);
-        $baseUrls = [];
-
-        foreach ((array) ($config['image_base_urls'] ?? []) as $set => $url) {
-            if (is_string($url) && $url !== '') {
-                $baseUrls[(string) $set] = $url;
-            }
-        }
+        $baseUrls = array_filter(
+            array_map(static fn (mixed $url): string => is_string($url) ? $url : '', self::stringKeyed($images['base_urls'] ?? null)),
+            static fn (string $url): bool => $url !== '',
+        );
+        $delimiters = is_array($shortcodes['delimiters'] ?? null) ? array_values($shortcodes['delimiters']) : [];
 
         return new self(
-            locale: $string('locale', 'en'),
-            fallbackLocale: $string('fallback_locale', 'en'),
-            preset: ShortcodePreset::from($string('shortcode_preset', ShortcodePreset::GitHub->value)),
-            imageSet: $string('image_set', 'twemoji'),
+            locale: $string($locale, 'default', 'en'),
+            fallbackLocale: $string($locale, 'fallback', 'en'),
+            preset: ShortcodePreset::from($string($shortcodes, 'preset', ShortcodePreset::GitHub->value)),
+            imageSet: $string($images, 'set', 'twemoji'),
             imageBaseUrls: $baseUrls,
-            imageClass: $string('image_class', 'emoji'),
-            nameTemplate: $string('name_template', '[{name}]'),
+            imageClass: $string($images, 'class', 'emoji'),
+            nameTemplate: $string($output, 'name_template', '[{name}]'),
             shortcodeOpen: is_string($delimiters[0] ?? null) ? $delimiters[0] : ':',
             shortcodeClose: is_string($delimiters[1] ?? null) ? $delimiters[1] : ':',
             degradation: $degradation,
-            autoFallback: Mode::from($string('auto_fallback', Mode::Ascii->value)),
-            maxInputBytes: is_int($config['max_input_bytes'] ?? null) ? $config['max_input_bytes'] : 1_048_576,
+            autoFallback: Mode::from($string($output, 'auto_fallback', Mode::Ascii->value)),
+            maxInputBytes: is_int($input['max_bytes'] ?? null) ? $input['max_bytes'] : 1_048_576,
+            policy: EmojiPolicy::fromArray($group('policy')),
+            imageFit: Fit::from($string($images, 'fit', Fit::Balanced->value)),
         );
     }
 
@@ -97,8 +149,21 @@ final readonly class Options
             Mode::Text     => [Mode::Unicode],
             Mode::Emoticon => [Mode::Shortcode],
             Mode::Image    => [Mode::Unicode],
+            Mode::Carrier  => [Mode::Unicode],
             Mode::Emoji    => [Mode::Shortcode],
             default        => [],
         };
+    }
+
+    /** @return array<string, mixed> */
+    private static function stringKeyed(mixed $value): array
+    {
+        $out = [];
+
+        foreach (is_array($value) ? $value : [] as $key => $item) {
+            $out[(string) $key] = $item;
+        }
+
+        return $out;
     }
 }

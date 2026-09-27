@@ -25,6 +25,7 @@ final readonly class Query
      * @param list<Group> $groups
      * @param list<Subgroup> $subgroups
      * @param list<SequenceType> $types
+     * @param list<string>|null $only hexcodes of a collection filter
      */
     public function __construct(
         private Catalogue $catalogue,
@@ -42,6 +43,7 @@ final readonly class Query
         private ?string $locale = null,
         private int $limit = 0,
         private int $offset = 0,
+        private ?array $only = null,
     ) {}
 
     public function group(Group ...$groups): self
@@ -62,6 +64,12 @@ final readonly class Query
     public function flags(): self
     {
         return $this->type(SequenceType::Flag, SequenceType::Tag);
+    }
+
+    /** Only the members of a curated collection (see Emojis::collection()), e.g. `japanese`. */
+    public function inCollection(string $name): self
+    {
+        return $this->with(['only' => $this->catalogue->collection($name)]);
     }
 
     /** Only emoji a platform supporting this Emoji version can display. */
@@ -158,7 +166,8 @@ final readonly class Query
 
     private function passes(Emoji $emoji): bool
     {
-        return ($this->components || ! $emoji->isComponent)
+        return ($this->only === null || in_array($emoji->hexcode, $this->only, true))
+            && ($this->components || ! $emoji->isComponent)
             && ($this->variants || ! $emoji->isSkinToneVariant())
             && ($this->groups === [] || in_array($emoji->group, $this->groups, true))
             && ($this->subgroups === [] || in_array($emoji->subgroup, $this->subgroups, true))

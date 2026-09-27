@@ -7,9 +7,9 @@ namespace Simtabi\Laranail\Emojis\Core\Enums;
 /**
  * Every form an emoji can be read from or written to.
  *
- * Sources (what a converter can parse): Unicode, Shortcode, Emoticon, HtmlEntity, Escaped, Codepoint and
- * Image (only the markup this package emits). Emoji, Text, Ascii and Name are targets only: Emoji and Text
- * are reached by parsing Unicode, and Ascii and Name are lossy by design.
+ * Sources (what a converter can parse): Unicode, Shortcode, Emoticon, HtmlEntity, Escaped, Codepoint,
+ * Carrier and Image (only the markup this package emits). Emoji, Text, Ascii and Name are targets only:
+ * Emoji and Text are reached by parsing Unicode, and Ascii and Name are lossy by design.
  */
 enum Mode: string
 {
@@ -37,6 +37,9 @@ enum Mode: string
     /** Numeric character references: "&#x1F600;". */
     case HtmlEntity = 'html_entity';
 
+    /** A Japanese carrier's private-use code point (docomo, au, SoftBank, Google); see Carrier. */
+    case Carrier = 'carrier';
+
     /** A source-code escape; see EscapeFormat. */
     case Escaped = 'escaped';
 
@@ -52,8 +55,8 @@ enum Mode: string
     public function isSource(): bool
     {
         return match ($this) {
-            self::Unicode, self::Shortcode, self::Emoticon, self::HtmlEntity, self::Escaped, self::Codepoint, self::Image => true,
-            default                                                                                                       => false,
+            self::Unicode, self::Shortcode, self::Emoticon, self::HtmlEntity, self::Escaped, self::Codepoint, self::Image, self::Carrier => true,
+            default                                                                                                                      => false,
         };
     }
 

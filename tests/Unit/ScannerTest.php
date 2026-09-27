@@ -112,7 +112,7 @@ it('rejects invalid UTF-8 without echoing it', function (): void {
 })->throws(InvalidInput::class, 'Input is not valid UTF-8.');
 
 it('rejects input over the size limit', function (): void {
-    Emojis::create(['max_input_bytes' => 10])->text(str_repeat('a', 11));
+    Emojis::create(['input' => ['max_bytes' => 10]])->text(str_repeat('a', 11));
 })->throws(InvalidInput::class);
 
 it('answers only-emoji and contains', function (): void {

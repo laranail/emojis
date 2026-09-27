@@ -8,6 +8,7 @@ use Stringable;
 use JsonSerializable;
 use Simtabi\Laranail\Emojis\Core\Enums\Mode;
 use Simtabi\Laranail\Emojis\Core\Enums\Group;
+use Simtabi\Laranail\Emojis\Core\Enums\Carrier;
 use Simtabi\Laranail\Emojis\Core\Enums\SkinTone;
 use Simtabi\Laranail\Emojis\Core\Enums\Subgroup;
 use Simtabi\Laranail\Emojis\Core\Enums\EmojiVersion;
@@ -141,6 +142,14 @@ final readonly class Emoji implements JsonSerializable, Stringable
     public function emoticons(): array
     {
         return $this->emojis->catalogue()->emoticonsOf($this);
+    }
+
+    /** The emoji as a Japanese carrier's private-use character, or null when that carrier had no such emoji. */
+    public function carrierCode(Carrier $carrier): ?string
+    {
+        $code = $this->emojis->catalogue()->carrierCodeOf($this, $carrier);
+
+        return $code === null ? null : mb_chr((int) hexdec($code), 'UTF-8');
     }
 
     // ---- variants ----------------------------------------------------------------------------
