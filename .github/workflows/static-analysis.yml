@@ -65,7 +65,7 @@ jobs:
         run: composer rector
 
       # CI=true makes sync-check download the pinned upstream sources (sha256-verified against
-      # tools/sources.lock.json) and fail rather than skip, so the dataset comparison always really runs.
+      # database/sources/upstream.lock.json) and fail rather than skip, so the dataset comparison always really runs.
       - name: Generated data is still generated
         run: composer sync-check
 

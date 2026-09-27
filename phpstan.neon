@@ -12,5 +12,5 @@ parameters:
         - src/Core
         - vendor
         # Generated: tools/build-dataset.php --check asserts these byte for byte.
-        - resources/data
+        - database
     treatPhpDocTypesAsCertain: false

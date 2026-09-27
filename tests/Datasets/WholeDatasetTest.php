@@ -32,7 +32,7 @@ it('holds every fully-qualified emoji and component', function (): void {
 });
 
 it('scans every known sequence, in every qualification, back to exactly one emoji', function (): void {
-    $data = require dirname(__DIR__, 2) . '/resources/data/scanner.php';
+    $data = require dirname(__DIR__, 2) . '/database/generated/scanner.php';
     $checked = 0;
 
     foreach ($data['sequences'] as $sequence => [$hex, $quality]) {
@@ -201,7 +201,7 @@ it('gives an image URL exactly where the set publishes one', function (): void {
 });
 
 it('marks only single-character text-default emoji as gated', function (): void {
-    $data = require dirname(__DIR__, 2) . '/resources/data/scanner.php';
+    $data = require dirname(__DIR__, 2) . '/database/generated/scanner.php';
     $gated = 0;
 
     foreach ($data['sequences'] as $sequence => [, $quality]) {
@@ -224,7 +224,7 @@ it('keeps the shipped dataset inside its size budget', function (): void {
     $bytes = 0;
     $files = 0;
 
-    foreach ([...glob(dirname(__DIR__, 2) . '/resources/data/*') ?: [], ...glob(dirname(__DIR__, 2) . '/resources/data/locales/*') ?: []] as $file) {
+    foreach ([...glob(dirname(__DIR__, 2) . '/database/generated/*') ?: [], ...glob(dirname(__DIR__, 2) . '/database/generated/locales/*') ?: []] as $file) {
         if (is_file($file)) {
             $bytes += (int) filesize($file);
             $files++;

@@ -40,13 +40,17 @@ Hosted at <https://opensource.simtabi.com/documentation/laranail/emojis/>.
 - [Catalogue and lookups](docs/tools/catalogue.md) — `Emojis`, `Emoji`, `EmojiId`, flags, skin tones
 - [Querying and search](docs/tools/querying.md) — `Query`, ranked localized search
 - [Text conversion](docs/tools/conversion.md) — `TextConverter`, every option and inspection method
-- [Images](docs/tools/images.md) — image sets, coverage, self-hosting, licences
+- [Images](docs/tools/images.md) — image sets, fit (padding removal), self-hosting, licences
+- [Styles](docs/tools/styles.md) — the stylesheet: inline, link or `@use` the SCSS; tokens; the Vite build
 - [Terminal output](docs/tools/terminal.md) — `Mode::Auto`, width and truncation
 - [Localisation](docs/tools/localisation.md) — shipped locales and fallback
 - [Kaomoji](docs/tools/kaomoji.md) — text faces by group
+- [Security and safety](docs/tools/security.md) — sanitising hidden payloads, emoji policies
+- [Japanese emoji](docs/tools/japanese.md) — carrier emoji, the Japanese collection, names
 - [Extending](docs/tools/extending.md) — custom emoji, shortcodes, emoticons, image sets, macros
 - [Laravel integration](docs/tools/laravel.md) — facade, helper, Blade, casts, rules, commands
-- [Data sources](docs/tools/data-sources.md) — where every field comes from, and the licences
+- [Data sources](docs/tools/data-sources.md) — where every field comes from, and the layout of `database/`
+- [Licences](docs/licences.md) — the third-party data notices
 
 ### Recipes
 
@@ -56,6 +60,8 @@ Hosted at <https://opensource.simtabi.com/documentation/laranail/emojis/>.
 - [Store emoji in a utf8mb3 column](docs/recipes/store-emoji-in-utf8mb3.md)
 - [Feed a JavaScript emoji picker](docs/recipes/feed-a-javascript-picker.md)
 - [Target older platforms](docs/recipes/target-older-platforms.md)
+- [Fit emoji into UI without padding](docs/recipes/fit-emoji-into-ui.md)
+- [Block hidden prompt injection in user text](docs/recipes/block-hidden-prompt-injection.md)
 
 ## Contributing & security
 
@@ -65,4 +71,4 @@ See [CONTRIBUTING.md](CONTRIBUTING.md). Report vulnerabilities privately to `sec
 ## License
 
 MIT — see [LICENSE](LICENSE). The generated data carries the Unicode, MIT and Apache-2.0 notices in
-[resources/data/NOTICE.md](resources/data/NOTICE.md).
+[docs/licences.md](docs/licences.md).

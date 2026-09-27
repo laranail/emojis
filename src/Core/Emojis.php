@@ -17,6 +17,7 @@ use Simtabi\Laranail\Emojis\Core\Render\ImageSets;
 use Simtabi\Laranail\Emojis\Core\Data\DatasetStore;
 use Simtabi\Laranail\Emojis\Core\Support\Macroable;
 use Simtabi\Laranail\Emojis\Core\Contracts\ImageSet;
+use Simtabi\Laranail\Emojis\Core\Security\Sanitizer;
 use Simtabi\Laranail\Emojis\Core\Text\TextConverter;
 use Simtabi\Laranail\Emojis\Core\Catalogue\Catalogue;
 use Simtabi\Laranail\Emojis\Core\Contracts\HtmlFactory;
@@ -28,6 +29,7 @@ use Simtabi\Laranail\Emojis\Core\Catalogue\EmojiCollection;
 use Simtabi\Laranail\Emojis\Core\Contracts\FailureReporter;
 use Simtabi\Laranail\Emojis\Core\Terminal\EnvTerminalProbe;
 use Simtabi\Laranail\Emojis\Core\Support\DefaultHtmlFactory;
+use Simtabi\Laranail\Emojis\Core\Exceptions\DatasetException;
 use Simtabi\Laranail\Emojis\Core\Support\Psr3FailureReporter;
 use Simtabi\Laranail\Emojis\Core\Exceptions\InvalidCustomEmoji;
 use Simtabi\Laranail\Emojis\Core\Extension\CustomEmojiRegistry;
@@ -37,7 +39,7 @@ use Simtabi\Laranail\Emojis\Core\Extension\CustomEmojiRegistry;
  *
  * Framework-free. Outside Laravel:
  *
- *     $emojis = Emojis::create(['locale' => 'fr', 'image_set' => 'noto']);
+ *     $emojis = Emojis::create(['locale' => ['default' => 'fr'], 'images' => ['set' => 'noto']]);
  *     $emojis->text('Bonjour :wave:')->toEmoji();            // "Bonjour 👋"
  *
  * Inside Laravel the container builds one per request scope from config/emojis.php, and the facade,
@@ -81,6 +83,12 @@ final class Emojis implements EmojisFluent
             reporter: $reporter ?? new Psr3FailureReporter,
             terminal: $terminal ?? new EnvTerminalProbe,
         );
+    }
+
+    /** Absolute path of a built asset under the package's public/assets. */
+    public static function assetPath(string $asset = ''): string
+    {
+        return dirname(__DIR__, 2) . '/public/assets' . ($asset === '' ? '' : '/' . ltrim($asset, '/'));
     }
 
     // ---- lookups --------------------------------------------------------------------------------
@@ -170,6 +178,26 @@ final class Emojis implements EmojisFluent
     }
 
     /**
+     * A curated collection by name — `japanese`: the Japanese-text buttons (🈁 … 🉑), and Japanese-origin
+     * symbols, places, culture and food. `collections()` lists the names.
+     *
+     * @throws EmojiNotFound for an unknown collection
+     */
+    public function collection(string $name): EmojiCollection
+    {
+        $hexcodes = $this->data->collections()[$name] ?? throw EmojiNotFound::for('collection', $name);
+        $catalogue = $this->catalogue();
+
+        return new EmojiCollection(array_values(array_filter(array_map($catalogue->byHexcode(...), $hexcodes))));
+    }
+
+    /** @return list<string> */
+    public function collections(): array
+    {
+        return array_keys($this->data->collections());
+    }
+
+    /**
      * Kaomoji and text faces, optionally one group ("shrugging", "table_flipping").
      *
      * @return list<Kaomoji>
@@ -180,7 +208,33 @@ final class Emojis implements EmojisFluent
 
         foreach ($this->data->kaomojiItems() as $item) {
             if (($group === null || $item['group'] === $group) && (! $asciiOnly || $item['ascii'])) {
-                $out[] = new Kaomoji($item['value'], $item['group'], $item['description'], $item['ascii']);
+                $out[] = $this->kaomojiFrom($item);
+            }
+        }
+
+        return $out;
+    }
+
+    /**
+     * Kaomoji whose description, tags or kana readings contain the term: `searchKaomoji('ねこ')`,
+     * `searchKaomoji('shrug')`.
+     *
+     * @return list<Kaomoji>
+     */
+    public function searchKaomoji(string $term, int $limit = 50): array
+    {
+        $term = mb_strtolower(trim($term), 'UTF-8');
+        $out = [];
+
+        foreach ($term === '' ? [] : $this->data->kaomojiItems() as $item) {
+            $haystack = mb_strtolower($item['description'] . ' | ' . $item['tags'] . ' | ' . $item['reading'] . ' | ' . $item['group'], 'UTF-8');
+
+            if (str_contains($haystack, $term)) {
+                $out[] = $this->kaomojiFrom($item);
+
+                if (count($out) >= $limit) {
+                    break;
+                }
             }
         }
 
@@ -213,6 +267,34 @@ final class Emojis implements EmojisFluent
         $converter = $this->text($text);
 
         return ($from === [] ? $converter : $converter->from(...$from))->to($to);
+    }
+
+    /**
+     * Make untrusted text safe: remove smuggled and invisible characters, then apply the configured emoji
+     * policy (permissive unless configured). See Security\Sanitizer.
+     */
+    public function sanitize(string $text): Sanitizer
+    {
+        return new Sanitizer($this, $text, $this->options->policy);
+    }
+
+    /**
+     * The stylesheet for emoji in web UI: sizing for fitted images and a tight box for native emoji. This is
+     * the built public/assets/css/emojis.css (source: resources/assets/styles/emojis.scss). Inline it with a
+     * nonce under a strict CSP, or publish it and link it.
+     *
+     * @throws DatasetException when the built file is missing
+     */
+    public function stylesheet(): string
+    {
+        $path = self::assetPath('css/emojis.css');
+        $css = is_file($path) ? file_get_contents($path) : false;
+
+        if ($css === false || $css === '') {
+            throw DatasetException::assetMissing('css/emojis.css', $path);
+        }
+
+        return $css;
     }
 
     public function strip(string $text): string
@@ -351,6 +433,12 @@ final class Emojis implements EmojisFluent
     }
 
     /** @internal */
+    public function dataset(): DatasetStore
+    {
+        return $this->data;
+    }
+
+    /** @internal */
     public function catalogue(): Catalogue
     {
         return $this->catalogue ??= new Catalogue($this, $this->data, $this->custom);
@@ -366,5 +454,13 @@ final class Emojis implements EmojisFluent
     public function renderer(): Renderer
     {
         return $this->renderer ??= new Renderer($this);
+    }
+
+    /** @param array{value: string, group: string, description: string, ascii: bool, tags: string, reading: string} $item */
+    private function kaomojiFrom(array $item): Kaomoji
+    {
+        $split = static fn (string $joined): array => $joined === '' ? [] : explode(' | ', $joined);
+
+        return new Kaomoji($item['value'], $item['group'], $item['description'], $item['ascii'], $split($item['tags']), $split($item['reading']));
     }
 }

@@ -8,8 +8,9 @@ use Throwable;
 use RuntimeException;
 
 /**
- * The shipped dataset is missing, unreadable or not the shape this code expects. Critical under the
- * failure standard: continuing would convert text with a partial catalogue and report success.
+ * The shipped dataset or a built asset is missing, unreadable or not the shape this code expects. Critical
+ * under the failure standard: continuing would convert text with a partial catalogue, or render UI without
+ * its stylesheet, and report success.
  */
 final class DatasetException extends RuntimeException implements EmojisException
 {
@@ -21,5 +22,10 @@ final class DatasetException extends RuntimeException implements EmojisException
     public static function malformed(string $shard, string $expected): self
     {
         return new self(sprintf('Emoji dataset shard "%s" is malformed: expected %s.', $shard, $expected));
+    }
+
+    public static function assetMissing(string $asset, string $path): self
+    {
+        return new self(sprintf('Built asset "%s" is missing at %s; run `npm run build` in the package.', $asset, $path));
     }
 }

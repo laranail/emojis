@@ -27,10 +27,10 @@ composer clear-cache && composer update laranail/emojis
 
 Unicode publishes a new Emoji version each September; CLDR follows.
 
-1. Update the URLs and versions in `tools/sources.lock.json`.
+1. Update the URLs and versions in `database/sources/upstream.lock.json`.
 2. `php tools/build-dataset.php --fetch`, then `php tools/build-dataset.php --lock`.
 3. `php tools/build-dataset.php && php tools/generate-enums.php`.
-4. Review `build/dataset-report.txt` (shortcode collisions, dropped codes) and the diff of `resources/data/`.
+4. Review `build/dataset-report.txt` (shortcode collisions, dropped codes) and the diff of `database/generated/`.
 5. Run `composer lint && composer test`. The whole-dataset suite fails if any emoji stops round-tripping.
 
 Existing `EmojiId` cases are never renamed. Image-set versions are pinned alongside their coverage data, so

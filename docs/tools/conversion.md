@@ -58,7 +58,7 @@ decoded before scanning (so `&lt;3` is an emoticon) and re-escaped where it chan
 
 ## Limits
 
-Input must be valid UTF-8 and at most `max_input_bytes`; otherwise `InvalidInput` is thrown with a message
+Input must be valid UTF-8 and at most `input.max_bytes`; otherwise `InvalidInput` is thrown with a message
 that never contains the input.
 
 ---

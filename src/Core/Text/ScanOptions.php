@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace Simtabi\Laranail\Emojis\Core\Text;
 
 use Simtabi\Laranail\Emojis\Core\Enums\Mode;
+use Simtabi\Laranail\Emojis\Core\Enums\Carrier;
 use Simtabi\Laranail\Emojis\Core\Exceptions\UnsupportedConversion;
 
 /** What the scanner looks for. */
@@ -15,6 +16,7 @@ final readonly class ScanOptions
         public array $sources = [Mode::Unicode, Mode::Shortcode],
         public bool $riskyEmoticons = false,
         public bool $textPresentation = false,
+        public Carrier $carrier = Carrier::Google,
     ) {
         foreach ($sources as $source) {
             if (! $source->isSource()) {

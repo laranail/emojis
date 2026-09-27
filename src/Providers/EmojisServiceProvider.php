@@ -16,6 +16,7 @@ use Simtabi\Laranail\Emojis\Core\Render\ImageSets;
 use Simtabi\Laranail\Emojis\Console\ConvertCommand;
 use Simtabi\Laranail\Emojis\Core\Data\DatasetStore;
 use Simtabi\Laranail\Emojis\Laravel\BladeDirective;
+use Simtabi\Laranail\Emojis\Console\SanitizeCommand;
 use Simtabi\Laranail\Emojis\Core\Contracts\HtmlFactory;
 use Simtabi\Laranail\Emojis\Core\Contracts\EmojisFluent;
 use Simtabi\Laranail\Emojis\Laravel\Doctor\DatasetCheck;
@@ -25,6 +26,7 @@ use Simtabi\Laranail\Package\Tools\Enums\BootCriticality;
 use Simtabi\Laranail\Emojis\Laravel\IlluminateHtmlFactory;
 use Simtabi\Laranail\Emojis\Core\Contracts\FailureReporter;
 use Simtabi\Laranail\Emojis\Laravel\LaravelFailureReporter;
+use Simtabi\Laranail\Emojis\Laravel\View\Components\Styles;
 use Simtabi\Laranail\Package\Tools\Services\Boot\BootReport;
 use Simtabi\Laranail\Emojis\Core\Exceptions\ImageSetNotFound;
 use Illuminate\Contracts\Config\Repository as ConfigRepository;
@@ -55,6 +57,8 @@ final class EmojisServiceProvider extends PackageServiceProvider
             ->setPublishTagId('emojis')
             ->hasConfigFile('emojis')
             ->hasTranslations()
+            // The Vite build (public/assets/{css,js}) → public/vendor/laranail/emojis, tag laranail::emojis-assets.
+            ->publishDirectory('public/assets', public_path(Styles::PUBLISHED_PATH), 'assets')
             ->hasBladeComponentNamespace('Simtabi\\Laranail\\Emojis\\Laravel\\View\\Components', 'laranail-emojis')
             ->hasBladeDirective('laranailEmojis', static fn (string $expression): string => BladeDirective::compile($expression))
             ->hasCommands([
@@ -62,6 +66,7 @@ final class EmojisServiceProvider extends PackageServiceProvider
                 ShowCommand::class,
                 ConvertCommand::class,
                 ExportCommand::class,
+                SanitizeCommand::class,
             ])
             ->hasDoctorCheck(DatasetCheck::class)
             ->hasAboutSection('Emojis', fn (): array => $this->aboutSection());
@@ -70,9 +75,9 @@ final class EmojisServiceProvider extends PackageServiceProvider
     #[Override]
     public function packageRegistered(): void
     {
-        $dataPath = $this->packagePath('resources/data');
-
-        $this->app->singleton(DatasetStore::class, static fn (): DatasetStore => new DatasetStore($dataPath));
+        // The shipped dataset, shared with Emojis::create(): a store per booted application re-parses the
+        // shards again wherever opcache is off, which includes every CLI process by default.
+        $this->app->singleton(DatasetStore::class, static fn (): DatasetStore => DatasetStore::packaged());
         $this->app->singleton(CustomEmojiRegistry::class);
         $this->app->singleton(TerminalProbe::class, ConsoleTerminalProbe::class);
         $this->app->singleton(HtmlFactory::class, IlluminateHtmlFactory::class);
@@ -86,7 +91,7 @@ final class EmojisServiceProvider extends PackageServiceProvider
         );
 
         $this->app->singleton(Emojis::class, static function (Application $app): Emojis {
-            $pinned = $app->make(ConfigRepository::class)->get('laranail.emojis.locale');
+            $pinned = $app->make(ConfigRepository::class)->get('laranail.emojis.locale.default');
 
             return new Emojis(
                 data: $app->make(DatasetStore::class),
@@ -125,7 +130,9 @@ final class EmojisServiceProvider extends PackageServiceProvider
     private static function options(Application $app): Options
     {
         $config = (array) $app->make(ConfigRepository::class)->get('laranail.emojis', []);
-        $config['locale'] = is_string($config['locale'] ?? null) && $config['locale'] !== '' ? $config['locale'] : $app->getLocale();
+        $locale = is_array($config['locale'] ?? null) ? $config['locale'] : [];
+        $locale['default'] = is_string($locale['default'] ?? null) && $locale['default'] !== '' ? $locale['default'] : $app->getLocale();
+        $config['locale'] = is_string($config['locale'] ?? null) ? $config['locale'] : $locale;
 
         /** @var array<string, mixed> $config */
         return Options::fromArray($config);
@@ -135,7 +142,7 @@ final class EmojisServiceProvider extends PackageServiceProvider
     {
         $config = $this->app->make(ConfigRepository::class);
 
-        foreach ((array) $config->get('laranail.emojis.custom', []) as $name => $custom) {
+        foreach ((array) $config->get('laranail.emojis.extend.custom', []) as $name => $custom) {
             $custom = (array) $custom;
             $emojis->addCustom(
                 (string) $name,
@@ -146,11 +153,11 @@ final class EmojisServiceProvider extends PackageServiceProvider
             );
         }
 
-        foreach ((array) $config->get('laranail.emojis.shortcodes', []) as $code => $emoji) {
+        foreach ((array) $config->get('laranail.emojis.extend.shortcodes', []) as $code => $emoji) {
             $emojis->addShortcode((string) $code, (string) $emoji);
         }
 
-        foreach ((array) $config->get('laranail.emojis.emoticons', []) as $emoticon => $emoji) {
+        foreach ((array) $config->get('laranail.emojis.extend.emoticons', []) as $emoticon => $emoji) {
             $emojis->addEmoticon((string) $emoticon, (string) $emoji);
         }
     }

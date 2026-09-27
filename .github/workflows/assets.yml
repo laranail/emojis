@@ -1,0 +1,35 @@
+name: Assets
+
+on:
+  pull_request:
+    branches: [main]
+    paths:
+      - 'resources/assets/**'
+      - 'public/assets/**'
+      - 'package.json'
+      - 'vite.config.mjs'
+      - 'tools/assets-check.mjs'
+      - '.github/workflows/assets.yml'
+  workflow_dispatch:
+
+concurrency:
+  group: ${{ github.workflow }}-${{ github.ref }}
+  cancel-in-progress: true
+
+permissions:
+  contents: read
+
+# public/assets is committed so Composer installs need no Node. This fails a PR whose committed build does
+# not match a fresh `vite build` of resources/assets.
+jobs:
+  assets-check:
+    name: Built assets match their source
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    steps:
+      - uses: actions/checkout@v7
+      - uses: actions/setup-node@v7
+        with:
+          node-version: 24
+      - run: npm install --no-audit --no-fund --no-package-lock
+      - run: npm run assets-check

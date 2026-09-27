@@ -1,0 +1,537 @@
+{
+    "about": "Pinned upstream inputs for tools/build-dataset.php. Bump a version, run --fetch then --lock, and review the diff of database/generated.",
+    "sources": {
+        "emoji-test": {
+            "url": "https://www.unicode.org/Public/18.0.0/emoji/emoji-test.txt",
+            "path": "emoji-test.txt",
+            "version": "18.0",
+            "licence": "Unicode-3.0",
+            "sha256": "8f3735cda1f92a779d78af67cf86066bb1f07143dc22f2ac29394d9bc57ab21a"
+        },
+        "emoji-data": {
+            "url": "https://www.unicode.org/Public/18.0.0/ucd/emoji/emoji-data.txt",
+            "path": "emoji-data.txt",
+            "version": "18.0",
+            "licence": "Unicode-3.0",
+            "sha256": "80d00f8e616a0ef27fd6b8de3b758c06383b5d917e2977709578e68baf733bf1"
+        },
+        "emoji-variation-sequences": {
+            "url": "https://www.unicode.org/Public/18.0.0/ucd/emoji/emoji-variation-sequences.txt",
+            "path": "emoji-variation-sequences.txt",
+            "version": "18.0",
+            "licence": "Unicode-3.0",
+            "sha256": "ff1707564aa1f1b2fcf4ec92d609d4cb26940bc0d4dcf07f5328ad6879e84da3"
+        },
+        "unicode-license": {
+            "url": "https://www.unicode.org/license.txt",
+            "path": "LICENSE-UNICODE.txt",
+            "version": "v3",
+            "licence": "Unicode-3.0",
+            "sha256": "e7a93b009565cfce55919a381437ac4db883e9da2126fa28b91d12732bc53d96"
+        },
+        "cldr-en": {
+            "url": "https://cdn.jsdelivr.net/npm/cldr-annotations-full@48.2.0/annotations/en/annotations.json",
+            "path": "cldr/en.json",
+            "version": "48.2.0",
+            "licence": "Unicode-3.0",
+            "sha256": "f22083cb86dffb63a643d5bacb5d9899f82d2fa5d388ad4f3aed72184acef505"
+        },
+        "cldr-ar": {
+            "url": "https://cdn.jsdelivr.net/npm/cldr-annotations-full@48.2.0/annotations/ar/annotations.json",
+            "path": "cldr/ar.json",
+            "version": "48.2.0",
+            "licence": "Unicode-3.0",
+            "sha256": "bd722b651c4461e0b3e48a886bb4bac2db970f8567029c5442ce82b6f07e8346"
+        },
+        "cldr-bn": {
+            "url": "https://cdn.jsdelivr.net/npm/cldr-annotations-full@48.2.0/annotations/bn/annotations.json",
+            "path": "cldr/bn.json",
+            "version": "48.2.0",
+            "licence": "Unicode-3.0",
+            "sha256": "6a31c21977729f545f0d181605a6a761484120d60579b97176b92f008213d91d"
+        },
+        "cldr-de": {
+            "url": "https://cdn.jsdelivr.net/npm/cldr-annotations-full@48.2.0/annotations/de/annotations.json",
+            "path": "cldr/de.json",
+            "version": "48.2.0",
+            "licence": "Unicode-3.0",
+            "sha256": "bfd22f5226d874843a28b6efec01db7e47dfae4ed802eceab8b416550f09e3c2"
+        },
+        "cldr-es": {
+            "url": "https://cdn.jsdelivr.net/npm/cldr-annotations-full@48.2.0/annotations/es/annotations.json",
+            "path": "cldr/es.json",
+            "version": "48.2.0",
+            "licence": "Unicode-3.0",
+            "sha256": "339cdf9ae5fe6d3250d3c53b95ff6d8a4dae96c7c0d279756ee7a73c43c84b56"
+        },
+        "cldr-fa": {
+            "url": "https://cdn.jsdelivr.net/npm/cldr-annotations-full@48.2.0/annotations/fa/annotations.json",
+            "path": "cldr/fa.json",
+            "version": "48.2.0",
+            "licence": "Unicode-3.0",
+            "sha256": "e79925c38e6e32150856cfbabba229a1f0f656a0a07b029999a4c6d2886b6400"
+        },
+        "cldr-fr": {
+            "url": "https://cdn.jsdelivr.net/npm/cldr-annotations-full@48.2.0/annotations/fr/annotations.json",
+            "path": "cldr/fr.json",
+            "version": "48.2.0",
+            "licence": "Unicode-3.0",
+            "sha256": "33da052f74782791989e6226d60871c846799e077a5a7fb4e87ecfa7ca385733"
+        },
+        "cldr-hi": {
+            "url": "https://cdn.jsdelivr.net/npm/cldr-annotations-full@48.2.0/annotations/hi/annotations.json",
+            "path": "cldr/hi.json",
+            "version": "48.2.0",
+            "licence": "Unicode-3.0",
+            "sha256": "ffca03eeb25ca34f7b9e14e0d35a02c2c5081b35297736f969be94aaa5c2fb37"
+        },
+        "cldr-id": {
+            "url": "https://cdn.jsdelivr.net/npm/cldr-annotations-full@48.2.0/annotations/id/annotations.json",
+            "path": "cldr/id.json",
+            "version": "48.2.0",
+            "licence": "Unicode-3.0",
+            "sha256": "05012824e827cdb81337f6e77cdbc1f6ff09ca5dd9111b5f62dcd49c28146449"
+        },
+        "cldr-it": {
+            "url": "https://cdn.jsdelivr.net/npm/cldr-annotations-full@48.2.0/annotations/it/annotations.json",
+            "path": "cldr/it.json",
+            "version": "48.2.0",
+            "licence": "Unicode-3.0",
+            "sha256": "ec8e0b6339a10de3d5a2297fa6db84239b363cc305504552c64abe4eead67ac6"
+        },
+        "cldr-ja": {
+            "url": "https://cdn.jsdelivr.net/npm/cldr-annotations-full@48.2.0/annotations/ja/annotations.json",
+            "path": "cldr/ja.json",
+            "version": "48.2.0",
+            "licence": "Unicode-3.0",
+            "sha256": "737ce4bea3d52d904f7744eb7653ea55100c99232255609a913f69a5a8c3d6c1"
+        },
+        "cldr-ko": {
+            "url": "https://cdn.jsdelivr.net/npm/cldr-annotations-full@48.2.0/annotations/ko/annotations.json",
+            "path": "cldr/ko.json",
+            "version": "48.2.0",
+            "licence": "Unicode-3.0",
+            "sha256": "197be7720f3cc64126fee01bad5fdb668e51de5674ce5ce5ada0bd5028f3417e"
+        },
+        "cldr-nl": {
+            "url": "https://cdn.jsdelivr.net/npm/cldr-annotations-full@48.2.0/annotations/nl/annotations.json",
+            "path": "cldr/nl.json",
+            "version": "48.2.0",
+            "licence": "Unicode-3.0",
+            "sha256": "d86882905773fb28f9e808ac4818041c5a89888b36a0f95dd33ce63939943118"
+        },
+        "cldr-pl": {
+            "url": "https://cdn.jsdelivr.net/npm/cldr-annotations-full@48.2.0/annotations/pl/annotations.json",
+            "path": "cldr/pl.json",
+            "version": "48.2.0",
+            "licence": "Unicode-3.0",
+            "sha256": "81420256d40acb05a9a512cdde5c67bafa6a373df51c93a83f02ecc200cba6fa"
+        },
+        "cldr-pt": {
+            "url": "https://cdn.jsdelivr.net/npm/cldr-annotations-full@48.2.0/annotations/pt/annotations.json",
+            "path": "cldr/pt.json",
+            "version": "48.2.0",
+            "licence": "Unicode-3.0",
+            "sha256": "ebaa8e177bdafd49afe17e126274215565a420c53823f7082733b672a02c06cb"
+        },
+        "cldr-ru": {
+            "url": "https://cdn.jsdelivr.net/npm/cldr-annotations-full@48.2.0/annotations/ru/annotations.json",
+            "path": "cldr/ru.json",
+            "version": "48.2.0",
+            "licence": "Unicode-3.0",
+            "sha256": "c483d312051dbea379bcd2ac6dec6f2712572c0c9a5d073031f4702b030e99a9"
+        },
+        "cldr-sv": {
+            "url": "https://cdn.jsdelivr.net/npm/cldr-annotations-full@48.2.0/annotations/sv/annotations.json",
+            "path": "cldr/sv.json",
+            "version": "48.2.0",
+            "licence": "Unicode-3.0",
+            "sha256": "ed4734f62f1baa38e2dfc7c67fe7be9df9a0bfc18141bedb45bf50c441368520"
+        },
+        "cldr-sw": {
+            "url": "https://cdn.jsdelivr.net/npm/cldr-annotations-full@48.2.0/annotations/sw/annotations.json",
+            "path": "cldr/sw.json",
+            "version": "48.2.0",
+            "licence": "Unicode-3.0",
+            "sha256": "2894fa8e5e6954103fc305b68a4351de987f9bae6350b5fa0085b0ea904d8f5a"
+        },
+        "cldr-th": {
+            "url": "https://cdn.jsdelivr.net/npm/cldr-annotations-full@48.2.0/annotations/th/annotations.json",
+            "path": "cldr/th.json",
+            "version": "48.2.0",
+            "licence": "Unicode-3.0",
+            "sha256": "fcc6301f8b0935921ecc3f6c8fe14873d5caadc433df2130d5657356d046c389"
+        },
+        "cldr-tr": {
+            "url": "https://cdn.jsdelivr.net/npm/cldr-annotations-full@48.2.0/annotations/tr/annotations.json",
+            "path": "cldr/tr.json",
+            "version": "48.2.0",
+            "licence": "Unicode-3.0",
+            "sha256": "203f92597ad0dbffde89083cb760c1585843e52f488c0c7866406f2ef6e881cc"
+        },
+        "cldr-uk": {
+            "url": "https://cdn.jsdelivr.net/npm/cldr-annotations-full@48.2.0/annotations/uk/annotations.json",
+            "path": "cldr/uk.json",
+            "version": "48.2.0",
+            "licence": "Unicode-3.0",
+            "sha256": "b53eafa79658a4c8178e1aee7c066d1b5ad6997629465edfa92ef3552402816a"
+        },
+        "cldr-vi": {
+            "url": "https://cdn.jsdelivr.net/npm/cldr-annotations-full@48.2.0/annotations/vi/annotations.json",
+            "path": "cldr/vi.json",
+            "version": "48.2.0",
+            "licence": "Unicode-3.0",
+            "sha256": "a0a8d4c3d6fc52d843e0d69051fb025a27bce6aee2b3eade5a1488b6dd9adffd"
+        },
+        "cldr-zh": {
+            "url": "https://cdn.jsdelivr.net/npm/cldr-annotations-full@48.2.0/annotations/zh/annotations.json",
+            "path": "cldr/zh.json",
+            "version": "48.2.0",
+            "licence": "Unicode-3.0",
+            "sha256": "8d2dfe9bf41894bd17c9c1a1906a31bf0ccc06204bf4b77c2ab2b0d8f79a5fdf"
+        },
+        "cldr-zh-Hant": {
+            "url": "https://cdn.jsdelivr.net/npm/cldr-annotations-full@48.2.0/annotations/zh-Hant/annotations.json",
+            "path": "cldr/zh-Hant.json",
+            "version": "48.2.0",
+            "licence": "Unicode-3.0",
+            "sha256": "59158786a4a0b0937a7f3a370cbe5bc79ae7f3a6155edd55914dceadf0f0a35f"
+        },
+        "cldr-license": {
+            "url": "https://cdn.jsdelivr.net/npm/cldr-annotations-full@48.2.0/LICENSE",
+            "path": "cldr/LICENSE",
+            "version": "48.2.0",
+            "licence": "Unicode-3.0",
+            "sha256": "b49d0e9f8ead51ca8b7df6fec89cc3ae6809198b4b9d43c74216da0118f23f5b"
+        },
+        "emojibase-data": {
+            "url": "https://cdn.jsdelivr.net/npm/emojibase-data@17.0.0/en/data.json",
+            "path": "emojibase/data.json",
+            "version": "17.0.0",
+            "licence": "MIT",
+            "sha256": "ed014f1049bd370c5794f815850156196ac382850f51c3e9f6a9e83553fb3f01"
+        },
+        "emojibase-github": {
+            "url": "https://cdn.jsdelivr.net/npm/emojibase-data@17.0.0/en/shortcodes/github.json",
+            "path": "emojibase/sc-github.json",
+            "version": "17.0.0",
+            "licence": "MIT",
+            "sha256": "d6bb7101e7bab1e52b30f4b3562da2319b484a6266352a1119f0d1ba52db23db"
+        },
+        "emojibase-emojibase": {
+            "url": "https://cdn.jsdelivr.net/npm/emojibase-data@17.0.0/en/shortcodes/emojibase.json",
+            "path": "emojibase/sc-emojibase.json",
+            "version": "17.0.0",
+            "licence": "MIT",
+            "sha256": "db3d41edf2f190bcb81bf171a51b1f889af774eed5dc24d21ad8dfcb998b40d3"
+        },
+        "emojibase-slack": {
+            "url": "https://cdn.jsdelivr.net/npm/emojibase-data@17.0.0/en/shortcodes/iamcal.json",
+            "path": "emojibase/sc-iamcal.json",
+            "version": "17.0.0",
+            "licence": "MIT",
+            "sha256": "b1952bd90cb8580224434eaf8f1911265d23a78c7ed36f39f8590c90847443eb"
+        },
+        "emojibase-joypixels": {
+            "url": "https://cdn.jsdelivr.net/npm/emojibase-data@17.0.0/en/shortcodes/joypixels.json",
+            "path": "emojibase/sc-joypixels.json",
+            "version": "17.0.0",
+            "licence": "MIT",
+            "sha256": "71c0608ffb9715b0bcd7dcc5001218fee07ddbd95635e328a392b9cc07a70ab8"
+        },
+        "emojibase-cldr": {
+            "url": "https://cdn.jsdelivr.net/npm/emojibase-data@17.0.0/en/shortcodes/cldr.json",
+            "path": "emojibase/sc-cldr.json",
+            "version": "17.0.0",
+            "licence": "MIT",
+            "sha256": "62577c7290e5335b9c80ef5d598eef8b743d4505a7d222e865b9df04ade4d564"
+        },
+        "emojibase-license": {
+            "url": "https://cdn.jsdelivr.net/npm/emojibase-data@17.0.0/LICENSE",
+            "path": "emojibase/LICENSE",
+            "version": "17.0.0",
+            "licence": "MIT",
+            "sha256": "5c4e1582dcae9429a5d00ec0a64185c3a711f9757b2308fdf275d90b120f6149"
+        },
+        "gemoji": {
+            "url": "https://raw.githubusercontent.com/github/gemoji/fa4d5f8a0e3ce8e6bd0d6e6ab3e3f362272afa8c/db/emoji.json",
+            "path": "gemoji.json",
+            "version": "fa4d5f8a0e3ce8e6bd0d6e6ab3e3f362272afa8c",
+            "licence": "MIT",
+            "sha256": "b174ae2aeb321b52f64adb9ff412f966a7f338839d780784dd15dcad702c2dd6"
+        },
+        "gemoji-license": {
+            "url": "https://raw.githubusercontent.com/github/gemoji/fa4d5f8a0e3ce8e6bd0d6e6ab3e3f362272afa8c/LICENSE",
+            "path": "gemoji-LICENSE",
+            "version": "fa4d5f8a0e3ce8e6bd0d6e6ab3e3f362272afa8c",
+            "licence": "MIT",
+            "sha256": "7ea1d1fd0602e6623b9a65e791499a0ea5a2f5f60f91bfad78cbaeee19da26e6"
+        },
+        "googlefonts-ordering": {
+            "url": "https://raw.githubusercontent.com/googlefonts/emoji-metadata/173b9b26e8fcbcbe64e1ecbf073a21a96b95c6b1/emoji_18_0_ordering.json",
+            "path": "gf-ordering.json",
+            "version": "173b9b26e8fcbcbe64e1ecbf073a21a96b95c6b1",
+            "licence": "Apache-2.0",
+            "sha256": "90b5212a08e14c6e1584e7f4b84ee8a0a071a089672ad2d62daf30635ccc3c40"
+        },
+        "googlefonts-emoticons": {
+            "url": "https://raw.githubusercontent.com/googlefonts/emoji-metadata/173b9b26e8fcbcbe64e1ecbf073a21a96b95c6b1/emoticon_ordering.json",
+            "path": "gf-emoticons.json",
+            "version": "173b9b26e8fcbcbe64e1ecbf073a21a96b95c6b1",
+            "licence": "Apache-2.0",
+            "sha256": "9cbaa9ca2f8117f571053be7b0c95c0c54f738e867300d8fc2298a0636e282f9"
+        },
+        "googlefonts-license": {
+            "url": "https://raw.githubusercontent.com/googlefonts/emoji-metadata/173b9b26e8fcbcbe64e1ecbf073a21a96b95c6b1/LICENSE",
+            "path": "gf-LICENSE",
+            "version": "173b9b26e8fcbcbe64e1ecbf073a21a96b95c6b1",
+            "licence": "Apache-2.0",
+            "sha256": "cfc7749b96f63bd31c3c42b5c471bf756814053e847c10f3eb003417bc523d30"
+        },
+        "iamcal": {
+            "url": "https://cdn.jsdelivr.net/npm/emoji-datasource@16.0.0/emoji.json",
+            "path": "iamcal.json",
+            "version": "16.0.0",
+            "licence": "MIT",
+            "sha256": "1d602e65be88772bf8cc368ce16b855d719eeddbafe128d471b80203f494d29f"
+        },
+        "twemoji-listing": {
+            "url": "https://data.jsdelivr.com/v1/packages/gh/jdecked/twemoji@17.0.3?structure=flat",
+            "path": "images/twemoji.json",
+            "version": "17.0.3",
+            "licence": "listing only",
+            "sha256": "46a21f2481267f6152f104d957610c0e055fcba25314cbbc4b8e646d031cd5fe"
+        },
+        "noto-listing": {
+            "url": "https://api.github.com/repos/googlefonts/noto-emoji/git/trees/e20cbc2bbec1926686be9f9bee7d1d2cfa1fea0e:2D/svg",
+            "path": "images/noto-tree.json",
+            "version": "e20cbc2bbec1926686be9f9bee7d1d2cfa1fea0e",
+            "licence": "listing only",
+            "sha256": "b324ddf74c4d47d4a7ee164598a9c4f651e235247781be9090ffa4d28810a7cf"
+        },
+        "openmoji-data": {
+            "url": "https://cdn.jsdelivr.net/npm/openmoji@17.0.0/data/openmoji.json",
+            "path": "images/openmoji.json",
+            "version": "17.0.0",
+            "licence": "listing only",
+            "sha256": "ab181dd523021dfbe2b98a13d96ab384b7b3014d17815261bc267fb39d9a211b"
+        },
+        "fluent-listing": {
+            "url": "https://api.github.com/repos/microsoft/fluentui-emoji/git/trees/1ffb34c752ecf5d402f04cfb4b392c77f57c54bc:assets",
+            "path": "images/fluent-tree.json",
+            "version": "1ffb34c752ecf5d402f04cfb4b392c77f57c54bc",
+            "licence": "listing only",
+            "sha256": "198390dfe7ac36f1df6369164fb42afe432357f0c11097c07a8ea212a03d9846"
+        },
+        "iamcal-license": {
+            "url": "https://cdn.jsdelivr.net/npm/emoji-datasource@16.0.0/LICENSE",
+            "path": "iamcal-LICENSE",
+            "version": "16.0.0",
+            "licence": "MIT",
+            "sha256": "ee9953a79bf2132b59b1342b217f1c377b3d03d9e7713006f6c3b89eb159f1db"
+        },
+        "cldr-derived-en": {
+            "url": "https://cdn.jsdelivr.net/npm/cldr-annotations-derived-full@48.2.0/annotationsDerived/en/annotations.json",
+            "path": "cldr/derived/en.json",
+            "version": "48.2.0",
+            "licence": "Unicode-3.0",
+            "sha256": "15c9457afa703a32dcc78d54626418a91e820fe0ddd67b7d491c4c4d9f5846ab"
+        },
+        "cldr-derived-ar": {
+            "url": "https://cdn.jsdelivr.net/npm/cldr-annotations-derived-full@48.2.0/annotationsDerived/ar/annotations.json",
+            "path": "cldr/derived/ar.json",
+            "version": "48.2.0",
+            "licence": "Unicode-3.0",
+            "sha256": "e4fa6c26d663647de5316f921a666062cc44702b333049a15b6b775d5f1933c4"
+        },
+        "cldr-derived-bn": {
+            "url": "https://cdn.jsdelivr.net/npm/cldr-annotations-derived-full@48.2.0/annotationsDerived/bn/annotations.json",
+            "path": "cldr/derived/bn.json",
+            "version": "48.2.0",
+            "licence": "Unicode-3.0",
+            "sha256": "209d8a530f69c0f3d5cfb5516e81611a150a4f6d6f3ec9030792ac29a2c7c287"
+        },
+        "cldr-derived-de": {
+            "url": "https://cdn.jsdelivr.net/npm/cldr-annotations-derived-full@48.2.0/annotationsDerived/de/annotations.json",
+            "path": "cldr/derived/de.json",
+            "version": "48.2.0",
+            "licence": "Unicode-3.0",
+            "sha256": "486a878923ef6d8303fd9b8f4472486c60575cb64a811a7dbef451bf064c4496"
+        },
+        "cldr-derived-es": {
+            "url": "https://cdn.jsdelivr.net/npm/cldr-annotations-derived-full@48.2.0/annotationsDerived/es/annotations.json",
+            "path": "cldr/derived/es.json",
+            "version": "48.2.0",
+            "licence": "Unicode-3.0",
+            "sha256": "f9f43c327c5b76dbd337496738c0f5c526ee1c803dd683d60100b5fce85ab79e"
+        },
+        "cldr-derived-fa": {
+            "url": "https://cdn.jsdelivr.net/npm/cldr-annotations-derived-full@48.2.0/annotationsDerived/fa/annotations.json",
+            "path": "cldr/derived/fa.json",
+            "version": "48.2.0",
+            "licence": "Unicode-3.0",
+            "sha256": "a00f3af370371c551ca8cd24e401212ae0e3377958f189f876eec4abeac6ce82"
+        },
+        "cldr-derived-fr": {
+            "url": "https://cdn.jsdelivr.net/npm/cldr-annotations-derived-full@48.2.0/annotationsDerived/fr/annotations.json",
+            "path": "cldr/derived/fr.json",
+            "version": "48.2.0",
+            "licence": "Unicode-3.0",
+            "sha256": "012bb08af81a2ea0686e8fe069388f02dbd025d62b02d7423067c452b37e8855"
+        },
+        "cldr-derived-hi": {
+            "url": "https://cdn.jsdelivr.net/npm/cldr-annotations-derived-full@48.2.0/annotationsDerived/hi/annotations.json",
+            "path": "cldr/derived/hi.json",
+            "version": "48.2.0",
+            "licence": "Unicode-3.0",
+            "sha256": "5fc6b2c76c15a8db26c7a090c0f05c9ddc1e0e301a466f9c567385a7cb7020cc"
+        },
+        "cldr-derived-id": {
+            "url": "https://cdn.jsdelivr.net/npm/cldr-annotations-derived-full@48.2.0/annotationsDerived/id/annotations.json",
+            "path": "cldr/derived/id.json",
+            "version": "48.2.0",
+            "licence": "Unicode-3.0",
+            "sha256": "4fc73d3ce7351bee6be5f320744c32d81d58f7526b8a79c1bc5e0ef69e415f55"
+        },
+        "cldr-derived-it": {
+            "url": "https://cdn.jsdelivr.net/npm/cldr-annotations-derived-full@48.2.0/annotationsDerived/it/annotations.json",
+            "path": "cldr/derived/it.json",
+            "version": "48.2.0",
+            "licence": "Unicode-3.0",
+            "sha256": "0957417d36590b3f48956fa4e992b5c68c6f9b23e13c2e6feb26323488edd610"
+        },
+        "cldr-derived-ja": {
+            "url": "https://cdn.jsdelivr.net/npm/cldr-annotations-derived-full@48.2.0/annotationsDerived/ja/annotations.json",
+            "path": "cldr/derived/ja.json",
+            "version": "48.2.0",
+            "licence": "Unicode-3.0",
+            "sha256": "6c5496486b89d57cb6f9f0701c8052d44c23b08703d796e5e45c1d65f3902edf"
+        },
+        "cldr-derived-ko": {
+            "url": "https://cdn.jsdelivr.net/npm/cldr-annotations-derived-full@48.2.0/annotationsDerived/ko/annotations.json",
+            "path": "cldr/derived/ko.json",
+            "version": "48.2.0",
+            "licence": "Unicode-3.0",
+            "sha256": "69e006aaa9f0ea4568e061b0018a0f11898e19f77606e85b111b95555299f52f"
+        },
+        "cldr-derived-nl": {
+            "url": "https://cdn.jsdelivr.net/npm/cldr-annotations-derived-full@48.2.0/annotationsDerived/nl/annotations.json",
+            "path": "cldr/derived/nl.json",
+            "version": "48.2.0",
+            "licence": "Unicode-3.0",
+            "sha256": "ce2a92668829f6ebba8b8e6b31650e03facebcc6354d5df84d03604a94a28468"
+        },
+        "cldr-derived-pl": {
+            "url": "https://cdn.jsdelivr.net/npm/cldr-annotations-derived-full@48.2.0/annotationsDerived/pl/annotations.json",
+            "path": "cldr/derived/pl.json",
+            "version": "48.2.0",
+            "licence": "Unicode-3.0",
+            "sha256": "489db8825f8a02737595a94b0b0e6a165acbc3705f6207a4fe0aa064a645362d"
+        },
+        "cldr-derived-pt": {
+            "url": "https://cdn.jsdelivr.net/npm/cldr-annotations-derived-full@48.2.0/annotationsDerived/pt/annotations.json",
+            "path": "cldr/derived/pt.json",
+            "version": "48.2.0",
+            "licence": "Unicode-3.0",
+            "sha256": "23423f141587e22c8ee07a78f8cca45a59f11fca1cc5269f63dece4b02d4b8b6"
+        },
+        "cldr-derived-ru": {
+            "url": "https://cdn.jsdelivr.net/npm/cldr-annotations-derived-full@48.2.0/annotationsDerived/ru/annotations.json",
+            "path": "cldr/derived/ru.json",
+            "version": "48.2.0",
+            "licence": "Unicode-3.0",
+            "sha256": "c7106a9d14b485636620972d147232ec2e45e0d779422ed208dabad8fa186782"
+        },
+        "cldr-derived-sv": {
+            "url": "https://cdn.jsdelivr.net/npm/cldr-annotations-derived-full@48.2.0/annotationsDerived/sv/annotations.json",
+            "path": "cldr/derived/sv.json",
+            "version": "48.2.0",
+            "licence": "Unicode-3.0",
+            "sha256": "28babdb682780c0c062a0500f554cf96977c061ace4738e0d8ff974cdbbde4ea"
+        },
+        "cldr-derived-sw": {
+            "url": "https://cdn.jsdelivr.net/npm/cldr-annotations-derived-full@48.2.0/annotationsDerived/sw/annotations.json",
+            "path": "cldr/derived/sw.json",
+            "version": "48.2.0",
+            "licence": "Unicode-3.0",
+            "sha256": "8e765ccb8262a3be34600e2acf69125a60f99f7406f9e6dfae530cd8d61e3567"
+        },
+        "cldr-derived-th": {
+            "url": "https://cdn.jsdelivr.net/npm/cldr-annotations-derived-full@48.2.0/annotationsDerived/th/annotations.json",
+            "path": "cldr/derived/th.json",
+            "version": "48.2.0",
+            "licence": "Unicode-3.0",
+            "sha256": "11e23db9b3605763c637a6fc0ec76c466a48dafde2347bcdb52ed646706e505c"
+        },
+        "cldr-derived-tr": {
+            "url": "https://cdn.jsdelivr.net/npm/cldr-annotations-derived-full@48.2.0/annotationsDerived/tr/annotations.json",
+            "path": "cldr/derived/tr.json",
+            "version": "48.2.0",
+            "licence": "Unicode-3.0",
+            "sha256": "3fdd3797f361e8c41a9e088db3ac9ca25a7da7209ba858249c949a889695a6ca"
+        },
+        "cldr-derived-uk": {
+            "url": "https://cdn.jsdelivr.net/npm/cldr-annotations-derived-full@48.2.0/annotationsDerived/uk/annotations.json",
+            "path": "cldr/derived/uk.json",
+            "version": "48.2.0",
+            "licence": "Unicode-3.0",
+            "sha256": "bfb49f5bbd4e3021fc0c602d13ef232670f724767b4fcd5fc34d287a78f11347"
+        },
+        "cldr-derived-vi": {
+            "url": "https://cdn.jsdelivr.net/npm/cldr-annotations-derived-full@48.2.0/annotationsDerived/vi/annotations.json",
+            "path": "cldr/derived/vi.json",
+            "version": "48.2.0",
+            "licence": "Unicode-3.0",
+            "sha256": "2af5588927fb68bb01aedd28aa2947aa77d31374a53bd008844d426b6ba2f062"
+        },
+        "cldr-derived-zh": {
+            "url": "https://cdn.jsdelivr.net/npm/cldr-annotations-derived-full@48.2.0/annotationsDerived/zh/annotations.json",
+            "path": "cldr/derived/zh.json",
+            "version": "48.2.0",
+            "licence": "Unicode-3.0",
+            "sha256": "1ff96249af6fc69067f2dfabc26b450786a93d8048f2764ecfad53fd64953f92"
+        },
+        "cldr-derived-zh-Hant": {
+            "url": "https://cdn.jsdelivr.net/npm/cldr-annotations-derived-full@48.2.0/annotationsDerived/zh-Hant/annotations.json",
+            "path": "cldr/derived/zh-Hant.json",
+            "version": "48.2.0",
+            "licence": "Unicode-3.0",
+            "sha256": "d7c618f1ac87131cf60e6e736899145e5e1cc152aa3a7015c07b6ec09ceac28e"
+        },
+        "emoji-sources": {
+            "url": "https://www.unicode.org/Public/18.0.0/ucd/EmojiSources.txt",
+            "path": "EmojiSources.txt",
+            "version": "18.0",
+            "licence": "Unicode-3.0",
+            "sha256": "4b46d42e9016d26a6d0548818413cd001a095c6ac904e693f4e6061d36516268"
+        },
+        "standardized-variants": {
+            "url": "https://www.unicode.org/Public/18.0.0/ucd/StandardizedVariants.txt",
+            "path": "StandardizedVariants.txt",
+            "version": "18.0",
+            "licence": "Unicode-3.0",
+            "sha256": "c7ae634a7e2bb0932258548a1e81df984fbb38e30cecf4269391d6a4f94581ac"
+        },
+        "kaomojikan": {
+            "url": "https://raw.githubusercontent.com/kaomojikan/kaomoji-data/60c92ea4e85279ad42ff525e9a40464ebeb1003e/kaomoji.json",
+            "path": "kaomojikan.json",
+            "version": "60c92ea4e85279ad42ff525e9a40464ebeb1003e",
+            "licence": "MIT",
+            "sha256": "22721e1b31d60fee5a9bd9f26c8639ab4efee2e6c01cec3f674f0e0d1d3aea2b"
+        },
+        "kaomojikan-categories": {
+            "url": "https://raw.githubusercontent.com/kaomojikan/kaomoji-data/60c92ea4e85279ad42ff525e9a40464ebeb1003e/categories.json",
+            "path": "kaomojikan-categories.json",
+            "version": "60c92ea4e85279ad42ff525e9a40464ebeb1003e",
+            "licence": "MIT",
+            "sha256": "5b6c3f00d8ee35733f20238ee887cf85839217746051e1d644f497a432330a0b"
+        },
+        "kaomojikan-license": {
+            "url": "https://raw.githubusercontent.com/kaomojikan/kaomoji-data/60c92ea4e85279ad42ff525e9a40464ebeb1003e/LICENSE",
+            "path": "kaomojikan-LICENSE",
+            "version": "60c92ea4e85279ad42ff525e9a40464ebeb1003e",
+            "licence": "MIT",
+            "sha256": "08cb2c981c94a80ef0b80be68cdec72e54faa8d81c96e3476a23955eb9ba8a3b"
+        }
+    }
+}

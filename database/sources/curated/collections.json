@@ -1,0 +1,14 @@
+{
+    "about": "Curated named collections (name -> hexcodes, in display order). build-dataset.php fails if an entry is not a fully-qualified emoji in the dataset.",
+    "collections": {
+        "japanese": [
+            "1F201", "1F202-FE0F", "1F237-FE0F", "1F236", "1F22F", "1F250", "1F239", "1F21A", "1F232", "1F251",
+            "1F238", "1F234", "1F233", "3297-FE0F", "3299-FE0F", "1F23A", "1F235",
+            "1F530", "1F4AE", "1F1EF-1F1F5", "1F5FE", "1F5FB", "1F5FC", "1F3EF", "1F3E3", "26E9-FE0F", "1F38C",
+            "1F38E", "1F38F", "1F390", "1F391", "1F38B", "1F38D", "1F3EE", "1F458", "1FAAD", "1F479", "1F47A",
+            "1F004", "1F3B4", "1F4B4",
+            "1F371", "1F359", "1F358", "1F365", "1F361", "1F362", "1F363", "1F35C", "1F35B", "1F35A", "1F360",
+            "1F367", "1F376", "1F375"
+        ]
+    }
+}

@@ -21,7 +21,7 @@ Windows Terminal, and `supportsFlags()` reports that.
 In Laravel the probe also defers to `laranail/console`'s `Capabilities`, so one setting and one test fake
 (`Capabilities::fake()`) govern every laranail command.
 
-When the terminal cannot draw emoji, `Mode::Auto` becomes `auto_fallback` — `ascii` by default, so output
+When the terminal cannot draw emoji, `Mode::Auto` becomes `output.auto_fallback` — `ascii` by default, so output
 stays readable in any log file.
 
 ## Width and truncation

@@ -16,7 +16,7 @@ return RectorConfig::configure()
     ->withPaths([__DIR__ . '/src', __DIR__ . '/tests', __DIR__ . '/helpers'])
     ->withSkip([
         __DIR__ . '/vendor',
-        __DIR__ . '/resources/data',
+        __DIR__ . '/database',
         __DIR__ . '/src/Core/Enums/EmojiId.php',
         __DIR__ . '/src/Core/Enums/Group.php',
         __DIR__ . '/src/Core/Enums/Subgroup.php',

@@ -64,7 +64,7 @@ if ($declared < 40) {
     exit(1);
 }
 
-$emojis = Emojis::create(['locale' => 'fr'], terminal: new EnvTerminalProbe(override: true), data: new DatasetStore($root . '/resources/data'));
+$emojis = Emojis::create(['locale' => ['default' => 'fr']], terminal: new EnvTerminalProbe(override: true), data: new DatasetStore($root . '/database/generated'));
 
 $checks = [
     'emoji'    => [$emojis->text('Ship it :rocket: :)')->withEmoticons()->toEmoji(), 'Ship it 🚀 🙂'],
@@ -76,7 +76,11 @@ $checks = [
     'flag'     => [(string) $emojis->flag('KE'), '🇰🇪'],
     'query'    => [(string) $emojis->query()->flags()->count(), (string) $emojis->query()->type(Simtabi\Laranail\Emojis\Core\Enums\SequenceType::Flag, Simtabi\Laranail\Emojis\Core\Enums\SequenceType::Tag)->count()],
     'search'   => [(string) $emojis->search('fusée', 'fr')->first(), '🚀'],
-    'kaomoji'  => [(string) count($emojis->kaomojiGroups()), '15'],
+    'kaomoji'  => [$emojis->searchKaomoji('ねこ') === [] ? 'none' : 'found', 'found'],
+    'sanitize' => [$emojis->sanitize("ok\u{202E}\u{E0041}")->clean(), 'ok'],
+    'carrier'  => [$emojis->text(mb_chr(0xE63E, 'UTF-8'))->carrier(Simtabi\Laranail\Emojis\Core\Enums\Carrier::Docomo)->from(Mode::Carrier)->toEmoji(), '☀️'],
+    'japanese' => [(string) $emojis->collection('japanese')->first(), '🈁'],
+    'fit'      => [str_starts_with($emojis->text('😀')->imageSet('openmoji')->toImages(), '<svg ') ? 'svg' : 'img', 'svg'],
     'html'     => [$emojis->html('<code>:wave:</code> :wave:')->toEmoji(), '<code>:wave:</code> 👋'],
     'entities' => [$emojis->text('&#x1F680;')->from(Mode::HtmlEntity)->toCodepoints(), 'U+1F680'],
     'width'    => [(string) $emojis->text('a👨‍👩‍👧‍👦')->width(), '3'],

@@ -6,6 +6,7 @@ namespace Simtabi\Laranail\Emojis\Core\Text;
 
 use Simtabi\Laranail\Emojis\Core\Emoji;
 use Simtabi\Laranail\Emojis\Core\Enums\Mode;
+use Simtabi\Laranail\Emojis\Core\Enums\Carrier;
 use Simtabi\Laranail\Emojis\Core\Enums\SkinTone;
 use Simtabi\Laranail\Emojis\Core\Data\DatasetStore;
 use Simtabi\Laranail\Emojis\Core\Catalogue\Catalogue;
@@ -82,6 +83,7 @@ final class Scanner
                 Mode::Escaped    => $this->escaped($text),
                 Mode::Codepoint  => $this->decoded($text, Mode::Codepoint, '/[Uu]\+([0-9A-Fa-f]{4,6})/', '[ ,]*'),
                 Mode::Image      => $this->images($text),
+                Mode::Carrier    => $this->carrier($text, $options->carrier),
                 default          => [],
             });
         }
@@ -382,10 +384,36 @@ final class Scanner
         return $tokens;
     }
 
-    /** @return list<Token> only the markup this package emits: <img … data-laranail-emoji="…"> */
+    /**
+     * Private-use code points of one carrier. The carrier must be named because docomo, au and SoftBank
+     * overlap; Google's plane-15 range (the default) does not.
+     *
+     * @return list<Token>
+     */
+    private function carrier(string $text, Carrier $carrier): array
+    {
+        if (preg_match_all('/[\\x{E000}-\\x{F8FF}\\x{F0000}-\\x{FFFFD}]/u', $text, $matches, PREG_OFFSET_CAPTURE) === false) {
+            return [];
+        }
+
+        $reads = $this->data->carrierReads($carrier->value);
+        $tokens = [];
+
+        foreach ($matches[0] as [$char, $offset]) {
+            $hex = $reads[sprintf('%04X', mb_ord($char, 'UTF-8'))] ?? null;
+
+            if ($hex !== null) {
+                $tokens[] = new Token($offset, strlen($char), Mode::Carrier, $hex);
+            }
+        }
+
+        return $tokens;
+    }
+
+    /** @return list<Token> only the markup this package emits: <img …> or a fitted <svg …>, keyed by data-laranail-emoji */
     private function images(string $text): array
     {
-        if (preg_match_all('/<img\b[^>]*\bdata-laranail-emoji="([0-9A-Fa-f-]+|:[a-z0-9_+\-]+:)"[^>]*>/i', $text, $matches, PREG_OFFSET_CAPTURE | PREG_SET_ORDER) === false) {
+        if (preg_match_all('/<img\b[^>]*\bdata-laranail-emoji="([0-9A-Fa-f-]+|:[a-z0-9_+\-]+:)"[^>]*>|<svg\b[^>]*\bdata-laranail-emoji="([0-9A-Fa-f-]+)"[^>]*>.*?<\/svg>/is', $text, $matches, PREG_OFFSET_CAPTURE | PREG_SET_ORDER) === false) {
             return [];
         }
 
@@ -393,7 +421,7 @@ final class Scanner
 
         foreach ($matches as $match) {
             [$whole, $offset] = $match[0];
-            $key = $match[1][0];
+            $key = ($match[1][0] ?? '') !== '' ? $match[1][0] : ($match[2][0] ?? '');
 
             if ($key[0] === ':') {
                 $custom = $this->custom->find(trim($key, ':'));

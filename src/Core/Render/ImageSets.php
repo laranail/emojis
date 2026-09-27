@@ -70,6 +70,29 @@ final class ImageSets
         return $this->resolved[$name] ??= $this->build($builtIn);
     }
 
+    /**
+     * The measured crop of an emoji in a built-in set: [inset, x, y, size] in permille, or null when the set
+     * was not measured, the emoji not covered, or the set is a registered custom one.
+     *
+     * @return array{0: int, 1: int, 2: int, 3: int}|null
+     */
+    public function crop(Emoji $emoji, string $set): ?array
+    {
+        if (isset($this->registered[$set])) {
+            return null;
+        }
+
+        $crop = $this->data->imageCrops($set)[$emoji->hexcode] ?? null;
+
+        if ($crop === null) {
+            return null;
+        }
+
+        $parts = array_map(intval(...), explode(' ', $crop));
+
+        return count($parts) === 4 ? [$parts[0], $parts[1], $parts[2], $parts[3]] : null;
+    }
+
     public function has(string $name): bool
     {
         return isset($this->registered[$name]) || ImageSetName::tryFrom($name) !== null;
@@ -120,7 +143,9 @@ final class ImageSets
                         return null;
                     }
 
-                    $stem = strtolower(str_replace(' ', '_', $folder));
+                    // Fluent names files after the emoji's CLDR name, which can differ from its folder name:
+                    // "O button blood type/Color/o_button_(blood_type)_color.svg".
+                    $stem = strtolower(str_replace(' ', '_', $e->base()->englishName));
                     $path = rawurlencode($folder);
 
                     if ($e->tones !== []) {
@@ -129,7 +154,8 @@ final class ImageSets
                         return "{$path}/" . ucwords($tone, '-') . "/Color/{$stem}_color_{$tone}.svg";
                     }
 
-                    return $e->supportsSkinTones() ? "{$path}/Default/Color/{$stem}_color_default.svg" : "{$path}/Color/{$stem}_color.svg";
+                    // Fluent ships tone folders only for single-person emoji; the handshake and couples are one image.
+                    return $e->skinTonePeople() === 1 ? "{$path}/Default/Color/{$stem}_color_default.svg" : "{$path}/Color/{$stem}_color.svg";
                 },
                 $bits['fluent'],
                 'MIT — microsoft/fluentui-emoji',

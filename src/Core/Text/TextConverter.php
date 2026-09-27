@@ -12,8 +12,10 @@ use function grapheme_str_split;
 
 use Simtabi\Laranail\Emojis\Core\Emoji;
 use Simtabi\Laranail\Emojis\Core\Emojis;
+use Simtabi\Laranail\Emojis\Core\Enums\Fit;
 use Simtabi\Laranail\Emojis\Core\Enums\Mode;
 use Simtabi\Laranail\Emojis\Core\Render\Piece;
+use Simtabi\Laranail\Emojis\Core\Enums\Carrier;
 use Simtabi\Laranail\Emojis\Core\Enums\SkinTone;
 use Simtabi\Laranail\Emojis\Core\Enums\EmojiVersion;
 use Simtabi\Laranail\Emojis\Core\Enums\EscapeFormat;
@@ -57,6 +59,8 @@ final readonly class TextConverter implements Stringable
         private ?SkinTone $skinTone = null,
         private array $chains = [],
         private array $stages = [],
+        private Carrier $carrier = Carrier::Google,
+        private ?Fit $fit = null,
     ) {
         if (! mb_check_encoding($text, 'UTF-8')) {
             throw InvalidInput::invalidUtf8();
@@ -94,6 +98,15 @@ final readonly class TextConverter implements Stringable
         return $this->with(['sources' => $this->uniqueModes([...$this->sources, Mode::Emoticon]), 'riskyEmoticons' => $risky]);
     }
 
+    /**
+     * Read and write a Japanese carrier's private-use emoji. Reading needs the carrier named because docomo,
+     * au and SoftBank overlap: `->carrier(Carrier::Docomo)->from(Mode::Carrier)->toEmoji()`.
+     */
+    public function carrier(Carrier $carrier): self
+    {
+        return $this->with(['carrier' => $carrier]);
+    }
+
     /** Also treat text-default characters without FE0F (©, ®, ™, ☺) as emoji. */
     public function includeTextPresentation(bool $include = true): self
     {
@@ -115,6 +128,12 @@ final readonly class TextConverter implements Stringable
     public function imageSet(string $set): self
     {
         return $this->with(['imageSet' => $set]);
+    }
+
+    /** How images fill their box: Fit::None (published padding), Balanced (default), Tight. */
+    public function fit(Fit $fit): self
+    {
+        return $this->with(['fit' => $fit]);
     }
 
     /** Render as a platform supporting only this Emoji version would: newer emoji decompose or degrade. */
@@ -435,7 +454,7 @@ final readonly class TextConverter implements Stringable
     /** @return list<Token> */
     private function tokens(): array
     {
-        return $this->emojis->scanner()->scan($this->text, new ScanOptions($this->sources, $this->riskyEmoticons, $this->textPresentation));
+        return $this->emojis->scanner()->scan($this->text, new ScanOptions($this->sources, $this->riskyEmoticons, $this->textPresentation, $this->carrier));
     }
 
     /**
@@ -550,6 +569,8 @@ final readonly class TextConverter implements Stringable
             escapeFormat: $format ?? EscapeFormat::Php,
             skinTone: $this->skinTone,
             chains: $this->chains,
+            carrier: $this->carrier,
+            fit: $this->fit,
         );
     }
 

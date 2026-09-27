@@ -5,7 +5,7 @@ declare(strict_types=1);
 namespace Simtabi\Laranail\Emojis\Core\Data;
 
 /**
- * The positional layout of a catalogue record in resources/data/emojis.php.
+ * The positional layout of a catalogue record in database/generated/emojis.php.
  *
  * Records are lists, not maps, to keep the shard small and fast to lint. The generator writes the field
  * order into the shard, and DatasetStore refuses a shard whose order differs from FIELDS — so a dataset from

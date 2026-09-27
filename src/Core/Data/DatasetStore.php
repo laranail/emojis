@@ -8,10 +8,12 @@ use Throwable;
 use Simtabi\Laranail\Emojis\Core\Exceptions\DatasetException;
 
 /**
- * Lazy, validated, typed access to the generated shards in resources/data.
+ * Lazy, validated, typed access to the generated shards in database/generated.
  *
  * Each shard is a plain PHP file returning an array, so opcache keeps it as an immutable array and a
- * repeat load costs a pointer copy. A shard is loaded the first time something needs it: converting
+ * repeat load costs a pointer copy — where opcache runs. The CLI does not by default
+ * (opcache.enable_cli=0), and there each store re-parses the shards it touches, about 7.5 MB for a
+ * warmed catalogue; see packaged(). A shard is loaded the first time something needs it: converting
  * shortcodes never touches the locale data, and rendering an emoji never touches kaomoji.
  *
  * This is the one place untyped data enters the package. Each shard is checked for its keys on load
@@ -25,10 +27,12 @@ use Simtabi\Laranail\Emojis\Core\Exceptions\DatasetException;
  * with (string); lookups by a string key work either way.
  *
  * @phpstan-type EmojiRecord array{0: string, 1: string, 2: string, 3: string, 4: int, 5: int, 6: string, 7: string, 8: bool, 9: ?string, 10: ?string, 11: ?string, 12: bool, 13: ?string, 14: ?string, 15: ?string, 16: ?string, 17: int}
- * @phpstan-type KaomojiItem array{value: string, group: string, description: string, ascii: bool}
+ * @phpstan-type KaomojiItem array{value: string, group: string, description: string, ascii: bool, tags: string, reading: string}
  */
 final class DatasetStore
 {
+    private static ?self $packaged = null;
+
     /** @var array<string, array<string, mixed>> */
     private array $shards = [];
 
@@ -37,9 +41,14 @@ final class DatasetStore
 
     public function __construct(private readonly string $directory) {}
 
+    /**
+     * The shipped dataset, one store per process. Its caches are write-once reads of a fixed directory,
+     * so every Emojis instance can share them; a store per instance cost ~7.5 MB each without opcache,
+     * which ran this package's own suite out of a 256 MB limit.
+     */
     public static function packaged(): self
     {
-        return new self(dirname(__DIR__, 3) . '/resources/data');
+        return self::$packaged ??= new self(dirname(__DIR__, 3) . '/database/generated');
     }
 
     public function directory(): string
@@ -94,6 +103,24 @@ final class DatasetStore
     {
         /** @var string $value */
         $value = $this->scannerShard()['pictographic'];
+
+        return $value;
+    }
+
+    /** A regex character class body: characters that may take VS15/VS16 (emoji-variation-sequences.txt). */
+    public function emojiVsBaseClass(): string
+    {
+        /** @var string $value */
+        $value = $this->scannerShard()['emojiVsBases'];
+
+        return $value;
+    }
+
+    /** A regex character class body: characters that may take VS1–VS14 (StandardizedVariants.txt). */
+    public function standardizedVsBaseClass(): string
+    {
+        /** @var string $value */
+        $value = $this->scannerShard()['standardizedVsBases'];
 
         return $value;
     }
@@ -188,6 +215,20 @@ final class DatasetStore
         return $value;
     }
 
+    /**
+     * The measured crops of one set: hexcode => "inset x y size" in permille of the canvas — the Balanced
+     * inset (per side) and the Tight square. Empty for a set that was not measured.
+     *
+     * @return array<array-key, string>
+     */
+    public function imageCrops(string $set): array
+    {
+        /** @var array<string, array<array-key, string>> $crops */
+        $crops = $this->imageShard()['crops'] ?? [];
+
+        return $crops[$set] ?? [];
+    }
+
     /** @return array<array-key, string> hexcode => Fluent Emoji folder name */
     public function fluentFolders(): array
     {
@@ -197,9 +238,42 @@ final class DatasetStore
         return $value;
     }
 
+    /** @return array<array-key, string> hexcode => the carrier's private-use code point (hex) */
+    public function carrierCodes(string $carrier): array
+    {
+        /** @var array<string, array{codes: array<array-key, string>, reads: array<array-key, string>}> $shard */
+        $shard = $this->shard('carriers', ['docomo', 'au', 'softbank', 'google']);
+
+        return $shard[$carrier]['codes'] ?? [];
+    }
+
+    /** @return array<array-key, string> the carrier's private-use code point (hex) => hexcode */
+    public function carrierReads(string $carrier): array
+    {
+        /** @var array<string, array{codes: array<array-key, string>, reads: array<array-key, string>}> $shard */
+        $shard = $this->shard('carriers', ['docomo', 'au', 'softbank', 'google']);
+
+        return $shard[$carrier]['reads'] ?? [];
+    }
+
+    /** @return array<string, list<string>> collection name => hexcodes, in display order */
+    public function collections(): array
+    {
+        $file = $this->directory . '/collections.php';
+
+        if (! is_file($file)) {
+            return [];
+        }
+
+        /** @var array<string, string> $shard */
+        $shard = $this->shards['collections'] ??= $this->load('collections', $file, []);
+
+        return array_map(static fn (string $hexcodes): array => explode(' ', $hexcodes), $shard);
+    }
+
     public function version(): string
     {
-        $file = $this->directory . '/dataset-version.txt';
+        $file = $this->directory . '/VERSION';
 
         return is_file($file) ? trim((string) file_get_contents($file)) : 'unknown';
     }

@@ -14,7 +14,7 @@ Six seams let an application reshape the package without editing it.
 ## Custom emoji
 
 ```php
-// a service provider's boot(), or config('laranail.emojis.custom')
+// a service provider's boot(), or config('laranail.emojis.extend.custom')
 Emojis::addCustom('laravel', 'https://example.com/laravel.svg', aliases: ['lara'], label: 'Laravel');
 
 Emojis::text('Built with :laravel:')->toImages();   // <img … src="https://example.com/laravel.svg">

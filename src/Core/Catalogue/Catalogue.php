@@ -8,6 +8,7 @@ use Simtabi\Laranail\Emojis\Core\Emoji;
 use Simtabi\Laranail\Emojis\Core\Emojis;
 use Simtabi\Laranail\Emojis\Core\Data\Record;
 use Simtabi\Laranail\Emojis\Core\Enums\Group;
+use Simtabi\Laranail\Emojis\Core\Enums\Carrier;
 use Simtabi\Laranail\Emojis\Core\Enums\EmojiId;
 use Simtabi\Laranail\Emojis\Core\Enums\SkinTone;
 use Simtabi\Laranail\Emojis\Core\Enums\Subgroup;
@@ -124,6 +125,12 @@ final class Catalogue
             ?? $this->bySlug(trim((string) preg_replace('/[^a-z0-9]+/', '_', strtolower($key)), '_'));
     }
 
+    /** @return list<string> the hexcodes of a curated collection; unknown names give an empty list */
+    public function collection(string $name): array
+    {
+        return $this->data->collections()[$name] ?? [];
+    }
+
     /** @return list<Emoji> every fully-qualified emoji and component, in CLDR order */
     public function all(): array
     {
@@ -178,6 +185,14 @@ final class Catalogue
         }
 
         return $this->emoticonsByHex[$emoji->hexcode] ?? [];
+    }
+
+    /** The carrier code point (hex) for an emoji; a skin-tone variant falls back to its base, as carriers had none. */
+    public function carrierCodeOf(Emoji $emoji, Carrier $carrier): ?string
+    {
+        $codes = $this->data->carrierCodes($carrier->value);
+
+        return $codes[$emoji->hexcode] ?? ($emoji->baseHexcode === null ? null : $codes[$emoji->baseHexcode] ?? null);
     }
 
     /** @return array<array-key, string> code => hexcode */

@@ -88,6 +88,6 @@ it('lists kaomoji by group', function (): void {
     $shrugs = emojis()->kaomoji('shrugging');
 
     expect($shrugs)->not->toBeEmpty()
-        ->and(emojis()->kaomojiGroups())->toHaveCount(15)
+        ->and(count(emojis()->kaomojiGroups()))->toBeGreaterThan(30)
         ->and(array_filter(emojis()->kaomoji(asciiOnly: true), static fn (Kaomoji $k): bool => preg_match('/[^\x20-\x7E]/', $k->value) === 1))->toBeEmpty();
 });
