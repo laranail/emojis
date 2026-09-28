@@ -254,16 +254,16 @@
             "sha256": "5c4e1582dcae9429a5d00ec0a64185c3a711f9757b2308fdf275d90b120f6149"
         },
         "gemoji": {
-            "url": "https://raw.githubusercontent.com/github/gemoji/fa4d5f8a0e3ce8e6bd0d6e6ab3e3f362272afa8c/db/emoji.json",
+            "url": "https://raw.githubusercontent.com/github/gemoji/fadaeaf1f1a9be82b321316a6c5502e43138b2f6/db/emoji.json",
             "path": "gemoji.json",
-            "version": "fa4d5f8a0e3ce8e6bd0d6e6ab3e3f362272afa8c",
+            "version": "fadaeaf1f1a9be82b321316a6c5502e43138b2f6",
             "licence": "MIT",
             "sha256": "b174ae2aeb321b52f64adb9ff412f966a7f338839d780784dd15dcad702c2dd6"
         },
         "gemoji-license": {
-            "url": "https://raw.githubusercontent.com/github/gemoji/fa4d5f8a0e3ce8e6bd0d6e6ab3e3f362272afa8c/LICENSE",
+            "url": "https://raw.githubusercontent.com/github/gemoji/fadaeaf1f1a9be82b321316a6c5502e43138b2f6/LICENSE",
             "path": "gemoji-LICENSE",
-            "version": "fa4d5f8a0e3ce8e6bd0d6e6ab3e3f362272afa8c",
+            "version": "fadaeaf1f1a9be82b321316a6c5502e43138b2f6",
             "licence": "MIT",
             "sha256": "7ea1d1fd0602e6623b9a65e791499a0ea5a2f5f60f91bfad78cbaeee19da26e6"
         },

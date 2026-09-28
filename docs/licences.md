@@ -13,7 +13,7 @@ reason, unlike the rest of `docs/`.
 | Unicode emoji data files | 18.0 | Unicode License V3 | catalogue, order, groups, names, properties |
 | Unicode CLDR annotations | 48.2.0 | Unicode License V3 | localized names and keywords |
 | emojibase-data | 17.0.0 | MIT | shortcode presets, emoticons |
-| github/gemoji | fa4d5f8a0e3ce8e6bd0d6e6ab3e3f362272afa8c | MIT | GitHub shortcodes |
+| github/gemoji | fadaeaf1f1a9be82b321316a6c5502e43138b2f6 | MIT | GitHub shortcodes |
 | googlefonts/emoji-metadata | 173b9b26e8fcbcbe64e1ecbf073a21a96b95c6b1 | Apache License 2.0 | emoticons, kaomoji |
 | iamcal/emoji-data | 16.0.0 | MIT | emoticons, Japanese carrier codes |
 | kaomojikan/kaomoji-data | 60c92ea4e85279ad42ff525e9a40464ebeb1003e | MIT | Japanese kaomoji, tags, readings |
