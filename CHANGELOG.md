@@ -20,6 +20,7 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/),
 - The weekly refresh opens its pull request as a GitHub App, with a short-lived token scoped to this repository,
   instead of a personal token or the workflow's own. A pull request opened with the workflow's token starts no
   CI, and checks started any other way are not attached to it, so `main`'s required checks never reported.
+  The app's client ID and key are organisation-level, not repository-level.
 - Source downloads retry a reset connection too (`curl --retry-all-errors`); the CI sync-check downloads
   about 80 files cold and failed on one reset from jsDelivr.
 - The Tests workflow runs on every pull request, Markdown-only ones included, because its checks are now
