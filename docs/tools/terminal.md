@@ -24,6 +24,19 @@ In Laravel the probe also defers to `laranail/console`'s `Capabilities`, so one 
 When the terminal cannot draw emoji, `Mode::Auto` becomes `output.auto_fallback` — `ascii` by default, so output
 stays readable in any log file.
 
+## laranail/console
+
+Console discovers this package at runtime through its `EmojiCatalogue` contract. Console never requires
+emojis; emojis ships the adapter, `Laravel\ConsoleEmojiCatalogue`, and console finds it by name. Once both are
+installed:
+
+- `Console::emoji()` and every console widget resolve any shortcode in the catalogue;
+- `ConsoleUIFormatter::message()` and `icon()` do the same (console 0.1.4 and later), resolving when the string
+  is rendered so a later `capabilities()` call still applies;
+- console's `DisplayWidth` measures emoji sequences exactly as `->width()` does here.
+
+`tests/Feature/ConsoleCatalogueTest.php` pins each of these against the real classes.
+
 ## Width and truncation
 
 Terminals give an emoji sequence two columns, but `mb_strwidth()` counts code points: the family emoji

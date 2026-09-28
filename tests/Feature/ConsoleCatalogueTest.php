@@ -5,9 +5,11 @@ declare(strict_types=1);
 use Simtabi\Laranail\Emojis\Core\Emojis;
 use Simtabi\Laranail\Emojis\Core\Enums\Mode;
 use Simtabi\Laranail\Console\Tools\Support\Emoji;
+use Simtabi\Laranail\Console\Tools\Support\Capabilities;
 use Simtabi\Laranail\Console\Tools\Support\DisplayWidth;
 use Simtabi\Laranail\Console\Tools\Support\EmojisBridge;
 use Simtabi\Laranail\Emojis\Laravel\ConsoleEmojiCatalogue;
+use Simtabi\Laranail\Console\Tools\Formatting\ConsoleUIFormatter;
 
 /*
  * laranail/console discovers this package's adapter by a class name it cannot import. These tests are
@@ -16,7 +18,10 @@ use Simtabi\Laranail\Emojis\Laravel\ConsoleEmojiCatalogue;
  */
 
 beforeEach(fn () => EmojisBridge::reset());
-afterEach(fn () => EmojisBridge::reset());
+afterEach(function (): void {
+    EmojisBridge::reset();
+    Capabilities::clearFake();
+});
 
 it('is the class console looks for', function (): void {
     expect(EmojisBridge::ADAPTER)->toBe(ConsoleEmojiCatalogue::class)
@@ -51,4 +56,20 @@ it('makes console measure every emoji in the catalogue as this package does', fu
 
     expect($checked)->toBeGreaterThan(3900)
         ->and($disagree)->toBe([]);
+});
+
+it('gives console\'s formatter the whole catalogue', function (): void {
+    // ConsoleUIFormatter::icon() and message() shortcodes arrived in laranail/console 0.1.4. The
+    // floor here stays at ^0.1.2 because nothing in src/ needs them, so prefer-lowest skips this.
+    if (! method_exists(ConsoleUIFormatter::class, 'icon')) {
+        $this->markTestSkipped('laranail/console < 0.1.4 has no ConsoleUIFormatter::icon().');
+    }
+
+    $unicode = ConsoleUIFormatter::create()->capabilities(Capabilities::fake(unicode: true));
+    expect($unicode->icon('unicorn')->message('herd :unicorn:')->render())->toBe('🦄 herd 🦄');
+
+    // Console's own map still wins for its names, and ASCII falls back to the shortcode.
+    $ascii = ConsoleUIFormatter::create()->capabilities(Capabilities::fake(unicode: false));
+    expect(ConsoleUIFormatter::create()->capabilities(Capabilities::fake(unicode: true))->icon('cross')->message('x')->render())->toBe('❌ x')
+        ->and($ascii->icon('unicorn')->message('herd')->render())->toBe(':unicorn: herd');
 });
