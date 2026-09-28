@@ -45,8 +45,12 @@ re-measures and re-hashes an image set that moved, regenerates everything, and r
 refresh stops. It talks to a fixed list of hosts over https without redirects.
 
 `.github/workflows/refresh.yml` runs it every Monday and opens a pull request with the report as its body —
-never a push to `main`, never an automatic merge. Run it by hand with `php .dev/tools/refresh.php` (or
-`--dry-run` to see what is behind), and the cross-check alone with `php .dev/tools/cross-check.php --strict`.
+never a push to `main`, never an automatic merge. It needs no personal token: the pull request is opened with
+the workflow's own token, and because a pull request opened that way starts no other workflows, the workflow
+then starts Tests and Static analysis on the refresh branch itself, so the checks `main` requires report on
+the pull request as usual. The repository must allow Actions to create pull requests (Settings → Actions →
+General → Workflow permissions). Run it by hand with `php .dev/tools/refresh.php` (or `--dry-run` to see
+what is behind), and the cross-check alone with `php .dev/tools/cross-check.php --strict`.
 
 The licences travel with the data in [licences](../licences.md), the one docs page the Composer archive
 includes.
