@@ -45,9 +45,9 @@ re-measures and re-hashes an image set that moved, regenerates everything, and r
 refresh stops. It talks to a fixed list of hosts over https without redirects.
 
 `.github/workflows/refresh.yml` runs it every Monday and opens a pull request with the report as its body —
-never a push to `main`, never an automatic merge. It opens that pull request as the laranail refresh GitHub
-App, with a token minted per run, scoped to this repository's contents and pull requests, and revoked when
-the job ends. An app rather than the workflow's own token, because a pull request opened with that token
+never a push to `main`, never an automatic merge. It opens that pull request as a GitHub App owned by the
+maintainer's account and installed on the org, with a token minted per run, scoped to this repository's
+contents and pull requests, and revoked when the job ends. An app rather than the workflow's own token, because a pull request opened with that token
 starts no workflows and checks run any other way are not attached to it, so `main`'s required checks would
 never report. The app's client ID is the `REFRESH_APP_CLIENT_ID` repository variable and its private key the
 `REFRESH_APP_PRIVATE_KEY` secret. Run the refresh by hand with `php .dev/tools/refresh.php` (or `--dry-run`
