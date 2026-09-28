@@ -25,7 +25,9 @@ composer clear-cache && composer update laranail/emojis
 
 ## Moving to a new Unicode or CLDR version
 
-Unicode publishes a new Emoji version each September; CLDR follows.
+Unicode publishes a new Emoji version each September; CLDR follows. The weekly `Refresh upstream data`
+workflow does the steps below and opens a pull request; review its report (and the dataset diff) like code.
+To do it by hand, `php tools/refresh.php` runs them all, or:
 
 1. Update the URLs and versions in `database/sources/upstream.lock.json`.
 2. `php tools/build-dataset.php --fetch`, then `php tools/build-dataset.php --lock`.

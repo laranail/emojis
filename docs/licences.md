@@ -18,9 +18,12 @@ reason, unlike the rest of `docs/`.
 | iamcal/emoji-data | 16.0.0 | MIT | emoticons, Japanese carrier codes |
 | kaomojikan/kaomoji-data | 60c92ea4e85279ad42ff525e9a40464ebeb1003e | MIT | Japanese kaomoji, tags, readings |
 | Unicode EmojiSources.txt | 18.0 | Unicode License V3 | canonical carrier mappings |
+| Unicode UnicodeData.txt, Blocks.txt | 18.0 | Unicode License V3 | symbol names, categories, blocks |
+| WHATWG HTML named character references | living-standard | CC BY 4.0 | symbol HTML entities |
 
-Image sets are never bundled; image URLs point at the publisher's CDN and carry the publisher's licence
-(see [images](tools/images.md#attribution)).
+Image sets are never bundled in the package. Image URLs point at the publisher's CDN, or at a copy
+`laranail::emojis.images install` downloads into the application; either way the images carry the
+publisher's licence (see [images](tools/images.md#attribution)). The package ships only their SHA-256 hashes.
 
 ## Unicode License V3 (Unicode data files and CLDR)
 

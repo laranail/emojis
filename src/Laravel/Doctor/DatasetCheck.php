@@ -26,7 +26,7 @@ final readonly class DatasetCheck implements DoctorCheck
 
     public function description(): string
     {
-        return 'The emoji catalogue loads, scans and renders, and no locale shard has degraded.';
+        return 'The emoji catalogue loads, scans and renders, the configured image set resolves, and no locale shard has degraded.';
     }
 
     public function run(): DoctorResult
@@ -38,6 +38,12 @@ final readonly class DatasetCheck implements DoctorCheck
             $degraded = $emojis->reporter()->degradations();
         } catch (Throwable $e) {
             return DoctorResult::fail('The emoji dataset could not be loaded: ' . $e->getMessage());
+        }
+
+        try {
+            $emojis->images()->get($emojis->options()->imageSet);
+        } catch (Throwable $e) {
+            return DoctorResult::fail('The configured image set does not resolve: ' . $e->getMessage(), ['set' => $emojis->options()->imageSet]);
         }
 
         if ($roundTrip !== ':wave_tone3: :rocket:') {

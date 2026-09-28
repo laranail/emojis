@@ -90,8 +90,11 @@ final readonly class Sanitizer
 
         $limit = $this->emojis->options()->maxInputBytes;
 
+        // Only the first $limit bytes are inspected, so the rest is cut — and the cut is recorded, because
+        // text the rules never saw must not read as safe.
         if (strlen($text) > $limit) {
             $text = mb_strcut($text, 0, $limit, 'UTF-8');
+            $counts[Threat::Oversized->value] = 1;
         }
 
         $text = $this->secure($text, $counts);
@@ -128,36 +131,43 @@ final readonly class Sanitizer
         ));
         $out = '';
         $cursor = 0;
-        $previousEnd = null;
+        // Carried across runs: the last character written, and how many joiners in a row lead up to it. A
+        // chain of known emoji joined by ZWJ is a run of single joiners between protected tokens, so the
+        // "four in a row" cap only holds if the count survives the token in between.
+        $state = ['previous' => '', 'joins' => 0];
+        $afterEmoji = false;
 
         foreach ($protected as $token) {
-            $out .= $this->secureRun(substr($text, $cursor, $token->offset - $cursor), $counts, $out, $previousEnd !== null, true);
-            $out .= $token->text($text);
+            $out .= $this->secureRun(substr($text, $cursor, $token->offset - $cursor), $counts, $state, $afterEmoji, true);
+            $emoji = $token->text($text);
+            $out .= $emoji;
+            $state['previous'] = mb_substr($emoji, -1, 1, 'UTF-8');
             $cursor = $token->end();
-            $previousEnd = $cursor;
+            $afterEmoji = true;
         }
 
-        return $out . $this->secureRun(substr($text, $cursor), $counts, $out, $previousEnd !== null, false);
+        return $out . $this->secureRun(substr($text, $cursor), $counts, $state, $afterEmoji, false);
     }
 
     /**
      * Applies the character rules to a run of text that contains no recognised emoji sequence.
      *
      * @param array<string, int> $counts
-     * @param string $before the output so far, for context across token boundaries
+     * @param array{previous: string, joins: int} $state the last character written and the joiners in a row
+     *                                                   before it, carried across token boundaries
      * @param bool $afterEmoji the run starts right after a recognised emoji
      * @param bool $beforeEmoji the run ends right before a recognised emoji
      */
-    private function secureRun(string $run, array &$counts, string $before, bool $afterEmoji, bool $beforeEmoji): string
+    private function secureRun(string $run, array &$counts, array &$state, bool $afterEmoji, bool $beforeEmoji): string
     {
         if ($run === '') {
             return '';
         }
 
         $chars = mb_str_split($run, 1, 'UTF-8');
-        $out = [];
+        $out = '';
+        $first = true;
         $marks = 0;
-        $joins = 0;
         $variation = false;
         $count = static function (Threat $threat) use (&$counts): void {
             $counts[$threat->value] = ($counts[$threat->value] ?? 0) + 1;
@@ -165,14 +175,14 @@ final readonly class Sanitizer
 
         foreach ($chars as $index => $char) {
             $cp = mb_ord($char, 'UTF-8');
-            $previous = $out === [] ? mb_substr($before, -1, 1, 'UTF-8') : $out[array_key_last($out)];
+            $previous = $state['previous'];
             $next = $chars[$index + 1] ?? '';
 
             $threat = match (true) {
-                ($cp < 0x20 && ! in_array($cp, [0x09, 0x0A, 0x0D], true)) || ($cp >= 0x7F && $cp <= 0x9F)                             => Threat::Control,
-                $this->removeBidi && (($cp >= 0x202A && $cp <= 0x202E) || ($cp >= 0x2066 && $cp <= 0x2069))                           => Threat::Bidi,
-                in_array($cp, [0x200B, 0x2060, 0x2061, 0x2062, 0x2063, 0x2064, 0xFEFF, 0x180E, 0x115F, 0x1160, 0x3164, 0xFFA0], true) => Threat::Invisible,
-                $cp >= 0xE0000 && $cp <= 0xE007F                                                                                      => Threat::Tag,
+                ($cp < 0x20 && ! in_array($cp, [0x09, 0x0A, 0x0D], true)) || ($cp >= 0x7F && $cp <= 0x9F) => Threat::Control,
+                $this->removeBidi && $this->isBidi($cp)                                                   => Threat::Bidi,
+                $this->isInvisible($cp)                                                                   => Threat::Invisible,
+                $cp >= 0xE0000 && $cp <= 0xE007F                                                          => Threat::Tag,
                 // At most one selector, and only after a character Unicode defines that selector for: VS15/16
                 // after an emoji-capable character, VS1–14 after a standardized-variant base, VS17–256 after a
                 // CJK ideograph. Anything else is payload — one hidden byte per visible character adds up.
@@ -180,7 +190,7 @@ final readonly class Sanitizer
                 // Between letters (Indic, Persian) or between two emoji (a vendor sequence such as 🐱‍👤, or one
                 // newer than the dataset) a joiner is meaningful, up to four joins in a row — the longest RGI
                 // sequence has three, so more is a renderer-abuse chain. Anywhere else it hides nothing.
-                $cp === 0x200C || $cp === 0x200D                                                                                                 => $this->joins($previous, $next, $out === [] && $afterEmoji, $next === '' && $beforeEmoji, $joins) ? null : Threat::Joiner,
+                $cp === 0x200C || $cp === 0x200D                                                                                                 => $this->joins($previous, $next, $first && $afterEmoji, $next === '' && $beforeEmoji, $state['joins']) ? null : Threat::Joiner,
                 ($cp >= 0x1F3FB && $cp <= 0x1F3FF) || $cp === 0x20E3 || ($cp >= 0x1F1E6 && $cp <= 0x1F1FF) || ($cp >= 0x1F9B0 && $cp <= 0x1F9B3) => Threat::OrphanComponent,
                 // UTS #39: no more than maxCombiningMarks on one character, and never the same mark twice running.
                 preg_match('/^\p{M}$/u', $char) === 1 => $marks >= $this->maxCombiningMarks || $char === $previous ? Threat::Combining : null,
@@ -198,20 +208,41 @@ final readonly class Sanitizer
             } elseif (preg_match('/^\p{M}$/u', $char) === 1) {
                 $marks++;
             } elseif ($cp === 0x200D || $cp === 0x200C) {
-                $joins++;
+                $state['joins']++;
             } else {
                 $marks = 0;
                 $variation = false;
 
                 if (! $this->isPictograph($char)) {
-                    $joins = 0;
+                    $state['joins'] = 0;
                 }
             }
 
-            $out[] = $char;
+            $out .= $char;
+            $state['previous'] = $char;
+            $first = false;
         }
 
-        return implode('', $out);
+        return $out;
+    }
+
+    /** Embeddings, overrides and isolates (Trojan Source), and the implicit direction marks LRM, RLM and ALM. */
+    private function isBidi(int $cp): bool
+    {
+        return ($cp >= 0x202A && $cp <= 0x202E) || ($cp >= 0x2066 && $cp <= 0x2069) || $cp === 0x200E || $cp === 0x200F || $cp === 0x061C;
+    }
+
+    /**
+     * Characters that render as nothing (or as blank space indistinguishable from a space) and so can hide
+     * content: zero-width spaces and invisible operators, the soft hyphen, the combining grapheme joiner,
+     * line and paragraph separators, the braille blank, interlinear annotation controls, musical formatting
+     * controls, Khmer inherent vowels and the Hangul fillers.
+     */
+    private function isInvisible(int $cp): bool
+    {
+        return in_array($cp, [0x00AD, 0x034F, 0x115F, 0x1160, 0x17B4, 0x17B5, 0x180E, 0x200B, 0x2028, 0x2029, 0x2060, 0x2061, 0x2062, 0x2063, 0x2064, 0x2800, 0x3164, 0xFEFF, 0xFFA0], true)
+            || ($cp >= 0xFFF9 && $cp <= 0xFFFB)
+            || ($cp >= 0x1D173 && $cp <= 0x1D17A);
     }
 
     /** @param array<string, int> $counts */

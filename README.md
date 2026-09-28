@@ -8,8 +8,8 @@
 The version badge reads the GitHub tag: the family resolves through VCS repositories, not Packagist, so there
 is no registry listing to show.
 
-> Every Unicode emoji as a fluent, typed PHP catalogue — render and convert between emoji, text, ASCII,
-> emoticon, shortcode, image and escaped forms, for web and CLI, with a Laravel layer.
+> Every Unicode emoji, and 7,000 special characters, as a fluent, typed PHP catalogue — render and convert
+> between emoji, text, ASCII, emoticon, shortcode, image and escaped forms, for web and CLI, with a Laravel layer.
 
 PHP `^8.4.1 || ^8.5`. The core runs without booting Laravel; the Laravel layer targets Laravel `^13.0`.
 
@@ -40,7 +40,8 @@ Hosted at <https://opensource.simtabi.com/documentation/laranail/emojis/>.
 - [Catalogue and lookups](docs/tools/catalogue.md) — `Emojis`, `Emoji`, `EmojiId`, flags, skin tones
 - [Querying and search](docs/tools/querying.md) — `Query`, ranked localized search
 - [Text conversion](docs/tools/conversion.md) — `TextConverter`, every option and inspection method
-- [Images](docs/tools/images.md) — image sets, fit (padding removal), self-hosting, licences
+- [Images](docs/tools/images.md) — image sets, fit (padding removal), a verified local copy, your own images, SVG sanitising
+- [Symbols](docs/tools/symbols.md) — 7,354 special characters: arrows, currency, maths, letters, hieroglyphs
 - [Styles](docs/tools/styles.md) — the stylesheet: inline, link or `@use` the SCSS; tokens; the Vite build
 - [Terminal output](docs/tools/terminal.md) — `Mode::Auto`, width and truncation
 - [Localisation](docs/tools/localisation.md) — shipped locales and fallback
@@ -49,7 +50,7 @@ Hosted at <https://opensource.simtabi.com/documentation/laranail/emojis/>.
 - [Japanese emoji](docs/tools/japanese.md) — carrier emoji, the Japanese collection, names
 - [Extending](docs/tools/extending.md) — custom emoji, shortcodes, emoticons, image sets, macros
 - [Laravel integration](docs/tools/laravel.md) — facade, helper, Blade, casts, rules, commands
-- [Data sources](docs/tools/data-sources.md) — where every field comes from, and the layout of `database/`
+- [Data sources](docs/tools/data-sources.md) — where every field comes from, what we check against, the weekly refresh
 - [Licences](docs/licences.md) — the third-party data notices
 
 ### Recipes
@@ -62,6 +63,9 @@ Hosted at <https://opensource.simtabi.com/documentation/laranail/emojis/>.
 - [Target older platforms](docs/recipes/target-older-platforms.md)
 - [Fit emoji into UI without padding](docs/recipes/fit-emoji-into-ui.md)
 - [Block hidden prompt injection in user text](docs/recipes/block-hidden-prompt-injection.md)
+- [Use your own emoji images](docs/recipes/use-your-own-emoji-images.md)
+- [Serve emoji images from your own origin](docs/recipes/serve-emoji-images-locally.md)
+- [Build a special-character picker](docs/recipes/build-a-special-character-picker.md)
 
 ## Contributing & security
 

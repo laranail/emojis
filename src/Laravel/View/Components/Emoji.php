@@ -53,7 +53,11 @@ final class Emoji extends Component
         }
 
         $label = htmlspecialchars($emoji->name($this->locale), ENT_QUOTES | ENT_SUBSTITUTE | ENT_HTML5);
-        $body = htmlspecialchars($emoji->render($mode), ENT_QUOTES | ENT_SUBSTITUTE | ENT_HTML5);
+        $rendered = $emoji->render($mode);
+        // HtmlEntity output is already HTML ("&#x1F44B;"); escaping it again would print the reference.
+        $body = $mode === Mode::HtmlEntity && preg_match('/\A(?:&#(?:x[0-9A-Fa-f]{1,6}|[0-9]{1,7});)+\z/', $rendered) === 1
+            ? $rendered
+            : htmlspecialchars($rendered, ENT_QUOTES | ENT_SUBSTITUTE | ENT_HTML5);
 
         return new HtmlString("<span class=\"laranail-emoji\" role=\"img\" aria-label=\"{$label}\">{$body}</span>");
     }

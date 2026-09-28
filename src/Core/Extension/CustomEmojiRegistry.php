@@ -4,11 +4,12 @@ declare(strict_types=1);
 
 namespace Simtabi\Laranail\Emojis\Core\Extension;
 
+use Simtabi\Laranail\Emojis\Core\Image\EmojiImage;
 use Simtabi\Laranail\Emojis\Core\Exceptions\InvalidCustomEmoji;
 
 /**
  * Consumer additions to the catalogue: custom image emoji, extra shortcodes and extra emoticons for
- * existing emoji.
+ * existing emoji, and replacement images for existing emoji.
  *
  * Instance-scoped, never static, so two Emojis instances cannot fight over it. Registration happens at
  * boot; freeze() then makes it read-only. In a long-running worker (Octane, RoadRunner) a registration made
@@ -25,13 +26,26 @@ final class CustomEmojiRegistry
     /** @var array<string, string> emoticon => hexcode */
     private array $emoticons = [];
 
+    /** @var array<string, EmojiImage> hexcode => image, used before any image set */
+    private array $images = [];
+
     private bool $frozen = false;
 
     public function add(CustomEmoji $emoji): self
     {
         $this->guard();
 
-        foreach ([$emoji->name, ...$emoji->aliases] as $code) {
+        $codes = [$emoji->name, ...$emoji->aliases];
+
+        // A second registration under a taken code would silently replace the first, in a flat map, far
+        // from where either was declared.
+        foreach ($codes as $code) {
+            if (isset($this->custom[$code]) || count(array_keys($codes, $code, true)) > 1) {
+                throw InvalidCustomEmoji::duplicate($code);
+            }
+        }
+
+        foreach ($codes as $code) {
             $this->custom[$code] = $emoji;
         }
 
@@ -63,6 +77,19 @@ final class CustomEmojiRegistry
         $this->emoticons[$emoticon] = strtoupper($hexcode);
 
         return $this;
+    }
+
+    public function image(string $hexcode, EmojiImage $image): self
+    {
+        $this->guard();
+        $this->images[strtoupper($hexcode)] = $image;
+
+        return $this;
+    }
+
+    public function imageFor(string $hexcode): ?EmojiImage
+    {
+        return $this->images[$hexcode] ?? null;
     }
 
     public function freeze(): self

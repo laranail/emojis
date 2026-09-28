@@ -292,10 +292,15 @@ foreach (explode("\n", $read('emoji-data')) as $line) {
 isset($props['Extended_Pictographic'], $props['Emoji_Presentation'], $props['Emoji_Modifier_Base']) || $fail('emoji-data.txt is missing expected properties');
 
 $textVs = [];
+$emojiVs = [];
 
 foreach (explode("\n", $read('emoji-variation-sequences')) as $line) {
     if (preg_match('/^([0-9A-F]+) FE0E\s*;/', $line, $m) === 1) {
         $textVs[hexdec($m[1])] = true;
+    }
+
+    if (preg_match('/^([0-9A-F]+) FE0F\s*;/', $line, $m) === 1) {
+        $emojiVs[hexdec($m[1])] = true;
     }
 }
 
@@ -690,6 +695,142 @@ foreach ($overlay('collections')['collections'] as $name => $members) {
 }
 
 // ---------------------------------------------------------------------------------------------------
+// 5d. Symbols: Unicode's non-emoji special characters, grouped by database/sources/curated/symbols.json
+//     from UnicodeData.txt (name, general category) and Blocks.txt, with the shortest WHATWG named entity.
+// ---------------------------------------------------------------------------------------------------
+
+$blockRanges = [];
+
+foreach (explode("\n", $read('unicode-blocks')) as $line) {
+    if (preg_match('/^([0-9A-F]+)\.\.([0-9A-F]+);\s*(.+?)\s*$/', $line, $m) === 1) {
+        $blockRanges[] = [hexdec($m[1]), hexdec($m[2]), $m[3]];
+    }
+}
+
+count($blockRanges) > 300 || $fail('Blocks.txt: only ' . count($blockRanges) . ' blocks parsed');
+$blockOf = static function (int $cp) use ($blockRanges): ?string {
+    foreach ($blockRanges as [$from, $to, $name]) {
+        if ($cp >= $from && $cp <= $to) {
+            return $name;
+        }
+    }
+
+    return null;
+};
+
+$entityOf = [];
+
+foreach ($json('whatwg-entities') as $entity => $spec) {
+    if (! str_ends_with($entity, ';') || count($spec['codepoints']) !== 1) {
+        continue;
+    }
+
+    $cp = $spec['codepoints'][0];
+    $current = $entityOf[$cp] ?? null;
+
+    if ($current === null || strlen($entity) < strlen($current) || (strlen($entity) === strlen($current) && strcmp($entity, $current) < 0)) {
+        $entityOf[$cp] = $entity;
+    }
+}
+
+count($entityOf) > 1400 || $fail('entities.json: only ' . count($entityOf) . ' single-code-point entities');
+
+$symbolRules = $overlay('symbols');
+$excluded = $symbolRules['exclude_categories'];
+$ucd = [];
+
+foreach (explode("\n", $read('unicode-data')) as $line) {
+    $f = explode(';', $line);
+
+    // Ranges (<CJK Ideograph, First>) and <control> names are never symbols we list.
+    if (count($f) < 3 || str_starts_with($f[1], '<')) {
+        continue;
+    }
+
+    $ucd[hexdec($f[0])] = [$f[1], $f[2]];
+}
+
+// Ideographs are named by rule, not listed (UAX #44 §4.8); only the hand-picked `extra` entries need it.
+$ideograph = static fn (int $cp): ?array => ($cp >= 0x4E00 && $cp <= 0x9FFF) || ($cp >= 0x3400 && $cp <= 0x4DBF) ? [sprintf('CJK UNIFIED IDEOGRAPH-%04X', $cp), 'Lo'] : null;
+
+count($ucd) > 30000 || $fail('UnicodeData.txt: only ' . count($ucd) . ' named code points parsed');
+
+$symbolRecords = [];
+$symbolGroups = [];
+$blocksUsed = [];
+
+foreach ($symbolRules['groups'] as $group => $rules) {
+    $members = [];
+
+    foreach ($rules as $rule) {
+        if (isset($rule['extra'])) {
+            foreach ($rule['extra'] as $entry) {
+                [$hex, $name] = array_pad(explode('=', $entry, 2), 2, null);
+                $cp = hexdec($hex);
+                $ucd[$cp] ??= ($name !== null ? [$name, 'Lo'] : null) ?? $ideograph($cp) ?? $fail("symbols.json: extra {$hex} is not a named code point");
+                $members[$cp] = true;
+            }
+
+            continue;
+        }
+
+        $anyBlock = in_array('*', $rule['blocks'], true);
+
+        foreach ($ucd as $cp => [$name, $category]) {
+            if (in_array($category, $excluded, true)) {
+                continue;
+            }
+
+            $matchesCategory = false;
+
+            foreach ($rule['categories'] as $prefix) {
+                $matchesCategory = $matchesCategory || str_starts_with($category, $prefix);
+            }
+
+            if (! $matchesCategory || (isset($rule['name']) && ! str_contains($name, $rule['name'])) || (isset($rule['exclude_name']) && str_contains($name, $rule['exclude_name']))) {
+                continue;
+            }
+
+            $block = $blockOf($cp) ?? $fail(sprintf('U+%04X has no block', $cp));
+
+            if ((! $anyBlock && ! in_array($block, $rule['blocks'], true)) || in_array($block, $rule['exclude_blocks'] ?? [], true)) {
+                continue;
+            }
+
+            $members[$cp] = true;
+        }
+    }
+
+    count($members) >= 20 || $fail("symbols.json: group {$group} matched only " . count($members) . ' characters');
+    ksort($members);
+
+    foreach (array_keys($members) as $cp) {
+        $hex = sprintf('%04X', $cp);
+        $block = (string) $blockOf($cp);
+        $blocksUsed[$block] ??= count($blocksUsed);
+        $symbolRecords[$hex] ??= [strtolower($ucd[$cp][0]), $ucd[$cp][1], $blocksUsed[$block], $entityOf[$cp] ?? null];
+    }
+
+    $symbolGroups[$group] = implode(' ', array_map(static fn (int $cp): string => sprintf('%04X', $cp), array_keys($members)));
+}
+
+$popular = [];
+
+foreach (preg_split('/\s+/u', trim($symbolRules['popular'])) ?: [] as $char) {
+    $cp = mb_ord($char, 'UTF-8');
+    mb_strlen($char, 'UTF-8') === 1 && isset($ucd[$cp]) && ! in_array($ucd[$cp][1], $excluded, true) || $fail("symbols.json: popular entry \"{$char}\" is not one visible, named character");
+    $hex = sprintf('%04X', $cp);
+    $block = (string) $blockOf($cp);
+    $blocksUsed[$block] ??= count($blocksUsed);
+    $symbolRecords[$hex] ??= [strtolower($ucd[$cp][0]), $ucd[$cp][1], $blocksUsed[$block], $entityOf[$cp] ?? null];
+    $popular[] = $hex;
+}
+
+count(array_unique($popular)) === count($popular) || $fail('symbols.json: popular lists a character twice');
+$symbolGroups = ['popular' => implode(' ', $popular)] + $symbolGroups;
+ksort($symbolRecords, SORT_STRING);
+
+// ---------------------------------------------------------------------------------------------------
 // 6. Image-set coverage
 // ---------------------------------------------------------------------------------------------------
 
@@ -805,6 +946,35 @@ foreach ($imageVersions as $set => $lockId) {
     ksort($crops[$set], SORT_STRING);
 }
 
+// 6c. Image hashes, from tools/measure/hash-images.php (database/sources/measured/hashes): what
+//     `laranail::emojis.images install` checks every downloaded file against before writing it.
+// ---------------------------------------------------------------------------------------------------
+
+$imageHashes = [];
+
+foreach ($imageVersions as $set => $lockId) {
+    $file = MEASURED . "/hashes/{$set}.json";
+
+    if (! is_file($file)) {
+        continue;
+    }
+
+    $hashes = json_decode((string) file_get_contents($file), true, flags: JSON_THROW_ON_ERROR);
+    $hashes['version'] === $lock[$lockId]['version'] || $fail("hashes/{$set}.json hashed {$hashes['version']}, but the lock pins {$lock[$lockId]['version']}: re-hash");
+
+    foreach ($hashes['entries'] as $hex => $hash) {
+        $hex = (string) $hex;
+        preg_match('/^[0-9a-f]{32}$/', (string) $hash) === 1 || $fail("hashes/{$set}.json: bad hash for {$hex}");
+
+        if (isset($records[$hex])) {
+            $imageHashes[$set][$hex] = (string) $hash;
+        }
+    }
+
+    count($imageHashes[$set] ?? []) > 2500 || $fail("hashes/{$set}.json covers only " . count($imageHashes[$set] ?? []) . ' catalogue emoji');
+    ksort($imageHashes[$set], SORT_STRING);
+}
+
 // ---------------------------------------------------------------------------------------------------
 // 7. Locales: CLDR names and keywords for base emoji and components
 // ---------------------------------------------------------------------------------------------------
@@ -872,6 +1042,18 @@ foreach ($aliases as $hex => $status) {
     $target = $resolve($hex) ?? $fail("alias {$hex} resolves to no fully-qualified emoji");
     $quality = $status === 'minimally-qualified' ? Q_MINIMALLY : (count(cps($hex)) === 1 ? Q_TEXT_DEFAULT : Q_UNQUALIFIED);
     $addSequence($hex, $quality, $target);
+}
+
+// A default-emoji character followed by VS16 ("⭐️" = 2B50 FE0F) is a standardized variation sequence, so
+// valid, but emoji-test.txt lists only the bare character. Pasted text is full of these; without the alias
+// the scanner matches ⭐ and strands the FE0F as an invisible orphan (strip() and toShortcodes() left it).
+foreach ($records as $hex => $record) {
+    $hex = (string) $hex;
+    $points = cps($hex);
+
+    if (count($points) === 1 && isset($emojiVs[$points[0]]) && ! isset($sequences[charsOf([$points[0], 0xFE0F])])) {
+        $addSequence($hex . '-FE0F', Q_FULLY, $hex);
+    }
 }
 
 // Keycap bases without FE0F ("#⃣") are unqualified but not listed for every base; accept them explicitly.
@@ -951,10 +1133,15 @@ $files = [
     'shortcodes.php'  => PhpEmitter::file(['presets' => $shortcodes, 'index' => $index], $header('Shortcodes per preset (hexcode → codes, primary first) and the merged reverse index (code → hexcode).')),
     'emoticons.php'   => PhpEmitter::file(['map' => $emoticons, 'risky' => array_keys($risky), 'primary' => $primaryEmoticon], $header('ASCII emoticons → hexcode, the opt-in "risky" subset, and each emoji\'s primary emoticon.')),
     'kaomoji.php'     => PhpEmitter::file(['groups' => $kaomojiGroups, 'items' => $kaomoji], $header("Kaomoji and text faces, grouped: googlefonts/emoji-metadata emoticon_ordering.json, then kaomojikan/kaomoji-data\n(groups prefixed ja_, with Japanese tags and kana readings).")),
+    'symbols.php'     => PhpEmitter::file(['fields' => ['name', 'category', 'block', 'entity'], 'blocks' => array_keys($blocksUsed), 'groups' => $symbolGroups, 'symbols' => $symbolRecords], $header("Special characters that are not emoji: Unicode name, general category, block (index into 'blocks') and\nshortest WHATWG named entity, keyed by code point; 'groups' lists members in code point order ('popular' is curated).")),
     'collections.php' => PhpEmitter::file($collections, $header('Curated named collections: name => space-joined hexcodes, in display order.')),
     'carriers.php'    => PhpEmitter::file($carriers, $header("Japanese carrier emoji: per carrier, 'codes' (hexcode -> private-use code point) and 'reads'\n(code point -> hexcode; shared codes read as the first emoji in CLDR order).")),
     'images.php'      => PhpEmitter::file(['bits' => ['twemoji' => IMG_TWEMOJI, 'noto' => IMG_NOTO, 'openmoji' => IMG_OPENMOJI, 'fluent' => IMG_FLUENT], 'versions' => ['twemoji' => $lock['twemoji-listing']['version'], 'noto' => $lock['noto-listing']['version'], 'openmoji' => $lock['openmoji-data']['version'], 'fluent' => $lock['fluent-listing']['version']], 'fluent' => $fluent, 'crops' => $crops], $header('Image-set coverage bits, pinned CDN versions, Fluent folder names, and measured crops ("inset x y size", permille).')),
 ];
+
+foreach ($imageHashes as $set => $hashes) {
+    $files["image-hashes/{$set}.php"] = PhpEmitter::file(['version' => $lock[$imageVersions[$set]]['version'], 'hashes' => $hashes], $header("SHA-256 (first 128 bits) of each {$set} image at the pinned version, keyed by hexcode. Read only by the image installer."));
+}
 
 foreach ($locales as $locale => $data) {
     $files["locales/{$locale}.php"] = PhpEmitter::file($data, $header("CLDR annotations for {$locale}: names (non-en only; en uses emoji-test names) and keywords."));
@@ -973,8 +1160,10 @@ $notice = "# Licences\n\nThe notices for the third-party data in `database/gener
     . "| googlefonts/emoji-metadata | {$lock['googlefonts-ordering']['version']} | Apache License 2.0 | emoticons, kaomoji |\n"
     . "| iamcal/emoji-data | {$lock['iamcal']['version']} | MIT | emoticons, Japanese carrier codes |\n"
     . "| kaomojikan/kaomoji-data | {$lock['kaomojikan']['version']} | MIT | Japanese kaomoji, tags, readings |\n"
-    . "| Unicode EmojiSources.txt | {$lock['emoji-sources']['version']} | Unicode License V3 | canonical carrier mappings |\n\n"
-    . "Image sets are never bundled; image URLs point at the publisher's CDN and carry the publisher's licence\n(see [images](tools/images.md#attribution)).\n";
+    . "| Unicode EmojiSources.txt | {$lock['emoji-sources']['version']} | Unicode License V3 | canonical carrier mappings |\n"
+    . "| Unicode UnicodeData.txt, Blocks.txt | {$lock['unicode-data']['version']} | Unicode License V3 | symbol names, categories, blocks |\n"
+    . "| WHATWG HTML named character references | {$lock['whatwg-entities']['version']} | CC BY 4.0 | symbol HTML entities |\n\n"
+    . "Image sets are never bundled in the package. Image URLs point at the publisher's CDN, or at a copy\n`laranail::emojis.images install` downloads into the application; either way the images carry the\npublisher's licence (see [images](tools/images.md#attribution)). The package ships only their SHA-256 hashes.\n";
 
 foreach (['unicode-license' => 'Unicode License V3 (Unicode data files and CLDR)', 'emojibase-license' => 'emojibase-data (MIT)', 'gemoji-license' => 'github/gemoji (MIT)', 'googlefonts-license' => 'googlefonts/emoji-metadata (Apache License 2.0)', 'iamcal-license' => 'iamcal/emoji-data (MIT)', 'kaomojikan-license' => 'kaomojikan/kaomoji-data (MIT)'] as $id => $title) {
     $notice .= "\n## {$title}\n\n```text\n" . rtrim(str_replace("\r\n", "\n", $read($id))) . "\n```\n";

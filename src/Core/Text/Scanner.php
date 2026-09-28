@@ -112,6 +112,14 @@ final class Scanner
         $found = [];
         $sequences = $this->data->sequences();
 
+        // One pass over both lists. Candidates arrive in offset order and do not overlap, so their ends rise
+        // too; every known token starting before the current candidate ends is folded into $reach (the
+        // furthest end seen), and the candidate overlaps a known token exactly when $reach passes its start.
+        usort($known, static fn (Token $a, Token $b): int => $a->offset <=> $b->offset);
+        $next = 0;
+        $total = count($known);
+        $reach = -1;
+
         foreach ($matches[0] as [$match, $offset]) {
             $sequence = $sequences[$match] ?? null;
 
@@ -121,10 +129,13 @@ final class Scanner
 
             $candidate = new Token($offset, strlen($match), Mode::Unicode);
 
-            foreach ($known as $token) {
-                if ($candidate->offset < $token->end() && $token->offset < $candidate->end()) {
-                    continue 2;
-                }
+            while ($next < $total && $known[$next]->offset < $candidate->end()) {
+                $reach = max($reach, $known[$next]->end());
+                $next++;
+            }
+
+            if ($reach > $candidate->offset) {
+                continue;
             }
 
             $found[] = $candidate;

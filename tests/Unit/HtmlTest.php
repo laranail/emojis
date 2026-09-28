@@ -6,6 +6,7 @@ use Simtabi\Laranail\Emojis\Core\Emoji;
 use Simtabi\Laranail\Emojis\Core\Emojis;
 use Simtabi\Laranail\Emojis\Core\Enums\Mode;
 use Simtabi\Laranail\Emojis\Core\Contracts\ImageSet;
+use Simtabi\Laranail\Emojis\Core\Exceptions\InvalidImage;
 use Simtabi\Laranail\Emojis\Core\Exceptions\InvalidCustomEmoji;
 use Simtabi\Laranail\Emojis\Core\Render\ImageSets\TemplateImageSet;
 
@@ -80,7 +81,7 @@ it('renders custom emoji and refuses unsafe URLs', function (): void {
         ->and($emojis->text('hi :laravel:')->toEmoji())->toBe('hi :laravel:');
 
     $emojis->addCustom('evil', 'javascript:alert(1)');
-})->throws(InvalidCustomEmoji::class);
+})->throws(InvalidImage::class);
 
 it('refuses a custom name that shadows a Unicode shortcode', function (): void {
     Emojis::create()->addCustom('rocket', 'https://example.com/r.svg');

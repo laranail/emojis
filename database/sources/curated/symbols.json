@@ -1,0 +1,253 @@
+{
+    "about": "Our own grouping of Unicode's non-emoji special characters, built from UnicodeData.txt and Blocks.txt by tools/build-dataset.php. A character joins a group when its block is listed and its general category starts with one of the listed prefixes; `name` narrows by name. Controls, format and invisible characters, private use, surrogates, unassigned code points, separators and standalone combining marks are never included — they cannot be seen, and several are the raw material of text-smuggling attacks. `popular` is a hand-picked list. A rule may instead list `extra` code points (hex) to add by hand — the CJK ideographs and Hangul syllable used as currency signs, which Unicode names by rule rather than listing (`HEX=NAME` supplies the name).",
+    "exclude_categories": [
+        "Cc",
+        "Cf",
+        "Co",
+        "Cs",
+        "Cn",
+        "Zs",
+        "Zl",
+        "Zp",
+        "Mn",
+        "Mc",
+        "Me"
+    ],
+    "groups": {
+        "arrows": [
+            {
+                "blocks": [
+                    "Arrows",
+                    "Supplemental Arrows-A",
+                    "Supplemental Arrows-B",
+                    "Supplemental Arrows-C"
+                ],
+                "categories": [
+                    "S"
+                ]
+            },
+            {
+                "blocks": [
+                    "Miscellaneous Symbols and Arrows",
+                    "Dingbats",
+                    "Miscellaneous Technical"
+                ],
+                "categories": [
+                    "S"
+                ],
+                "name": "ARROW"
+            }
+        ],
+        "currency": [
+            {
+                "blocks": [
+                    "*"
+                ],
+                "categories": [
+                    "Sc"
+                ]
+            },
+            {
+                "extra": [
+                    "5143",
+                    "5186",
+                    "5706",
+                    "570E",
+                    "5713",
+                    "3350",
+                    "571C",
+                    "C6D0=HANGUL SYLLABLE WON"
+                ]
+            }
+        ],
+        "math": [
+            {
+                "blocks": [
+                    "Mathematical Operators",
+                    "Supplemental Mathematical Operators",
+                    "Miscellaneous Mathematical Symbols-A",
+                    "Miscellaneous Mathematical Symbols-B",
+                    "Letterlike Symbols",
+                    "Latin-1 Supplement",
+                    "Basic Latin",
+                    "Miscellaneous Technical",
+                    "Geometric Shapes"
+                ],
+                "categories": [
+                    "Sm"
+                ]
+            },
+            {
+                "blocks": [
+                    "Superscripts and Subscripts"
+                ],
+                "categories": [
+                    "S",
+                    "P",
+                    "L",
+                    "N"
+                ]
+            }
+        ],
+        "numbers": [
+            {
+                "blocks": [
+                    "*"
+                ],
+                "categories": [
+                    "No",
+                    "Nl"
+                ],
+                "exclude_blocks": [
+                    "Egyptian Hieroglyphs",
+                    "Egyptian Hieroglyphs Extended-A",
+                    "Kharoshthi",
+                    "Old Italic",
+                    "Counting Rod Numerals",
+                    "Aegean Numbers",
+                    "Ancient Greek Numbers",
+                    "Cuneiform Numbers and Punctuation",
+                    "Rumi Numeral Symbols",
+                    "Indic Siyaq Numbers",
+                    "Ottoman Siyaq Numbers",
+                    "Coptic Epact Numbers",
+                    "Mayan Numerals",
+                    "Kaktovik Numerals",
+                    "Tamil Supplement",
+                    "Sinhala Archaic Numbers"
+                ]
+            },
+            {
+                "blocks": [
+                    "Mathematical Alphanumeric Symbols",
+                    "Halfwidth and Fullwidth Forms"
+                ],
+                "categories": [
+                    "Nd"
+                ]
+            },
+            {
+                "blocks": [
+                    "Basic Latin"
+                ],
+                "categories": [
+                    "Nd"
+                ]
+            },
+            {
+                "blocks": [
+                    "Number Forms"
+                ],
+                "categories": [
+                    "L",
+                    "N"
+                ]
+            }
+        ],
+        "punctuation": [
+            {
+                "blocks": [
+                    "Basic Latin",
+                    "Latin-1 Supplement",
+                    "Greek and Coptic",
+                    "General Punctuation",
+                    "Supplemental Punctuation",
+                    "CJK Symbols and Punctuation",
+                    "Halfwidth and Fullwidth Forms"
+                ],
+                "categories": [
+                    "P"
+                ]
+            },
+            {
+                "blocks": [
+                    "Basic Latin"
+                ],
+                "categories": [
+                    "Sk"
+                ]
+            },
+            {
+                "blocks": [
+                    "General Punctuation"
+                ],
+                "categories": [
+                    "Sm"
+                ]
+            }
+        ],
+        "letters": [
+            {
+                "blocks": [
+                    "Basic Latin",
+                    "Latin-1 Supplement",
+                    "Latin Extended-A",
+                    "Latin Extended-B",
+                    "IPA Extensions",
+                    "Greek and Coptic",
+                    "Cyrillic",
+                    "Arabic",
+                    "Hebrew",
+                    "Latin Extended-D"
+                ],
+                "categories": [
+                    "L"
+                ]
+            }
+        ],
+        "symbols": [
+            {
+                "blocks": [
+                    "Latin-1 Supplement",
+                    "Spacing Modifier Letters",
+                    "Letterlike Symbols",
+                    "Miscellaneous Technical",
+                    "Control Pictures",
+                    "Enclosed Alphanumerics",
+                    "Box Drawing",
+                    "Block Elements",
+                    "Geometric Shapes",
+                    "Miscellaneous Symbols",
+                    "Dingbats",
+                    "Miscellaneous Symbols and Arrows",
+                    "Geometric Shapes Extended",
+                    "Musical Symbols",
+                    "Playing Cards",
+                    "Mahjong Tiles",
+                    "Domino Tiles",
+                    "Chess Symbols",
+                    "Enclosed Alphanumeric Supplement",
+                    "Symbols for Legacy Computing"
+                ],
+                "categories": [
+                    "So",
+                    "Sk"
+                ],
+                "exclude_name": "ARROW"
+            },
+            {
+                "blocks": [
+                    "Letterlike Symbols",
+                    "Dingbats",
+                    "Miscellaneous Symbols"
+                ],
+                "categories": [
+                    "L",
+                    "P",
+                    "Sm"
+                ]
+            }
+        ],
+        "hieroglyphs": [
+            {
+                "blocks": [
+                    "Egyptian Hieroglyphs"
+                ],
+                "categories": [
+                    "Lo"
+                ]
+            }
+        ]
+    },
+    "popular": "© ® ™ ° ± × ÷ ≠ ≈ ≤ ≥ ∞ √ ∑ ∆ π µ Ω ½ ¼ ¾ ² ³ ¹ ‰ € £ ¥ ¢ ₹ ₿ § ¶ † ‡ • · … – — ‘ ’ “ ” « » ‹ › ¡ ¿ ← ↑ → ↓ ↔ ⇒ ⇔ ↩ ✓ ✔ ✗ ✘ ★ ☆ ♥ ♦ ♣ ♠ ♪ ♫ ☀ ☁ ☂ ☎ ✉ ✂ ⌘ ⌥ ⇧ ⏎ ⌫ ∅ ∈ ∉ ∩ ∪ ⊂ ⊃ ∀ ∃ ¬ ∧ ∨ ℃ ℉ № ℗ ℠ ♂ ♀ ⚠ ☑ ☐"
+}

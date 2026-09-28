@@ -12,6 +12,9 @@ A framework-free core that owns the catalogue, the scanner and every conversion,
 | `src/Core/Text/` | `Scanner`, `TextConverter`, `HtmlSegments`, `Token`, `EmojiMatch`. |
 | `src/Core/Render/` | `Renderer` (one emoji into one mode, with degradation) and the image sets. |
 | `src/Core/Locale/`, `Terminal/`, `Extension/` | CLDR names, terminal detection, custom emoji. |
+| `src/Core/Image/` | `EmojiImage` and its checks, `SvgSanitizer`, `RasterInspector`, and `ImageStore` (the verified local copy of a set). |
+| `src/Core/Symbols/` | The special-character catalogue: `Symbols`, `Symbol`. |
+| `src/Core/Security/` | `Sanitizer`, `EmojiPolicy` and the threat report. |
 | `src/Providers/`, `src/Laravel/`, `src/Facades/`, `src/Console/` | The Laravel shell. |
 | `database/generated/` | The shipped dataset: generated PHP shards and `VERSION` — never edit by hand. |
 | `database/sources/` | Generator inputs, not shipped: `upstream.lock.json`, `curated/` JSON, `measured/` image bounds. |

@@ -229,6 +229,38 @@ final class DatasetStore
         return $crops[$set] ?? [];
     }
 
+    /**
+     * The SHA-256 prefix (128 bits, hex) of each image of a set at its pinned version, keyed by hexcode;
+     * empty when the set has no hash manifest. Loaded only by the image installer.
+     *
+     * @return array<array-key, string>
+     */
+    public function imageHashes(string $set): array
+    {
+        if (preg_match('/^[a-z0-9-]+$/', $set) !== 1 || ! is_file("{$this->directory}/image-hashes/{$set}.php")) {
+            return [];
+        }
+
+        /** @var array<array-key, string> $hashes */
+        $hashes = $this->shard("image-hashes/{$set}", ['version', 'hashes'])['hashes'];
+
+        return $hashes;
+    }
+
+    /**
+     * The symbol catalogue: `fields`, `blocks` (names), `groups` (name => space-joined hex) and `symbols`
+     * (hex => [name, category, block index, entity|null]).
+     *
+     * @return array{fields: list<string>, blocks: list<string>, groups: array<string, string>, symbols: array<array-key, array{0: string, 1: string, 2: int, 3: ?string}>}
+     */
+    public function symbols(): array
+    {
+        /** @var array{fields: list<string>, blocks: list<string>, groups: array<string, string>, symbols: array<array-key, array{0: string, 1: string, 2: int, 3: ?string}>} $shard */
+        $shard = $this->shard('symbols', ['fields', 'blocks', 'groups', 'symbols']);
+
+        return $shard;
+    }
+
     /** @return array<array-key, string> hexcode => Fluent Emoji folder name */
     public function fluentFolders(): array
     {

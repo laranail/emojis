@@ -13,6 +13,59 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/),
   and `message()` shortcodes resolve through this catalogue: names only it knows, console's map winning for its
   own, and the ASCII fallback. It skips on console versions before 0.1.4, which have no such methods, so the
   `^0.1.2` floor stays where it is.
+- **Your own emoji images, safely.** `EmojiImage::fromDataUri()`, `fromBase64()`, `fromBytes()`, `fromFile()`
+  and `fromUrl()` accept PNG, GIF, JPEG, WebP or SVG. Size is checked before decoding, base64 strictly, the
+  type is sniffed from the content and must match any declared type, dimensions come from the header (so a
+  decompression bomb is refused without decoding it), SVG is sanitised, and embedded images are re-encoded.
+  URLs must be `https://` or root-relative and are never fetched. `Emojis::useImage()` replaces an emoji's
+  picture; `Emojis::image()` validates without registering; `EmojiImageRule` validates uploads and strings.
+  Limits under `images.custom`; `extend.images` in config.
+- **SVG sanitiser.** Rebuilds an SVG from an allow-list derived from all 14,631 files of the four pinned sets
+  (14,629 render pixel-identical after sanitising; Noto's rainbow flag and package crash resvg before and
+  after, so could not be compared): no script, event handler, `foreignObject`, `style`,
+  `image`, link, animation, external reference or entity declaration survives. SVG is also only ever rendered
+  inside `<img>`.
+- **A verified local copy of an image set.** `laranail::emojis.images install {set}` downloads Twemoji, Noto,
+  OpenMoji or Fluent into `public/vendor/laranail/emojis/images`, refusing any file whose SHA-256 differs from
+  the one shipped for the pinned version, and sanitising the rest; `verify` detects later changes on disk.
+  `images.source` = `local` serves installed sets from your own origin. Only hashes ship; no images.
+- **Symbols.** `Emojis::symbols()`: 7,354 special characters that are not emoji — arrows, currency, maths,
+  numbers, punctuation, letters, symbols, Egyptian hieroglyphs and a popular list — from Unicode's character
+  database, with names, blocks and WHATWG HTML entities, searchable. Invisible, control, private-use and
+  combining characters are never included.
+- **Weekly refresh.** `tools/refresh.php` moves every source to its newest release, re-locks, re-measures and
+  re-hashes, regenerates, and cross-checks; `.github/workflows/refresh.yml` runs it every Monday and opens a
+  pull request. `tools/cross-check.php` proves the catalogue covers every emoji in the Unicode charts and
+  everything getemoji.com and copychar.cc offer for copying (their images are not licensed for
+  redistribution, and are not used).
+
+### Changed
+
+- **Breaking:** `extend.custom.<name>.url` is renamed `image` (boot names the old key), and a custom emoji's
+  image is an `EmojiImage` (`CustomEmoji::$image`, was `$imageUrl`). A refused image throws `InvalidImage`.
+- **Breaking:** registering a custom emoji under a name or alias that is already taken throws, instead of
+  silently replacing the earlier one.
+- The doctor check now fails when the configured image set does not resolve, as its description said.
+- A strict conversion refused because of a version cap says so.
+
+### Fixed
+
+- `strip()`, `count()`, `length()`, `width()` and `truncate()` were quadratic in the number of emoji: 200 KB
+  took 400 s. Linear now.
+- Sanitising was quadratic in the number of runs between emoji. Linear now.
+- Input over `input.max_bytes` was cut silently and reported clean, so the security rules passed it. It is
+  now reported (`Threat::Oversized`) and fails `NoHiddenCharacters` and `EmojiPolicyRule`.
+- The HTML converter ended a tag at a `>` inside a quoted attribute, and could write into the attribute;
+  `<code/>` and tag-like text inside `<script>`, `<style>` and `<textarea>` confused it.
+- HTML-entity output was escaped twice when written into HTML.
+- The HTML path ignored the configured carrier.
+- The "at most four joiners in a row" limit reset at every emoji.
+- Bidi marks (U+200E, U+200F, U+061C) and further invisible characters (soft hyphen, braille blank,
+  interlinear annotation, musical format controls, and others) were not removed.
+- `AsEmojiText` turned a shortcode the user typed literally into an emoji on read.
+- A default-emoji character followed by VS16 (`⭐️`, as pasted from most sites) was matched without its
+  selector, so `strip()` and `toShortcodes()` left an invisible U+FE0F behind.
+- A custom-emoji URL with a trailing newline, or starting `/\`, passed the URL check.
 
 ### Documentation
 

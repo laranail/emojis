@@ -21,9 +21,12 @@ Emojis::text('Built with :laravel:')->toImages();   // <img … src="https://exa
 Emojis::text('Built with :laravel:')->toEmoji();    // unchanged: no Unicode form
 ```
 
-Names must match `[a-z0-9_+-]+` and must not shadow a Unicode shortcode. URLs must be `https://`,
-root-relative or a `data:image/…;base64` URI; anything else throws. Pass `fallback:` to give text modes a
-Unicode stand-in.
+Names must match `[a-z0-9_+-]+` and must not shadow a Unicode shortcode or another custom emoji. The image is
+an `https://` or root-relative URL, a data URI, or an `EmojiImage` built from base64, bytes or a file, checked
+as described in [images](images.md#your-own-images); anything refused throws `InvalidImage`. Pass
+`fallback:` to give text modes a Unicode stand-in.
+
+To replace the picture of an emoji Unicode does have, use `Emojis::useImage('thumbsup', $image)`.
 
 ## Extra shortcodes and emoticons
 

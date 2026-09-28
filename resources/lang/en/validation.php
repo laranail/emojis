@@ -10,4 +10,5 @@ return [
     'max_emojis'           => 'The :attribute field must not contain more than :max emoji.',
     'no_hidden_characters' => 'The :attribute field contains hidden or invisible characters.',
     'emoji_policy'         => 'The :attribute field contains emoji that are not allowed here.',
+    'emoji_image'          => 'The :attribute field is not an allowed emoji image. :reason',
 ];

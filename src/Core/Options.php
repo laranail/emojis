@@ -7,6 +7,8 @@ namespace Simtabi\Laranail\Emojis\Core;
 use InvalidArgumentException;
 use Simtabi\Laranail\Emojis\Core\Enums\Fit;
 use Simtabi\Laranail\Emojis\Core\Enums\Mode;
+use Simtabi\Laranail\Emojis\Core\Enums\ImageSource;
+use Simtabi\Laranail\Emojis\Core\Image\ImagePolicy;
 use Simtabi\Laranail\Emojis\Core\Security\EmojiPolicy;
 use Simtabi\Laranail\Emojis\Core\Enums\ShortcodePreset;
 
@@ -54,6 +56,8 @@ final readonly class Options
         public int $maxInputBytes = 1_048_576,
         public EmojiPolicy $policy = new EmojiPolicy,
         public Fit $imageFit = Fit::Balanced,
+        public ImagePolicy $imagePolicy = new ImagePolicy,
+        public ImageSource $imageSource = ImageSource::Cdn,
     ) {
         if ($maxInputBytes < 1) {
             throw new InvalidArgumentException('maxInputBytes must be positive.');
@@ -134,6 +138,8 @@ final readonly class Options
             maxInputBytes: is_int($input['max_bytes'] ?? null) ? $input['max_bytes'] : 1_048_576,
             policy: EmojiPolicy::fromArray($group('policy')),
             imageFit: Fit::from($string($images, 'fit', Fit::Balanced->value)),
+            imagePolicy: ImagePolicy::fromArray(self::stringKeyed($images['custom'] ?? null)),
+            imageSource: ImageSource::from($string($images, 'source', ImageSource::Cdn->value)),
         );
     }
 

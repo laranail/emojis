@@ -180,29 +180,16 @@ final readonly class TextConverter implements Stringable
     public function to(Mode $target, ?EscapeFormat $format = null): string
     {
         $target = $target === Mode::Auto ? $this->emojis->resolveAuto() : $target;
-        $settings = $this->settings($format);
 
-        if ($this->isHtml) {
-            $out = '';
-
-            foreach (HtmlSegments::split($this->text) as [$segment, $convertible]) {
-                $out .= $convertible ? $this->convertHtmlText($segment, $target, $settings) : $segment;
-            }
-
-            return $out;
-        }
-
-        return $this->assemble($this->text, $this->tokens(), $target, $settings, escapeText: $target->producesHtml());
+        return $this->convert($target, $format, asHtml: $target->producesHtml());
     }
 
     /** The conversion as HTML-safe markup: plain text is escaped, HTML input is converted in place. */
     public function toHtml(Mode $target = Mode::Image, ?EscapeFormat $format = null): Stringable
     {
-        if ($this->isHtml || $target->producesHtml()) {
-            return $this->emojis->htmlFactory()->make($this->to($target, $format));
-        }
+        $target = $target === Mode::Auto ? $this->emojis->resolveAuto() : $target;
 
-        return $this->emojis->htmlFactory()->make(htmlspecialchars($this->to($target, $format), ENT_QUOTES | ENT_SUBSTITUTE | ENT_HTML5));
+        return $this->emojis->htmlFactory()->make($this->convert($target, $format, asHtml: true));
     }
 
     public function toEmoji(): string
@@ -407,6 +394,17 @@ final readonly class TextConverter implements Stringable
     }
 
     /**
+     * True when a rendered piece is nothing but numeric character references ("&#x1F44B;"), which are
+     * already HTML and mean the same thing in plain text. Escaping them again would print "&amp;#x1F44B;".
+     * Checked on the text rather than assumed from the mode, because a custom emoji or a fallback chain can
+     * put arbitrary text in an HtmlEntity conversion.
+     */
+    private function isCharacterReferences(Mode $target, string $text): bool
+    {
+        return $target === Mode::HtmlEntity && preg_match('/\A(?:&#(?:x[0-9A-Fa-f]{1,6}|[0-9]{1,7});)+\z/', $text) === 1;
+    }
+
+    /**
      * @param array<array-key, Mode> $modes
      *
      * @return list<Mode>
@@ -450,6 +448,27 @@ final readonly class TextConverter implements Stringable
     }
 
     // ---- internals ------------------------------------------------------------------------------
+
+    /**
+     * @param bool $asHtml whether the result is HTML: the text around each emoji is escaped, and each rendered
+     *                     emoji is escaped unless it is already markup
+     */
+    private function convert(Mode $target, ?EscapeFormat $format, bool $asHtml): string
+    {
+        $settings = $this->settings($format);
+
+        if ($this->isHtml) {
+            $out = '';
+
+            foreach (HtmlSegments::split($this->text) as [$segment, $convertible]) {
+                $out .= $convertible ? $this->convertHtmlText($segment, $target, $settings) : $segment;
+            }
+
+            return $out;
+        }
+
+        return $this->assemble($this->text, $this->tokens(), $target, $settings, escapeText: $asHtml);
+    }
 
     /** @return list<Token> */
     private function tokens(): array
@@ -527,7 +546,7 @@ final readonly class TextConverter implements Stringable
             $out .= $escape(substr($text, $cursor, $token->offset - $cursor));
             $piece = $renderer->render($token, $token->text($text), $target, $settings);
             $piece = $this->applyStages($piece, $token);
-            $out .= $piece->html || ! $escapeText ? $piece->text : $escape($piece->text);
+            $out .= $piece->html || ! $escapeText || $this->isCharacterReferences($target, $piece->text) ? $piece->text : $escape($piece->text);
             $cursor = $token->end();
         }
 
@@ -537,7 +556,7 @@ final readonly class TextConverter implements Stringable
     private function convertHtmlText(string $segment, Mode $target, RenderSettings $settings): string
     {
         $decoded = html_entity_decode($segment, ENT_QUOTES | ENT_HTML5, 'UTF-8');
-        $tokens = $this->emojis->scanner()->scan($decoded, new ScanOptions(array_values(array_filter($this->sources, static fn (Mode $m): bool => $m !== Mode::HtmlEntity && $m !== Mode::Image)), $this->riskyEmoticons, $this->textPresentation));
+        $tokens = $this->emojis->scanner()->scan($decoded, new ScanOptions(array_values(array_filter($this->sources, static fn (Mode $m): bool => $m !== Mode::HtmlEntity && $m !== Mode::Image)), $this->riskyEmoticons, $this->textPresentation, $this->carrier));
 
         return $tokens === [] ? $segment : $this->assemble($decoded, $tokens, $target, $settings, escapeText: true);
     }
