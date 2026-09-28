@@ -9,12 +9,13 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/),
 
 ### Fixed
 
-- **The weekly refresh failed on its first run.** It fetched the Noto file listing from GitHub's API with
-  `Accept: application/json`, which returns the same tree minified, under a different SHA-256 than the
-  pretty-printed bytes the lock pinned — so the unchanged-content guard, correctly, refused it. Sources are
-  now fetched exactly as `build-dataset.php` fetches them; only version lookups ask for JSON. The Fluent
-  listing's lock entry had been recorded from a differently formatted download and is re-pinned to the
-  canonical bytes (the generated dataset is byte-identical either way).
+- **The weekly refresh failed on its first run, and would have kept failing at random.** The image-set
+  listings come from APIs (GitHub's git-trees endpoint, jsDelivr's listing endpoint) that do not return
+  stable bytes: the same request for the same commit-pinned tree came back pretty-printed and minified
+  twenty minutes apart, with identical data, so a raw-byte SHA-256 pin failed whenever the format flipped.
+  API JSON is now pinned by a hash of its canonical form (`.dev/tools/lib/SourceHash.php`), which still
+  changes the moment the data does; plain files are hashed as before. The three listing pins were re-locked;
+  the generated dataset is byte-identical.
 - Dependabot now also watches `.dev/tools/measure/package.json`, the image-measuring tool the refresh runs.
 
 ## [0.2.0] - 2026-09-28

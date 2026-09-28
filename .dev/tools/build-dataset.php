@@ -23,6 +23,7 @@ declare(strict_types=1);
  */
 
 require __DIR__ . '/lib/PhpEmitter.php';
+require __DIR__ . '/lib/SourceHash.php';
 
 const ROOT = __DIR__ . '/../..';
 const CACHE = ROOT . '/build/cache/sources';
@@ -66,7 +67,7 @@ if (in_array('--lock', $args, true)) {
     foreach ($lock as $id => $source) {
         $file = CACHE . '/' . $source['path'];
         is_file($file) || $fail("cannot lock {$id}: {$file} is missing");
-        $lock[$id]['sha256'] = hash_file('sha256', $file);
+        $lock[$id]['sha256'] = SourceHash::of($source['url'], $file);
     }
 
     $json = json_decode((string) file_get_contents(LOCK), true, flags: JSON_THROW_ON_ERROR);
@@ -96,7 +97,7 @@ foreach ($lock as $id => $source) {
         $code === 0 || $fail("download of {$id} failed: " . implode(' ', $out));
     }
 
-    $actual = hash_file('sha256', $file);
+    $actual = SourceHash::of($source['url'], $file);
     $actual === $source['sha256'] || $fail("sha256 mismatch for {$id}: expected {$source['sha256']}, got {$actual}");
 }
 
