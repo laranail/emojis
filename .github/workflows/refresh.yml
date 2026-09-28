@@ -19,10 +19,10 @@ jobs:
     name: Refresh and propose
     runs-on: ubuntu-latest
     timeout-minutes: 90
+    # The workflow's own token only reads. The branch and pull request are written with a short-lived token
+    # from the laranail refresh GitHub App (below), which is what lets the pull request start CI.
     permissions:
-      contents: write      # push the refresh branch
-      pull-requests: write # open or update the pull request
-      actions: write       # start Tests and Static analysis on that branch
+      contents: read
     steps:
       - uses: actions/checkout@v7
 
@@ -54,14 +54,22 @@ jobs:
           composer test
           php .dev/tools/cross-check.php --strict
 
-      # Opened with the built-in token, so no personal token has to be created, approved or rotated. A pull
-      # request opened that way triggers no pull_request workflows, so the next step starts the required ones
-      # itself (workflow_dispatch is the one event GITHUB_TOKEN may trigger); their runs report on the branch's
-      # head commit under the same check names, which is what the main ruleset requires.
-      - uses: peter-evans/create-pull-request@5f6978faf089d4d20b00c7766989d076bb2fc7f1 # v8.1.1
-        id: pr
+      # Why an app, not the built-in token: a pull request opened with GITHUB_TOKEN starts no workflows, and
+      # checks run any other way are not attached to the pull request, so the ruleset would never see the
+      # required checks. A GitHub App installation token opens it as the app, CI runs as for any pull request,
+      # and the token is minted per run, scoped to this repository and these two permissions, and revoked when
+      # the job ends. Nothing expires or belongs to a person.
+      - uses: actions/create-github-app-token@v3
+        id: app
         with:
-          token: ${{ github.token }}
+          client-id: ${{ vars.REFRESH_APP_CLIENT_ID }}
+          private-key: ${{ secrets.REFRESH_APP_PRIVATE_KEY }}
+          permission-contents: write
+          permission-pull-requests: write
+
+      - uses: peter-evans/create-pull-request@5f6978faf089d4d20b00c7766989d076bb2fc7f1 # v8.1.1
+        with:
+          token: ${{ steps.app.outputs.token }}
           branch: chore/refresh-upstream-data
           delete-branch: true
           commit-message: Refresh upstream emoji data
@@ -72,13 +80,3 @@ jobs:
             database/**
             docs/licences.md
             src/Core/Enums/**
-
-      - name: Run the required checks on the pull request
-        if: steps.pr.outputs.pull-request-operation == 'created' || steps.pr.outputs.pull-request-operation == 'updated'
-        env:
-          GH_TOKEN: ${{ github.token }}
-          BRANCH: chore/refresh-upstream-data
-        run: |
-          gh workflow run tests.yml --repo "$GITHUB_REPOSITORY" --ref "$BRANCH"
-          gh workflow run static-analysis.yml --repo "$GITHUB_REPOSITORY" --ref "$BRANCH"
-          echo "Started Tests and Static analysis on $BRANCH for #${{ steps.pr.outputs.pull-request-number }}." >> "$GITHUB_STEP_SUMMARY"
