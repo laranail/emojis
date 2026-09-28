@@ -60,12 +60,19 @@ $fail = static function (string $message): never {
     exit(1);
 };
 
-/** GET one URL from an allowed host; GitHub API calls carry GITHUB_TOKEN when set (rate limits). */
-$get = static function (string $url) use ($fail): string {
+/**
+ * GET one URL from an allowed host; GitHub API calls carry GITHUB_TOKEN when set (rate limits).
+ *
+ * Source files are requested exactly as build-dataset.php's curl requests them — no Accept header — because
+ * the bytes are what gets pinned: GitHub's API answers `Accept: application/json` with minified JSON and the
+ * default with pretty-printed JSON, the same data under a different SHA-256. Only version lookups ($json)
+ * ask for JSON.
+ */
+$get = static function (string $url, bool $json = false) use ($fail): string {
     $host = strtolower((string) parse_url($url, PHP_URL_HOST));
     in_array($host, HOSTS, true) && str_starts_with($url, 'https://') || $fail("refusing to fetch from {$host}");
 
-    $headers = ['User-Agent: laranail-emojis-refresh', 'Accept: application/json, text/plain, */*'];
+    $headers = ['User-Agent: laranail-emojis-refresh', 'Accept: ' . ($json ? 'application/json' : '*/*')];
     $token = getenv('GITHUB_TOKEN');
 
     if ($host === 'api.github.com' && is_string($token) && $token !== '') {
@@ -95,7 +102,7 @@ $get = static function (string $url) use ($fail): string {
 };
 
 /** @return array<string, mixed> */
-$getJson = static fn (string $url): array => (array) json_decode($get($url), true, flags: JSON_THROW_ON_ERROR);
+$getJson = static fn (string $url): array => (array) json_decode($get($url, json: true), true, flags: JSON_THROW_ON_ERROR);
 
 $latest = static function (array $how) use ($get, $getJson): string {
     return match ($how[0]) {
@@ -131,6 +138,7 @@ foreach ($changes as $family => [$old, $new, $ids]) {
 }
 
 if ($changes === []) {
+    $report[] = '- every source is at its latest version';
     fwrite(STDOUT, "refresh: every source is at its latest version.\n");
 }
 
