@@ -20,7 +20,7 @@ jobs:
     runs-on: ubuntu-latest
     timeout-minutes: 90
     # The workflow's own token only reads. The branch and pull request are written with a short-lived token
-    # from the laranail refresh GitHub App (below), which is what lets the pull request start CI.
+    # from the maintainer's GitHub App (below), which is what lets the pull request start CI.
     permissions:
       contents: read
     steps:
@@ -58,7 +58,8 @@ jobs:
       # checks run any other way are not attached to the pull request, so the ruleset would never see the
       # required checks. A GitHub App installation token opens it as the app, CI runs as for any pull request,
       # and the token is minted per run, scoped to this repository and these two permissions, and revoked when
-      # the job ends. Nothing expires or belongs to a person.
+      # the job ends. The app belongs to the maintainer's account and is installed on each org that uses it; the
+      # token action finds the installation on this repository's owner, so one app serves every org.
       - uses: actions/create-github-app-token@v3
         id: app
         with:
