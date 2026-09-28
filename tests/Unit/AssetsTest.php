@@ -3,29 +3,59 @@
 declare(strict_types=1);
 
 use Simtabi\Laranail\Emojis\Core\Emojis;
+use Simtabi\Laranail\Emojis\Core\Enums\Mode;
+use Simtabi\Laranail\Emojis\Core\Render\Renderer;
 
-// The committed build must carry every class the SCSS source declares. `npm run assets-check` is the exact
-// comparison and needs Node; this is the check the PHP suite can make on its own.
+// The stylesheet and the markup meet at class names, which nothing type-checks. These tests read both sides
+// — the committed build and what the renderer writes — so a rename on one side fails here, not on a page.
+// `npm run assets-check` separately proves the build matches its SCSS source.
 
-/** @return list<string> */
-function scssClasses(): array
+/** @return list<string> every class selector in the built stylesheet */
+function builtClasses(): array
 {
-    $source = (string) file_get_contents(dirname(__DIR__, 2) . '/resources/assets/styles/emojis.scss');
-    $source = (string) preg_replace('~/\*.*?\*/|//[^\n]*~s', '', $source);
-    preg_match_all('/\.([a-z][\w-]*)/', $source, $matches);
+    preg_match_all('/\.([a-z][\w-]*)/', Emojis::create()->stylesheet(), $matches);
 
     return array_values(array_unique($matches[1]));
 }
 
-it('ships a built stylesheet for every class the SCSS source declares', function (): void {
-    $css = Emojis::create()->stylesheet();
-    $classes = scssClasses();
+/** @return list<string> */
+function classesIn(string $html): array
+{
+    preg_match_all('/\bclass="([^"]*)"/', $html, $matches);
 
-    expect($classes)->toHaveCount(3);
+    return array_values(array_unique(array_merge(...array_map(static fn (string $c): array => preg_split('/\s+/', trim($c)) ?: [], $matches[1]))));
+}
+
+it('defines every class the renderer writes', function (): void {
+    $emojis = Emojis::create();
+    $written = [
+        ...classesIn($emojis->text('😀')->toImages()),                        // fitted <svg>
+        ...classesIn(Emojis::create(['images' => ['fit' => 'none']])->text('😀')->toImages()),            // plain <img>
+        ...explode(' ', Renderer::NATIVE_CLASSES),                             // the Blade component's span
+        'laranail-emoji-box',                                                  // documented for containers
+    ];
+
+    expect($written)->toContain('laranail-emoji', 'laranail-emoji-image', 'laranail-emoji-native');
+
+    foreach (array_unique($written) as $class) {
+        expect(builtClasses())->toContain($class);
+    }
+});
+
+it('defines only prefixed classes, so it cannot restyle anything of the application', function (): void {
+    $classes = builtClasses();
+
+    expect($classes)->toHaveCount(4);
 
     foreach ($classes as $class) {
-        expect(preg_match('/\.' . preg_quote($class, '/') . '(?![\w-])/', $css))->toBe(1, "missing .{$class}");
+        expect($class)->toStartWith('laranail-emoji');
     }
+});
+
+it('adds configured image classes after its own instead of replacing them', function (): void {
+    $html = Emojis::create(['images' => ['class' => 'avatar-emoji', 'fit' => 'none']])->text('😀')->to(Mode::Image);
+
+    expect($html)->toContain('class="laranail-emoji laranail-emoji-image avatar-emoji"');
 });
 
 it('builds into public/assets, one directory per kind, with stable names', function (): void {

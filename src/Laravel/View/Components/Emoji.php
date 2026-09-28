@@ -11,6 +11,7 @@ use Simtabi\Laranail\Emojis\Core\Emojis;
 use Simtabi\Laranail\Emojis\Core\Enums\Fit;
 use Simtabi\Laranail\Emojis\Core\Enums\Mode;
 use Simtabi\Laranail\Emojis\Core\Enums\SkinTone;
+use Simtabi\Laranail\Emojis\Core\Render\Renderer;
 
 /**
  * <x-laranail-emojis::emoji name="wave" />                              👋 (native)
@@ -59,6 +60,6 @@ final class Emoji extends Component
             ? $rendered
             : htmlspecialchars($rendered, ENT_QUOTES | ENT_SUBSTITUTE | ENT_HTML5);
 
-        return new HtmlString("<span class=\"laranail-emoji\" role=\"img\" aria-label=\"{$label}\">{$body}</span>");
+        return new HtmlString('<span class="' . Renderer::NATIVE_CLASSES . "\" role=\"img\" aria-label=\"{$label}\">{$body}</span>");
     }
 }

@@ -14,7 +14,7 @@ it('leaves full-bleed artwork as a plain <img>', function (): void {
 it('crops a small symbol to its artwork with Fit::Tight, as an svg viewBox', function (): void {
     $html = emojis()->text('🔹')->fit(Fit::Tight)->toImages();
 
-    expect($html)->toStartWith('<svg class="emoji" viewBox="205 205 590 590"')
+    expect($html)->toStartWith('<svg class="laranail-emoji laranail-emoji-image" viewBox="205 205 590 590"')
         ->and($html)->toContain('role="img" aria-label="small blue diamond"')
         ->and($html)->toContain('<title>small blue diamond</title>')
         ->and($html)->toContain('<image href="https://cdn.jsdelivr.net/gh/jdecked/twemoji@17.0.3/assets/svg/1f539.svg" width="1000" height="1000"')

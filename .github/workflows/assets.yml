@@ -8,7 +8,7 @@ on:
       - 'public/assets/**'
       - 'package.json'
       - 'vite.config.mjs'
-      - 'tools/assets-check.mjs'
+      - '.dev/tools/assets-check.mjs'
       - '.github/workflows/assets.yml'
   workflow_dispatch:
 

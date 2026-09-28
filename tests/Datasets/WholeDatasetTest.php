@@ -13,7 +13,7 @@ use Simtabi\Laranail\Emojis\Core\Enums\ShortcodePreset;
 /*
  * Sweeps over the whole dataset. Each asserts how many items it inspected against a floor, because a sweep
  * whose loop stops matching reports a clean dataset rather than a broken search. The exact counts are pinned
- * by tools/build-dataset.php against emoji-test.txt's own status footer; the floors here only catch a
+ * by .dev/tools/build-dataset.php against emoji-test.txt's own status footer; the floors here only catch a
  * catalogue that has quietly shrunk or a loop that has quietly emptied.
  */
 const FLOOR_EMOJI = 3900;

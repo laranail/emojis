@@ -6,8 +6,8 @@ declare(strict_types=1);
  * Brings the dataset up to the newest upstream releases. Run weekly by .github/workflows/refresh.yml, which
  * turns the result into a pull request; never pushed to main, never merged without review.
  *
- *   php tools/refresh.php              find newer versions, download, re-lock, rebuild, cross-check
- *   php tools/refresh.php --dry-run    only report which sources have newer versions
+ *   php .dev/tools/refresh.php              find newer versions, download, re-lock, rebuild, cross-check
+ *   php .dev/tools/refresh.php --dry-run    only report which sources have newer versions
  *
  * For every source family it asks the family's own registry for the latest version (Unicode's latest/
  * directory, the npm registry, a GitHub release or the tip of a branch), rewrites the pinned URLs and
@@ -16,8 +16,8 @@ declare(strict_types=1);
  * upstream changed content under an unchanged name and the refresh stops rather than pinning it.
  *
  * When an image set moves, every image of it is downloaded (hash-checked by content, not trusted), its
- * margins are re-measured (tools/measure, needs Node) and its hashes recorded. Then the dataset and enums
- * are regenerated and tools/cross-check.php compares the catalogue with the published lists.
+ * margins are re-measured (.dev/tools/measure, needs Node) and its hashes recorded. Then the dataset and enums
+ * are regenerated and .dev/tools/cross-check.php compares the catalogue with the published lists.
  *
  * Network access is limited to the hosts in HOSTS, over https, without redirects. A summary for the pull
  * request body is written to build/refresh-report.md.
@@ -25,7 +25,7 @@ declare(strict_types=1);
 
 use Simtabi\Laranail\Emojis\Core\Image\HttpsFetcher;
 
-const ROOT = __DIR__ . '/..';
+const ROOT = __DIR__ . '/../..';
 const LOCK = ROOT . '/database/sources/upstream.lock.json';
 const CACHE = ROOT . '/build/cache/sources';
 const REPORT = ROOT . '/build/refresh-report.md';
@@ -192,14 +192,14 @@ $run = static function (string $command) use ($fail): void {
     $status === 0 || $fail("step failed: {$command}");
 };
 
-$run("{$php} " . escapeshellarg(ROOT . '/tools/build-dataset.php'));
+$run("{$php} " . escapeshellarg(ROOT . '/.dev/tools/build-dataset.php'));
 
 // An image set that moved: fetch every file (checked below by measuring and hashing what arrived), then
 // re-measure margins and re-record hashes, and rebuild so crops and hashes match the new version.
 $sets = array_values(array_filter(array_column($changes, 3)));
 
 if ($sets !== []) {
-    $run("{$php} " . escapeshellarg(ROOT . '/tools/measure/image-urls.php') . ' ' . implode(' ', array_map(escapeshellarg(...), $sets)));
+    $run("{$php} " . escapeshellarg(ROOT . '/.dev/tools/measure/image-urls.php') . ' ' . implode(' ', array_map(escapeshellarg(...), $sets)));
     $fetcher = new HttpsFetcher(['cdn.jsdelivr.net']);
 
     foreach ($sets as $set) {
@@ -220,17 +220,17 @@ if ($sets !== []) {
         }
 
         $version = $lock[array_values(array_filter(FAMILIES, static fn (array $f): bool => ($f['images'] ?? null) === $set))[0]['ids'][0]]['version'];
-        $run('node ' . escapeshellarg(ROOT . '/tools/measure/measure-bounds.mjs') . ' ' . implode(' ', array_map(escapeshellarg(...), [$set, ROOT . "/build/cache/images/{$set}.urls", $dir, $version])));
-        $run("{$php} " . escapeshellarg(ROOT . '/tools/measure/hash-images.php') . ' ' . implode(' ', array_map(escapeshellarg(...), [$set, $dir, $version])));
+        $run('node ' . escapeshellarg(ROOT . '/.dev/tools/measure/measure-bounds.mjs') . ' ' . implode(' ', array_map(escapeshellarg(...), [$set, ROOT . "/build/cache/images/{$set}.urls", $dir, $version])));
+        $run("{$php} " . escapeshellarg(ROOT . '/.dev/tools/measure/hash-images.php') . ' ' . implode(' ', array_map(escapeshellarg(...), [$set, $dir, $version])));
         $report[] = "- **{$set}** images re-downloaded, re-measured and re-hashed";
     }
 
-    $run("{$php} " . escapeshellarg(ROOT . '/tools/build-dataset.php'));
+    $run("{$php} " . escapeshellarg(ROOT . '/.dev/tools/build-dataset.php'));
 }
 
-$run("{$php} " . escapeshellarg(ROOT . '/tools/generate-enums.php'));
+$run("{$php} " . escapeshellarg(ROOT . '/.dev/tools/generate-enums.php'));
 
-exec("{$php} " . escapeshellarg(ROOT . '/tools/cross-check.php') . ' 2>&1', $crossCheck, $crossStatus);
+exec("{$php} " . escapeshellarg(ROOT . '/.dev/tools/cross-check.php') . ' 2>&1', $crossCheck, $crossStatus);
 $report[] = "\n## Cross-check\n\n" . implode("\n", $crossCheck);
 
 @mkdir(dirname(REPORT), 0o775, true);

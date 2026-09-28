@@ -63,4 +63,4 @@ jobs:
         run: vendor/bin/pest tests/Unit tests/Datasets --no-coverage
 
       - name: Core without Laravel
-        run: php tools/core-isolation.php
+        run: php .dev/tools/core-isolation.php

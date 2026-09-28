@@ -7,5 +7,5 @@ composer.lock
 .deptrac.cache
 .DS_Store
 /node_modules
-/tools/measure/node_modules
+/.dev/tools/measure/node_modules
 package-lock.json

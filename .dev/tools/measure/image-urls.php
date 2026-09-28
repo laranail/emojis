@@ -7,13 +7,13 @@ declare(strict_types=1);
  * for downloading and measuring (see measure-bounds.mjs). Run after build-dataset.php, since coverage and the
  * pinned versions come from the committed dataset.
  *
- *   php tools/measure/image-urls.php twemoji noto openmoji fluent
+ *   php .dev/tools/measure/image-urls.php twemoji noto openmoji fluent
  */
 
 use Simtabi\Laranail\Emojis\Core\Emojis;
 use Simtabi\Laranail\Emojis\Core\Enums\Fit;
 
-$root = dirname(__DIR__, 2);
+$root = dirname(__DIR__, 3);
 
 require $root . '/vendor/autoload.php';
 

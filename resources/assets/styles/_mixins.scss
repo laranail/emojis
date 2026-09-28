@@ -1,13 +1,8 @@
-@use 'tokens' as *;
+// The class prefix every rule uses. Not a token: the PHP renderer writes these class names into markup, so
+// the two must match (tests/Unit/AssetsTest.php checks that they do).
+$block: 'laranail-emoji';
 
-// The box size, read through the custom property so it stays themable at runtime.
-@function box-size() {
-  @return var(#{$box-size-property}, #{$box-size-default});
-}
-
-// Reset everything a host stylesheet may have put on an inline element that would push emoji apart.
-@mixin flush-inline {
-  display: inline-block;
-  letter-spacing: 0;
-  line-height: 1;
+// A token read through its runtime custom property: var(--laranail-emoji-<name>, <fallback>).
+@function prop($name, $fallback) {
+  @return var(--#{$block}-#{$name}, #{$fallback});
 }

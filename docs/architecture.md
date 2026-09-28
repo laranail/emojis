@@ -21,10 +21,10 @@ A framework-free core that owns the catalogue, the scanner and every conversion,
 | `resources/assets/` | Front-end source: `styles/*.scss` (and `scripts/`), built by Vite. |
 | `public/assets/` | The committed build: `css/emojis.css`. Read by `Emojis::stylesheet()`, published to `public/vendor/laranail/emojis`. |
 | `resources/lang/` | Translations. |
-| `tools/` | The generators, the source lock, and the gates. |
+| `.dev/tools/` | The generators, the source lock, and the gates. |
 
-The boundary is enforced three ways: deptrac statically (`tools/deptrac-guard.php`), a Pest arch test, and
-`tools/core-isolation.php`, which runs the core under an autoloader that refuses every class outside it.
+The boundary is enforced three ways: deptrac statically (`.dev/tools/deptrac-guard.php`), a Pest arch test, and
+`.dev/tools/core-isolation.php`, which runs the core under an autoloader that refuses every class outside it.
 
 ## Why no regex over the emoji set?
 

@@ -5,19 +5,19 @@ declare(strict_types=1);
 /**
  * CI gate: fails when any generated file disagrees with what the generators produce today.
  *
- * Runs tools/build-dataset.php --check (the dataset shards) and tools/generate-enums.php --check (the enums
+ * Runs .dev/tools/build-dataset.php --check (the dataset shards) and .dev/tools/generate-enums.php --check (the enums
  * generated from those shards). Outside CI, a missing source cache is reported as a skip, so a contributor
  * without the upstream files can still lint. In CI the dataset check runs with --fetch, so the gate can
  * never be skipped where it matters: a skip in CI means the gate is silently not running, and is a failure.
  */
-$root = dirname(__DIR__);
+$root = dirname(__DIR__, 2);
 $inCi = getenv('CI') !== false && getenv('CI') !== '' && getenv('CI') !== 'false';
 $php = escapeshellarg(PHP_BINARY);
 $failed = false;
 
 $commands = [
-    'dataset' => $php . ' ' . escapeshellarg($root . '/tools/build-dataset.php') . ' --check' . ($inCi ? ' --fetch' : ''),
-    'enums'   => $php . ' ' . escapeshellarg($root . '/tools/generate-enums.php') . ' --check',
+    'dataset' => $php . ' ' . escapeshellarg($root . '/.dev/tools/build-dataset.php') . ' --check' . ($inCi ? ' --fetch' : ''),
+    'enums'   => $php . ' ' . escapeshellarg($root . '/.dev/tools/generate-enums.php') . ' --check',
 ];
 
 foreach ($commands as $name => $command) {

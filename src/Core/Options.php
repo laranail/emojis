@@ -40,6 +40,7 @@ final readonly class Options
     /**
      * @param array<string, list<Mode>> $degradation target mode value => ordered fallback modes
      * @param array<string, string> $imageBaseUrls image set name => base URL override (self-hosting)
+     * @param string $imageClass extra classes for rendered images, after the package's own `laranail-emoji laranail-emoji-image`
      */
     public function __construct(
         public string $locale = 'en',
@@ -47,7 +48,7 @@ final readonly class Options
         public ShortcodePreset $preset = ShortcodePreset::GitHub,
         public string $imageSet = 'twemoji',
         public array $imageBaseUrls = [],
-        public string $imageClass = 'emoji',
+        public string $imageClass = '',
         public string $nameTemplate = '[{name}]',
         public string $shortcodeOpen = ':',
         public string $shortcodeClose = ':',
@@ -129,7 +130,7 @@ final readonly class Options
             preset: ShortcodePreset::from($string($shortcodes, 'preset', ShortcodePreset::GitHub->value)),
             imageSet: $string($images, 'set', 'twemoji'),
             imageBaseUrls: $baseUrls,
-            imageClass: $string($images, 'class', 'emoji'),
+            imageClass: is_string($images['class'] ?? null) ? trim($images['class']) : '',
             nameTemplate: $string($output, 'name_template', '[{name}]'),
             shortcodeOpen: is_string($delimiters[0] ?? null) ? $delimiters[0] : ':',
             shortcodeClose: is_string($delimiters[1] ?? null) ? $delimiters[1] : ':',

@@ -9,7 +9,7 @@
 /docs/licences.md   -export-ignore
 /database/sources   export-ignore
 /tests              export-ignore
-/tools              export-ignore
+/.dev               export-ignore
 /.editorconfig      export-ignore
 /.gitattributes     export-ignore
 /.gitignore         export-ignore

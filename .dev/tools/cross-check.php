@@ -5,8 +5,8 @@ declare(strict_types=1);
 /**
  * Compares the generated catalogue with lists published elsewhere, and prints a Markdown report.
  *
- *   php tools/cross-check.php            exit 1 when an emoji in Unicode's own charts is missing
- *   php tools/cross-check.php --strict   also exit 1 on a getemoji.com or copychar.cc gap
+ *   php .dev/tools/cross-check.php            exit 1 when an emoji in Unicode's own charts is missing
+ *   php .dev/tools/cross-check.php --strict   also exit 1 on a getemoji.com or copychar.cc gap
  *
  * - unicode.org full-emoji-list and full-emoji-modifiers: every emoji the Unicode Consortium charts must
  *   resolve, fully qualified. This is authoritative, so a miss fails.
@@ -22,7 +22,7 @@ declare(strict_types=1);
 
 use Simtabi\Laranail\Emojis\Core\Emojis;
 
-const ROOT = __DIR__ . '/..';
+const ROOT = __DIR__ . '/../..';
 const HOSTS = ['www.unicode.org', 'getemoji.com', 'copychar.cc'];
 const EXCLUDED = ['Cc', 'Cf', 'Co', 'Cs', 'Cn', 'Zs', 'Zl', 'Zp', 'Mn', 'Mc', 'Me'];
 const COPYCHAR = ['popular', 'arrows', 'currency', 'emoji', 'hieroglyphs', 'letters', 'math', 'numbers', 'punctuation', 'symbols'];

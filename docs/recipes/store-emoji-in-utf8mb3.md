@@ -14,8 +14,10 @@ $user->bio = 'Coffee first ☕🚀';      // stored as "Coffee first :coffee::ro
 $user->bio;                             // "Coffee first ☕🚀"
 ```
 
-The stored form uses `Mode::Ascii`, which is seven-bit for every emoji in the dataset. For a single emoji
-per column, `AsEmoji` stores the hexcode instead. See [Laravel integration](../tools/laravel.md#casts).
+Nothing four-byte is ever stored: each emoji becomes its ASCII code, any other character above U+FFFF
+(an emoji newer than the dataset, a rare ideograph) becomes `:U+1FC00:`, and a `:` or `\` the user typed is
+escaped, so everything reads back exactly as written. For a single emoji per column, `AsEmoji` stores the
+hexcode instead. See [Laravel integration](../tools/laravel.md#casts).
 
 ---
 

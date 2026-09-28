@@ -57,7 +57,7 @@ jobs:
       - name: PHPStan
         run: composer phpstan
 
-      # Through tools/deptrac-guard.php: deptrac exits 0 when it cannot parse a file.
+      # Through .dev/tools/deptrac-guard.php: deptrac exits 0 when it cannot parse a file.
       - name: Architecture boundary
         run: composer deptrac
 

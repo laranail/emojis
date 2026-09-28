@@ -27,6 +27,11 @@ use Simtabi\Laranail\Emojis\Core\Exceptions\UnsupportedConversion;
  */
 final readonly class Renderer
 {
+    /** Must match the class names in resources/assets/styles/emojis.scss; tests/Unit/AssetsTest.php checks both. */
+    public const string IMAGE_CLASSES = 'laranail-emoji laranail-emoji-image';
+
+    public const string NATIVE_CLASSES = 'laranail-emoji laranail-emoji-native';
+
     public function __construct(private Emojis $emojis) {}
 
     public function render(Token $token, string $original, Mode $target, RenderSettings $settings): Piece
@@ -175,7 +180,7 @@ final readonly class Renderer
 
         return sprintf(
             '<svg class="%s" viewBox="%d %d %d %d" width="1em" height="1em" role="img" aria-label="%s" data-laranail-emoji="%s" data-laranail-fit="%s"><title>%s</title><image href="%s" width="1000" height="1000" preserveAspectRatio="none"/></svg>',
-            $e($this->emojis->options()->imageClass),
+            $e($this->imageClasses()),
             $box[0],
             $box[1],
             $box[2],
@@ -299,13 +304,22 @@ final readonly class Renderer
         return $options->shortcodeOpen . $emoji->asciiCode . $options->shortcodeClose;
     }
 
+    /**
+     * The classes on every rendered image: the package's own, which the stylesheet targets, then any extra
+     * from `images.class`. Extra classes add hooks; they never replace the ones the layout depends on.
+     */
+    private function imageClasses(): string
+    {
+        return trim(self::IMAGE_CLASSES . ' ' . $this->emojis->options()->imageClass);
+    }
+
     private function imgTag(string $alt, string $label, string $url, string $key): string
     {
         $e = static fn (string $v): string => htmlspecialchars($v, ENT_QUOTES | ENT_SUBSTITUTE | ENT_HTML5);
 
         return sprintf(
             '<img class="%s" draggable="false" loading="lazy" decoding="async" alt="%s" aria-label="%s" title="%s" src="%s" data-laranail-emoji="%s">',
-            $e($this->emojis->options()->imageClass),
+            $e($this->imageClasses()),
             $e($alt),
             $e($label),
             $e($label),

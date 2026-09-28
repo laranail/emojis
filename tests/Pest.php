@@ -12,7 +12,7 @@ use Simtabi\Laranail\Emojis\Core\Terminal\EnvTerminalProbe;
 |--------------------------------------------------------------------------
 |
 | Only Feature tests boot Laravel. Unit and Datasets tests exercise src/Core with no container, which is the
-| runtime proof that Core stayed framework-free (deptrac and tools/core-isolation.php are the static and
+| runtime proof that Core stayed framework-free (deptrac and .dev/tools/core-isolation.php are the static and
 | autoloader proofs).
 |
 */

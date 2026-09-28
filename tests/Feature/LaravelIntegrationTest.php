@@ -45,7 +45,7 @@ it('returns HtmlString so Blade does not escape images twice', function (): void
 });
 
 it('renders the Blade component accessibly', function (): void {
-    expect(Blade::render('<x-laranail-emojis::emoji name="wave" skin-tone="medium" />'))->toBe('<span class="laranail-emoji" role="img" aria-label="waving hand: medium skin tone">👋🏽</span>')
+    expect(Blade::render('<x-laranail-emojis::emoji name="wave" skin-tone="medium" />'))->toBe('<span class="laranail-emoji laranail-emoji-native" role="img" aria-label="waving hand: medium skin tone">👋🏽</span>')
         ->and(Blade::render('<x-laranail-emojis::emoji name="rocket" mode="image" set="openmoji" />'))->toContain('openmoji@17.0.0/color/svg/1F680.svg');
 });
 

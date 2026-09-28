@@ -10,7 +10,7 @@ declare(strict_types=1);
  * only the Core namespace and psr/log, and throws on any other class — then drives the public API end to end.
  * A Core class that touches the framework fails here with the class it tried to load.
  */
-$root = dirname(__DIR__);
+$root = dirname(__DIR__, 2);
 $loaded = [];
 
 spl_autoload_register(static function (string $class) use ($root, &$loaded): void {

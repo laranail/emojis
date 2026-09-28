@@ -18,7 +18,7 @@ declare(strict_types=1);
  * Fails when: deptrac exits non-zero · any violation is reported · any error is reported ·
  * the output mentions a syntax error · the JSON report cannot be read at all.
  */
-$root = dirname(__DIR__);
+$root = dirname(__DIR__, 2);
 $binary = $root . '/vendor/bin/deptrac';
 
 if (! is_file($binary)) {

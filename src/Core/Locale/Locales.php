@@ -97,7 +97,7 @@ final class Locales
             return $this->keywords($emoji, 'en');
         }
 
-        // Stored joined with " | " (see tools/build-dataset.php) to keep the shards small for opcache and lint.
+        // Stored joined with " | " (see .dev/tools/build-dataset.php) to keep the shards small for opcache and lint.
         return is_string($words) && $words !== '' ? explode(' | ', $words) : [];
     }
 
