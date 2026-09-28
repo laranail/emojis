@@ -49,8 +49,10 @@ never a push to `main`, never an automatic merge. It opens that pull request as 
 maintainer's account and installed on the org, with a token minted per run, scoped to this repository's
 contents and pull requests, and revoked when the job ends. An app rather than the workflow's own token, because a pull request opened with that token
 starts no workflows and checks run any other way are not attached to it, so `main`'s required checks would
-never report. The app's client ID is the `REFRESH_APP_CLIENT_ID` repository variable and its private key the
-`REFRESH_APP_PRIVATE_KEY` secret. Run the refresh by hand with `php .dev/tools/refresh.php` (or `--dry-run`
+never report. The app's client ID is the `REFRESH_APP_CLIENT_ID` variable and its private key the
+`REFRESH_APP_PRIVATE_KEY` secret, both set at the organisation level so every repository can use them; a
+repository-level value of the same name would override them. On the Free plan, organisation secrets do not
+reach private repositories, which need their own copy. Run the refresh by hand with `php .dev/tools/refresh.php` (or `--dry-run`
 to see what is behind), and the cross-check alone with `php .dev/tools/cross-check.php --strict`.
 
 The licences travel with the data in [licences](../licences.md), the one docs page the Composer archive
