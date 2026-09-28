@@ -5,6 +5,18 @@ All notable changes to `laranail/emojis` are documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/), and this project adheres to
 [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [Unreleased]
+
+### Fixed
+
+- **The weekly refresh failed on its first run.** It fetched the Noto file listing from GitHub's API with
+  `Accept: application/json`, which returns the same tree minified, under a different SHA-256 than the
+  pretty-printed bytes the lock pinned — so the unchanged-content guard, correctly, refused it. Sources are
+  now fetched exactly as `build-dataset.php` fetches them; only version lookups ask for JSON. The Fluent
+  listing's lock entry had been recorded from a differently formatted download and is re-pinned to the
+  canonical bytes (the generated dataset is byte-identical either way).
+- Dependabot now also watches `.dev/tools/measure/package.json`, the image-measuring tool the refresh runs.
+
 ## [0.2.0] - 2026-09-28
 
 ### Added

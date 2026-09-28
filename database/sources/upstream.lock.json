@@ -321,7 +321,7 @@
             "path": "images/fluent-tree.json",
             "version": "1ffb34c752ecf5d402f04cfb4b392c77f57c54bc",
             "licence": "listing only",
-            "sha256": "198390dfe7ac36f1df6369164fb42afe432357f0c11097c07a8ea212a03d9846"
+            "sha256": "af4e322aee1d00dfe7f6962e12c2803183671c1c4caebb0972d8abe328994b00"
         },
         "iamcal-license": {
             "url": "https://cdn.jsdelivr.net/npm/emoji-datasource@16.0.0/LICENSE",

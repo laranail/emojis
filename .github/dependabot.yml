@@ -18,7 +18,10 @@ updates:
           - patch
 
   - package-ecosystem: npm
-    directory: /
+    # The Vite build (/) and the image-measuring tool the weekly refresh runs (/.dev/tools/measure).
+    directories:
+      - /
+      - /.dev/tools/measure
     schedule:
       interval: weekly
       day: monday
