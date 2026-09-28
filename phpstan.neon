@@ -11,6 +11,6 @@ parameters:
     excludePaths:
         - src/Core
         - vendor
-        # Generated: tools/build-dataset.php --check asserts these byte for byte.
+        # Generated: .dev/tools/build-dataset.php --check asserts these byte for byte.
         - database
     treatPhpDocTypesAsCertain: false

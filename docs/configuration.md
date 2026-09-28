@@ -17,7 +17,7 @@ Grouped by concern; each group's keys are listed once.
 | `shortcodes.delimiters` | `[':', ':']` | Wrapped around shortcode and ASCII output. |
 | `images.set` | `'twemoji'` | `twemoji`, `noto`, `openmoji`, `fluent`, `joypixels`, or a registered set. Checked at boot. |
 | `images.fit` | `'balanced'` | `balanced`, `tight` or `none` — see [images](tools/images.md#fit). |
-| `images.class` | `'emoji'` | The `class` on every image. |
+| `images.class` | `''` | Extra classes on every image, after the package's own `laranail-emoji laranail-emoji-image`, which the stylesheet targets. |
 | `images.source` | `'cdn'` | `cdn`, or `local` to serve installed sets from `public/vendor/laranail/emojis/images` — see [images](tools/images.md#serving-from-your-own-origin). |
 | `images.base_urls` | `[]` | Per-set base URL, to serve images from your own mirror. |
 | `images.custom.max_bytes` | `262144` | Largest image you supply, decoded. |
@@ -59,6 +59,12 @@ php artisan vendor:publish --tag=laranail::emojis-config --force
   `InvalidCustomEmoji`) for a refused image, and `CustomEmoji::$imageUrl` is now `CustomEmoji::$image`, an
   `EmojiImage`.
 - Registering a custom emoji whose name or alias is already taken throws instead of silently replacing it.
+- Every class is prefixed: images carry `laranail-emoji laranail-emoji-image` (was `emoji`) and the Blade
+  component's span `laranail-emoji laranail-emoji-native` (was `laranail-emoji`). `images.class` now adds
+  classes instead of replacing them, so a published config still holding `'class' => 'emoji'` keeps working
+  and adds `emoji` as an extra hook. Update your own CSS that targeted `.emoji`.
+- `AsEmojiText` writes an escaped format (a typed `:` or `\` is escaped). Rows written by 0.1 read back as
+  before, except that a shortcode touching a letter is now converted too.
 
 ## Environment
 

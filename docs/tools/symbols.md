@@ -50,7 +50,7 @@ A `Symbol` is `JsonSerializable`, so `response()->json(Emojis::symbols()->group(
 
 ## Coverage
 
-`tools/cross-check.php` checks every character copychar.cc lists: each is one of these symbols, an emoji,
+`.dev/tools/cross-check.php` checks every character copychar.cc lists: each is one of these symbols, an emoji,
 or one of the invisible characters excluded above.
 
 ---

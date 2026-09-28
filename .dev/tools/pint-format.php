@@ -22,7 +22,7 @@ declare(strict_types=1);
  */
 function laranail_pint_format(string $contents): string
 {
-    $root = dirname(__DIR__);
+    $root = dirname(__DIR__, 2);
     $pint = $root . '/vendor/bin/pint';
     $config = $root . '/vendor/laranail/package-tools/pint.json';
 

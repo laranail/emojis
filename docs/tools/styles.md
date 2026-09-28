@@ -6,11 +6,18 @@ builds it into `public/assets/css/emojis.css`, and Laravel publishes that file t
 
 ## What it does
 
+Every class carries the `laranail-emoji` prefix, so the stylesheet cannot restyle anything of your
+application's, and none of its rules match an unprefixed name.
+
 | Class | Applies to | Effect |
 |---|---|---|
-| `.emoji` | The `<img>` or fitted `<svg>` the package renders (`images.class`) | Sizes the image to the text, `1.15em` square, on the baseline |
-| `.laranail-emoji` | The native-emoji `<span>` the Blade component renders | Pins the colour-emoji font, the presentation and a `1` line box, so the glyph does not push lines apart |
-| `.laranail-emoji-box` | A container you add: reactions, avatars, pickers | A square of `--laranail-emoji-size` (default `1.5rem`) that the emoji fills edge to edge |
+| `.laranail-emoji` | every emoji the package renders | An inline box with a `1` line box that a flex parent cannot squeeze |
+| `.laranail-emoji-image` | the `<img>` or fitted `<svg>` | Sizes the image to the text, `1.15em` square, on the baseline |
+| `.laranail-emoji-native` | the Blade component's `<span>` around a native emoji | Pins the colour-emoji font and presentation, whose side bearings and tall line box otherwise push text apart |
+| `.laranail-emoji-box` | a container you add: reactions, avatars, pickers | A square the emoji fills edge to edge |
+
+Rendered images carry `class="laranail-emoji laranail-emoji-image"`, followed by anything in `images.class`;
+the Blade component's span carries `class="laranail-emoji laranail-emoji-native"`.
 
 ## Including it
 
@@ -37,13 +44,15 @@ after `composer update` and the published copy keeps up.
 
 ## Theming
 
-Box size is a custom property, so it changes at runtime without a rebuild:
+Every size is a custom property, read with its token as the fallback, so you can change it at runtime —
+on one element, a section, or `:root` — without rebuilding:
 
 ```html
 <span class="laranail-emoji-box" style="--laranail-emoji-size: 2rem">…</span>
+<article style="--laranail-emoji-image-size: 1.3em">…</article>
 ```
 
-Everything else is an SCSS token with `!default`, overridable from your own build:
+To change the fallbacks themselves, override the tokens in your own build:
 
 ```scss
 @use 'vendor/laranail/emojis/resources/assets/styles/tokens' with (
@@ -53,15 +62,18 @@ Everything else is an SCSS token with `!default`, overridable from your own buil
 @use 'vendor/laranail/emojis/resources/assets/styles/emojis';
 ```
 
-| Token | Default | |
-|---|---|---|
-| `$font-stack` | Apple, Segoe UI, Noto, Twemoji Mozilla, … | Native emoji font order |
-| `$image-size` | `1.15em` | Image emoji size in text |
-| `$image-gap` | `0.05em` | Horizontal margin around an image emoji |
-| `$image-baseline` | `-0.2em` | `vertical-align` of an image emoji |
-| `$native-baseline` | `-0.1em` | `vertical-align` of a native emoji |
-| `$box-size-default` | `1.5rem` | `.laranail-emoji-box` size when `--laranail-emoji-size` is unset |
-| `$box-glyph-scale` | `0.86` | Native glyph size inside a box, relative to the box |
+| Token | Custom property | Default | |
+|---|---|---|---|
+| `$image-size` | `--laranail-emoji-image-size` | `1.15em` | Image emoji size in text |
+| `$image-gap` | `--laranail-emoji-image-gap` | `0.05em` | Horizontal margin around an image emoji |
+| `$image-baseline` | `--laranail-emoji-image-baseline` | `-0.2em` | `vertical-align` of an image emoji |
+| `$native-baseline` | `--laranail-emoji-native-baseline` | `-0.1em` | `vertical-align` of a native emoji |
+| `$box-size` | `--laranail-emoji-size` | `1.5rem` | `.laranail-emoji-box` size |
+| `$box-glyph-scale` | `--laranail-emoji-glyph-scale` | `0.86` | Native glyph size inside a box, relative to the box |
+| `$font-stack` | — | Apple, Segoe UI, Noto, Twemoji Mozilla, … | Native emoji font order |
+
+The class names are not tokens: the PHP renderer writes them into markup, and a test checks that every class
+it writes is defined in the stylesheet.
 
 ## Building
 

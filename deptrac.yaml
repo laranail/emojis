@@ -1,4 +1,4 @@
-# The boundary, gated in CI through tools/deptrac-guard.php (deptrac exits 0 when it cannot parse a file, so
+# The boundary, gated in CI through .dev/tools/deptrac-guard.php (deptrac exits 0 when it cannot parse a file, so
 # the guard also fails on parse errors).
 #
 # One rule, absolute: src/Core is framework-free. It may not reference Illuminate, Symfony or any other

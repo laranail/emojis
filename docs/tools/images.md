@@ -48,7 +48,7 @@ Emojis::text('Ship it 🚀')->fit(Fit::Tight)->toImages();
 Fitted output is an inline `<svg>` whose `viewBox` is the crop, wrapping the image:
 
 ```html
-<svg class="emoji" viewBox="95 95 810 810" width="1em" height="1em" role="img" aria-label="grinning face"
+<svg class="laranail-emoji laranail-emoji-image" viewBox="95 95 810 810" width="1em" height="1em" role="img" aria-label="grinning face"
      data-laranail-emoji="1F600" data-laranail-fit="balanced"><title>grinning face</title>
   <image href="https://cdn.jsdelivr.net/npm/openmoji@17.0.0/color/svg/1F600.svg" width="1000" height="1000"/></svg>
 ```
@@ -58,7 +58,7 @@ only has to allow the image host in `img-src`. When a crop would remove nothing 
 is 0), a plain `<img>` is rendered instead. Custom sets are not measured and render as `<img>`, as do two Noto
 images the rasteriser cannot read (🏳️‍🌈 and 📦).
 
-How the crops are made: `tools/measure` rasterises every image with resvg at 512 px and records each
+How the crops are made: `.dev/tools/measure` rasterises every image with resvg at 512 px and records each
 transparent margin, rounded down, in `database/sources/measured/bounds/`; the dataset generator turns those into
 crops. `Balanced` insets every emoji by the set's median border, capped at that emoji's own smallest margin,
 so no crop cuts into artwork and emoji keep their relative sizes. `Tight` is the square around the artwork.
@@ -68,7 +68,7 @@ so no crop cuts into artwork and emoji keep their relative sizes. `Tight` is the
 Include the stylesheet once — `<x-laranail-emojis::styles />` in your layout's `<head>` (it passes Laravel's
 Vite CSP nonce, or `:nonce="$nonce"`), link the published file, or `@use` the SCSS in your own build; see
 [styles](styles.md). It sizes images to the
-text, fixes the tall line box and side bearings of native colour-emoji fonts (`.laranail-emoji`), and adds
+text, fixes the tall line box and side bearings of native colour-emoji fonts (`.laranail-emoji-native`), and adds
 `.laranail-emoji-box` for square containers:
 
 ```html
@@ -78,7 +78,7 @@ text, fixes the tall line box and side bearings of native colour-emoji fonts (`.
 ## Markup
 
 ```html
-<img class="emoji" draggable="false" loading="lazy" decoding="async" alt="👋" aria-label="waving hand"
+<img class="laranail-emoji laranail-emoji-image" draggable="false" loading="lazy" decoding="async" alt="👋" aria-label="waving hand"
      title="waving hand" src="https://cdn.jsdelivr.net/gh/jdecked/twemoji@17.0.3/assets/svg/1f44b.svg"
      data-laranail-emoji="1F44B">
 ```

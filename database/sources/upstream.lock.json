@@ -1,5 +1,5 @@
 {
-    "about": "Pinned upstream inputs for tools/build-dataset.php. Bump a version, run --fetch then --lock, and review the diff of database/generated.",
+    "about": "Pinned upstream inputs for .dev/tools/build-dataset.php. Bump a version, run --fetch then --lock, and review the diff of database/generated.",
     "sources": {
         "emoji-test": {
             "url": "https://www.unicode.org/Public/18.0.0/emoji/emoji-test.txt",

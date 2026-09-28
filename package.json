@@ -10,7 +10,7 @@
   "scripts": {
     "build": "vite build",
     "watch": "vite build --watch",
-    "assets-check": "node tools/assets-check.mjs"
+    "assets-check": "node .dev/tools/assets-check.mjs"
   },
   "devDependencies": {
     "sass": "^1.105",

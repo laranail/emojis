@@ -38,15 +38,15 @@ that can be installed locally.
 
 ## Keeping it current
 
-`tools/refresh.php` moves every source family to its newest release: it asks Unicode's `latest/` directory,
+`.dev/tools/refresh.php` moves every source family to its newest release: it asks Unicode's `latest/` directory,
 the npm registry and GitHub for the current version, rewrites the lock, downloads and re-hashes the files,
 re-measures and re-hashes an image set that moved, regenerates everything, and runs
-`tools/cross-check.php`. A file whose version did not change must still match its locked hash, or the
+`.dev/tools/cross-check.php`. A file whose version did not change must still match its locked hash, or the
 refresh stops. It talks to a fixed list of hosts over https without redirects.
 
 `.github/workflows/refresh.yml` runs it every Monday and opens a pull request with the report as its body —
-never a push to `main`, never an automatic merge. Run it by hand with `php tools/refresh.php` (or
-`--dry-run` to see what is behind), and the cross-check alone with `php tools/cross-check.php --strict`.
+never a push to `main`, never an automatic merge. Run it by hand with `php .dev/tools/refresh.php` (or
+`--dry-run` to see what is behind), and the cross-check alone with `php .dev/tools/cross-check.php --strict`.
 
 The licences travel with the data in [licences](../licences.md), the one docs page the Composer archive
 includes.
@@ -55,7 +55,7 @@ includes.
 
 ```
 database/
-├── generated/                 the shipped dataset — written by tools/build-dataset.php, never edited
+├── generated/                 the shipped dataset — written by .dev/tools/build-dataset.php, never edited
 │   ├── emojis.php  scanner.php  shortcodes.php  emoticons.php  kaomoji.php
 │   ├── images.php  carriers.php  collections.php  symbols.php
 │   ├── image-hashes/{set}.php  SHA-256 of each image, for the local installer
@@ -64,7 +64,7 @@ database/
 └── sources/                   generator inputs — not shipped
     ├── upstream.lock.json     every upstream file: URL, version, licence, sha256
     ├── curated/               aliases.json, collections.json, emoticons.json, symbols.json
-    └── measured/              bounds/ (per-image margins) and hashes/ (per-image SHA-256), from tools/measure
+    └── measured/              bounds/ (per-image margins) and hashes/ (per-image SHA-256), from .dev/tools/measure
 ```
 
 ## What the generator adds

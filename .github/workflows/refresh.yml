@@ -38,20 +38,20 @@ jobs:
       - run: composer update --no-interaction --no-progress --prefer-dist
 
       - name: Install the margin-measuring tool
-        working-directory: tools/measure
+        working-directory: .dev/tools/measure
         run: npm install --no-audit --no-fund --no-package-lock
 
       - name: Refresh
         id: refresh
         env:
           GITHUB_TOKEN: ${{ github.token }}
-        run: php tools/refresh.php
+        run: php .dev/tools/refresh.php
 
       - name: Gates
         run: |
           composer sync-check
           composer test
-          php tools/cross-check.php --strict
+          php .dev/tools/cross-check.php --strict
 
       # A pull request opened with GITHUB_TOKEN does not trigger other workflows. Set REFRESH_TOKEN (a
       # fine-grained token with contents and pull-requests write on this repository) to have CI run on it;

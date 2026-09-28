@@ -1,19 +1,19 @@
-// Design tokens. Sizes are em-relative so emoji follow the surrounding text; the box size is a custom
-// property so a consuming app can theme it without rebuilding.
+// Design tokens. Each is overridable twice: when you build with `@use '…/tokens' with (…)`, and at runtime
+// through its custom property, `--laranail-emoji-<name>`, which the rules read with the token as fallback.
+// Sizes are em-relative, so emoji follow the text around them.
 
 $font-stack: 'Apple Color Emoji', 'Segoe UI Emoji', 'Noto Color Emoji', 'Twemoji Mozilla', 'Android Emoji',
   'EmojiOne Color', sans-serif !default;
 
 // Fitted images (Fit::Balanced, Fit::Tight) carry no padding, so 1em reads as the height of a capital.
-$image-size: 1.15em !default;
-$image-gap: 0.05em !default;
-$image-baseline: -0.2em !default;
+$image-size: 1.15em !default;      // --laranail-emoji-image-size
+$image-gap: 0.05em !default;       // --laranail-emoji-image-gap
+$image-baseline: -0.2em !default;  // --laranail-emoji-image-baseline
 
-$native-baseline: -0.1em !default;
+$native-baseline: -0.1em !default; // --laranail-emoji-native-baseline
 
 // Square containers: reactions, avatars, pickers.
-$box-size-property: --laranail-emoji-size;
-$box-size-default: 1.5rem !default;
+$box-size: 1.5rem !default;        // --laranail-emoji-size
 
-// A native glyph's advance is wider than its ink; this scales it to fill the box like an image does.
-$box-glyph-scale: 0.86 !default;
+// A native glyph's advance is wider than its ink; this scales it to fill the box as an image does.
+$box-glyph-scale: 0.86 !default;   // --laranail-emoji-glyph-scale

@@ -9,7 +9,7 @@ namespace Simtabi\Laranail\Emojis\Core\Enums;
  * canvas empty on every side, Noto and Fluent about 5–6%, Twemoji almost none — which shows up as uneven,
  * oversized gaps around emoji in running text and buttons.
  *
- * The crops come from measuring every pinned image (tools/measure), so they never cut into artwork.
+ * The crops come from measuring every pinned image (.dev/tools/measure), so they never cut into artwork.
  */
 enum Fit: string
 {

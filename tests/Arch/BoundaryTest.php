@@ -5,7 +5,7 @@ declare(strict_types=1);
 use Simtabi\Laranail\Emojis\Core\Exceptions\EmojisException;
 
 /*
- * src/Core is framework-free. deptrac enforces it statically (tools/deptrac-guard.php), tools/core-isolation.php
+ * src/Core is framework-free. deptrac enforces it statically (.dev/tools/deptrac-guard.php), .dev/tools/core-isolation.php
  * proves it with an autoloader that refuses everything outside Core, and this is the third, cheapest layer.
  */
 arch('Core uses no framework and no other laranail package')

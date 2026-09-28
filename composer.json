@@ -90,19 +90,25 @@
             "@sync-check",
             "@core-isolation"
         ],
-        "parallel-lint": "vendor/bin/parallel-lint --exclude vendor src tests tools helpers config",
-        "pint": "@php vendor/bin/laranail-pint --test",
-        "pint-fix": "@php vendor/bin/laranail-pint --parallel",
+        "parallel-lint": "vendor/bin/parallel-lint --exclude vendor src tests .dev/tools helpers config",
+        "pint": [
+            "@php vendor/bin/laranail-pint --test",
+            "@php vendor/bin/laranail-pint --test .dev/tools"
+        ],
+        "pint-fix": [
+            "@php vendor/bin/laranail-pint --parallel",
+            "@php vendor/bin/laranail-pint .dev/tools"
+        ],
         "phpstan": [
             "vendor/bin/phpstan analyse -c phpstan.neon --no-progress --memory-limit=1G",
             "vendor/bin/phpstan analyse -c phpstan-core.neon --no-progress --memory-limit=1G"
         ],
-        "deptrac": "@php tools/deptrac-guard.php",
+        "deptrac": "@php .dev/tools/deptrac-guard.php",
         "rector": "vendor/bin/rector process --dry-run --no-progress-bar",
         "rector-fix": "vendor/bin/rector process",
-        "sync-check": "@php tools/sync-check.php",
-        "core-isolation": "@php tools/core-isolation.php",
-        "build-dataset": "@php tools/build-dataset.php",
+        "sync-check": "@php .dev/tools/sync-check.php",
+        "core-isolation": "@php .dev/tools/core-isolation.php",
+        "build-dataset": "@php .dev/tools/build-dataset.php",
         "composer-audit": "@composer audit --no-interaction",
         "format": "@pint-fix"
     },

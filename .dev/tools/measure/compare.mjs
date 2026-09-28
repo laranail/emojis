@@ -1,6 +1,6 @@
 // Worker/driver: renders each raw SVG and its sanitised twin at 128 px and reports the largest per-channel
 // difference, so a sanitiser change that alters how any emoji looks is caught.
-//   node tools/measure/compare.mjs <raw-dir> <sanitised-dir>
+//   node .dev/tools/measure/compare.mjs <raw-dir> <sanitised-dir>
 import { readFileSync, readdirSync } from 'node:fs';
 import { spawnSync } from 'node:child_process';
 import { fileURLToPath } from 'node:url';

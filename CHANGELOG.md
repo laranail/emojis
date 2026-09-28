@@ -45,6 +45,15 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/),
   image is an `EmojiImage` (`CustomEmoji::$image`, was `$imageUrl`). A refused image throws `InvalidImage`.
 - **Breaking:** registering a custom emoji under a name or alias that is already taken throws, instead of
   silently replacing the earlier one.
+- **Breaking:** every CSS class is prefixed. Images render as `laranail-emoji laranail-emoji-image` (was
+  `emoji`), the Blade component's span as `laranail-emoji laranail-emoji-native` (was `laranail-emoji`), and
+  the stylesheet defines nothing unprefixed. `images.class` (default now `''`) adds classes after the
+  package's own instead of replacing them.
+- The stylesheet source shares one base rule instead of repeating the inline-box reset, and every size is
+  themable at runtime through a `--laranail-emoji-*` custom property (image size, gap and baseline, native
+  baseline, box size, glyph scale). A test checks that every class the renderer writes is defined in it.
+- The maintainer tools moved from `tools/` to `.dev/tools/`. Composer scripts, CI and docs follow; Pint and
+  parallel-lint now name the directory explicitly, since their default scan skips dot-directories.
 - The doctor check now fails when the configured image set does not resolve, as its description said.
 - A strict conversion refused because of a version cap says so.
 
@@ -62,7 +71,10 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/),
 - The "at most four joiners in a row" limit reset at every emoji.
 - Bidi marks (U+200E, U+200F, U+061C) and further invisible characters (soft hyphen, braille blank,
   interlinear annotation, musical format controls, and others) were not removed.
-- `AsEmojiText` turned a shortcode the user typed literally into an emoji on read.
+- `AsEmojiText` did not round-trip: a shortcode the user typed came back as an emoji, and an emoji touching
+  a letter (`a🚀b`, stored `a:rocket:b`) came back as text. The stored form is now a documented escaped
+  format — emoji as `:code:`, a typed `:` or `\` escaped, any other four-byte character as `:U+…:` — so
+  every value reads back exactly as written and nothing four-byte is stored. Rows written by 0.1 read as before.
 - A default-emoji character followed by VS16 (`⭐️`, as pasted from most sites) was matched without its
   selector, so `strip()` and `toShortcodes()` left an invisible U+FE0F behind.
 - A custom-emoji URL with a trailing newline, or starting `/\`, passed the URL check.

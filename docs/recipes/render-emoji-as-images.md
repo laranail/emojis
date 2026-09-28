@@ -10,9 +10,8 @@ Show consistent emoji images across platforms while keeping the text escaped and
 <x-laranail-emojis::emoji name="tada" mode="image" />
 ```
 
-```css
-img.emoji { height: 1.2em; width: 1.2em; vertical-align: -0.2em; }
-```
+Include `<x-laranail-emojis::styles />` once in your layout's `<head>` to size them to the text; to change
+the size, set `--laranail-emoji-image-size` (see [styles](../tools/styles.md#theming)).
 
 Pick another set with `config('laranail.emojis.images.set')`, and credit Twemoji or OpenMoji on your site —
 see [images](../tools/images.md#attribution).

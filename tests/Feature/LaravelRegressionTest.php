@@ -32,10 +32,11 @@ function castRoundTrip(string $value): array
     return [$stored, $cast->get($model, 'bio', $stored, [])];
 }
 
-it('round-trips text through the cast, including shortcodes the user typed', function (string $value): void {
-    [, $read] = castRoundTrip($value);
+it('round-trips text through the cast', function (string $value): void {
+    [$stored, $read] = castRoundTrip($value);
 
-    expect($read)->toBe($value);
+    expect($read)->toBe($value)
+        ->and(preg_match('/[\xF0-\xF7]/', (string) $stored))->toBe(0);
 })->with([
     'typed shortcode'              => 'type :rocket: literally',
     'typed and real'               => 'ship :rocket: 🚀',
@@ -44,14 +45,43 @@ it('round-trips text through the cast, including shortcodes the user typed', fun
     'backslash before a shortcode' => 'C:\\ \\:rocket: and \\🚀',
     'plain backslashes'            => 'a\\b\\\\c',
     'emoji after typed code'       => ':rocket: 👋🏽',
+    'emoji touching letters'       => 'a🚀b and x👋🏽y',
+    'times and ratios'             => '12:30:45 at 3:1',
+    'emoji newer than the dataset' => "new \u{1FC00} face",
+    'rare ideograph'               => '𠀀 is U+20000',
+    'unicode escapes typed'        => 'type :U+1F680: literally',
+    'empty'                        => '',
 ]);
 
-it('still stores emoji as shortcodes and reads existing rows back as emoji', function (): void {
-    [$stored] = castRoundTrip('ship 🚀');
-    $cast = new AsEmojiText;
+it('stores a documented, escaped format', function (): void {
+    expect(castRoundTrip('a🚀b')[0])->toBe('a:rocket:b')
+        ->and(castRoundTrip('time 12:30 \\ :rocket:')[0])->toBe('time 12\\:30 \\\\ \\:rocket\\:')
+        ->and(castRoundTrip("new \u{1FC00}")[0])->toBe('new :U+1FC00:');
+});
 
-    expect($stored)->toBe('ship :rocket:')
-        ->and($cast->get(new class extends Model {}, 'bio', ':wave_tone3: :rocket:', []))->toBe('👋🏽 🚀');
+it('reads rows written before 0.2, and now also converts a shortcode touching a letter', function (): void {
+    $cast = new AsEmojiText;
+    $model = new class extends Model {};
+
+    expect($cast->get($model, 'bio', ':wave_tone3: :rocket:', []))->toBe('👋🏽 🚀')
+        ->and($cast->get($model, 'bio', 'a:rocket:b', []))->toBe('a🚀b')
+        ->and($cast->get($model, 'bio', 'C:\\Users 12:30', []))->toBe('C:\\Users 12:30')
+        ->and($cast->get($model, 'bio', ':zz:rocket: :nope:', []))->toBe(':zz🚀 :nope:');
+});
+
+it('round-trips every emoji in the dataset through storage', function (): void {
+    $emojis = app(Emojis::class);
+    $inspected = 0;
+
+    foreach ($emojis->all() as $emoji) {
+        $stored = AsEmojiText::encode('x' . $emoji->char . 'y', $emojis);
+        $inspected++;
+
+        expect(AsEmojiText::decode($stored, $emojis))->toBe('x' . $emoji->char . 'y', $emoji->hexcode)
+            ->and(preg_match('/[\xF0-\xF7]/', $stored))->toBe(0, $emoji->hexcode);
+    }
+
+    expect($inspected)->toBeGreaterThan(3900);
 });
 
 it('fails the doctor when the configured image set does not resolve', function (): void {

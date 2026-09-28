@@ -6,7 +6,7 @@ import { tmpdir } from 'node:os';
 import { join, relative, resolve } from 'node:path';
 import { build } from 'vite';
 
-const root = resolve(import.meta.dirname, '..');
+const root = resolve(import.meta.dirname, '../..');
 const committed = join(root, 'public/assets');
 const fresh = mkdtempSync(join(tmpdir(), 'laranail-emojis-assets-'));
 

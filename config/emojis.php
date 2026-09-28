@@ -23,7 +23,7 @@ return [
         'set'       => 'twemoji',  // twemoji, noto, openmoji, fluent, joypixels, or a registered set
         'source'    => 'cdn',      // cdn, or local after `php artisan laranail::emojis.images install <set>`
         'fit'       => 'balanced', // balanced, tight, none
-        'class'     => 'emoji',
+        'class'     => '',         // extra classes, after the package's own laranail-emoji laranail-emoji-image
         'base_urls' => [],         // your own mirror: ['twemoji' => 'https://cdn.example.com/twemoji/svg']
 
         // Limits for images you supply: custom emoji, extend.images, Emojis::image(), EmojiImageRule.

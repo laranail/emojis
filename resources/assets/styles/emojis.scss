@@ -1,58 +1,66 @@
 /*!
  * laranail/emojis — layout for emoji in running text and UI.
  *
- * Images: the class set by config('laranail.emojis.images.class') (default "emoji") on the <img> or fitted
- * <svg> the package renders. Fitted output (Fit::Balanced, Fit::Tight) has no built-in padding, so 1em reads
- * as the size of a capital letter's box; Fit::None keeps the publisher's padding.
+ * .laranail-emoji         every emoji the package renders: an inline box that neither stretches the line
+ *                         nor lets a flex parent squeeze it
+ * .laranail-emoji-image   the <img> or fitted <svg>; with Fit::Balanced or Fit::Tight there is no built-in
+ *                         padding, so 1em reads as a capital letter's height
+ * .laranail-emoji-native  a native emoji in the Blade component's <span>: pins the colour-emoji font and
+ *                         presentation, whose tall line box and side bearings otherwise push text apart
+ * .laranail-emoji-box     a square container (reactions, avatars, pickers) the emoji fills edge to edge
  *
- * Native emoji: the .laranail-emoji span the Blade component renders. Colour-emoji fonts carry wide side
- * bearings and a tall line box; this pins the font, the presentation and the box so a native emoji sits in
- * the line like a letter instead of pushing it apart.
- *
- * Inline it with <x-laranail-emojis::styles /> (strict-CSP friendly), link the published file with
- * <x-laranail-emojis::styles link />, or import resources/assets/styles/emojis.scss into your own build.
+ * Every size is a custom property, so `style="--laranail-emoji-size: 2rem"` themes it without a rebuild.
+ * Inline it with <x-laranail-emojis::styles />, link the published file with <x-laranail-emojis::styles link />,
+ * or @use resources/assets/styles/emojis.scss in your own build.
  */
 
-@use 'tokens' as *;
-@use 'mixins' as *;
+@use 'tokens' as t;
+@use 'mixins' as m;
 
-.emoji {
+.#{m.$block} {
   display: inline-block;
-  width: $image-size;
-  height: $image-size;
-  margin: 0 $image-gap;
-  vertical-align: $image-baseline;
-  object-fit: contain;
-  overflow: hidden;
   flex-shrink: 0;
+  line-height: 1;
+  letter-spacing: 0;
 }
 
-.laranail-emoji {
-  @include flush-inline;
+.#{m.$block}-image {
+  $size: m.prop('image-size', t.$image-size);
 
-  font-family: $font-stack;
+  width: $size;
+  height: $size;
+  margin: 0 m.prop('image-gap', t.$image-gap);
+  vertical-align: m.prop('image-baseline', t.$image-baseline);
+  object-fit: contain;
+  overflow: hidden;
+}
+
+.#{m.$block}-native {
+  font-family: t.$font-stack;
   font-style: normal;
   font-weight: normal;
   font-variant-emoji: emoji;
-  vertical-align: $native-baseline;
+  vertical-align: m.prop('native-baseline', t.$native-baseline);
 }
 
-.laranail-emoji-box {
+.#{m.$block}-box {
+  $size: m.prop('size', t.$box-size);
+
   display: inline-flex;
   align-items: center;
   justify-content: center;
-  width: box-size();
-  height: box-size();
+  width: $size;
+  height: $size;
   line-height: 1;
 
-  > .emoji {
+  > .#{m.$block}-image {
     width: 100%;
     height: 100%;
     margin: 0;
     vertical-align: top;
   }
 
-  > .laranail-emoji {
-    font-size: calc(#{box-size()} * #{$box-glyph-scale});
+  > .#{m.$block}-native {
+    font-size: calc(#{$size} * #{m.prop('glyph-scale', t.$box-glyph-scale)});
   }
 }

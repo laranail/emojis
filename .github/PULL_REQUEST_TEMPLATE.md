@@ -6,7 +6,7 @@
 
 - [ ] `composer lint` passes (parallel-lint, Pint, PHPStan ×2, deptrac, Rector, sync-check, core isolation)
 - [ ] `composer test` passes
-- [ ] If `database/sources/` or `tools/` changed: `composer build-dataset` was run and the regenerated
+- [ ] If `database/sources/` or `.dev/tools/` changed: `composer build-dataset` was run and the regenerated
       `database/generated/` (and `docs/licences.md`) is committed in the same pull request
 - [ ] `CHANGELOG.md` has an entry under `## [Unreleased]`, if this is user-facing
 

@@ -40,7 +40,7 @@ The helper is namespaced, so it cannot collide with another package's global `em
 @laranailEmojis($comment->body, 'emoji')    {{-- native emoji; text escaped --}}
 ```
 
-The component wraps native output in `<span class="laranail-emoji" role="img" aria-label="…">`. `toHtml()` returns an
+The component wraps native output in `<span class="laranail-emoji laranail-emoji-native" role="img" aria-label="…">`. `toHtml()` returns an
 `HtmlString`, so `{{ Emojis::text($x)->toHtml() }}` is not escaped twice. The directive compiles to a call
 to `Laravel\BladeDirective`, so a cached view holds only a class name.
 
@@ -91,6 +91,21 @@ protected function casts(): array
     ];
 }
 ```
+
+`AsEmojiText` stores no four-byte character, for utf8mb3 columns, and reads every value back exactly as it
+was written. Its stored form is a small escaped format:
+
+| Written | Stored |
+|---|---|
+| an emoji | `:rocket:` — its ASCII code, fixed delimiters whatever `shortcodes.delimiters` says |
+| `:` | `\:` |
+| `\` | `\\` |
+| another character above U+FFFF | `:U+1FC00:` |
+
+So `a🚀b` is `a:rocket:b`, and a shortcode the user typed (`:rocket:`) is `\:rocket\:`, which reads back as
+text. Rows written by 0.1 — emoji as shortcodes, nothing escaped — read back as before, except that a
+shortcode touching a letter is now converted too. `AsEmojiText::encode()` and `decode()` are public, for
+migrating or searching stored values.
 
 ## Commands
 
