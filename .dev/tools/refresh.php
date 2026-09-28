@@ -50,6 +50,7 @@ const FAMILIES = [
 ];
 
 require ROOT . '/vendor/autoload.php';
+require __DIR__ . '/lib/SourceHash.php';
 
 $dryRun = in_array('--dry-run', $argv, true);
 $php = escapeshellarg(PHP_BINARY);
@@ -179,11 +180,11 @@ foreach ($lock as $id => $source) {
 
     $unchanged = ! in_array($id, array_merge(...array_column($changes, 2)), true) && $id !== 'whatwg-entities';
 
-    if ($unchanged && $source['sha256'] !== '' && hash_file('sha256', $file) !== $source['sha256']) {
+    if ($unchanged && $source['sha256'] !== '' && SourceHash::of($source['url'], $file) !== $source['sha256']) {
         $fail("{$id} changed content without a version change ({$source['url']}); not pinning it");
     }
 
-    $sha = hash_file('sha256', $file);
+    $sha = SourceHash::of($source['url'], $file);
 
     if ($id === 'whatwg-entities' && $sha !== $source['sha256']) {
         $report[] = '- **whatwg-entities**: the entity list changed';

@@ -300,14 +300,14 @@
             "path": "images/twemoji.json",
             "version": "17.0.3",
             "licence": "listing only",
-            "sha256": "46a21f2481267f6152f104d957610c0e055fcba25314cbbc4b8e646d031cd5fe"
+            "sha256": "c88784409eba046725f00d69c47cd71691998b4edf7d35b48e8f8668e1faaa4e"
         },
         "noto-listing": {
             "url": "https://api.github.com/repos/googlefonts/noto-emoji/git/trees/e20cbc2bbec1926686be9f9bee7d1d2cfa1fea0e:2D/svg",
             "path": "images/noto-tree.json",
             "version": "e20cbc2bbec1926686be9f9bee7d1d2cfa1fea0e",
             "licence": "listing only",
-            "sha256": "b324ddf74c4d47d4a7ee164598a9c4f651e235247781be9090ffa4d28810a7cf"
+            "sha256": "91da947a307ddb31b75474e3adf8a9a5612f0e2c34a73c034f8691569d8361ca"
         },
         "openmoji-data": {
             "url": "https://cdn.jsdelivr.net/npm/openmoji@17.0.0/data/openmoji.json",
