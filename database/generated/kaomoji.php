@@ -8,7 +8,7 @@ declare(strict_types=1);
  * Kaomoji and text faces, grouped: googlefonts/emoji-metadata emoticon_ordering.json, then kaomojikan/kaomoji-data
  * (groups prefixed ja_, with Japanese tags and kana readings).
  *
- * Sources: Unicode Emoji 18.0 (2026-04-30) · CLDR 48.2.0 · emojibase-data 17.0.0 · gemoji fa4d5f8a0e3c · googlefonts/emoji-metadata 173b9b26e8fc
+ * Sources: Unicode Emoji 18.0 (2026-04-30) · CLDR 48.2.0 · emojibase-data 17.0.0 · gemoji fadaeaf1f1a9 · googlefonts/emoji-metadata 173b9b26e8fc
  * Licences: docs/licences.md
  */
 return [
