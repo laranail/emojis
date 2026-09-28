@@ -17,9 +17,9 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/),
   changes the moment the data does; plain files are hashed as before. The three listing pins were re-locked;
   the generated dataset is byte-identical.
 - Dependabot now also watches `.dev/tools/measure/package.json`, the image-measuring tool the refresh runs.
-- The weekly refresh needs no personal token. It opens its pull request with the workflow's own token and
-  then starts Tests and Static analysis on the refresh branch itself, since a pull request opened with that
-  token triggers no workflows; the required checks report under their usual names.
+- The weekly refresh opens its pull request as a GitHub App, with a short-lived token scoped to this repository,
+  instead of a personal token or the workflow's own. A pull request opened with the workflow's token starts no
+  CI, and checks started any other way are not attached to it, so `main`'s required checks never reported.
 - Source downloads retry a reset connection too (`curl --retry-all-errors`); the CI sync-check downloads
   about 80 files cold and failed on one reset from jsDelivr.
 - The Tests workflow runs on every pull request, Markdown-only ones included, because its checks are now
