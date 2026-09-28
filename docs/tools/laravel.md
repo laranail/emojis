@@ -13,7 +13,7 @@ Every name is vendor-scoped and asserted against Laravel's live registries in `N
 | Translations | `laranail/emojis::validation.*` |
 | Blade directive | `@laranailEmojis(...)` |
 | Blade components | `<x-laranail-emojis::emoji />`, `<x-laranail-emojis::styles />` |
-| Commands | `laranail::emojis.search`, `.show`, `.convert`, `.export`, `.sanitize` |
+| Commands | `laranail::emojis.search`, `.show`, `.convert`, `.export`, `.sanitize`, `.images` |
 
 ## Facade and helper
 
@@ -61,6 +61,23 @@ $request->validate([
 string values and invalid UTF-8 fail. With `laranail/validation`, pass them through `->rule()`:
 `FluentRule::string()->rule(new NoEmoji)`.
 
+`EmojiImageRule` accepts an image a user supplies — an uploaded file, a data URI or an `https://` URL — under
+the `images.custom` limits. Store what `Emojis::image($value)` returns rather than the raw input, so an SVG is
+kept in its sanitised form:
+
+```php
+use Simtabi\Laranail\Emojis\Core\Image\EmojiImage;
+use Simtabi\Laranail\Emojis\Laravel\Rules\EmojiImageRule;
+
+$request->validate(['icon' => ['required', new EmojiImageRule]]);
+
+$icon = $request->hasFile('icon')
+    ? EmojiImage::fromFile($request->file('icon')->getRealPath(), Emojis::options()->imagePolicy)
+    : Emojis::image($request->input('icon'));   // a data URI or https URL
+
+$user->update(['icon' => $icon->src]);
+```
+
 ## Casts
 
 ```php
@@ -84,12 +101,15 @@ php artisan laranail::emojis.convert "Ship it :) :rocket:" --to=ascii --from=uni
 echo "hi 🚀" | php artisan laranail::emojis.convert - --to=shortcode
 php artisan laranail::emojis.export public/emojis.json --locale=fr --variants
 php artisan laranail::emojis.sanitize - --check < user-content.txt
+php artisan laranail::emojis.images install twemoji
+php artisan laranail::emojis.images verify twemoji
 ```
 
 ## Health
 
 The provider registers a doctor check (`php artisan laranail::package-tools.doctor`) and an `about`
-section. A configured image set that does not exist stops boot; a degraded locale shows in both.
+section. A configured image set that does not exist stops boot; a degraded locale, and a set configured for
+local serving that is not installed yet, show in both.
 
 ---
 

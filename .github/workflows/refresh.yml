@@ -1,0 +1,71 @@
+name: Refresh upstream data
+
+# Weekly: move every source to its newest release, rebuild, cross-check against the Unicode charts,
+# getemoji.com and copychar.cc, run the gates, and open a pull request for review. Never pushes to main.
+on:
+  schedule:
+    - cron: '0 10 * * 1' # Mondays 10:00 UTC (06:00 America/New_York, with the Dependabot run)
+  workflow_dispatch:
+
+concurrency:
+  group: refresh
+  cancel-in-progress: false
+
+permissions:
+  contents: read
+
+jobs:
+  refresh:
+    name: Refresh and propose
+    runs-on: ubuntu-latest
+    timeout-minutes: 90
+    permissions:
+      contents: write
+      pull-requests: write
+    steps:
+      - uses: actions/checkout@v7
+
+      - uses: shivammathur/setup-php@f3e473d116dcccaddc5834248c87452386958240 # 2.37.2
+        with:
+          php-version: '8.5'
+          extensions: dom, curl, mbstring, intl
+          coverage: none
+
+      - uses: actions/setup-node@v7
+        with:
+          node-version: 24
+
+      - run: composer update --no-interaction --no-progress --prefer-dist
+
+      - name: Install the margin-measuring tool
+        working-directory: tools/measure
+        run: npm install --no-audit --no-fund --no-package-lock
+
+      - name: Refresh
+        id: refresh
+        env:
+          GITHUB_TOKEN: ${{ github.token }}
+        run: php tools/refresh.php
+
+      - name: Gates
+        run: |
+          composer sync-check
+          composer test
+          php tools/cross-check.php --strict
+
+      # A pull request opened with GITHUB_TOKEN does not trigger other workflows. Set REFRESH_TOKEN (a
+      # fine-grained token with contents and pull-requests write on this repository) to have CI run on it;
+      # without it the gates above are the only ones that ran.
+      - uses: peter-evans/create-pull-request@5f6978faf089d4d20b00c7766989d076bb2fc7f1 # v8.1.1
+        with:
+          token: ${{ secrets.REFRESH_TOKEN || github.token }}
+          branch: chore/refresh-upstream-data
+          delete-branch: true
+          commit-message: Refresh upstream emoji data
+          title: Refresh upstream emoji data
+          body-path: build/refresh-report.md
+          labels: dependencies
+          add-paths: |
+            database/**
+            docs/licences.md
+            src/Core/Enums/**

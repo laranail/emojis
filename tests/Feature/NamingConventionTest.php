@@ -45,7 +45,7 @@ it('registers its directive under a vendor-scoped name', function (): void {
 it('names every command laranail::emojis.*', function (): void {
     $ours = array_values(array_filter(array_keys(app(Kernel::class)->all()), static fn (string $name): bool => str_contains($name, 'emojis')));
 
-    expect($ours)->toHaveCount(5);
+    expect($ours)->toHaveCount(6);
 
     foreach ($ours as $name) {
         expect($name)->toStartWith('laranail::emojis.');

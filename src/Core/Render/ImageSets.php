@@ -30,6 +30,9 @@ final class ImageSets
     /** @var array<string, ImageSet> */
     private array $registered = [];
 
+    /** @var array<string, CdnImageSet> the built-ins at their pinned CDN address, ignoring base URL overrides */
+    private array $upstream = [];
+
     private bool $frozen = false;
 
     /** @param array<string, string> $baseUrls set name => base URL override */
@@ -93,6 +96,19 @@ final class ImageSets
         return count($parts) === 4 ? [$parts[0], $parts[1], $parts[2], $parts[3]] : null;
     }
 
+    /**
+     * A built-in set at its pinned CDN address even when a base URL override (self-hosting, `images.source`
+     * local) is configured — where the installer downloads from.
+     *
+     * @throws ImageSetNotFound for a registered or unknown set
+     */
+    public function upstream(string $name): CdnImageSet
+    {
+        $builtIn = ImageSetName::tryFrom($name) ?? throw ImageSetNotFound::named($name, $this->names());
+
+        return $this->upstream[$name] ??= $this->build($builtIn, ignoreOverrides: true);
+    }
+
     public function has(string $name): bool
     {
         return isset($this->registered[$name]) || ImageSetName::tryFrom($name) !== null;
@@ -104,12 +120,12 @@ final class ImageSets
         return array_values(array_unique([...array_map(static fn (ImageSetName $n): string => $n->value, ImageSetName::cases()), ...array_keys($this->registered)]));
     }
 
-    private function build(ImageSetName $name): ImageSet
+    private function build(ImageSetName $name, bool $ignoreOverrides = false): CdnImageSet
     {
         $bits = $this->data->imageBits();
         $versions = $this->data->imageVersions();
         $fluent = $this->data->fluentFolders();
-        $base = fn (string $default): string => $this->baseUrls[$name->value] ?? $default;
+        $base = fn (string $default): string => $ignoreOverrides ? $default : ($this->baseUrls[$name->value] ?? $default);
 
         return match ($name) {
             ImageSetName::Twemoji => new CdnImageSet(

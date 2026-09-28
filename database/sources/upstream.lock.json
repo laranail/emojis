@@ -532,6 +532,27 @@
             "version": "60c92ea4e85279ad42ff525e9a40464ebeb1003e",
             "licence": "MIT",
             "sha256": "08cb2c981c94a80ef0b80be68cdec72e54faa8d81c96e3476a23955eb9ba8a3b"
+        },
+        "unicode-data": {
+            "url": "https://www.unicode.org/Public/18.0.0/ucd/UnicodeData.txt",
+            "path": "ucd/UnicodeData.txt",
+            "version": "18.0",
+            "licence": "Unicode-3.0",
+            "sha256": "0736451de439ae7baf1425136617da495e09ee5afbe6e394374db7009ea08950"
+        },
+        "unicode-blocks": {
+            "url": "https://www.unicode.org/Public/18.0.0/ucd/Blocks.txt",
+            "path": "ucd/Blocks.txt",
+            "version": "18.0",
+            "licence": "Unicode-3.0",
+            "sha256": "a58f8d322f3c5e254f9f97b1cbf76a454a7e02de6ac35619a5e4f27aaabfd553"
+        },
+        "whatwg-entities": {
+            "url": "https://html.spec.whatwg.org/entities.json",
+            "path": "whatwg-entities.json",
+            "version": "living-standard",
+            "licence": "CC-BY-4.0",
+            "sha256": "d741d877ac77c4194c4ad526b5b4a19aef8dfe411ab840a466891cdbb9f362e6"
         }
     }
 }

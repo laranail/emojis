@@ -85,6 +85,11 @@ $checks = [
     'entities' => [$emojis->text('&#x1F680;')->from(Mode::HtmlEntity)->toCodepoints(), 'U+1F680'],
     'width'    => [(string) $emojis->text('a👨‍👩‍👧‍👦')->width(), '3'],
     'custom'   => [$emojis->addCustom('lara', 'https://example.com/l.svg')->text(':lara:')->toShortcodes(), ':lara:'],
+    'image'    => [(string) Simtabi\Laranail\Emojis\Core\Image\EmojiImage::fromBytes("\x89PNG\r\n\x1A\n" . pack('N', 13) . 'IHDR' . pack('NNCCCCC', 8, 8, 8, 6, 0, 0, 0))->width, '8'],
+    'svg'      => [Simtabi\Laranail\Emojis\Core\Image\SvgSanitizer::sanitize('<svg xmlns="http://www.w3.org/2000/svg" onload="x"><script>x</script><path d="M0 0"/></svg>'), '<svg xmlns="http://www.w3.org/2000/svg"><path d="M0 0"/></svg>'],
+    'replace'  => [str_contains($emojis->useImage('thumbsup', 'https://example.com/r.png')->text('👍')->toImages(), 'example.com/r.png') ? 'own' : 'set', 'own'],
+    'symbols'  => [$emojis->symbols()->get('U+2192')?->htmlEntity() ?? 'none', '&rarr;'],
+    'hashes'   => [count($emojis->dataset()->imageHashes('twemoji')) > 2500 ? 'hashes' : 'none', 'hashes'],
 ];
 
 foreach (['twemoji', 'noto', 'openmoji', 'fluent', 'joypixels'] as $set) {

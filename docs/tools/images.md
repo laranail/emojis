@@ -87,16 +87,79 @@ For `<img>`, `alt` is the character, so copying text keeps the emoji; `aria-labe
 localized name (for fitted `<svg>`, `aria-label` and `<title>`).
 `data-laranail-emoji` lets the markup be read back with `from(Mode::Image)`.
 
-## Self-hosting
+## Serving from your own origin
 
-Copy a set to your own host and point at it:
+A CDN sees every visitor's IP address, which may matter under GDPR, and is one more host for your
+Content-Security-Policy to allow. Install a verified copy of a set into the application instead:
+
+```bash
+php artisan laranail::emojis.images install twemoji   # into public/vendor/laranail/emojis/images/twemoji
+php artisan laranail::emojis.images verify twemoji    # exit 1 if any file changed since; for deploy checks
+```
 
 ```php
 // config/laranail/emojis.php
+'images' => ['set' => 'twemoji', 'source' => 'local'],
+```
+
+Nothing is bundled in the package — the four sets are 9.8 MB (Twemoji), 12.6 MB (OpenMoji), 40.7 MB (Noto)
+and 122 MB (Fluent) — so `install` downloads the set once. Every file must match the SHA-256 this package
+ships for the pinned version, or it is refused and nothing is written for it; accepted files are sanitised
+(below) and written atomically. A manifest records what was written, which is what `verify` checks.
+JoyPixels cannot be installed: its licence does not allow redistribution.
+
+With `source` set to `local`, only sets that have been installed are served locally; any other keeps its CDN
+address, and boot records a degraded warning (visible in `laranail::package-tools.doctor`) until you
+install it.
+
+To use your own mirror instead, set a base URL per set:
+
+```php
 'images' => ['base_urls' => ['twemoji' => 'https://cdn.example.com/twemoji/svg']],
 ```
 
-Third-party CDNs see your visitors' IP addresses; self-hosting avoids that, which may matter under GDPR.
+## Your own images
+
+Give one emoji your own picture, or add an emoji Unicode does not have, from a URL, a data URI, base64, raw
+bytes or a file — PNG, GIF, JPEG, WebP or SVG:
+
+```php
+use Simtabi\Laranail\Emojis\Core\Image\EmojiImage;
+
+Emojis::useImage('thumbsup', 'https://brand.example/thumbs.png');           // replaces 👍 in Image mode
+Emojis::addCustom('laravel', 'data:image/svg+xml;base64,PHN2ZyB4bWxu…');    // :laravel:
+Emojis::addCustom('logo', EmojiImage::fromFile(resource_path('logo.png')));
+Emojis::addCustom('party', EmojiImage::fromBase64($base64, 'image/webp'));
+
+$image = Emojis::image($request->input('emoji'));   // validate without registering; throws InvalidImage
+```
+
+Every image goes through the same checks, configured under `images.custom`:
+
+| Check | Rule |
+|---|---|
+| Size | at most `max_bytes` (256 KB) decoded, refused before decoding |
+| Encoding | strict base64; anything outside the alphabet is refused |
+| Type | sniffed from the content; a declared type (data URI, argument) must agree with it. PNG, GIF, JPEG, WebP, SVG only |
+| Dimensions | read from the header, never by decoding pixels, at most `max_dimension` (1024 px), so a decompression bomb is refused cheaply |
+| SVG | sanitised (below), or refused entirely with `'svg' => false` |
+| URL | `https://` or root-relative only; no credentials, whitespace, quotes, backslashes or `//`; optionally only `hosts`. Never fetched by the package |
+
+Embedded images are re-encoded as a base64 data URI, so the bytes that render are the bytes that were
+checked. The exception message names the rule that failed and never contains the input.
+
+### SVG sanitising
+
+An SVG is rebuilt from an allow-list rather than filtered: static shapes, gradients, clip paths, masks and
+filters in the SVG namespace, with presentation attributes. Scripts, event handlers, `<foreignObject>`,
+`<style>`, `<image>`, links, animation, other namespaces, comments and processing instructions never reach
+the output. References must stay inside the document (`href="#id"`, `url(#id)`); a DOCTYPE with entity
+declarations is refused (XXE, entity expansion); element count and nesting depth are capped.
+
+It is the second defence: SVG is only ever rendered inside `<img src="data:…">`, where browsers run no
+script and load nothing external. The allow-list was derived from all 14,631 files of the four pinned sets.
+Rasterised before and after sanitising, 14,629 are pixel-identical; the other two (Noto's rainbow flag and
+package) crash the rasteriser, resvg, in their original form too, so they could not be compared.
 
 ## Your own set
 

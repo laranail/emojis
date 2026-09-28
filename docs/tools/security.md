@@ -33,13 +33,14 @@ Emojis::sanitize($input)->isSafe();   // true when the security rules would remo
 |---|---|
 | `InvalidUtf8` | invalid bytes are replaced before anything else runs |
 | `Control` | C0/C1 controls except tab, line feed and carriage return |
-| `Bidi` | embeddings, overrides and isolates (U+202A–202E, U+2066–2069); `keepBidiControls()` opts out |
-| `Invisible` | U+200B, U+2060–2064, U+FEFF, U+180E and the Hangul fillers |
+| `Bidi` | embeddings, overrides, isolates and marks (U+202A–202E, U+2066–2069, U+200E, U+200F, U+061C); `keepBidiControls()` opts out |
+| `Invisible` | U+200B, U+2060–2064, U+FEFF, U+180E, U+00AD, U+034F, U+2028, U+2029, U+2800, U+FFF9–FFFB, U+1D173–1D17A, U+17B4–17B5 and the Hangul fillers |
 | `Tag` | tag characters outside the three RGI subdivision flags |
 | `VariationSelector` | any selector not defined for the character before it — VS15/16 only after emoji-capable characters, VS1–14 only after `StandardizedVariants.txt` bases, VS17–256 only after a CJK ideograph — and any second selector |
 | `Joiner` | ZWJ/ZWNJ that are not inside an emoji, between two emoji (at most four in a row), or between letters |
 | `Combining` | combining marks past `maxCombiningMarks()` (default 4) on one character, and a mark repeating the one before it (UTS #39) |
 | `OrphanComponent` | a skin tone, keycap mark, hair component or regional indicator with nothing to modify |
+| `Oversized` | input past `input.max_bytes`: the text is cut at the limit and the report says so, so `isSafe()` is false and both validation rules fail it |
 
 What stays: every emoji sequence the dataset knows (its joiners, selectors, tones and tags are inside it);
 ZWJ and ZWNJ between letters, which Indic and Persian words need; one variation selector per character,
@@ -83,9 +84,20 @@ php artisan laranail::emojis.sanitize - --check < docs/page.md       # exit 1 if
 
 ## HTML output
 
-Separately from sanitising: every HTML the package renders escapes surrounding text, custom-emoji URLs must
-be `https://`, root-relative or `data:image`, and fitted images carry no inline styles, so a strict
-Content-Security-Policy needs only `img-src` for the image host.
+Separately from sanitising: every HTML the package renders escapes surrounding text, and fitted images carry
+no inline styles, so a strict Content-Security-Policy needs only `img-src` for the image host (plus `data:`
+if you use embedded images of your own).
+
+## Images you supply
+
+Custom emoji, replacement images and anything passed to `Emojis::image()` or `EmojiImageRule` are checked for
+size, encoding, real type and dimensions, and SVG is sanitised and only ever rendered inside `<img>`. URLs
+must be `https://` or root-relative and are never fetched by the package, so there is no server-side request
+forgery to defend against. See [images](images.md#your-own-images).
+
+Images installed with `laranail::emojis.images install` are verified file by file against the SHA-256 this
+package ships, so a changed or compromised CDN file is refused. See
+[images](images.md#serving-from-your-own-origin).
 
 ---
 

@@ -8,6 +8,7 @@ use Simtabi\Laranail\Emojis\Core\Emoji;
 use Simtabi\Laranail\Emojis\Core\Enums\Mode;
 use Simtabi\Laranail\Emojis\Core\Enums\EmojiId;
 use Simtabi\Laranail\Emojis\Core\Catalogue\Query;
+use Simtabi\Laranail\Emojis\Core\Symbols\Symbols;
 use Simtabi\Laranail\Emojis\Core\Text\TextConverter;
 use Simtabi\Laranail\Emojis\Core\Catalogue\EmojiCollection;
 
@@ -36,4 +37,7 @@ interface EmojisFluent
     public function strip(string $text): string;
 
     public function contains(string $text): bool;
+
+    /** Special characters that are not emoji: arrows, currency, maths, letters, punctuation, hieroglyphs. */
+    public function symbols(): Symbols;
 }

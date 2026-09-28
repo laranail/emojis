@@ -34,6 +34,12 @@ enum Threat: string
     /** An emoji component with nothing to modify: a lone skin tone, keycap mark or regional indicator. */
     case OrphanComponent = 'orphan_component';
 
+    /**
+     * Input longer than the configured maximum (`input.max_bytes`). Only the first part was inspected and
+     * the rest was cut, so the text is never reported as safe.
+     */
+    case Oversized = 'oversized';
+
     /** An emoji the policy does not allow. */
     case Policy = 'policy';
 

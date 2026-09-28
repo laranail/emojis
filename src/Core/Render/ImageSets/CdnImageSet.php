@@ -34,13 +34,19 @@ final readonly class CdnImageSet implements ImageSet
 
     public function url(Emoji $emoji): ?string
     {
+        $path = $this->path($emoji);
+
+        return $path === null ? null : rtrim($this->baseUrl, '/') . '/' . $path;
+    }
+
+    /** The emoji's file below the base URL (URL-encoded), or null when the set has no image for it. */
+    public function path(Emoji $emoji): ?string
+    {
         if ($this->coverageBit !== 0 && ($emoji->imageCoverage & $this->coverageBit) === 0) {
             return null;
         }
 
-        $path = ($this->filename)($emoji);
-
-        return $path === null ? null : rtrim($this->baseUrl, '/') . '/' . $path;
+        return ($this->filename)($emoji);
     }
 
     public function licence(): string

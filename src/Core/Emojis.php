@@ -13,6 +13,8 @@ use Simtabi\Laranail\Emojis\Core\Enums\EmojiId;
 use Simtabi\Laranail\Emojis\Core\Locale\Locales;
 use Simtabi\Laranail\Emojis\Core\Catalogue\Query;
 use Simtabi\Laranail\Emojis\Core\Render\Renderer;
+use Simtabi\Laranail\Emojis\Core\Symbols\Symbols;
+use Simtabi\Laranail\Emojis\Core\Image\EmojiImage;
 use Simtabi\Laranail\Emojis\Core\Render\ImageSets;
 use Simtabi\Laranail\Emojis\Core\Data\DatasetStore;
 use Simtabi\Laranail\Emojis\Core\Support\Macroable;
@@ -24,6 +26,7 @@ use Simtabi\Laranail\Emojis\Core\Contracts\HtmlFactory;
 use Simtabi\Laranail\Emojis\Core\Extension\CustomEmoji;
 use Simtabi\Laranail\Emojis\Core\Contracts\EmojisFluent;
 use Simtabi\Laranail\Emojis\Core\Contracts\TerminalProbe;
+use Simtabi\Laranail\Emojis\Core\Exceptions\InvalidImage;
 use Simtabi\Laranail\Emojis\Core\Exceptions\EmojiNotFound;
 use Simtabi\Laranail\Emojis\Core\Catalogue\EmojiCollection;
 use Simtabi\Laranail\Emojis\Core\Contracts\FailureReporter;
@@ -59,6 +62,8 @@ final class Emojis implements EmojisFluent
     private ?Renderer $renderer = null;
 
     private ?Locales $locales = null;
+
+    private ?Symbols $symbols = null;
 
     /** @var array<string, string>|null region => hexcode */
     private ?array $flags = null;
@@ -328,13 +333,18 @@ final class Emojis implements EmojisFluent
     // ---- extension ------------------------------------------------------------------------------
 
     /**
-     * Register an image-only custom emoji (":laravel:"). Its name must not shadow a Unicode shortcode.
+     * Register an image-only custom emoji (":laravel:"). Its name must not shadow a Unicode shortcode or
+     * another custom emoji. The image is an https or root-relative URL, a data URI, or an EmojiImage built
+     * from base64, bytes or a file; it is validated against the configured image policy.
      *
      * @param list<string> $aliases
+     *
+     * @throws InvalidCustomEmoji
+     * @throws InvalidImage
      */
-    public function addCustom(string $name, string $imageUrl, ?string $fallback = null, array $aliases = [], ?string $label = null): self
+    public function addCustom(string $name, EmojiImage|string $image, ?string $fallback = null, array $aliases = [], ?string $label = null): self
     {
-        $custom = new CustomEmoji($name, $imageUrl, $fallback, $aliases, $label);
+        $custom = new CustomEmoji($name, $image, $fallback, $aliases, $label, $this->options->imagePolicy);
 
         foreach ([$custom->name, ...$custom->aliases] as $code) {
             if ($this->catalogue()->byShortcode($code) instanceof Emoji) {
@@ -345,6 +355,36 @@ final class Emojis implements EmojisFluent
         $this->custom->add($custom);
 
         return $this;
+    }
+
+    /**
+     * Use your own image for an existing emoji in Image mode, ahead of any image set — a brand's thumbs-up,
+     * a PNG for a platform the sets do not draw. Same validation as custom emoji.
+     *
+     * @throws InvalidImage
+     */
+    public function useImage(Emoji|EmojiId|string $emoji, EmojiImage|string $image): self
+    {
+        $this->custom->image($this->get($emoji)->hexcode, EmojiImage::from($image, $this->options->imagePolicy));
+
+        return $this;
+    }
+
+    /**
+     * Validate an image against the configured policy without registering it: for form input, uploads and
+     * anything else that will end up in an <img src>.
+     *
+     * @throws InvalidImage
+     */
+    public function image(EmojiImage|string $image): EmojiImage
+    {
+        return EmojiImage::from($image, $this->options->imagePolicy);
+    }
+
+    /** The replacement image registered for an emoji with useImage(), if any. */
+    public function customImage(Emoji $emoji): ?EmojiImage
+    {
+        return $this->custom->imageFor($emoji->hexcode);
     }
 
     /** An extra shortcode for an existing emoji. */
@@ -405,6 +445,12 @@ final class Emojis implements EmojisFluent
     public function availableLocales(): array
     {
         return $this->data->availableLocales();
+    }
+
+    /** Special characters that are not emoji: arrows, currency, maths, letters, punctuation, hieroglyphs… */
+    public function symbols(): Symbols
+    {
+        return $this->symbols ??= new Symbols($this->data);
     }
 
     public function images(): ImageSets

@@ -31,7 +31,7 @@ final readonly class EmojiPolicyRule implements ValidationRule
         $emojis = app(Emojis::class);
         $report = $emojis->sanitize($value)->policy($this->policy ?? $emojis->options()->policy)->report();
 
-        if ($report->has(Threat::Policy) || $report->has(Threat::Limit)) {
+        if ($report->has(Threat::Policy) || $report->has(Threat::Limit) || $report->has(Threat::Oversized)) {
             $fail('laranail/emojis::validation.emoji_policy')->translate();
         }
     }

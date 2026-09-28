@@ -58,6 +58,14 @@ it fetches and never skips.
 
 `EmojiId` case names are public API: the generator keeps every existing case and only adds new ones.
 
+## Images and the SVG sanitiser
+
+`tools/measure/` holds the maintainer tools behind image fit and the local image store: `measure-bounds.mjs`
+(margins), `hash-images.php` (the SHA-256 the installer verifies) and `compare.mjs`. After changing
+`src/Core/Image/SvgSanitizer.php`, sanitise every cached image and run `compare.mjs` on each set; it rasterises
+each file before and after and must report 0 differing images. `tools/refresh.php` runs the first two when an
+image set moves.
+
 ## Front-end assets
 
 `resources/assets/styles/*.scss` is the source; `public/assets/` is the committed Vite build, so Composer

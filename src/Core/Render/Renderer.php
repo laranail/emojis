@@ -11,6 +11,7 @@ use Simtabi\Laranail\Emojis\Core\Enums\Fit;
 use Simtabi\Laranail\Emojis\Core\Enums\Mode;
 use Simtabi\Laranail\Emojis\Core\Text\Token;
 use Simtabi\Laranail\Emojis\Core\Enums\SkinTone;
+use Simtabi\Laranail\Emojis\Core\Image\EmojiImage;
 use Simtabi\Laranail\Emojis\Core\Enums\EmojiVersion;
 use Simtabi\Laranail\Emojis\Core\Enums\ShortcodePreset;
 use Simtabi\Laranail\Emojis\Core\Extension\CustomEmoji;
@@ -65,6 +66,12 @@ final readonly class Renderer
 
     public function image(Emoji $emoji, string $set, ?string $locale = null, ?Fit $fit = null): Stringable
     {
+        $own = $this->emojis->customImage($emoji);
+
+        if ($own instanceof EmojiImage) {
+            return $this->emojis->htmlFactory()->make($this->imgTag($emoji->char, $emoji->name($locale), $own->src, $emoji->hexcode));
+        }
+
         $url = $this->emojis->images()->get($set)->url($emoji);
 
         return $this->emojis->htmlFactory()->make($url === null
@@ -82,8 +89,11 @@ final readonly class Renderer
 
     private function degrade(Emoji $emoji, Mode $target, RenderSettings $settings, ?string $original, bool $skipSelf): Piece
     {
+        // skipSelf is set only on the version-cap path, so the cap is the reason the target was skipped.
         if ($skipSelf && $settings->strict) {
-            throw UnsupportedConversion::for($emoji->hexcode, $target);
+            throw $settings->versionCap instanceof EmojiVersion
+                ? UnsupportedConversion::versionCapped($emoji->hexcode, $target, $settings->versionCap)
+                : UnsupportedConversion::for($emoji->hexcode, $target);
         }
 
         $chain = $skipSelf ? [] : [$target];
@@ -134,6 +144,14 @@ final readonly class Renderer
 
     private function imagePiece(Emoji $emoji, RenderSettings $settings): ?Piece
     {
+        // A replacement registered with useImage() wins over every set; it is already validated, and is
+        // shown as-is (a caller-supplied image has no measured crop).
+        $own = $this->emojis->customImage($emoji);
+
+        if ($own instanceof EmojiImage) {
+            return new Piece($this->imgTag($emoji->char, $emoji->name($settings->locale), $own->src, $emoji->hexcode), true);
+        }
+
         $set = $settings->imageSet ?? $this->emojis->options()->imageSet;
         $url = $this->emojis->images()->get($set)->url($emoji);
 
@@ -237,7 +255,7 @@ final readonly class Renderer
         $fallback = $custom->fallback ?? $code;
 
         return match ($target) {
-            Mode::Image                  => new Piece($this->imgTag($code, $custom->label(), $custom->imageUrl, ':' . $custom->name . ':'), true),
+            Mode::Image                  => new Piece($this->imgTag($code, $custom->label(), $custom->image->src, ':' . $custom->name . ':'), true),
             Mode::Shortcode, Mode::Ascii => new Piece($code, false),
             Mode::Name                   => new Piece(strtr($options->nameTemplate, ['{name}' => $custom->label()]), false),
             Mode::Auto                   => $this->custom($custom, $this->emojis->resolveAuto(), $settings),
