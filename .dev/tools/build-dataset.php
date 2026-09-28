@@ -93,7 +93,9 @@ foreach ($lock as $id => $source) {
         }
 
         @mkdir(dirname($file), 0o775, true);
-        exec(sprintf('curl -sSfL --retry 3 -o %s %s 2>&1', escapeshellarg($file), escapeshellarg($source['url'])), $out, $code);
+        // --retry-all-errors: plain --retry skips a reset connection, which jsDelivr answers bursts with; the
+        // CI sync-check downloads ~80 files cold and failed on exactly that (2026-09-28).
+        exec(sprintf('curl -sSfL --retry 5 --retry-all-errors --retry-delay 2 -o %s %s 2>&1', escapeshellarg($file), escapeshellarg($source['url'])), $out, $code);
         $code === 0 || $fail("download of {$id} failed: " . implode(' ', $out));
     }
 
