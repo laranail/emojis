@@ -15,7 +15,8 @@ Converters are immutable: each option returns a new converter, so a configured o
 
 Emoticons match only as whole words — preceded by the start or whitespace, followed by the end, whitespace
 or closing punctuation — so `http://`, `foo();)` and `x<3` are left alone. Emoticons starting with a letter
-or digit (`XD`, `D:`, `8)`, `B-)`) are "risky" and match only with `withEmoticons(risky: true)`.
+or digit (`XD`, `D:`, `8)`, `B-)`) are "risky" and match only with `withEmoticons(risky: true)`. The
+[emoticon list](emoticons.md) has every one, and `Emojis::emoticons()` returns them in code.
 
 Shortcodes must not be glued to a word, a path or a stray colon: `12:30:45`, `std::vector`,
 `laranail::emojis.search` and `/users/:id:` stay as they are, while `:smile::smile:` is two emoji.

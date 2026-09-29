@@ -40,6 +40,7 @@ Hosted at <https://opensource.simtabi.com/documentation/laranail/emojis/>.
 - [Catalogue and lookups](docs/tools/catalogue.md) — `Emojis`, `Emoji`, `EmojiId`, flags, skin tones
 - [Querying and search](docs/tools/querying.md) — `Query`, ranked localized search
 - [Text conversion](docs/tools/conversion.md) — `TextConverter`, every option and inspection method
+- [Emoticons](docs/tools/emoticons.md) — every ASCII smiley recognised, and the emoji it converts to
 - [Images](docs/tools/images.md) — image sets, fit (padding removal), a verified local copy, your own images, SVG sanitising
 - [Symbols](docs/tools/symbols.md) — 7,354 special characters: arrows, currency, maths, letters, hieroglyphs
 - [Styles](docs/tools/styles.md) — the stylesheet: inline, link or `@use` the SCSS; tokens; the Vite build

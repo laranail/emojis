@@ -136,6 +136,28 @@ final class Emojis implements EmojisFluent
     }
 
     /**
+     * Every emoticon text conversion recognises, mapped to its emoji: the dataset's and any added with
+     * addEmoticon(). Opt-in-only ("risky") ones are included only when asked, as withEmoticons() does.
+     *
+     * @return array<string, Emoji> emoticon => emoji
+     */
+    public function emoticons(bool $risky = false): array
+    {
+        $excluded = $risky ? [] : array_flip($this->data->riskyEmoticons());
+        $out = [];
+
+        foreach (array_keys([...$this->data->emoticonMap(), ...$this->custom->emoticons()]) as $emoticon) {
+            $emoticon = (string) $emoticon;
+
+            if (! isset($excluded[$emoticon]) && ($emoji = $this->catalogue()->byEmoticon($emoticon)) instanceof Emoji) {
+                $out[$emoticon] = $emoji;
+            }
+        }
+
+        return $out;
+    }
+
+    /**
      * A flag by ISO 3166-1 alpha-2 region ("KE", "gb"), or one of the three RGI subdivision flags
      * ("GB-ENG", "gbsct"). Only RGI flags exist: "XX" throws, and "UK" is not silently read as "GB".
      *
