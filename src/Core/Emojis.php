@@ -137,19 +137,17 @@ final class Emojis implements EmojisFluent
 
     /**
      * Every emoticon text conversion recognises, mapped to its emoji: the dataset's and any added with
-     * addEmoticon(). Opt-in-only ("risky") ones are included only when asked, as withEmoticons() does.
+     * addEmoticon(), less any removed with removeEmoticon(). Opt-in-only ("risky") ones are included only
+     * when asked, as withEmoticons() does.
      *
      * @return array<string, Emoji> emoticon => emoji
      */
     public function emoticons(bool $risky = false): array
     {
-        $excluded = $risky ? [] : array_flip($this->data->riskyEmoticons());
         $out = [];
 
-        foreach (array_keys([...$this->data->emoticonMap(), ...$this->custom->emoticons()]) as $emoticon) {
-            $emoticon = (string) $emoticon;
-
-            if (! isset($excluded[$emoticon]) && ($emoji = $this->catalogue()->byEmoticon($emoticon)) instanceof Emoji) {
+        foreach ($this->catalogue()->activeEmoticons($risky) as $emoticon => $hex) {
+            if (($emoji = $this->catalogue()->byHexcode($hex)) instanceof Emoji) {
                 $out[$emoticon] = $emoji;
             }
         }
@@ -421,7 +419,22 @@ final class Emojis implements EmojisFluent
     public function addEmoticon(string $emoticon, Emoji|EmojiId|string $emoji): self
     {
         $this->custom->emoticon($emoticon, $this->get($emoji)->hexcode);
-        $this->scanner = null; // the emoticon pattern is built from the registry
+        $this->emoticonsChanged();
+
+        return $this;
+    }
+
+    /**
+     * Switch emoticons off, packaged or added: they are no longer matched, listed, looked up or written, and
+     * an emoji whose primary emoticon is removed is written with another of its emoticons, or degrades.
+     */
+    public function removeEmoticon(string ...$emoticons): self
+    {
+        foreach ($emoticons as $emoticon) {
+            $this->custom->disableEmoticon($emoticon);
+        }
+
+        $this->emoticonsChanged();
 
         return $this;
     }
@@ -522,6 +535,13 @@ final class Emojis implements EmojisFluent
     public function renderer(): Renderer
     {
         return $this->renderer ??= new Renderer($this);
+    }
+
+    /** The scanner's pattern and the catalogue's emoticon views are built from the registry. */
+    private function emoticonsChanged(): void
+    {
+        $this->scanner = null;
+        $this->catalogue?->forgetEmoticons();
     }
 
     /** @param array{value: string, group: string, description: string, ascii: bool, tags: string, reading: string} $item */

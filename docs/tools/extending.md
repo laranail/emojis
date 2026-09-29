@@ -32,8 +32,14 @@ To replace the picture of an emoji Unicode does have, use `Emojis::useImage('thu
 
 ```php
 Emojis::addShortcode('shipit', 'rocket');
-Emojis::addEmoticon(':3', 'cat face');
+Emojis::addEmoticon(':3', 'cat face');     // remaps the packaged :3 (kissing cat)
+Emojis::addEmoticon('(y)', 'thumbs up');   // matches without the opt-in, though packaged as opt-in only
+Emojis::removeEmoticon(':P', '^^');        // never matched, listed, looked up or written
 ```
+
+An emoticon you add always matches once emoticons are on, even where the package marks the same text as
+opt-in only: adding it is the decision. [Emoticons](emoticons.md#choosing-what-matches) has the full set of
+levers.
 
 ## Macros
 

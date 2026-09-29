@@ -2,6 +2,7 @@
 
 declare(strict_types=1);
 
+use Simtabi\Laranail\Emojis\Core\Emojis;
 use Simtabi\Laranail\Emojis\Core\Enums\Mode;
 use Simtabi\Laranail\Emojis\Core\Enums\Carrier;
 use Simtabi\Laranail\Emojis\Core\Enums\SkinTone;
@@ -87,5 +88,8 @@ it('shows outputs the code really produces', function (string $actual, string $d
     'emoticons: risky'                          => fn (): array => [emojis()->text('o_O T_T')->withEmoticons(risky: true)->toEmoji(), '🤨 😭'],
     'emoticons: lookup'                         => fn (): array => [(string) emojis()->fromEmoticon('>_<'), '😣'],
     'emoticons: of an emoji'                    => fn (): array => [implode(' ', emojis()->get('🙂')->emoticons()), '(: :) :-) :-] :] =]'],
-    'recipe: older platforms'                   => fn (): array => [emojis()->text('❤️‍🔥 🫩 🚀')->supportedUpTo(EmojiVersion::V13_0)->toEmoji(), '❤️🔥 :face_with_eye_bags: 🚀'],
+    // These two change the instance, so each gets its own rather than the suite's shared one.
+    'emoticons: add one opt-in' => fn (): array => [Emojis::create()->addEmoticon('(y)', 'thumbs up')->text('ok (y) (n)')->withEmoticons()->toEmoji(), 'ok 👍 (n)'],
+    'emoticons: remove one'     => fn (): array => [Emojis::create()->removeEmoticon(':)')->text('🙂')->toEmoticons(), ':-)'],
+    'recipe: older platforms'   => fn (): array => [emojis()->text('❤️‍🔥 🫩 🚀')->supportedUpTo(EmojiVersion::V13_0)->toEmoji(), '❤️🔥 :face_with_eye_bags: 🚀'],
 ]);

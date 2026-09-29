@@ -8,7 +8,8 @@ Every ASCII smiley the scanner recognises, grouped by the emoji it converts to.
   emoji's *primary* emoticon: what `toEmoticons()` writes back.
 - **Opt-in only** entries collide with ordinary prose and code (`XD`, `8)`, `o_O`), so they match only with
   `withEmoticons(risky: true)`. Anything that starts with a letter or a digit is in this column
-  automatically; `:/`, `:|` and `(:` are added by hand.
+  automatically; `:/`, `:|`, `(:`, and the prose-like `(y)`, `(n)`, `:?` and `<><` are added by hand. An
+  emoji's primary can still be one of these: `toEmoticons()` writes `(y)` for 👍.
 - Each emoticon converts to exactly one emoji. Where sources disagree, the curated overlay wins, then
   emojibase, Google's emoji metadata and iamcal, in that order ([data sources](data-sources.md)).
 
@@ -21,6 +22,34 @@ Emojis::get('🙂')->emoticons();                                      // ['(:',
 
 Add your own with `Emojis::addEmoticon()` ([extending](extending.md)). Text faces with no single emoji
 equivalent, such as `¯\_(ツ)_/¯`, are in the [kaomoji](kaomoji.md) catalogue instead.
+
+## Choosing what matches
+
+Some readings are judgement calls, and the package makes one so it can work out of the box. These are
+the ones worth a look, and the lever for each:
+
+| Case | Packaged behaviour | If you want otherwise |
+|---|---|---|
+| `(y)` and `(n)` | opt-in only: "Continue? (y) or (n)" stays text | `addEmoticon('(y)', 'thumbs up')` for just that one |
+| `:?` and `<><` | opt-in only: they read as punctuation or arrows | `addEmoticon(':?', …)` |
+| `:X` | 😘 face blowing a kiss, as the upstream sources have it | `addEmoticon(':X', 'zipper-mouth face')` |
+| `:O` and `:o` | 😮 and 😲, from different sources | `addEmoticon(':o', 'face with open mouth')` |
+| 😎 😇 👋 😵 🤨 | every emoticon for them starts with a letter or digit, so they are opt-in only and `toEmoticons()` writes a shortcode | `withEmoticons(risky: true)`, or add the one you use |
+| a default you do not want | matched | `removeEmoticon(':P')`, or `input.disabled_emoticons` in config |
+
+The levers, from broadest to narrowest:
+
+- `withEmoticons(risky: true)` matches every opt-in-only emoticon, per call.
+- `addEmoticon()` (or `extend.emoticons` in config) adds or remaps one. Added emoticons always match, even
+  text the package marks opt-in only.
+- `removeEmoticon()` (or `input.disabled_emoticons`) switches one off everywhere: matching, `emoticons()`,
+  `fromEmoticon()` and `toEmoticons()`. An emoji whose primary is removed is written with another of its
+  emoticons, or degrades to a shortcode.
+
+```php
+Emojis::addEmoticon('(y)', 'thumbs up')->text('ok (y) (n)')->withEmoticons()->toEmoji();   // 'ok 👍 (n)'
+Emojis::removeEmoticon(':)')->text('🙂')->toEmoticons();                                     // ':-)'
+```
 
 ## The list
 
@@ -59,7 +88,7 @@ Generated from the dataset by `.dev/tools/emoticons-doc.php`; `composer sync-che
 | 😑 | expressionless face | **`-_-`** `-.-` | — |
 | 😶 | face without mouth | **`:#`** | — |
 | 😏 | smirking face | **`:j`** `>~>` | — |
-| 😒 | unamused face | **`:?`** `>->` | — |
+| 😒 | unamused face | `>->` | `:?` |
 | 😬 | grimacing face | — | `8D` |
 | 😔 | pensive face | **`._.`** | — |
 | 😪 | sleepy face | **`(-.-)zzZZ`** | — |
@@ -106,8 +135,8 @@ Generated from the dataset by `.dev/tools/emoticons-doc.php`; `composer sync-che
 | ❤️ | red heart | **`<3`** | — |
 | 👋 | waving hand | — | `o/` |
 | 🤘 | sign of the horns | **`\m/`** `\M/` | — |
-| 👍 | thumbs up | **`(y)`** | — |
-| 👎 | thumbs down | **`(n)`** | — |
+| 👍 | thumbs up | — | `(y)` |
+| 👎 | thumbs down | — | `(n)` |
 | 🙌 | raising hands | **`\o/`** | — |
 | 🧙‍♂️ | man mage | **`:{>`** | — |
 | 🧛 | vampire | **`:E`** | — |
@@ -117,7 +146,7 @@ Generated from the dataset by `.dev/tools/emoticons-doc.php`; `composer sync-che
 | 🐮 | cow face | — | `3:O` |
 | 🐁 | mouse | **`<:3)~`** | — |
 | 🐧 | penguin | **`<(")`** | — |
-| 🐟 | fish | **`<><`** | — |
+| 🐟 | fish | — | `<><` |
 | 🌹 | rose | **`@-,-'-,-`** | — |
 | 🌚 | new moon face | **`>_>`** | — |
 | 🌝 | full moon face | **`<_<`** | — |

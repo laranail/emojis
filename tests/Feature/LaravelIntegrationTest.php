@@ -11,6 +11,7 @@ use Illuminate\Support\Facades\Validator;
 
 use function Simtabi\Laranail\Emojis\emoji;
 
+use Simtabi\Laranail\Emojis\Tests\TestCase;
 use Simtabi\Laranail\Emojis\Core\Enums\Mode;
 use Simtabi\Laranail\Emojis\Laravel\Casts\AsEmoji;
 use Simtabi\Laranail\Emojis\Laravel\Rules\NoEmoji;
@@ -177,4 +178,21 @@ it('publishes the built assets to public/vendor/laranail/emojis', function (): v
         ->and(array_key_first($paths))->toEndWith('public/assets')
         ->and(array_values($paths)[0])->toBe(public_path('vendor/laranail/emojis'))
         ->and(is_file(array_key_first($paths) . '/css/emojis.css'))->toBeTrue();
+});
+
+it('applies added and disabled emoticons from config at boot', function (): void {
+    TestCase::$bootConfig = [
+        'laranail.emojis.extend.emoticons'         => ['(y)' => '1F44D', ':X' => '1F910'],
+        'laranail.emojis.input.disabled_emoticons' => [':P'],
+    ];
+
+    try {
+        $this->refreshApplication();
+        $emojis = app(Emojis::class);
+
+        expect($emojis->text('ok (y) (n) :X :P')->withEmoticons()->toEmoji())->toBe('ok 👍 (n) 🤐 :P')
+            ->and($emojis->fromEmoticon(':P'))->toBeNull();
+    } finally {
+        TestCase::$bootConfig = [];
+    }
 });

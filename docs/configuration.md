@@ -28,10 +28,11 @@ Grouped by concern; each group's keys are listed once.
 | `output.auto_fallback` | `'ascii'` | What `Mode::Auto` becomes when the terminal cannot draw emoji. |
 | `output.degradation` | `[]` | Per-target fallback chains, e.g. `'text' => ['shortcode', 'ascii']`. |
 | `input.max_bytes` | `1048576` | Larger input throws `InvalidInput` instead of pinning a worker. |
+| `input.disabled_emoticons` | `[]` | Emoticons never to match, list or write: `[':P', '^^']` ([emoticons](tools/emoticons.md#choosing-what-matches)). |
 | `extend.custom` | `[]` | Image-only custom emoji: `'laravel' => ['image' => 'https://… or data:image/…', 'aliases' => [], 'fallback' => null, 'label' => …]`. |
 | `extend.images` | `[]` | Your image for an existing emoji: `'thumbsup' => 'https://…'` — see [images](tools/images.md#your-own-images). |
 | `extend.shortcodes` | `[]` | Extra shortcodes for existing emoji: `'shipit' => '1F680'`. |
-| `extend.emoticons` | `[]` | Extra emoticons: `':3' => '1F63A'`. |
+| `extend.emoticons` | `[]` | Extra or remapped emoticons, which always match: `':X' => '1F910'`. |
 | `policy` | `[]` | Default emoji policy for `sanitize()` and `EmojiPolicyRule`: `allow_groups`, `deny_groups`, `deny_subgroups`, `allow_only`, `deny`, `max_version`, `allow_unknown`, `allow_custom`, `max_emojis`, `replacement` — see [security](tools/security.md#emoji-policy-opt-in). |
 
 Outside Laravel, `Emojis::create()` takes the same array:

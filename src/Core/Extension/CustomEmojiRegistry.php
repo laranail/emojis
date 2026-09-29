@@ -26,6 +26,9 @@ final class CustomEmojiRegistry
     /** @var array<string, string> emoticon => hexcode */
     private array $emoticons = [];
 
+    /** @var array<string, true> emoticons switched off, packaged or added */
+    private array $disabledEmoticons = [];
+
     /** @var array<string, EmojiImage> hexcode => image, used before any image set */
     private array $images = [];
 
@@ -75,8 +78,25 @@ final class CustomEmojiRegistry
         }
 
         $this->emoticons[$emoticon] = strtoupper($hexcode);
+        unset($this->disabledEmoticons[$emoticon]); // the later call is the caller's decision
 
         return $this;
+    }
+
+    /** Switch an emoticon off: it is no longer matched, listed, looked up or written. */
+    public function disableEmoticon(string $emoticon): self
+    {
+        $this->guard();
+        unset($this->emoticons[$emoticon]);
+        $this->disabledEmoticons[$emoticon] = true;
+
+        return $this;
+    }
+
+    /** @return array<string, true> */
+    public function disabledEmoticons(): array
+    {
+        return $this->disabledEmoticons;
     }
 
     public function image(string $hexcode, EmojiImage $image): self

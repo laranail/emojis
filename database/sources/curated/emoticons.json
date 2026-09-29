@@ -1,5 +1,5 @@
 {
-    "about": "Curated ASCII emoticons. Entries here win over every upstream source. 'risky' adds emoticons that only match when a caller opts in, on top of the automatic rule (anything starting with a letter or digit). 'primary' pins the emoticon an emoji renders as in Emoticon mode. Emoji that already had a primary before an entry was added here keep it pinned, so adding a smiley never changes what toEmoticons() writes.",
+    "about": "Curated ASCII emoticons. Entries here win over every upstream source. 'risky' adds emoticons that only match when a caller opts in, on top of the automatic rule (anything starting with a letter or digit). 'primary' pins the emoticon an emoji renders as in Emoticon mode. Emoji that already had a primary before an entry was added here keep it pinned, so adding a smiley never changes what toEmoticons() writes. A pin may name an opt-in-only emoticon: (y), (n), :? and <>< were made opt-in because they read as prose, but toEmoticons() still writes them.",
     "emoticons": {
         ":)": "1F642",
         ":-)": "1F642",
@@ -85,7 +85,7 @@
         ">_<": "1F623",
         "*-*": "1F929"
     },
-    "risky": [":/", ":|", "(:"],
+    "risky": [":/", ":|", "(:", "(y)", "(n)", ":?", "<><"],
     "primary": {
         "1F642": ":)",
         "1F600": ":D",
@@ -101,6 +101,10 @@
         "1F633": ":$",
         "1F63D": ":3",
         "1F929": "*_*",
-        "1F92C": ":@"
+        "1F92C": ":@",
+        "1F44D": "(y)",
+        "1F44E": "(n)",
+        "1F612": ":?",
+        "1F41F": "<><"
     }
 }

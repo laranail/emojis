@@ -43,6 +43,10 @@ return [
 
     'input' => [
         'max_bytes' => 1048576, // larger input throws InvalidInput
+
+        // Emoticons never to match, list or write, packaged or added: [':P', '^^']. To match an opt-in-only
+        // one without opting in to all of them, add it under extend.emoticons instead.
+        'disabled_emoticons' => [],
     ],
 
     // Additions, registered at boot and frozen after it.
