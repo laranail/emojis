@@ -83,5 +83,9 @@ it('shows outputs the code really produces', function (string $actual, string $d
     'japanese: search'                          => fn (): array => [(string) emojis()->search('寿司', 'ja')->first(), '🍣'],
     'japanese: collection size'                 => fn (): array => [(string) emojis()->collection('japanese')->count(), '55'],
     'kaomoji: total'                            => fn (): array => [(string) count(emojis()->kaomoji()), '2092'],
+    'emoticons: plain'                          => fn (): array => [emojis()->text('Nice one :] ^^')->withEmoticons()->toEmoji(), 'Nice one 🙂 😊'],
+    'emoticons: risky'                          => fn (): array => [emojis()->text('o_O T_T')->withEmoticons(risky: true)->toEmoji(), '🤨 😭'],
+    'emoticons: lookup'                         => fn (): array => [(string) emojis()->fromEmoticon('>_<'), '😣'],
+    'emoticons: of an emoji'                    => fn (): array => [implode(' ', emojis()->get('🙂')->emoticons()), '(: :) :-) :-] :] =]'],
     'recipe: older platforms'                   => fn (): array => [emojis()->text('❤️‍🔥 🫩 🚀')->supportedUpTo(EmojiVersion::V13_0)->toEmoji(), '❤️🔥 :face_with_eye_bags: 🚀'],
 ]);

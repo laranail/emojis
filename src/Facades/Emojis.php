@@ -27,6 +27,7 @@ use Simtabi\Laranail\Emojis\Core\Catalogue\EmojiCollection;
  * @method static Query query()
  * @method static EmojiCollection search(string $term, ?string $locale = null, int $limit = 24)
  * @method static Emoji random(?Group $group = null)
+ * @method static array<string, Emoji> emoticons(bool $risky = false)
  * @method static list<Kaomoji> kaomoji(?string $group = null, bool $asciiOnly = false)
  * @method static TextConverter text(string $text)
  * @method static TextConverter html(string $html)

@@ -20,7 +20,8 @@ Upstream sources, pinned by URL and sha256 in `database/sources/upstream.lock.js
 | WHATWG HTML named character references | living standard | CC BY 4.0 | symbols' HTML entities |
 
 Plus curated inputs in `database/sources/curated/`: `emoticons.json` (the everyday emoticons, which win over
-every source, and the "risky" list), `aliases.json` (common shortcodes no preset carries), `collections.json`
+every source, the "risky" list, and pinned primaries, so adding a smiley never changes what
+`toEmoticons()` writes for an emoji that already had one), `aliases.json` (common shortcodes no preset carries), `collections.json`
 and `symbols.json` (how the symbol groups are drawn from Unicode).
 
 ## Sources we check against but do not copy
