@@ -218,6 +218,8 @@ final class EmojisServiceProvider extends PackageServiceProvider
         foreach ((array) $config->get('laranail.emojis.extend.emoticons', []) as $emoticon => $emoji) {
             $emojis->addEmoticon((string) $emoticon, (string) $emoji);
         }
+
+        $emojis->removeEmoticon(...array_map(strval(...), array_values((array) $config->get('laranail.emojis.input.disabled_emoticons', []))));
     }
 
     /** @return array<string, string> */

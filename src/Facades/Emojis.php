@@ -42,6 +42,7 @@ use Simtabi\Laranail\Emojis\Core\Catalogue\EmojiCollection;
  * @method static Symbols symbols()
  * @method static \Simtabi\Laranail\Emojis\Core\Emojis addShortcode(string $shortcode, Emoji|EmojiId|string $emoji)
  * @method static \Simtabi\Laranail\Emojis\Core\Emojis addEmoticon(string $emoticon, Emoji|EmojiId|string $emoji)
+ * @method static \Simtabi\Laranail\Emojis\Core\Emojis removeEmoticon(string ...$emoticons)
  * @method static \Simtabi\Laranail\Emojis\Core\Emojis addImageSet(ImageSet $set)
  * @method static string datasetVersion()
  *

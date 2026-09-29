@@ -1207,6 +1207,7 @@ file_put_contents(ROOT . '/build/dataset-report.txt', implode("\n", [
     'sequences: ' . count($sequences) . ', lengths: ' . implode(',', $lengths),
     'shortcodes indexed: ' . count($index) . ', dropped (non-ASCII / illegal): ' . count($dropped),
     'emoticons: ' . count($emoticons) . ' (' . count($risky) . ' risky), primaries: ' . count($primaryEmoticon),
+    'emoticons by source: ' . implode(', ', array_map(static fn (string $source, int $n): string => "{$source} {$n}", array_keys($bySource = array_count_values($emoticonSource)), $bySource)),
     'kaomoji: ' . count($kaomoji),
     'fluent mapped: ' . count($fluent),
     '',

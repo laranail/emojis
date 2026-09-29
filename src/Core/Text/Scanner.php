@@ -260,14 +260,7 @@ final class Scanner
     private function emoticons(string $text, bool $risky): array
     {
         if ($this->emoticonPattern === null || $this->emoticonPatternRisky !== $risky) {
-            $excluded = $risky ? [] : array_flip($this->data->riskyEmoticons());
-            $all = [];
-
-            foreach (array_keys([...$this->data->emoticonMap(), ...$this->custom->emoticons()]) as $emoticon) {
-                if (! isset($excluded[(string) $emoticon])) {
-                    $all[] = (string) $emoticon;
-                }
-            }
+            $all = array_map(strval(...), array_keys($this->catalogue->activeEmoticons($risky)));
 
             usort($all, static fn (string $a, string $b): int => strlen($b) <=> strlen($a));
             $this->emoticonPattern = $all === [] ? '' : '~(?<!\S)(?:' . implode('|', array_map(static fn (string $e): string => preg_quote($e, '~'), $all)) . ')(?![^\s.,!?;:)\]"\'])~';

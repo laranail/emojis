@@ -38,6 +38,9 @@ final class Catalogue
     /** @var array<string, list<string>>|null hexcode => emoticons */
     private ?array $emoticonsByHex = null;
 
+    /** @var array<int, array<string, string>> risky flag (0/1) => emoticon => hexcode */
+    private array $activeEmoticons = [];
+
     public function __construct(
         private readonly Emojis $emojis,
         private readonly DatasetStore $data,
@@ -91,9 +94,47 @@ final class Catalogue
 
     public function byEmoticon(string $emoticon): ?Emoji
     {
-        $hex = $this->custom->emoticons()[$emoticon] ?? $this->data->emoticonMap()[$emoticon] ?? null;
+        $hex = $this->activeEmoticons(risky: true)[$emoticon] ?? null;
 
         return $hex === null ? null : $this->byHexcode($hex);
+    }
+
+    /**
+     * The emoticons in force, emoticon => hexcode: the dataset's, then the caller's added ones (which win),
+     * less any switched off. The one definition the scanner, lookups and listings all read.
+     *
+     * Risky dataset entries are left out unless $risky. An emoticon the caller added is never treated as
+     * risky, even when the dataset marks the same text so: adding it was the decision to match it.
+     *
+     * @return array<string, string>
+     */
+    public function activeEmoticons(bool $risky = false): array
+    {
+        if (isset($this->activeEmoticons[$risky])) {
+            return $this->activeEmoticons[$risky];
+        }
+
+        $custom = $this->custom->emoticons();
+        $disabled = $this->custom->disabledEmoticons();
+        $excluded = $risky ? [] : array_diff_key(array_flip($this->data->riskyEmoticons()), $custom);
+        $active = [];
+
+        foreach ([...$this->data->emoticonMap(), ...$custom] as $emoticon => $hex) {
+            $emoticon = (string) $emoticon;
+
+            if (! isset($disabled[$emoticon]) && ! isset($excluded[$emoticon])) {
+                $active[$emoticon] = $hex;
+            }
+        }
+
+        return $this->activeEmoticons[$risky] = $active;
+    }
+
+    /** @internal called when an emoticon is added or switched off, so memoised views are rebuilt */
+    public function forgetEmoticons(): void
+    {
+        $this->activeEmoticons = [];
+        $this->emoticonsByHex = null;
     }
 
     /**
@@ -170,17 +211,31 @@ final class Catalogue
 
     public function emoticonOf(Emoji $emoji): ?string
     {
-        return $this->data->primaryEmoticons()[$emoji->hexcode] ?? null;
+        $primary = $this->data->primaryEmoticons()[$emoji->hexcode] ?? null;
+
+        if ($primary !== null && ($this->activeEmoticons(risky: true)[$primary] ?? null) === $emoji->hexcode) {
+            return $primary;
+        }
+
+        // The primary was switched off or remapped to another emoji, and writing it would read back as
+        // something else: use another emoticon that still means this emoji, or none (Emoticon mode degrades).
+        if ($primary === null) {
+            return null;
+        }
+
+        $fallback = array_search($emoji->hexcode, $this->activeEmoticons(), true);
+
+        return $fallback === false ? null : $fallback;
     }
 
-    /** @return list<string> */
+    /** @return list<string> every emoticon for this emoji, opt-in-only ones included */
     public function emoticonsOf(Emoji $emoji): array
     {
         if ($this->emoticonsByHex === null) {
             $this->emoticonsByHex = [];
 
-            foreach ([...$this->data->emoticonMap(), ...$this->custom->emoticons()] as $emoticon => $hex) {
-                $this->emoticonsByHex[$hex][] = (string) $emoticon;
+            foreach ($this->activeEmoticons(risky: true) as $emoticon => $hex) {
+                $this->emoticonsByHex[$hex][] = $emoticon;
             }
         }
 
