@@ -69,6 +69,7 @@ use Simtabi\Laranail\Emojis\Core\Contracts\FailureReporter;
  * @method static EmojisService addImageSet(ImageSet $set)
  * @method static EmojisService freeze()
  * @method static CustomEmoji|null customEmoji(string $name)
+ * @method static list<CustomEmoji> customEmojis()
  * @method static Options options()
  * @method static string datasetVersion()
  * @method static list<string> availableLocales()

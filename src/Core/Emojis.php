@@ -483,6 +483,12 @@ final class Emojis implements EmojisFluent
         return $this->custom->find($name);
     }
 
+    /** @return list<CustomEmoji> every custom emoji, once each, in the order they were added */
+    public function customEmojis(): array
+    {
+        return array_values(array_unique($this->custom->all(), SORT_REGULAR));
+    }
+
     // ---- collaborators ------------------------------------------------------------------------
 
     public function options(): Options

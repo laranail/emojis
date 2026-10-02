@@ -9,6 +9,18 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/),
 
 ### Added
 
+- **A read-only HTTP API**, off by default (`LARANAIL_EMOJIS_API=true`): nine `GET` endpoints under
+  `/laranail/emojis/api/v1` for the catalogue (filtered, paged, localized), one emoji by any key, a picker
+  payload, symbols, kaomoji, emoticons and status tags. Off means no routes are registered at all. Inputs are
+  bounded (422 naming the field, never echoing it), unknown keys are 404s, the configured emoji policy
+  applies, responses carry an ETag (304 on a repeat) and `Vary: Accept-Language`, and the default prefix sits
+  outside `api/*` so no origin is allowed cross-site until the application says so. Documented in
+  [docs/tools/api.md](docs/tools/api.md), with an OpenAPI 3.1 file in `resources/openapi/`.
+- `Core\Picker\PayloadBuilder`: everything an emoji picker draws for one locale — the emoji the policy
+  permits, grouped, with localized names and keywords and skin-tone maps, then custom emoji. The API serves
+  it, and the Blade picker will share it.
+- `Emojis::customEmojis()` lists the custom emoji, once each.
+
 - **Status tags: `[OK]`, `[WARN]`, `[FAIL]` and 75 more**, for logs, consoles and plain text, in six groups
   (outcome, severity, task state, test result, change, other), collected from what Symfony, Laravel, Pest and
   the PSR-3 levels already print. Each has a role, a one-character text symbol that is never an emoji, the
