@@ -3471,7 +3471,7 @@ return [
         '2716-FE0F'                                  => 'cancellare | croce | segno moltiplicazione | segno per | X',
         2795                                         => '+ | croce | matematica | più | segno | segno di addizione',
         2796                                         => '- | matematica | meno | segno | segno di sottrazione | trattino',
-        2797                                         => "\u{F7} | diviso | matematica | segno | segno di divisione",
+        2797                                         => '÷ | diviso | matematica | segno | segno di divisione',
         '1F7F0'                                      => 'matematica | segno uguale | uguaglianza | uguale',
         '267E-FE0F'                                  => 'eternità | illimitato | per sempre | universale',
         '203C-FE0F'                                  => 'esclamazione | punteggiatura | punti esclamativi | punto esclamativo',

@@ -6,10 +6,12 @@ declare(strict_types=1);
  * Renders PHP values as source in the shape laranail's Pint config produces: short arrays, four-space
  * indentation, trailing commas, `=>` separated by single spaces.
  *
- * var_export() cannot be used for the dataset. It writes emoji, zero-width joiners, variation selectors and
- * tag characters as raw bytes, so a diff of the data shows invisible changes and an editor can silently
- * normalise them. Those are written double-quoted with `\u{…}` escapes instead; letters, digits and
- * punctuation of every script stay raw, so localized names remain readable and the shards stay small.
+ * var_export() cannot be used for the dataset. It writes zero-width joiners, variation selectors, tag
+ * characters and other invisible code points as raw bytes, so a diff of the data shows invisible changes
+ * and an editor can silently normalise them. Those, and only those, are written double-quoted with
+ * `\u{…}` escapes. Everything visible stays raw: letters, digits, punctuation and marks of every script,
+ * and every symbol, so 😂 reads as 😂, `👨‍👩‍👧` as "👨\u{200D}👩\u{200D}👧" (each person visible, each joiner
+ * explicit) and `❤️` as "❤\u{FE0F}".
  */
 final class PhpEmitter
 {
@@ -69,8 +71,15 @@ final class PhpEmitter
     }
 
     /**
-     * Letters, digits, marks and punctuation of any script, and printable ASCII, stay raw; anything invisible,
-     * spacing or pictographic (every emoji, ZWJ, variation selector, keycap, tag) is escaped.
+     * Everything visible stays raw: letters, digits, punctuation, marks and symbols of every script,
+     * pictographs, emoji modifiers and regional indicators included. Escaped: controls, format characters
+     * (ZWJ, bidi controls, tags), separators other than the plain space, private-use code points, variation
+     * selectors, and the enclosing keycap, which renders only on the character before it.
+     *
+     * This lists what to escape rather than what to keep. A keep-list needs PCRE to know every character's
+     * category, and a PHP whose PCRE predates the newest Unicode reads its newest emoji as unassigned, so two
+     * machines would emit different bytes and `sync-check` would fail on one of them. These categories are
+     * long settled, and the ranges that matter most are named outright.
      */
     private static function isReadable(string $char): bool
     {
@@ -80,7 +89,13 @@ final class PhpEmitter
             return true;
         }
 
-        return preg_match('/^[\p{L}\p{N}\p{P}\p{M}]$/u', $char) === 1 && ($cp < 0xFE00 || $cp > 0xFE0F) && $cp !== 0x20E3 && $cp < 0xE0000;
+        $invisible = ($cp >= 0xFE00 && $cp <= 0xFE0F)      // variation selectors 1-16
+            || ($cp >= 0xE0100 && $cp <= 0xE01EF)          // variation selectors 17-256
+            || ($cp >= 0xE0000 && $cp <= 0xE007F)          // tags
+            || $cp === 0x200D || $cp === 0x200C            // zero-width joiner and non-joiner
+            || $cp === 0x20E3;                             // combining enclosing keycap
+
+        return ! $invisible && preg_match('/^[\p{Cc}\p{Cf}\p{Co}\p{Cs}\p{Zs}\p{Zl}\p{Zp}]$/u', $char) !== 1;
     }
 
     /** @param array<array-key, mixed> $value */

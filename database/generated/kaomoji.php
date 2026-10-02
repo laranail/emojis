@@ -310,7 +310,7 @@ return [
             'reading'     => '',
         ],
         [
-            'value'       => "(・\u{2200}・)",
+            'value'       => '(・∀・)',
             'group'       => 'smiling',
             'description' => 'smiling bird face',
             'ascii'       => false,
@@ -318,7 +318,7 @@ return [
             'reading'     => '',
         ],
         [
-            'value'       => "\u{25C9}‿\u{25C9}",
+            'value'       => '◉‿◉',
             'group'       => 'smiling',
             'description' => 'smiley face',
             'ascii'       => false,
@@ -326,7 +326,7 @@ return [
             'reading'     => '',
         ],
         [
-            'value'       => "｡\u{25D5}‿\u{25D5}｡",
+            'value'       => '｡◕‿◕｡',
             'group'       => 'smiling',
             'description' => 'smiley face',
             'ascii'       => false,
@@ -334,7 +334,7 @@ return [
             'reading'     => '',
         ],
         [
-            'value'       => "(. \u{275B} ᴗ \u{275B}.)",
+            'value'       => '(. ❛ ᴗ ❛.)',
             'group'       => 'smiling',
             'description' => 'smiley face',
             'ascii'       => false,
@@ -358,7 +358,7 @@ return [
             'reading'     => '',
         ],
         [
-            'value'       => "(\u{2737}‿\u{2737})",
+            'value'       => '(✷‿✷)',
             'group'       => 'smiling',
             'description' => 'smile with starry eyes',
             'ascii'       => false,
@@ -366,7 +366,7 @@ return [
             'reading'     => '',
         ],
         [
-            'value'       => "(\u{25D4}‿\u{25D4})",
+            'value'       => '(◔‿◔)',
             'group'       => 'smiling',
             'description' => 'eyes looking up smiley face',
             'ascii'       => false,
@@ -374,7 +374,7 @@ return [
             'reading'     => '',
         ],
         [
-            'value'       => "(\u{25D5}ᴗ\u{25D5}\u{273F})",
+            'value'       => '(◕ᴗ◕✿)',
             'group'       => 'smiling',
             'description' => 'adorable face',
             'ascii'       => false,
@@ -382,7 +382,7 @@ return [
             'reading'     => '',
         ],
         [
-            'value'       => "(ʘᴗʘ\u{273F})",
+            'value'       => '(ʘᴗʘ✿)',
             'group'       => 'smiling',
             'description' => 'excited adorable face',
             'ascii'       => false,
@@ -398,7 +398,7 @@ return [
             'reading'     => '',
         ],
         [
-            'value'       => "(\u{25CD}•ᴗ•\u{25CD})",
+            'value'       => '(◍•ᴗ•◍)',
             'group'       => 'smiling',
             'description' => 'blushing happy face',
             'ascii'       => false,
@@ -406,7 +406,7 @@ return [
             'reading'     => '',
         ],
         [
-            'value'       => "( \u{2579}\u{25BD}\u{2579} )",
+            'value'       => '( ╹▽╹ )',
             'group'       => 'smiling',
             'description' => 'bird face',
             'ascii'       => false,
@@ -414,7 +414,7 @@ return [
             'reading'     => '',
         ],
         [
-            'value'       => "(\u{2267}\u{25BD}\u{2266})",
+            'value'       => '(≧▽≦)',
             'group'       => 'smiling',
             'description' => 'grinning squinting face',
             'ascii'       => false,
@@ -422,7 +422,7 @@ return [
             'reading'     => '',
         ],
         [
-            'value'       => "(\u{2606}\u{25BD}\u{2606})",
+            'value'       => '(☆▽☆)',
             'group'       => 'smiling',
             'description' => 'star-eyed happy face',
             'ascii'       => false,
@@ -430,7 +430,7 @@ return [
             'reading'     => '',
         ],
         [
-            'value'       => "(\u{272F}ᴗ\u{272F})",
+            'value'       => '(✯ᴗ✯)',
             'group'       => 'smiling',
             'description' => 'grinning face with star eyes',
             'ascii'       => false,
@@ -454,7 +454,7 @@ return [
             'reading'     => '',
         ],
         [
-            'value'       => "<(\u{FFE3}︶\u{FFE3})>",
+            'value'       => '<(￣︶￣)>',
             'group'       => 'smiling',
             'description' => 'smug smile with arms behind head',
             'ascii'       => false,
@@ -462,7 +462,7 @@ return [
             'reading'     => '',
         ],
         [
-            'value'       => "(*'ω\u{FF40}*)",
+            'value'       => '(*\'ω｀*)',
             'group'       => 'smiling',
             'description' => 'squinting smiling bear face',
             'ascii'       => false,
@@ -478,7 +478,7 @@ return [
             'reading'     => '',
         ],
         [
-            'value'       => "(\u{273F}^‿^)",
+            'value'       => '(✿^‿^)',
             'group'       => 'smiling',
             'description' => 'grinning face with flower',
             'ascii'       => false,
@@ -494,7 +494,7 @@ return [
             'reading'     => '',
         ],
         [
-            'value'       => "(\u{25E1} ω \u{25E1})",
+            'value'       => '(◡ ω ◡)',
             'group'       => 'smiling',
             'description' => 'grinning denko',
             'ascii'       => false,
@@ -502,7 +502,7 @@ return [
             'reading'     => '',
         ],
         [
-            'value'       => "( '\u{25E1}‿ゝ\u{25E1}`)",
+            'value'       => '( \'◡‿ゝ◡`)',
             'group'       => 'smiling',
             'description' => 'gentle smile with closed eyes',
             'ascii'       => false,
@@ -510,7 +510,7 @@ return [
             'reading'     => '',
         ],
         [
-            'value'       => "(｡•̀ᴗ-)\u{2727}",
+            'value'       => '(｡•̀ᴗ-)✧',
             'group'       => 'smiling',
             'description' => 'wink',
             'ascii'       => false,
@@ -518,7 +518,7 @@ return [
             'reading'     => '',
         ],
         [
-            'value'       => "(\u{25E0}‿\u{25D5})",
+            'value'       => '(◠‿◕)',
             'group'       => 'smiling',
             'description' => 'wink',
             'ascii'       => false,
@@ -526,7 +526,7 @@ return [
             'reading'     => '',
         ],
         [
-            'value'       => "(\u{25E0}‿・)—\u{2606}",
+            'value'       => '(◠‿・)—☆',
             'group'       => 'smiling',
             'description' => 'wink with magic',
             'ascii'       => false,
@@ -534,7 +534,7 @@ return [
             'reading'     => '',
         ],
         [
-            'value'       => "\u{2727}\u{25DD}(⁰\u{25BF}⁰)\u{25DC}\u{2727}",
+            'value'       => '✧◝(⁰▿⁰)◜✧',
             'group'       => 'smiling',
             'description' => 'smiling and throwing sparkles',
             'ascii'       => false,
@@ -542,7 +542,7 @@ return [
             'reading'     => '',
         ],
         [
-            'value'       => "(人*'\u{2200}\u{FF40})｡*ﾟ+",
+            'value'       => '(人*\'∀｀)｡*ﾟ+',
             'group'       => 'smiling',
             'description' => 'hands up with sparkles',
             'ascii'       => false,
@@ -550,7 +550,7 @@ return [
             'reading'     => '',
         ],
         [
-            'value'       => "(ﾉ\u{25D5}ヮ\u{25D5})ﾉ*.\u{2727}",
+            'value'       => '(ﾉ◕ヮ◕)ﾉ*.✧',
             'group'       => 'smiling',
             'description' => 'throwing sparkles',
             'ascii'       => false,
@@ -558,7 +558,7 @@ return [
             'reading'     => '',
         ],
         [
-            'value'       => "(\u{25CF}\u{2661}\u{2200}\u{2661})",
+            'value'       => '(●♡∀♡)',
             'group'       => 'loving',
             'description' => 'heart eyes',
             'ascii'       => false,
@@ -566,7 +566,7 @@ return [
             'reading'     => '',
         ],
         [
-            'value'       => "(๑\u{2661}\u{2313}\u{2661}๑)",
+            'value'       => '(๑♡⌓♡๑)',
             'group'       => 'loving',
             'description' => 'heart eyes',
             'ascii'       => false,
@@ -574,7 +574,7 @@ return [
             'reading'     => '',
         ],
         [
-            'value'       => "(｡\u{2661}‿\u{2661}｡)",
+            'value'       => '(｡♡‿♡｡)',
             'group'       => 'loving',
             'description' => 'heart eyes',
             'ascii'       => false,
@@ -582,7 +582,7 @@ return [
             'reading'     => '',
         ],
         [
-            'value'       => "(\u{273F} \u{2661}‿\u{2661})",
+            'value'       => '(✿ ♡‿♡)',
             'group'       => 'loving',
             'description' => 'heart eyes with flower',
             'ascii'       => false,
@@ -590,7 +590,7 @@ return [
             'reading'     => '',
         ],
         [
-            'value'       => "(\u{25CD}•ᴗ•\u{25CD})\u{2764}",
+            'value'       => '(◍•ᴗ•◍)❤',
             'group'       => 'loving',
             'description' => 'smiling with heart',
             'ascii'       => false,
@@ -598,7 +598,7 @@ return [
             'reading'     => '',
         ],
         [
-            'value'       => "( \u{25DC}‿\u{25DD} )\u{2661}",
+            'value'       => '( ◜‿◝ )♡',
             'group'       => 'loving',
             'description' => 'smiling with heart',
             'ascii'       => false,
@@ -606,7 +606,7 @@ return [
             'reading'     => '',
         ],
         [
-            'value'       => "(｡･ω･｡)ﾉ\u{2661}",
+            'value'       => '(｡･ω･｡)ﾉ♡',
             'group'       => 'loving',
             'description' => 'denko love',
             'ascii'       => false,
@@ -614,7 +614,7 @@ return [
             'reading'     => '',
         ],
         [
-            'value'       => "(•ө•)\u{2661}",
+            'value'       => '(•ө•)♡',
             'group'       => 'loving',
             'description' => 'bird with heart',
             'ascii'       => false,
@@ -622,7 +622,7 @@ return [
             'reading'     => '',
         ],
         [
-            'value'       => "(\u{2661}ω\u{2661} ) ~\u{266A}",
+            'value'       => '(♡ω♡ ) ~♪',
             'group'       => 'loving',
             'description' => 'denko heart eyes and whistling',
             'ascii'       => false,
@@ -630,7 +630,7 @@ return [
             'reading'     => '',
         ],
         [
-            'value'       => "\u{A4B0}\u{2445}ᵕ\u{F1A}ᵕ\u{A4B1}\u{2D6}\u{2661}",
+            'value'       => '꒰⑅ᵕ༚ᵕ꒱˖♡',
             'group'       => 'loving',
             'description' => 'gentle love',
             'ascii'       => false,
@@ -638,7 +638,7 @@ return [
             'reading'     => '',
         ],
         [
-            'value'       => "\u{2661}\u{2D6}\u{A4B0}ᵕ\u{F1A}ᵕ\u{2445}\u{A4B1}",
+            'value'       => '♡˖꒰ᵕ༚ᵕ⑅꒱',
             'group'       => 'loving',
             'description' => 'gentle love',
             'ascii'       => false,
@@ -646,7 +646,7 @@ return [
             'reading'     => '',
         ],
         [
-            'value'       => "\u{2661}(ӦｖӦ｡)",
+            'value'       => '♡(ӦｖӦ｡)',
             'group'       => 'loving',
             'description' => 'cute face',
             'ascii'       => false,
@@ -654,7 +654,7 @@ return [
             'reading'     => '',
         ],
         [
-            'value'       => "ෆ\u{2579} .̮ \u{2579}ෆ",
+            'value'       => 'ෆ╹ .̮ ╹ෆ',
             'group'       => 'loving',
             'description' => 'cute face',
             'ascii'       => false,
@@ -662,7 +662,7 @@ return [
             'reading'     => '',
         ],
         [
-            'value'       => "('\u{2229}｡• ᵕ •｡\u{2229}`)",
+            'value'       => '(\'∩｡• ᵕ •｡∩`)',
             'group'       => 'loving',
             'description' => 'hug love',
             'ascii'       => false,
@@ -670,7 +670,7 @@ return [
             'reading'     => '',
         ],
         [
-            'value'       => "\u{2661}(> ਊ <)\u{2661}",
+            'value'       => '♡(> ਊ <)♡',
             'group'       => 'loving',
             'description' => 'screaming love',
             'ascii'       => false,
@@ -678,7 +678,7 @@ return [
             'reading'     => '',
         ],
         [
-            'value'       => "\u{2665}\u{2563}[-_-]\u{2560}\u{2665}",
+            'value'       => '♥╣[-_-]╠♥',
             'group'       => 'loving',
             'description' => 'sharing love',
             'ascii'       => false,
@@ -686,7 +686,7 @@ return [
             'reading'     => '',
         ],
         [
-            'value'       => "(灬º‿º灬)\u{2661}",
+            'value'       => '(灬º‿º灬)♡',
             'group'       => 'loving',
             'description' => 'shy love',
             'ascii'       => false,
@@ -710,7 +710,7 @@ return [
             'reading'     => '',
         ],
         [
-            'value'       => "('ε\u{FF40} )",
+            'value'       => '(\'ε｀ )',
             'group'       => 'loving',
             'description' => 'kiss',
             'ascii'       => false,
@@ -718,7 +718,7 @@ return [
             'reading'     => '',
         ],
         [
-            'value'       => "( \u{2D8} ³\u{2D8})\u{2665}",
+            'value'       => '( ˘ ³˘)♥',
             'group'       => 'loving',
             'description' => 'kiss',
             'ascii'       => false,
@@ -726,7 +726,7 @@ return [
             'reading'     => '',
         ],
         [
-            'value'       => "(~\u{FFE3}³\u{FFE3})~",
+            'value'       => '(~￣³￣)~',
             'group'       => 'loving',
             'description' => 'kissy with arms outreached',
             'ascii'       => false,
@@ -734,7 +734,7 @@ return [
             'reading'     => '',
         ],
         [
-            'value'       => "(\u{25D5}દ\u{25D5})",
+            'value'       => '(◕દ◕)',
             'group'       => 'loving',
             'description' => 'kiss',
             'ascii'       => false,
@@ -742,7 +742,7 @@ return [
             'reading'     => '',
         ],
         [
-            'value'       => "(ʃƪ\u{FF3E}3\u{FF3E}）",
+            'value'       => '(ʃƪ＾3＾）',
             'group'       => 'loving',
             'description' => 'very happy kissy face',
             'ascii'       => false,
@@ -750,7 +750,7 @@ return [
             'reading'     => '',
         ],
         [
-            'value'       => "(*\u{FF3E}3\u{FF3E})/\u{FF5E}\u{2661}",
+            'value'       => '(*＾3＾)/～♡',
             'group'       => 'loving',
             'description' => 'kiss',
             'ascii'       => false,
@@ -758,7 +758,7 @@ return [
             'reading'     => '',
         ],
         [
-            'value'       => "(っ\u{2D8}з(\u{2D8}\u{2323}\u{2D8} )",
+            'value'       => '(っ˘з(˘⌣˘ )',
             'group'       => 'loving',
             'description' => 'giving a kiss',
             'ascii'       => false,
@@ -766,7 +766,7 @@ return [
             'reading'     => '',
         ],
         [
-            'value'       => "(\u{25CF}'3)\u{2661}(ε`\u{25CF})",
+            'value'       => '(●\'3)♡(ε`●)',
             'group'       => 'loving',
             'description' => 'two people kissing',
             'ascii'       => false,
@@ -774,7 +774,7 @@ return [
             'reading'     => '',
         ],
         [
-            'value'       => "(๑\u{2D9}\u{2765}\u{2D9}๑)",
+            'value'       => '(๑˙❥˙๑)',
             'group'       => 'loving',
             'description' => 'kiss',
             'ascii'       => false,
@@ -790,7 +790,7 @@ return [
             'reading'     => '',
         ],
         [
-            'value'       => "( \u{2F6} \u{275B} ꁞ \u{275B} \u{2F6} )",
+            'value'       => '( ˶ ❛ ꁞ ❛ ˶ )',
             'group'       => 'loving',
             'description' => 'two people kissing',
             'ascii'       => false,
@@ -798,7 +798,7 @@ return [
             'reading'     => '',
         ],
         [
-            'value'       => "(*\u{2D8}︶\u{2D8}*).｡*\u{2661}",
+            'value'       => '(*˘︶˘*).｡*♡',
             'group'       => 'loving',
             'description' => 'smiley face with love and sparkles',
             'ascii'       => false,
@@ -806,7 +806,7 @@ return [
             'reading'     => '',
         ],
         [
-            'value'       => "(\u{25CD}•ᴗ•\u{25CD})\u{2727}*。",
+            'value'       => '(◍•ᴗ•◍)✧*。',
             'group'       => 'loving',
             'description' => 'smiley face with love and sparkles',
             'ascii'       => false,
@@ -814,7 +814,7 @@ return [
             'reading'     => '',
         ],
         [
-            'value'       => "\u{2282}((・\u{25BD}・))\u{2283}",
+            'value'       => '⊂((・▽・))⊃',
             'group'       => 'hugging',
             'description' => 'big wide hug',
             'ascii'       => false,
@@ -822,7 +822,7 @@ return [
             'reading'     => '',
         ],
         [
-            'value'       => "(づ｡\u{25D5}‿‿\u{25D5}｡)づ",
+            'value'       => '(づ｡◕‿‿◕｡)づ',
             'group'       => 'hugging',
             'description' => 'hug with big smile',
             'ascii'       => false,
@@ -830,7 +830,7 @@ return [
             'reading'     => '',
         ],
         [
-            'value'       => "༼ つ \u{25D5}‿\u{25D5} ༽つ",
+            'value'       => '༼ つ ◕‿◕ ༽つ',
             'group'       => 'hugging',
             'description' => 'happy hug',
             'ascii'       => false,
@@ -838,7 +838,7 @@ return [
             'reading'     => '',
         ],
         [
-            'value'       => "(づ\u{FFE3} ³\u{FFE3})づ",
+            'value'       => '(づ￣ ³￣)づ',
             'group'       => 'hugging',
             'description' => 'kissy hug',
             'ascii'       => false,
@@ -846,7 +846,7 @@ return [
             'reading'     => '',
         ],
         [
-            'value'       => "(\u{2283}｡•́‿•̀｡)\u{2283}",
+            'value'       => '(⊃｡•́‿•̀｡)⊃',
             'group'       => 'hugging',
             'description' => 'hug',
             'ascii'       => false,
@@ -870,7 +870,7 @@ return [
             'reading'     => '',
         ],
         [
-            'value'       => "(\u{2283} • ʖ̫ • )\u{2283}",
+            'value'       => '(⊃ • ʖ̫ • )⊃',
             'group'       => 'hugging',
             'description' => 'hug',
             'ascii'       => false,
@@ -878,7 +878,7 @@ return [
             'reading'     => '',
         ],
         [
-            'value'       => "(つ\u{2267}\u{25BD}\u{2266})つ",
+            'value'       => '(つ≧▽≦)つ',
             'group'       => 'hugging',
             'description' => 'hug',
             'ascii'       => false,
@@ -886,7 +886,7 @@ return [
             'reading'     => '',
         ],
         [
-            'value'       => "(つ\u{2727}ω\u{2727})つ",
+            'value'       => '(つ✧ω✧)つ',
             'group'       => 'hugging',
             'description' => 'star-eyed hug',
             'ascii'       => false,
@@ -894,7 +894,7 @@ return [
             'reading'     => '',
         ],
         [
-            'value'       => "(っ.\u{275B} ᴗ \u{275B}.)っ",
+            'value'       => '(っ.❛ ᴗ ❛.)っ',
             'group'       => 'hugging',
             'description' => 'happy hug',
             'ascii'       => false,
@@ -902,7 +902,7 @@ return [
             'reading'     => '',
         ],
         [
-            'value'       => "\u{FF5E}(つˆДˆ)つ｡\u{2606}",
+            'value'       => '～(つˆДˆ)つ｡☆',
             'group'       => 'hugging',
             'description' => 'running hug',
             'ascii'       => false,
@@ -910,7 +910,7 @@ return [
             'reading'     => '',
         ],
         [
-            'value'       => "ლ(' \u{2765} `ლ)",
+            'value'       => 'ლ(\' ❥ `ლ)',
             'group'       => 'hugging',
             'description' => 'kissy hug',
             'ascii'       => false,
@@ -918,7 +918,7 @@ return [
             'reading'     => '',
         ],
         [
-            'value'       => "\u{2282}(•‿•\u{2282} )*.\u{2727}",
+            'value'       => '⊂(•‿•⊂ )*.✧',
             'group'       => 'hugging',
             'description' => 'hug',
             'ascii'       => false,
@@ -926,7 +926,7 @@ return [
             'reading'     => '',
         ],
         [
-            'value'       => "\u{2282}('･\u{25E1}･\u{2282} )\u{2218}\u{2DA}\u{2F3}\u{B0}",
+            'value'       => '⊂(\'･◡･⊂ )∘˚˳°',
             'group'       => 'hugging',
             'description' => 'hug',
             'ascii'       => false,
@@ -934,7 +934,7 @@ return [
             'reading'     => '',
         ],
         [
-            'value'       => "\u{2282}(･ω･*\u{2282})",
+            'value'       => '⊂(･ω･*⊂)',
             'group'       => 'hugging',
             'description' => 'denko hug',
             'ascii'       => false,
@@ -942,7 +942,7 @@ return [
             'reading'     => '',
         ],
         [
-            'value'       => "\u{2282}(・﹏・\u{2282})",
+            'value'       => '⊂(・﹏・⊂)',
             'group'       => 'hugging',
             'description' => 'hug',
             'ascii'       => false,
@@ -950,7 +950,7 @@ return [
             'reading'     => '',
         ],
         [
-            'value'       => "\u{2282}(・\u{25BD}・\u{2282})",
+            'value'       => '⊂(・▽・⊂)',
             'group'       => 'hugging',
             'description' => 'hug',
             'ascii'       => false,
@@ -958,7 +958,7 @@ return [
             'reading'     => '',
         ],
         [
-            'value'       => "\u{2282}(\u{25C9}‿\u{25C9})つ",
+            'value'       => '⊂(◉‿◉)つ',
             'group'       => 'hugging',
             'description' => 'big wide hug',
             'ascii'       => false,
@@ -966,7 +966,7 @@ return [
             'reading'     => '',
         ],
         [
-            'value'       => "o((*^\u{25BD}^*))o",
+            'value'       => 'o((*^▽^*))o',
             'group'       => 'hugging',
             'description' => 'big wide hug',
             'ascii'       => false,
@@ -974,7 +974,7 @@ return [
             'reading'     => '',
         ],
         [
-            'value'       => "\u{2570}(*'︶`*)\u{256F}",
+            'value'       => '╰(*\'︶`*)╯',
             'group'       => 'hugging',
             'description' => 'big wide hug',
             'ascii'       => false,
@@ -982,7 +982,7 @@ return [
             'reading'     => '',
         ],
         [
-            'value'       => "\u{2570}(\u{FF3E}3\u{FF3E})\u{256F}",
+            'value'       => '╰(＾3＾)╯',
             'group'       => 'hugging',
             'description' => 'kiss and a hug',
             'ascii'       => false,
@@ -990,7 +990,7 @@ return [
             'reading'     => '',
         ],
         [
-            'value'       => "\u{2570}(⸝⸝⸝'\u{A4B3}`⸝⸝⸝)\u{256F}",
+            'value'       => '╰(⸝⸝⸝\'꒳`⸝⸝⸝)╯',
             'group'       => 'hugging',
             'description' => 'blushing hug',
             'ascii'       => false,
@@ -998,7 +998,7 @@ return [
             'reading'     => '',
         ],
         [
-            'value'       => "\u{2661}(\u{2C3}͈ દ \u{2C2}͈ \u{F36} )",
+            'value'       => '♡(˃͈ દ ˂͈ ༶ )',
             'group'       => 'hugging',
             'description' => 'kiss and a hug',
             'ascii'       => false,
@@ -1006,7 +1006,7 @@ return [
             'reading'     => '',
         ],
         [
-            'value'       => "ヾ(\u{2D9}\u{2765}\u{2D9})ﾉ",
+            'value'       => 'ヾ(˙❥˙)ﾉ',
             'group'       => 'hugging',
             'description' => 'kiss and a hug',
             'ascii'       => false,
@@ -1030,7 +1030,7 @@ return [
             'reading'     => '',
         ],
         [
-            'value'       => "ლ(\u{25D5}ω\u{25D5}ლ)",
+            'value'       => 'ლ(◕ω◕ლ)',
             'group'       => 'hugging',
             'description' => 'denko hug',
             'ascii'       => false,
@@ -1046,7 +1046,7 @@ return [
             'reading'     => '',
         ],
         [
-            'value'       => "(･ω･)つ\u{2282}(･ω･)",
+            'value'       => '(･ω･)つ⊂(･ω･)',
             'group'       => 'hugging',
             'description' => 'two denkos hugging',
             'ascii'       => false,
@@ -1062,7 +1062,7 @@ return [
             'reading'     => '',
         ],
         [
-            'value'       => "(･–･) \\(･\u{25E1}･)/",
+            'value'       => '(･–･) \\(･◡･)/',
             'group'       => 'hugging',
             'description' => 'comfort hug',
             'ascii'       => false,
@@ -1070,7 +1070,7 @@ return [
             'reading'     => '',
         ],
         [
-            'value'       => "ᕙ(\u{21C0}‸\u{21BC}‶)ᕗ",
+            'value'       => 'ᕙ(⇀‸↼‶)ᕗ',
             'group'       => 'flexing',
             'description' => 'flexing face',
             'ascii'       => false,
@@ -1078,7 +1078,7 @@ return [
             'reading'     => '',
         ],
         [
-            'value'       => "ᕙ(＠\u{B0}\u{25BD}\u{B0}＠)ᕗ",
+            'value'       => 'ᕙ(＠°▽°＠)ᕗ',
             'group'       => 'flexing',
             'description' => 'happy flexing',
             'ascii'       => false,
@@ -1102,7 +1102,7 @@ return [
             'reading'     => '',
         ],
         [
-            'value'       => "ᕙ (\u{B0} ~͜ʖ~ \u{B0}) ᕗ",
+            'value'       => 'ᕙ (° ~͜ʖ~ °) ᕗ',
             'group'       => 'flexing',
             'description' => 'flexing face',
             'ascii'       => false,
@@ -1110,7 +1110,7 @@ return [
             'reading'     => '',
         ],
         [
-            'value'       => "ᕙ( ͡\u{25C9} ͜ ʖ ͡\u{25C9})ᕗ",
+            'value'       => 'ᕙ( ͡◉ ͜ ʖ ͡◉)ᕗ',
             'group'       => 'flexing',
             'description' => 'happy flexing',
             'ascii'       => false,
@@ -1126,7 +1126,7 @@ return [
             'reading'     => '',
         ],
         [
-            'value'       => "୧(\u{FF3E} 〰 \u{FF3E})୨",
+            'value'       => '୧(＾ 〰 ＾)୨',
             'group'       => 'flexing',
             'description' => 'happy flexing',
             'ascii'       => false,
@@ -1134,7 +1134,7 @@ return [
             'reading'     => '',
         ],
         [
-            'value'       => "ᕙ( \u{A4} 〰 \u{A4} )ᕗ",
+            'value'       => 'ᕙ( ¤ 〰 ¤ )ᕗ',
             'group'       => 'flexing',
             'description' => 'teary eyed flex',
             'ascii'       => false,
@@ -1150,7 +1150,7 @@ return [
             'reading'     => '',
         ],
         [
-            'value'       => "ᕙ( : \u{2D8} \u{2227} \u{2D8} : )ᕗ",
+            'value'       => 'ᕙ( : ˘ ∧ ˘ : )ᕗ',
             'group'       => 'flexing',
             'description' => 'smug flex',
             'ascii'       => false,
@@ -1166,7 +1166,7 @@ return [
             'reading'     => '',
         ],
         [
-            'value'       => "ᕦ( \u{22A1} 益 \u{22A1} )ᕤ",
+            'value'       => 'ᕦ( ⊡ 益 ⊡ )ᕤ',
             'group'       => 'flexing',
             'description' => 'angry flex',
             'ascii'       => false,
@@ -1182,7 +1182,7 @@ return [
             'reading'     => '',
         ],
         [
-            'value'       => "ᕙ(\u{2609}ਊ\u{2609})ᕗ",
+            'value'       => 'ᕙ(☉ਊ☉)ᕗ',
             'group'       => 'flexing',
             'description' => 'wide eyed flex',
             'ascii'       => false,
@@ -1198,7 +1198,7 @@ return [
             'reading'     => '',
         ],
         [
-            'value'       => "ᕦ\u{2299}෴\u{2299}ᕤ",
+            'value'       => 'ᕦ⊙෴⊙ᕤ',
             'group'       => 'flexing',
             'description' => 'flexing face',
             'ascii'       => false,
@@ -1222,7 +1222,7 @@ return [
             'reading'     => '',
         ],
         [
-            'value'       => "ᕦ[ \u{25D1} \u{25A1} \u{25D1} ]ᕤ",
+            'value'       => 'ᕦ[ ◑ □ ◑ ]ᕤ',
             'group'       => 'flexing',
             'description' => 'happy flexing',
             'ascii'       => false,
@@ -1246,7 +1246,7 @@ return [
             'reading'     => '',
         ],
         [
-            'value'       => "ᕙ (\u{B0} ~ \u{B0} ~)",
+            'value'       => 'ᕙ (° ~ ° ~)',
             'group'       => 'flexing',
             'description' => 'left flex',
             'ascii'       => false,
@@ -1254,7 +1254,7 @@ return [
             'reading'     => '',
         ],
         [
-            'value'       => "( ͝\u{B0} ͜ʖ͡\u{B0})ᕤ",
+            'value'       => '( ͝° ͜ʖ͡°)ᕤ',
             'group'       => 'flexing',
             'description' => 'right flex',
             'ascii'       => false,
@@ -1262,7 +1262,7 @@ return [
             'reading'     => '',
         ],
         [
-            'value'       => "ᕙ( ͡\u{B0} ͜ʖ ͡\u{B0})ᕗ",
+            'value'       => 'ᕙ( ͡° ͜ʖ ͡°)ᕗ',
             'group'       => 'flexing',
             'description' => 'flexing lenny',
             'ascii'       => false,
@@ -1270,7 +1270,7 @@ return [
             'reading'     => '',
         ],
         [
-            'value'       => "ᕙ(͡\u{B0}‿ ͡\u{B0})ᕗ",
+            'value'       => 'ᕙ(͡°‿ ͡°)ᕗ',
             'group'       => 'flexing',
             'description' => 'flexing lenny',
             'ascii'       => false,
@@ -1294,7 +1294,7 @@ return [
             'reading'     => '',
         ],
         [
-            'value'       => "ᕙ༼\u{25D5} ᴥ \u{25D5}༽ᕗ",
+            'value'       => 'ᕙ༼◕ ᴥ ◕༽ᕗ',
             'group'       => 'flexing',
             'description' => 'flexing bear',
             'ascii'       => false,
@@ -1310,7 +1310,7 @@ return [
             'reading'     => '',
         ],
         [
-            'value'       => "ᕦᶘ ᵒ\u{3268}ᵒᶅᕤ",
+            'value'       => 'ᕦᶘ ᵒ㉨ᵒᶅᕤ',
             'group'       => 'flexing',
             'description' => 'flexing bear',
             'ascii'       => false,
@@ -1318,7 +1318,7 @@ return [
             'reading'     => '',
         ],
         [
-            'value'       => "ᕦ༼\u{2729}ل͜\u{2729}༽ᕤ",
+            'value'       => 'ᕦ༼✩ل͜✩༽ᕤ',
             'group'       => 'flexing',
             'description' => 'star eyed flex',
             'ascii'       => false,
@@ -1326,7 +1326,7 @@ return [
             'reading'     => '',
         ],
         [
-            'value'       => "V\u{25CF}ᴥ\u{25CF}V",
+            'value'       => 'V●ᴥ●V',
             'group'       => 'animals',
             'description' => 'dog',
             'ascii'       => false,
@@ -1334,7 +1334,7 @@ return [
             'reading'     => '',
         ],
         [
-            'value'       => "\u{25BC}・ᴥ・\u{25BC}",
+            'value'       => '▼・ᴥ・▼',
             'group'       => 'animals',
             'description' => 'dog',
             'ascii'       => false,
@@ -1342,7 +1342,7 @@ return [
             'reading'     => '',
         ],
         [
-            'value'       => "U '\u{A4C3} ` U",
+            'value'       => 'U \'꓃ ` U',
             'group'       => 'animals',
             'description' => 'dog',
             'ascii'       => false,
@@ -1350,7 +1350,7 @@ return [
             'reading'     => '',
         ],
         [
-            'value'       => "(\u{25E0}ᴥ\u{25D5}ʋ)",
+            'value'       => '(◠ᴥ◕ʋ)',
             'group'       => 'animals',
             'description' => 'winking dog',
             'ascii'       => false,
@@ -1366,7 +1366,7 @@ return [
             'reading'     => '',
         ],
         [
-            'value'       => "( ͡\u{B0}ᴥ ͡\u{B0} ʋ)",
+            'value'       => '( ͡°ᴥ ͡° ʋ)',
             'group'       => 'animals',
             'description' => 'lenny dog',
             'ascii'       => false,
@@ -1374,7 +1374,7 @@ return [
             'reading'     => '',
         ],
         [
-            'value'       => "\u{25D6}\u{2686}ᴥ\u{2686}\u{25D7}",
+            'value'       => '◖⚆ᴥ⚆◗',
             'group'       => 'animals',
             'description' => 'animal looking shady',
             'ascii'       => false,
@@ -1406,7 +1406,7 @@ return [
             'reading'     => '',
         ],
         [
-            'value'       => "(=\u{FF40}ェ'=)",
+            'value'       => '(=｀ェ\'=)',
             'group'       => 'animals',
             'description' => 'cat',
             'ascii'       => false,
@@ -1414,7 +1414,7 @@ return [
             'reading'     => '',
         ],
         [
-            'value'       => "(\u{FFE3}(ｴ)\u{FFE3})ﾉ",
+            'value'       => '(￣(ｴ)￣)ﾉ',
             'group'       => 'animals',
             'description' => 'bear waving',
             'ascii'       => false,
@@ -1422,7 +1422,7 @@ return [
             'reading'     => '',
         ],
         [
-            'value'       => "(*\u{FFE3}(ｴ)\u{FFE3}*)",
+            'value'       => '(*￣(ｴ)￣*)',
             'group'       => 'animals',
             'description' => 'neutral bear face',
             'ascii'       => false,
@@ -1430,7 +1430,7 @@ return [
             'reading'     => '',
         ],
         [
-            'value'       => "(\u{2267}(ｴ)\u{2266} )",
+            'value'       => '(≧(ｴ)≦ )',
             'group'       => 'animals',
             'description' => 'bear',
             'ascii'       => false,
@@ -1438,7 +1438,7 @@ return [
             'reading'     => '',
         ],
         [
-            'value'       => "('(ｪ)\u{FF40}）",
+            'value'       => '(\'(ｪ)｀）',
             'group'       => 'animals',
             'description' => 'bear',
             'ascii'       => false,
@@ -1486,7 +1486,7 @@ return [
             'reading'     => '',
         ],
         [
-            'value'       => "(\u{272A}\u{3268}\u{272A})",
+            'value'       => '(✪㉨✪)',
             'group'       => 'animals',
             'description' => 'bear',
             'ascii'       => false,
@@ -1494,7 +1494,7 @@ return [
             'reading'     => '',
         ],
         [
-            'value'       => "(\u{25D5}ᴥ\u{25D5})",
+            'value'       => '(◕ᴥ◕)',
             'group'       => 'animals',
             'description' => 'bear',
             'ascii'       => false,
@@ -1510,7 +1510,7 @@ return [
             'reading'     => '',
         ],
         [
-            'value'       => "Ꮚ\u{2D8} ꈊ \u{2D8} Ꮚ",
+            'value'       => 'Ꮚ˘ ꈊ ˘ Ꮚ',
             'group'       => 'animals',
             'description' => 'ram',
             'ascii'       => false,
@@ -1518,7 +1518,7 @@ return [
             'reading'     => '',
         ],
         [
-            'value'       => "('・(oo)・\u{FF40})",
+            'value'       => '(\'・(oo)・｀)',
             'group'       => 'animals',
             'description' => 'pig',
             'ascii'       => false,
@@ -1534,7 +1534,7 @@ return [
             'reading'     => '',
         ],
         [
-            'value'       => "\u{FF5E}>`)\u{FF5E}\u{FF5E}\u{FF5E}",
+            'value'       => '～>`)～～～',
             'group'       => 'animals',
             'description' => 'snake',
             'ascii'       => false,
@@ -1566,7 +1566,7 @@ return [
             'reading'     => '',
         ],
         [
-            'value'       => "/\u{2572}/\\\u{256D}(•‿•)\u{256E}/\\\u{2571}\\",
+            'value'       => '/╲/\\╭(•‿•)╮/\\╱\\',
             'group'       => 'animals',
             'description' => 'spider',
             'ascii'       => false,
@@ -1598,7 +1598,7 @@ return [
             'reading'     => '',
         ],
         [
-            'value'       => "(\u{309C}o\u{309C};",
+            'value'       => '(゜o゜;',
             'group'       => 'surprising',
             'description' => 'surprised face',
             'ascii'       => false,
@@ -1606,7 +1606,7 @@ return [
             'reading'     => '',
         ],
         [
-            'value'       => "w(\u{B0}ｏ\u{B0})w",
+            'value'       => 'w(°ｏ°)w',
             'group'       => 'surprising',
             'description' => 'wow face',
             'ascii'       => false,
@@ -1614,7 +1614,7 @@ return [
             'reading'     => '',
         ],
         [
-            'value'       => "(\u{2609}｡\u{2609})!",
+            'value'       => '(☉｡☉)!',
             'group'       => 'surprising',
             'description' => 'surprised face',
             'ascii'       => false,
@@ -1630,7 +1630,7 @@ return [
             'reading'     => '',
         ],
         [
-            'value'       => "ヽ((\u{25CE}д\u{25CE}))ゝ",
+            'value'       => 'ヽ((◎д◎))ゝ',
             'group'       => 'surprising',
             'description' => 'really surprised face',
             'ascii'       => false,
@@ -1638,7 +1638,7 @@ return [
             'reading'     => '',
         ],
         [
-            'value'       => "＼(\u{B0}o\u{B0})／",
+            'value'       => '＼(°o°)／',
             'group'       => 'surprising',
             'description' => 'surprised face with hands raised',
             'ascii'       => false,
@@ -1646,7 +1646,7 @@ return [
             'reading'     => '',
         ],
         [
-            'value'       => "ヽ(｡\u{25D5}o\u{25D5}｡)ﾉ.",
+            'value'       => 'ヽ(｡◕o◕｡)ﾉ.',
             'group'       => 'surprising',
             'description' => 'surprised face with hands raised',
             'ascii'       => false,
@@ -1654,7 +1654,7 @@ return [
             'reading'     => '',
         ],
         [
-            'value'       => "＼(\u{25CE}o\u{25CE})／",
+            'value'       => '＼(◎o◎)／',
             'group'       => 'surprising',
             'description' => 'surprised face with big eyes and raised hands',
             'ascii'       => false,
@@ -1670,7 +1670,7 @@ return [
             'reading'     => '',
         ],
         [
-            'value'       => "\u{2727}\\(>o<)ﾉ\u{2727}",
+            'value'       => '✧\\(>o<)ﾉ✧',
             'group'       => 'surprising',
             'description' => 'squinting eyes with arms in air',
             'ascii'       => false,
@@ -1694,7 +1694,7 @@ return [
             'reading'     => '',
         ],
         [
-            'value'       => "\u{22CB}\u{273F} ⁰ o ⁰ \u{273F}\u{22CC}",
+            'value'       => '⋋✿ ⁰ o ⁰ ✿⋌',
             'group'       => 'surprising',
             'description' => 'cute surprised face with hands raised',
             'ascii'       => false,
@@ -1702,7 +1702,7 @@ return [
             'reading'     => '',
         ],
         [
-            'value'       => "щ(\u{309C}ロ\u{309C}щ)",
+            'value'       => 'щ(゜ロ゜щ)',
             'group'       => 'surprising',
             'description' => 'surprised face with arms up',
             'ascii'       => false,
@@ -1734,7 +1734,7 @@ return [
             'reading'     => '',
         ],
         [
-            'value'       => "\u{2299}.\u{2609}",
+            'value'       => '⊙.☉',
             'group'       => 'surprising',
             'description' => 'surprised face',
             'ascii'       => false,
@@ -1742,7 +1742,7 @@ return [
             'reading'     => '',
         ],
         [
-            'value'       => "(\u{2449}\u{2299}ȏ\u{2299})",
+            'value'       => '(⑉⊙ȏ⊙)',
             'group'       => 'surprising',
             'description' => 'surprised face',
             'ascii'       => false,
@@ -1758,7 +1758,7 @@ return [
             'reading'     => '',
         ],
         [
-            'value'       => "(‘\u{25C9}\u{2313}\u{25C9}')",
+            'value'       => '(‘◉⌓◉\')',
             'group'       => 'surprising',
             'description' => 'surprised face',
             'ascii'       => false,
@@ -1766,7 +1766,7 @@ return [
             'reading'     => '',
         ],
         [
-            'value'       => "\u{2044}(\u{2044} \u{2044}•\u{2044}-\u{2044}•\u{2044} \u{2044})\u{2044}",
+            'value'       => '⁄(⁄ ⁄•⁄-⁄•⁄ ⁄)⁄',
             'group'       => 'surprising',
             'description' => 'bashful face',
             'ascii'       => false,
@@ -1774,7 +1774,7 @@ return [
             'reading'     => '',
         ],
         [
-            'value'       => "(｡\u{262C}０\u{262C}｡)",
+            'value'       => '(｡☬０☬｡)',
             'group'       => 'surprising',
             'description' => 'shocked face',
             'ascii'       => false,
@@ -1782,7 +1782,7 @@ return [
             'reading'     => '',
         ],
         [
-            'value'       => "('\u{2299}ω\u{2299}`)！",
+            'value'       => '(\'⊙ω⊙`)！',
             'group'       => 'surprising',
             'description' => 'surprised face',
             'ascii'       => false,
@@ -1798,7 +1798,7 @@ return [
             'reading'     => '',
         ],
         [
-            'value'       => "(\u{25CF}__\u{25CF})",
+            'value'       => '(●__●)',
             'group'       => 'surprising',
             'description' => 'neutral mouth with big eyes',
             'ascii'       => false,
@@ -1806,7 +1806,7 @@ return [
             'reading'     => '',
         ],
         [
-            'value'       => "(\u{273F}\u{2609}｡\u{2609})",
+            'value'       => '(✿☉｡☉)',
             'group'       => 'surprising',
             'description' => 'cute surprised face',
             'ascii'       => false,
@@ -1814,7 +1814,7 @@ return [
             'reading'     => '',
         ],
         [
-            'value'       => "(\u{FF1E}0\u{FF1C}；)",
+            'value'       => '(＞0＜；)',
             'group'       => 'surprising',
             'description' => 'closed eyes open mouth',
             'ascii'       => false,
@@ -1830,7 +1830,7 @@ return [
             'reading'     => '',
         ],
         [
-            'value'       => "(\u{256C}⁽⁽ ⁰ ⁾⁾ Д ⁽⁽ ⁰ ⁾⁾)",
+            'value'       => '(╬⁽⁽ ⁰ ⁾⁾ Д ⁽⁽ ⁰ ⁾⁾)',
             'group'       => 'surprising',
             'description' => 'surprised face with sweat',
             'ascii'       => false,
@@ -1838,7 +1838,7 @@ return [
             'reading'     => '',
         ],
         [
-            'value'       => "\u{266A}\u{FF5E}('ε\u{FF40} )",
+            'value'       => '♪～(\'ε｀ )',
             'group'       => 'dancing',
             'description' => 'whistling',
             'ascii'       => false,
@@ -1846,7 +1846,7 @@ return [
             'reading'     => '',
         ],
         [
-            'value'       => "(\u{FF3E}3\u{FF3E}\u{266A}",
+            'value'       => '(＾3＾♪',
             'group'       => 'dancing',
             'description' => 'grinning eyes and whistling',
             'ascii'       => false,
@@ -1854,7 +1854,7 @@ return [
             'reading'     => '',
         ],
         [
-            'value'       => "\u{250C}(・。・)\u{2518}\u{266A}",
+            'value'       => '┌(・。・)┘♪',
             'group'       => 'dancing',
             'description' => 'whistling and dancing',
             'ascii'       => false,
@@ -1862,7 +1862,7 @@ return [
             'reading'     => '',
         ],
         [
-            'value'       => "\u{266A}ヽ(･ˇ\u{2200}ˇ･ゞ)",
+            'value'       => '♪ヽ(･ˇ∀ˇ･ゞ)',
             'group'       => 'dancing',
             'description' => 'whistling and dancing',
             'ascii'       => false,
@@ -1870,7 +1870,7 @@ return [
             'reading'     => '',
         ],
         [
-            'value'       => "⁽⁽\u{25DD}( •௰• )\u{25DC}⁾⁾",
+            'value'       => '⁽⁽◝( •௰• )◜⁾⁾',
             'group'       => 'dancing',
             'description' => 'dancing',
             'ascii'       => false,
@@ -1878,7 +1878,7 @@ return [
             'reading'     => '',
         ],
         [
-            'value'       => "₍₍\u{25DE}( •௰• )\u{25DF}₎₎",
+            'value'       => '₍₍◞( •௰• )◟₎₎',
             'group'       => 'dancing',
             'description' => 'dancing',
             'ascii'       => false,
@@ -1894,7 +1894,7 @@ return [
             'reading'     => '',
         ],
         [
-            'value'       => "₍₍ \u{25DD}(\u{3000}ﾟ\u{2200} ﾟ )\u{25DF} ⁾⁾",
+            'value'       => "₍₍ ◝(\u{3000}ﾟ∀ ﾟ )◟ ⁾⁾",
             'group'       => 'dancing',
             'description' => 'dancing',
             'ascii'       => false,
@@ -1902,7 +1902,7 @@ return [
             'reading'     => '',
         ],
         [
-            'value'       => "\\(ϋ)/\u{2669}",
+            'value'       => '\\(ϋ)/♩',
             'group'       => 'dancing',
             'description' => 'dancing',
             'ascii'       => false,
@@ -1910,7 +1910,7 @@ return [
             'reading'     => '',
         ],
         [
-            'value'       => "\u{266A}\u{250C}|\u{2235}|\u{2518}\u{266A}",
+            'value'       => '♪┌|∵|┘♪',
             'group'       => 'dancing',
             'description' => 'dancing',
             'ascii'       => false,
@@ -1918,7 +1918,7 @@ return [
             'reading'     => '',
         ],
         [
-            'value'       => "\u{2514}|\u{2235}|\u{2510}\u{266A}",
+            'value'       => '└|∵|┐♪',
             'group'       => 'dancing',
             'description' => 'dancing',
             'ascii'       => false,
@@ -1926,7 +1926,7 @@ return [
             'reading'     => '',
         ],
         [
-            'value'       => "\u{266A} \\(^ω^\\ )",
+            'value'       => '♪ \\(^ω^\\ )',
             'group'       => 'dancing',
             'description' => 'dancing with grinning eyes',
             'ascii'       => false,
@@ -1934,7 +1934,7 @@ return [
             'reading'     => '',
         ],
         [
-            'value'       => "( /^ω^)/\u{266A}\u{266A}",
+            'value'       => '( /^ω^)/♪♪',
             'group'       => 'dancing',
             'description' => 'dancing with grinning eyes',
             'ascii'       => false,
@@ -1942,7 +1942,7 @@ return [
             'reading'     => '',
         ],
         [
-            'value'       => "(\u{FF3E}\u{2207}\u{FF3E})ﾉ\u{266A}",
+            'value'       => '(＾∇＾)ﾉ♪',
             'group'       => 'dancing',
             'description' => 'dancing with grinning eyes',
             'ascii'       => false,
@@ -1950,7 +1950,7 @@ return [
             'reading'     => '',
         ],
         [
-            'value'       => "ヾ( ͝\u{B0} ͜ʖ͡\u{B0})ノ\u{266A}",
+            'value'       => 'ヾ( ͝° ͜ʖ͡°)ノ♪',
             'group'       => 'dancing',
             'description' => 'dancing with grin',
             'ascii'       => false,
@@ -1958,7 +1958,7 @@ return [
             'reading'     => '',
         ],
         [
-            'value'       => "\\(๑\u{2579}\u{25E1}\u{2579}๑)ﾉ\u{266C}",
+            'value'       => '\\(๑╹◡╹๑)ﾉ♬',
             'group'       => 'dancing',
             'description' => 'dancing with grin',
             'ascii'       => false,
@@ -1966,7 +1966,7 @@ return [
             'reading'     => '',
         ],
         [
-            'value'       => "(*ﾉ・ω・)ﾉ\u{266B}",
+            'value'       => '(*ﾉ・ω・)ﾉ♫',
             'group'       => 'dancing',
             'description' => 'dancing with grin',
             'ascii'       => false,
@@ -1974,7 +1974,7 @@ return [
             'reading'     => '',
         ],
         [
-            'value'       => "\u{250C}|o^\u{25BD}^o|\u{2518}\u{266A}",
+            'value'       => '┌|o^▽^o|┘♪',
             'group'       => 'dancing',
             'description' => 'dancing and laughing',
             'ascii'       => false,
@@ -1982,7 +1982,7 @@ return [
             'reading'     => '',
         ],
         [
-            'value'       => "\u{250F}(\u{FF3E}0\u{FF3E})\u{251B}",
+            'value'       => '┏(＾0＾)┛',
             'group'       => 'dancing',
             'description' => 'dancing and laughing',
             'ascii'       => false,
@@ -1990,7 +1990,7 @@ return [
             'reading'     => '',
         ],
         [
-            'value'       => "\u{250C}(\u{2605}ｏ\u{2606})\u{2518}",
+            'value'       => '┌(★ｏ☆)┘',
             'group'       => 'dancing',
             'description' => 'dancing with star eyes',
             'ascii'       => false,
@@ -1998,7 +1998,7 @@ return [
             'reading'     => '',
         ],
         [
-            'value'       => "\u{2514}( \u{FF3E}ω\u{FF3E})」",
+            'value'       => '└( ＾ω＾)」',
             'group'       => 'dancing',
             'description' => 'dancing with grinning eyes',
             'ascii'       => false,
@@ -2014,7 +2014,7 @@ return [
             'reading'     => '',
         ],
         [
-            'value'       => "\u{266A}(\u{250C}・。・)\u{250C}",
+            'value'       => '♪(┌・。・)┌',
             'group'       => 'dancing',
             'description' => 'dancing',
             'ascii'       => false,
@@ -2022,7 +2022,7 @@ return [
             'reading'     => '',
         ],
         [
-            'value'       => "ヘ(\u{FFE3}ω\u{FFE3}ヘ)",
+            'value'       => 'ヘ(￣ω￣ヘ)',
             'group'       => 'dancing',
             'description' => 'dancing',
             'ascii'       => false,
@@ -2030,7 +2030,7 @@ return [
             'reading'     => '',
         ],
         [
-            'value'       => "ƪ(‾.‾“)\u{2510}",
+            'value'       => 'ƪ(‾.‾“)┐',
             'group'       => 'dancing',
             'description' => 'dancing',
             'ascii'       => false,
@@ -2038,7 +2038,7 @@ return [
             'reading'     => '',
         ],
         [
-            'value'       => "ƪ(\u{2D8}\u{2323}\u{2D8})ʃ",
+            'value'       => 'ƪ(˘⌣˘)ʃ',
             'group'       => 'dancing',
             'description' => 'dancing',
             'ascii'       => false,
@@ -2078,7 +2078,7 @@ return [
             'reading'     => '',
         ],
         [
-            'value'       => "(~‾\u{25BF}‾)~",
+            'value'       => '(~‾▿‾)~',
             'group'       => 'dancing',
             'description' => 'dancing',
             'ascii'       => false,
@@ -2086,7 +2086,7 @@ return [
             'reading'     => '',
         ],
         [
-            'value'       => "〜(\u{A4AA}\u{A4B3}\u{A4AA})〜",
+            'value'       => '〜(꒪꒳꒪)〜',
             'group'       => 'dancing',
             'description' => 'dancing',
             'ascii'       => false,
@@ -2094,7 +2094,7 @@ return [
             'reading'     => '',
         ],
         [
-            'value'       => "\u{AF}\\_(ツ)_/\u{AF}",
+            'value'       => '¯\\_(ツ)_/¯',
             'group'       => 'shrugging',
             'description' => 'shruggie',
             'ascii'       => false,
@@ -2102,7 +2102,7 @@ return [
             'reading'     => '',
         ],
         [
-            'value'       => "\u{AF}\\_༼ •́ ͜ʖ •̀ ༽_/\u{AF}",
+            'value'       => '¯\\_༼ •́ ͜ʖ •̀ ༽_/¯',
             'group'       => 'shrugging',
             'description' => 'shruggie',
             'ascii'       => false,
@@ -2110,7 +2110,7 @@ return [
             'reading'     => '',
         ],
         [
-            'value'       => "\u{AF}\\_( ͡\u{B0} ͜ʖ ͡\u{B0})_/\u{AF}",
+            'value'       => '¯\\_( ͡° ͜ʖ ͡°)_/¯',
             'group'       => 'shrugging',
             'description' => 'shruggie',
             'ascii'       => false,
@@ -2118,7 +2118,7 @@ return [
             'reading'     => '',
         ],
         [
-            'value'       => "\u{AF}\\(\u{B0}_o)/\u{AF}",
+            'value'       => '¯\\(°_o)/¯',
             'group'       => 'shrugging',
             'description' => 'shruggie',
             'ascii'       => false,
@@ -2126,7 +2126,7 @@ return [
             'reading'     => '',
         ],
         [
-            'value'       => "\u{2510}( \u{2235} )\u{250C}",
+            'value'       => '┐( ∵ )┌',
             'group'       => 'shrugging',
             'description' => 'shruggie',
             'ascii'       => false,
@@ -2134,7 +2134,7 @@ return [
             'reading'     => '',
         ],
         [
-            'value'       => "\u{AF}\\_༼ᴼل͜ᴼ༽_/\u{AF}",
+            'value'       => '¯\\_༼ᴼل͜ᴼ༽_/¯',
             'group'       => 'shrugging',
             'description' => 'shruggie',
             'ascii'       => false,
@@ -2142,7 +2142,7 @@ return [
             'reading'     => '',
         ],
         [
-            'value'       => "\u{256E}(. \u{275B} ᴗ \u{275B}.)\u{256D}",
+            'value'       => '╮(. ❛ ᴗ ❛.)╭',
             'group'       => 'shrugging',
             'description' => 'shruggie',
             'ascii'       => false,
@@ -2150,7 +2150,7 @@ return [
             'reading'     => '',
         ],
         [
-            'value'       => "乁༼\u{262F}‿\u{262F}\u{273F}༽ㄏ",
+            'value'       => '乁༼☯‿☯✿༽ㄏ',
             'group'       => 'shrugging',
             'description' => 'shruggie',
             'ascii'       => false,
@@ -2158,7 +2158,7 @@ return [
             'reading'     => '',
         ],
         [
-            'value'       => "\u{AF}\\(\u{25C9}‿\u{25C9})/\u{AF}",
+            'value'       => '¯\\(◉‿◉)/¯',
             'group'       => 'shrugging',
             'description' => 'shruggie',
             'ascii'       => false,
@@ -2166,7 +2166,7 @@ return [
             'reading'     => '',
         ],
         [
-            'value'       => "\u{AF}\\_ʘ‿ʘ_/\u{AF}",
+            'value'       => '¯\\_ʘ‿ʘ_/¯',
             'group'       => 'shrugging',
             'description' => 'shruggie',
             'ascii'       => false,
@@ -2174,7 +2174,7 @@ return [
             'reading'     => '',
         ],
         [
-            'value'       => "\u{AF}\\_༼ ಥ ‿ ಥ ༽_/\u{AF}",
+            'value'       => '¯\\_༼ ಥ ‿ ಥ ༽_/¯',
             'group'       => 'shrugging',
             'description' => 'shruggie',
             'ascii'       => false,
@@ -2182,7 +2182,7 @@ return [
             'reading'     => '',
         ],
         [
-            'value'       => "\u{256E}(\u{FF3E}\u{25BD}\u{FF3E})\u{256D}",
+            'value'       => '╮(＾▽＾)╭',
             'group'       => 'shrugging',
             'description' => 'shruggie',
             'ascii'       => false,
@@ -2190,7 +2190,7 @@ return [
             'reading'     => '',
         ],
         [
-            'value'       => "乁[ \u{25D5} ᴥ \u{25D5} ]ㄏ",
+            'value'       => '乁[ ◕ ᴥ ◕ ]ㄏ',
             'group'       => 'shrugging',
             'description' => 'shruggie',
             'ascii'       => false,
@@ -2198,7 +2198,7 @@ return [
             'reading'     => '',
         ],
         [
-            'value'       => "乁[ᓀ\u{2F5}\u{25BE}\u{2F5}ᓂ]ㄏ",
+            'value'       => '乁[ᓀ˵▾˵ᓂ]ㄏ',
             'group'       => 'shrugging',
             'description' => 'shruggie',
             'ascii'       => false,
@@ -2206,7 +2206,7 @@ return [
             'reading'     => '',
         ],
         [
-            'value'       => "\u{2510}('(エ)\u{FF40})\u{250C}",
+            'value'       => '┐(\'(エ)｀)┌',
             'group'       => 'shrugging',
             'description' => 'shruggie',
             'ascii'       => false,
@@ -2214,7 +2214,7 @@ return [
             'reading'     => '',
         ],
         [
-            'value'       => "\u{2510}( \u{2D8}_\u{2D8})\u{250C}",
+            'value'       => '┐( ˘_˘)┌',
             'group'       => 'shrugging',
             'description' => 'shruggie',
             'ascii'       => false,
@@ -2222,7 +2222,7 @@ return [
             'reading'     => '',
         ],
         [
-            'value'       => "\u{2510}('ー\u{FF40})\u{250C}",
+            'value'       => '┐(\'ー｀)┌',
             'group'       => 'shrugging',
             'description' => 'shruggie',
             'ascii'       => false,
@@ -2230,7 +2230,7 @@ return [
             'reading'     => '',
         ],
         [
-            'value'       => "\u{256E}(\u{256F}_\u{2570})\u{256D}",
+            'value'       => '╮(╯_╰)╭',
             'group'       => 'shrugging',
             'description' => 'shruggie',
             'ascii'       => false,
@@ -2238,7 +2238,7 @@ return [
             'reading'     => '',
         ],
         [
-            'value'       => "\u{AF}\\_(\u{2299}_ʖ\u{2299})_/\u{AF}",
+            'value'       => '¯\\_(⊙_ʖ⊙)_/¯',
             'group'       => 'shrugging',
             'description' => 'shruggie',
             'ascii'       => false,
@@ -2254,7 +2254,7 @@ return [
             'reading'     => '',
         ],
         [
-            'value'       => "\u{AF}\\_( ͠\u{B0} ͟ʖ \u{B0}͠ )_/\u{AF}",
+            'value'       => '¯\\_( ͠° ͟ʖ °͠ )_/¯',
             'group'       => 'shrugging',
             'description' => 'shruggie',
             'ascii'       => false,
@@ -2278,7 +2278,7 @@ return [
             'reading'     => '',
         ],
         [
-            'value'       => "\u{2510}(‘\u{FF5E}`;)\u{250C}",
+            'value'       => '┐(‘～`;)┌',
             'group'       => 'shrugging',
             'description' => 'shruggie',
             'ascii'       => false,
@@ -2286,7 +2286,7 @@ return [
             'reading'     => '',
         ],
         [
-            'value'       => "\u{2510}(\u{FFE3}ヘ\u{FFE3})\u{250C}",
+            'value'       => '┐(￣ヘ￣)┌',
             'group'       => 'shrugging',
             'description' => 'shruggie',
             'ascii'       => false,
@@ -2294,7 +2294,7 @@ return [
             'reading'     => '',
         ],
         [
-            'value'       => "\u{2510}('д`)\u{250C}",
+            'value'       => '┐(\'д`)┌',
             'group'       => 'shrugging',
             'description' => 'shruggie',
             'ascii'       => false,
@@ -2310,7 +2310,7 @@ return [
             'reading'     => '',
         ],
         [
-            'value'       => "乁 \u{2D8} o \u{2D8} ㄏ",
+            'value'       => '乁 ˘ o ˘ ㄏ',
             'group'       => 'shrugging',
             'description' => 'shruggie',
             'ascii'       => false,
@@ -2326,7 +2326,7 @@ return [
             'reading'     => '',
         ],
         [
-            'value'       => "\u{AF}\\_〳 •̀ o •́ 〵_/\u{AF}",
+            'value'       => '¯\\_〳 •̀ o •́ 〵_/¯',
             'group'       => 'shrugging',
             'description' => 'shruggie',
             'ascii'       => false,
@@ -2334,7 +2334,7 @@ return [
             'reading'     => '',
         ],
         [
-            'value'       => "\u{AF}\\_(\u{262F}෴\u{262F})_/\u{AF}",
+            'value'       => '¯\\_(☯෴☯)_/¯',
             'group'       => 'shrugging',
             'description' => 'shruggie',
             'ascii'       => false,
@@ -2342,7 +2342,7 @@ return [
             'reading'     => '',
         ],
         [
-            'value'       => "乁\u{2551} \u{2D9} 益 \u{2D9} \u{2551}ㄏ",
+            'value'       => '乁║ ˙ 益 ˙ ║ㄏ',
             'group'       => 'shrugging',
             'description' => 'shruggie',
             'ascii'       => false,
@@ -2350,7 +2350,7 @@ return [
             'reading'     => '',
         ],
         [
-            'value'       => "(\u{256F}\u{B0}\u{25A1}\u{B0}）\u{256F}︵ \u{253B}\u{2501}\u{253B}",
+            'value'       => '(╯°□°）╯︵ ┻━┻',
             'group'       => 'table_flipping',
             'description' => 'table flip',
             'ascii'       => false,
@@ -2358,7 +2358,7 @@ return [
             'reading'     => '',
         ],
         [
-            'value'       => "(ノ\u{FF40}Д')ノ彡\u{253B}\u{2501}\u{253B}",
+            'value'       => '(ノ｀Д\')ノ彡┻━┻',
             'group'       => 'table_flipping',
             'description' => 'table flip',
             'ascii'       => false,
@@ -2366,7 +2366,7 @@ return [
             'reading'     => '',
         ],
         [
-            'value'       => "(\u{251B}\u{25C9}Д\u{25C9})\u{251B}彡\u{253B}\u{2501}\u{253B}",
+            'value'       => '(┛◉Д◉)┛彡┻━┻',
             'group'       => 'table_flipping',
             'description' => 'table flip',
             'ascii'       => false,
@@ -2374,7 +2374,7 @@ return [
             'reading'     => '',
         ],
         [
-            'value'       => "(ﾉ\u{2267}\u{2207}\u{2266})ﾉ ﾐ \u{253B}\u{2501}\u{253B}",
+            'value'       => '(ﾉ≧∇≦)ﾉ ﾐ ┻━┻',
             'group'       => 'table_flipping',
             'description' => 'table flip',
             'ascii'       => false,
@@ -2382,7 +2382,7 @@ return [
             'reading'     => '',
         ],
         [
-            'value'       => "(ノಠ益ಠ)ノ彡\u{253B}\u{2501}\u{253B}",
+            'value'       => '(ノಠ益ಠ)ノ彡┻━┻',
             'group'       => 'table_flipping',
             'description' => 'table flip',
             'ascii'       => false,
@@ -2390,7 +2390,7 @@ return [
             'reading'     => '',
         ],
         [
-            'value'       => "(\u{256F}ರ ~ ರ)\u{256F}︵ \u{253B}\u{2501}\u{253B}",
+            'value'       => '(╯ರ ~ ರ)╯︵ ┻━┻',
             'group'       => 'table_flipping',
             'description' => 'table flip',
             'ascii'       => false,
@@ -2398,7 +2398,7 @@ return [
             'reading'     => '',
         ],
         [
-            'value'       => "(\u{251B}ಸ_ಸ)\u{251B}彡\u{253B}\u{2501}\u{253B}",
+            'value'       => '(┛ಸ_ಸ)┛彡┻━┻',
             'group'       => 'table_flipping',
             'description' => 'table flip',
             'ascii'       => false,
@@ -2406,7 +2406,7 @@ return [
             'reading'     => '',
         ],
         [
-            'value'       => "(ﾉ'･ω･)ﾉ ﾐ \u{253B}\u{2501}\u{253B}",
+            'value'       => '(ﾉ\'･ω･)ﾉ ﾐ ┻━┻',
             'group'       => 'table_flipping',
             'description' => 'table flip',
             'ascii'       => false,
@@ -2414,7 +2414,7 @@ return [
             'reading'     => '',
         ],
         [
-            'value'       => "(ノಥ,_｣ಥ)ノ彡\u{253B}\u{2501}\u{253B}",
+            'value'       => '(ノಥ,_｣ಥ)ノ彡┻━┻',
             'group'       => 'table_flipping',
             'description' => 'table flip',
             'ascii'       => false,
@@ -2422,7 +2422,7 @@ return [
             'reading'     => '',
         ],
         [
-            'value'       => "(\u{251B}\u{2727}Д\u{2727}))\u{251B}彡\u{253B}\u{2501}\u{253B}",
+            'value'       => '(┛✧Д✧))┛彡┻━┻',
             'group'       => 'table_flipping',
             'description' => 'table flip',
             'ascii'       => false,
@@ -2430,7 +2430,7 @@ return [
             'reading'     => '',
         ],
         [
-            'value'       => "\u{253B}\u{253B}︵\u{AF}\\(ツ)/\u{AF}︵\u{253B}\u{253B}",
+            'value'       => '┻┻︵¯\\(ツ)/¯︵┻┻',
             'group'       => 'table_flipping',
             'description' => 'table flip',
             'ascii'       => false,
@@ -2438,7 +2438,7 @@ return [
             'reading'     => '',
         ],
         [
-            'value'       => "\u{253B}\u{253B}︵ヽ(`Д')ﾉ︵\u{253B}\u{253B}",
+            'value'       => '┻┻︵ヽ(`Д\')ﾉ︵┻┻',
             'group'       => 'table_flipping',
             'description' => 'table flip',
             'ascii'       => false,
@@ -2446,7 +2446,7 @@ return [
             'reading'     => '',
         ],
         [
-            'value'       => "(/\u{AF}\u{25E1} ‿ \u{25E1})/\u{AF} ~ \u{253B}\u{2501}\u{253B}",
+            'value'       => '(/¯◡ ‿ ◡)/¯ ~ ┻━┻',
             'group'       => 'table_flipping',
             'description' => 'table flip',
             'ascii'       => false,
@@ -2454,7 +2454,7 @@ return [
             'reading'     => '',
         ],
         [
-            'value'       => "(ノ\u{FF40}\u{2312}')ノ\u{252B}：・\u{253B}\u{253B}",
+            'value'       => '(ノ｀⌒\')ノ┫：・┻┻',
             'group'       => 'table_flipping',
             'description' => 'table flip',
             'ascii'       => false,
@@ -2462,7 +2462,7 @@ return [
             'reading'     => '',
         ],
         [
-            'value'       => "(ﾉ\u{B0}_o)ﾉ\u{2312}\u{252B} \u{253B} \u{2523} \u{2533}",
+            'value'       => '(ﾉ°_o)ﾉ⌒┫ ┻ ┣ ┳',
             'group'       => 'table_flipping',
             'description' => 'table flip',
             'ascii'       => false,
@@ -2470,7 +2470,7 @@ return [
             'reading'     => '',
         ],
         [
-            'value'       => "\u{253B}\u{2501}\u{253B}ミ＼(\u{2267}ﾛ\u{2266}＼)",
+            'value'       => '┻━┻ミ＼(≧ﾛ≦＼)',
             'group'       => 'table_flipping',
             'description' => 'table flip',
             'ascii'       => false,
@@ -2478,7 +2478,7 @@ return [
             'reading'     => '',
         ],
         [
-            'value'       => "\u{253B}\u{2501}\u{253B}︵\u{2514}(՞\u{25BD}՞ \u{2514})",
+            'value'       => '┻━┻︵└(՞▽՞ └)',
             'group'       => 'table_flipping',
             'description' => 'table flip',
             'ascii'       => false,
@@ -2486,7 +2486,7 @@ return [
             'reading'     => '',
         ],
         [
-            'value'       => "\u{253B}\u{2501}\u{253B}︵\u{2514}('_\u{FF40}\u{2514})",
+            'value'       => '┻━┻︵└(\'_｀└)',
             'group'       => 'table_flipping',
             'description' => 'table flip',
             'ascii'       => false,
@@ -2494,7 +2494,7 @@ return [
             'reading'     => '',
         ],
         [
-            'value'       => "\u{253B}\u{2501}\u{253B} ヘ\u{2570}( •̀ε•́ \u{2570})",
+            'value'       => '┻━┻ ヘ╰( •̀ε•́ ╰)',
             'group'       => 'table_flipping',
             'description' => 'table flip',
             'ascii'       => false,
@@ -2502,7 +2502,7 @@ return [
             'reading'     => '',
         ],
         [
-            'value'       => "\u{2500}=\u{2261}Σ(\u{256F}\u{B0}\u{25A1}\u{B0})\u{256F}︵\u{253B}\u{253B}",
+            'value'       => '─=≡Σ(╯°□°)╯︵┻┻',
             'group'       => 'table_flipping',
             'description' => 'table flip',
             'ascii'       => false,
@@ -2510,7 +2510,7 @@ return [
             'reading'     => '',
         ],
         [
-            'value'       => "(ノ•̀ o •́ )ノ ~ \u{253B}\u{2501}\u{253B}",
+            'value'       => '(ノ•̀ o •́ )ノ ~ ┻━┻',
             'group'       => 'table_flipping',
             'description' => 'table flip',
             'ascii'       => false,
@@ -2518,7 +2518,7 @@ return [
             'reading'     => '',
         ],
         [
-            'value'       => "(-_- )ﾉ\u{2312}\u{252B} \u{253B} \u{2523} \u{2533}",
+            'value'       => '(-_- )ﾉ⌒┫ ┻ ┣ ┳',
             'group'       => 'table_flipping',
             'description' => 'table flip',
             'ascii'       => false,
@@ -2526,7 +2526,7 @@ return [
             'reading'     => '',
         ],
         [
-            'value'       => "(ノ\u{FFE3}皿\u{FFE3})ノ \u{2312}== \u{252B}",
+            'value'       => '(ノ￣皿￣)ノ ⌒== ┫',
             'group'       => 'table_flipping',
             'description' => 'table flip',
             'ascii'       => false,
@@ -2534,7 +2534,7 @@ return [
             'reading'     => '',
         ],
         [
-            'value'       => "(\u{251B}\u{274D}ᴥ\u{274D})\u{251B}彡\u{253B}\u{2501}\u{253B}",
+            'value'       => '(┛❍ᴥ❍)┛彡┻━┻',
             'group'       => 'table_flipping',
             'description' => 'table flip',
             'ascii'       => false,
@@ -2542,7 +2542,7 @@ return [
             'reading'     => '',
         ],
         [
-            'value'       => "(ノT＿T)ノ \u{FF3E}\u{253B}\u{2501}\u{253B}",
+            'value'       => '(ノT＿T)ノ ＾┻━┻',
             'group'       => 'table_flipping',
             'description' => 'table flip',
             'ascii'       => false,
@@ -2550,7 +2550,7 @@ return [
             'reading'     => '',
         ],
         [
-            'value'       => "ʕノ•ᴥ•ʔノ ︵ \u{253B}\u{2501}\u{253B}",
+            'value'       => 'ʕノ•ᴥ•ʔノ ︵ ┻━┻',
             'group'       => 'table_flipping',
             'description' => 'table flip',
             'ascii'       => false,
@@ -2558,7 +2558,7 @@ return [
             'reading'     => '',
         ],
         [
-            'value'       => "\u{252C}\u{2500}\u{252C}ノ( ͡\u{B0} ͜ʖ ͡\u{B0}ノ)",
+            'value'       => '┬─┬ノ( ͡° ͜ʖ ͡°ノ)',
             'group'       => 'table_flipping',
             'description' => 'places table back',
             'ascii'       => false,
@@ -2566,7 +2566,7 @@ return [
             'reading'     => '',
         ],
         [
-            'value'       => "\u{252C}\u{2500}\u{252C}ノ(ಠ_ಠノ)",
+            'value'       => '┬─┬ノ(ಠ_ಠノ)',
             'group'       => 'table_flipping',
             'description' => 'places table back',
             'ascii'       => false,
@@ -2574,7 +2574,7 @@ return [
             'reading'     => '',
         ],
         [
-            'value'       => "\u{252C}\u{2500}\u{252C}ノ( º _ ºノ)",
+            'value'       => '┬─┬ノ( º _ ºノ)',
             'group'       => 'table_flipping',
             'description' => 'places table back',
             'ascii'       => false,
@@ -2582,7 +2582,7 @@ return [
             'reading'     => '',
         ],
         [
-            'value'       => "\u{252C}\u{2500}\u{2500}\u{252C}\u{25E1}ﾉ(\u{B0} -\u{B0}ﾉ)",
+            'value'       => '┬──┬◡ﾉ(° -°ﾉ)',
             'group'       => 'table_flipping',
             'description' => 'places table back',
             'ascii'       => false,
@@ -2590,7 +2590,7 @@ return [
             'reading'     => '',
         ],
         [
-            'value'       => "(ヘ･_･)ヘ\u{2533}\u{2501}\u{2533}",
+            'value'       => '(ヘ･_･)ヘ┳━┳',
             'group'       => 'table_flipping',
             'description' => 'places table back',
             'ascii'       => false,
@@ -2598,7 +2598,7 @@ return [
             'reading'     => '',
         ],
         [
-            'value'       => "\u{252C}\u{2500}\u{2500}\u{252C} \u{AF}\\_(ツ)",
+            'value'       => '┬──┬ ¯\\_(ツ)',
             'group'       => 'table_flipping',
             'description' => 'places table back',
             'ascii'       => false,
@@ -2670,7 +2670,7 @@ return [
             'reading'     => '',
         ],
         [
-            'value'       => "ಠ\u{25E1}ಠ",
+            'value'       => 'ಠ◡ಠ',
             'group'       => 'disapproving',
             'description' => 'smile of disapproval',
             'ascii'       => false,
@@ -2678,7 +2678,7 @@ return [
             'reading'     => '',
         ],
         [
-            'value'       => "ಠ\u{2200}ಠ",
+            'value'       => 'ಠ∀ಠ',
             'group'       => 'disapproving',
             'description' => 'smile of disapproval',
             'ascii'       => false,
@@ -2734,7 +2734,7 @@ return [
             'reading'     => '',
         ],
         [
-            'value'       => "(ಠ_ಠ)>\u{2310}\u{25A0}-\u{25A0}",
+            'value'       => '(ಠ_ಠ)>⌐■-■',
             'group'       => 'disapproving',
             'description' => 'puts on sunglasses',
             'ascii'       => false,
@@ -2742,7 +2742,7 @@ return [
             'reading'     => '',
         ],
         [
-            'value'       => "(\u{2310}\u{25A0}-\u{25A0})",
+            'value'       => '(⌐■-■)',
             'group'       => 'disapproving',
             'description' => 'wearing sunglasses',
             'ascii'       => false,
@@ -2774,7 +2774,7 @@ return [
             'reading'     => '',
         ],
         [
-            'value'       => "(ಠ_ಠ)\u{2501}\u{2606}ﾟ.*･｡ﾟ",
+            'value'       => '(ಠ_ಠ)━☆ﾟ.*･｡ﾟ',
             'group'       => 'disapproving',
             'description' => 'disapproving magician',
             'ascii'       => false,
@@ -2782,7 +2782,7 @@ return [
             'reading'     => '',
         ],
         [
-            'value'       => "\u{AF}\\_ಠ_ಠ_/\u{AF}",
+            'value'       => '¯\\_ಠ_ಠ_/¯',
             'group'       => 'disapproving',
             'description' => 'shruggie of disapproval',
             'ascii'       => false,
@@ -2798,7 +2798,7 @@ return [
             'reading'     => '',
         ],
         [
-            'value'       => "ರ\u{256D}\u{256E}ರ",
+            'value'       => 'ರ╭╮ರ',
             'group'       => 'disapproving',
             'description' => 'frown of disapproval',
             'ascii'       => false,
@@ -2894,7 +2894,7 @@ return [
             'reading'     => '',
         ],
         [
-            'value'       => "( ；\u{2200}；)",
+            'value'       => '( ；∀；)',
             'group'       => 'crying',
             'description' => 'crying bird face',
             'ascii'       => false,
@@ -2902,7 +2902,7 @@ return [
             'reading'     => '',
         ],
         [
-            'value'       => "('；ω；\u{FF40})",
+            'value'       => '(\'；ω；｀)',
             'group'       => 'crying',
             'description' => 'crying denko',
             'ascii'       => false,
@@ -2918,7 +2918,7 @@ return [
             'reading'     => '',
         ],
         [
-            'value'       => "(\u{256F}︵\u{2570},)",
+            'value'       => '(╯︵╰,)',
             'group'       => 'crying',
             'description' => 'crying face',
             'ascii'       => false,
@@ -2926,7 +2926,7 @@ return [
             'reading'     => '',
         ],
         [
-            'value'       => "Ó\u{256D}\u{256E}Ò",
+            'value'       => 'Ó╭╮Ò',
             'group'       => 'crying',
             'description' => 'crying face',
             'ascii'       => false,
@@ -2934,7 +2934,7 @@ return [
             'reading'     => '',
         ],
         [
-            'value'       => "(っ\u{2D8}̩\u{256D}\u{256E}\u{2D8}̩)っ",
+            'value'       => '(っ˘̩╭╮˘̩)っ',
             'group'       => 'crying',
             'description' => 'crying and hugging',
             'ascii'       => false,
@@ -2990,7 +2990,7 @@ return [
             'reading'     => '',
         ],
         [
-            'value'       => "ಥ\u{256D}\u{256E}ಥ",
+            'value'       => 'ಥ╭╮ಥ',
             'group'       => 'crying',
             'description' => 'frown with teary eyes',
             'ascii'       => false,
@@ -3006,7 +3006,7 @@ return [
             'reading'     => '',
         ],
         [
-            'value'       => "( \u{2267}Д\u{2266})",
+            'value'       => '( ≧Д≦)',
             'group'       => 'crying',
             'description' => 'silently crying face',
             'ascii'       => false,
@@ -3014,7 +3014,7 @@ return [
             'reading'     => '',
         ],
         [
-            'value'       => ".·'\u{AF}`(>\u{2582}<)'\u{AF}`·.",
+            'value'       => '.·\'¯`(>▂<)\'¯`·.',
             'group'       => 'crying',
             'description' => 'loudly crying face',
             'ascii'       => false,
@@ -3022,7 +3022,7 @@ return [
             'reading'     => '',
         ],
         [
-            'value'       => "( \u{2688}̥̥̥̥̥́\u{2322}\u{2688}̥̥̥̥̥̀)",
+            'value'       => '( ⚈̥̥̥̥̥́⌢⚈̥̥̥̥̥̀)',
             'group'       => 'crying',
             'description' => 'crying face',
             'ascii'       => false,
@@ -3046,7 +3046,7 @@ return [
             'reading'     => '',
         ],
         [
-            'value'       => "｡:ﾟ(;'\u{2229}`;)ﾟ:｡",
+            'value'       => '｡:ﾟ(;\'∩`;)ﾟ:｡',
             'group'       => 'crying',
             'description' => 'loudly crying face',
             'ascii'       => false,
@@ -3062,7 +3062,7 @@ return [
             'reading'     => '',
         ],
         [
-            'value'       => "( ꈨຶ \u{2D9}̫̮ ꈨຶ )",
+            'value'       => '( ꈨຶ ˙̫̮ ꈨຶ )',
             'group'       => 'crying',
             'description' => 'loudly crying face',
             'ascii'       => false,
@@ -3078,7 +3078,7 @@ return [
             'reading'     => '',
         ],
         [
-            'value'       => "(\u{3012}﹏\u{3012})",
+            'value'       => '(〒﹏〒)',
             'group'       => 'crying',
             'description' => 'crying face',
             'ascii'       => false,
@@ -3094,7 +3094,7 @@ return [
             'reading'     => '',
         ],
         [
-            'value'       => "(\u{2565}﹏\u{2565})",
+            'value'       => '(╥﹏╥)',
             'group'       => 'crying',
             'description' => 'crying with quivering mouth',
             'ascii'       => false,
@@ -3110,7 +3110,7 @@ return [
             'reading'     => '',
         ],
         [
-            'value'       => "('\u{B0}̥̥̥̥̥̥̥̥ω\u{B0}̥̥̥̥̥̥̥̥\u{FF40})",
+            'value'       => '(\'°̥̥̥̥̥̥̥̥ω°̥̥̥̥̥̥̥̥｀)',
             'group'       => 'crying',
             'description' => 'weeping denko',
             'ascii'       => false,
@@ -3126,7 +3126,7 @@ return [
             'reading'     => '',
         ],
         [
-            'value'       => "\u{2299}﹏\u{2299}",
+            'value'       => '⊙﹏⊙',
             'group'       => 'worrying',
             'description' => 'quivering face',
             'ascii'       => false,
@@ -3134,7 +3134,7 @@ return [
             'reading'     => '',
         ],
         [
-            'value'       => "\u{254F} ” \u{229A} ͟ʖ \u{229A} ” \u{254F}",
+            'value'       => '╏ ” ⊚ ͟ʖ ⊚ ” ╏',
             'group'       => 'worrying',
             'description' => 'sweaty shocked face',
             'ascii'       => false,
@@ -3142,7 +3142,7 @@ return [
             'reading'     => '',
         ],
         [
-            'value'       => "(\u{256C}\u{2609}д\u{2299})\u{22B0}\u{22B9}ฺ",
+            'value'       => '(╬☉д⊙)⊰⊹ฺ',
             'group'       => 'worrying',
             'description' => 'zany face',
             'ascii'       => false,
@@ -3150,7 +3150,7 @@ return [
             'reading'     => '',
         ],
         [
-            'value'       => "ヘ（。\u{25A1}\u{B0}）ヘ",
+            'value'       => 'ヘ（。□°）ヘ',
             'group'       => 'worrying',
             'description' => 'zany face',
             'ascii'       => false,
@@ -3158,7 +3158,7 @@ return [
             'reading'     => '',
         ],
         [
-            'value'       => "(\u{2299}_\u{25CE})",
+            'value'       => '(⊙_◎)',
             'group'       => 'worrying',
             'description' => 'zany face',
             'ascii'       => false,
@@ -3166,7 +3166,7 @@ return [
             'reading'     => '',
         ],
         [
-            'value'       => "ミ\u{25CF}﹏\u{2609}ミ",
+            'value'       => 'ミ●﹏☉ミ',
             'group'       => 'worrying',
             'description' => 'zany face',
             'ascii'       => false,
@@ -3174,7 +3174,7 @@ return [
             'reading'     => '',
         ],
         [
-            'value'       => "(\u{25CF}'\u{2313}`\u{25CF})",
+            'value'       => '(●\'⌓`●)',
             'group'       => 'worrying',
             'description' => 'anguished face',
             'ascii'       => false,
@@ -3214,7 +3214,7 @@ return [
             'reading'     => '',
         ],
         [
-            'value'       => "(• \u{25BD} •;)",
+            'value'       => '(• ▽ •;)',
             'group'       => 'worrying',
             'description' => 'sweaty bird face',
             'ascii'       => false,
@@ -3222,7 +3222,7 @@ return [
             'reading'     => '',
         ],
         [
-            'value'       => "(\u{2D8}･_･\u{2D8})",
+            'value'       => '(˘･_･˘)',
             'group'       => 'worrying',
             'description' => 'concerned face',
             'ascii'       => false,
@@ -3230,7 +3230,7 @@ return [
             'reading'     => '',
         ],
         [
-            'value'       => "(*・\u{FF5E}・*)",
+            'value'       => '(*・～・*)',
             'group'       => 'worrying',
             'description' => 'concerned face',
             'ascii'       => false,
@@ -3262,7 +3262,7 @@ return [
             'reading'     => '',
         ],
         [
-            'value'       => "(^\u{FF5E}^;)ゞ",
+            'value'       => '(^～^;)ゞ',
             'group'       => 'worrying',
             'description' => 'scratching head and sweating face',
             'ascii'       => false,
@@ -3270,7 +3270,7 @@ return [
             'reading'     => '',
         ],
         [
-            'value'       => "(\u{FFE3}ヘ\u{FFE3};)",
+            'value'       => '(￣ヘ￣;)',
             'group'       => 'worrying',
             'description' => 'frown face with sweat',
             'ascii'       => false,
@@ -3278,7 +3278,7 @@ return [
             'reading'     => '',
         ],
         [
-            'value'       => "(٥\u{21BC}_\u{21BC})",
+            'value'       => '(٥↼_↼)',
             'group'       => 'worrying',
             'description' => 'expressionless face with sweat',
             'ascii'       => false,
@@ -3286,7 +3286,7 @@ return [
             'reading'     => '',
         ],
         [
-            'value'       => "(ー_ー\u{309B})",
+            'value'       => '(ー_ー゛)',
             'group'       => 'worrying',
             'description' => 'expressionless face with sweat',
             'ascii'       => false,
@@ -3294,7 +3294,7 @@ return [
             'reading'     => '',
         ],
         [
-            'value'       => "(\u{2500}.\u{2500}||）",
+            'value'       => '(─.─||）',
             'group'       => 'worrying',
             'description' => 'expressionless face with sweat',
             'ascii'       => false,
@@ -3350,7 +3350,7 @@ return [
             'reading'     => '',
         ],
         [
-            'value'       => "(ʘ言ʘ\u{256C})",
+            'value'       => '(ʘ言ʘ╬)',
             'group'       => 'worrying',
             'description' => 'upset sweaty face',
             'ascii'       => false,
@@ -3374,7 +3374,7 @@ return [
             'reading'     => '',
         ],
         [
-            'value'       => "\u{2517}(•ˇ_ˇ•)―\u{2192}",
+            'value'       => '┗(•ˇ_ˇ•)―→',
             'group'       => 'pointing',
             'description' => 'pointing right',
             'ascii'       => false,
@@ -3382,7 +3382,7 @@ return [
             'reading'     => '',
         ],
         [
-            'value'       => "(\u{261E} ಠ_ಠ)\u{261E}",
+            'value'       => '(☞ ಠ_ಠ)☞',
             'group'       => 'pointing',
             'description' => 'pointing right',
             'ascii'       => false,
@@ -3390,7 +3390,7 @@ return [
             'reading'     => '',
         ],
         [
-            'value'       => "(\u{261E}ﾟ\u{2200}ﾟ)\u{261E}",
+            'value'       => '(☞ﾟ∀ﾟ)☞',
             'group'       => 'pointing',
             'description' => 'pointing right',
             'ascii'       => false,
@@ -3398,7 +3398,7 @@ return [
             'reading'     => '',
         ],
         [
-            'value'       => "\u{261E}\u{FFE3}ᴥ\u{FFE3}\u{261E}",
+            'value'       => '☞￣ᴥ￣☞',
             'group'       => 'pointing',
             'description' => 'pointing right',
             'ascii'       => false,
@@ -3406,7 +3406,7 @@ return [
             'reading'     => '',
         ],
         [
-            'value'       => "\u{2192}(\u{B0} \u{6DD} \u{B0})\u{2517}",
+            'value'       => "→(° \u{6DD} °)┗",
             'group'       => 'pointing',
             'description' => 'pointing right',
             'ascii'       => false,
@@ -3414,7 +3414,7 @@ return [
             'reading'     => '',
         ],
         [
-            'value'       => "\u{2192}_\u{2192}",
+            'value'       => '→_→',
             'group'       => 'pointing',
             'description' => 'pointing right',
             'ascii'       => false,
@@ -3422,7 +3422,7 @@ return [
             'reading'     => '',
         ],
         [
-            'value'       => "\u{2190}_\u{2190}",
+            'value'       => '←_←',
             'group'       => 'pointing',
             'description' => 'pointing left',
             'ascii'       => false,
@@ -3430,7 +3430,7 @@ return [
             'reading'     => '',
         ],
         [
-            'value'       => "\u{27F5}(o_O)",
+            'value'       => '⟵(o_O)',
             'group'       => 'pointing',
             'description' => 'pointing left',
             'ascii'       => false,
@@ -3438,7 +3438,7 @@ return [
             'reading'     => '',
         ],
         [
-            'value'       => "\u{27F5}(๑\u{AF}\u{25E1}\u{AF}๑)",
+            'value'       => '⟵(๑¯◡¯๑)',
             'group'       => 'pointing',
             'description' => 'pointing left',
             'ascii'       => false,
@@ -3454,7 +3454,7 @@ return [
             'reading'     => '',
         ],
         [
-            'value'       => "\u{261C} (\u{21BC}_\u{21BC})",
+            'value'       => '☜ (↼_↼)',
             'group'       => 'pointing',
             'description' => 'pointing left',
             'ascii'       => false,
@@ -3462,7 +3462,7 @@ return [
             'reading'     => '',
         ],
         [
-            'value'       => "｡.ﾟ+ \u{27F5}(｡･ω･)",
+            'value'       => '｡.ﾟ+ ⟵(｡･ω･)',
             'group'       => 'pointing',
             'description' => 'pointing left',
             'ascii'       => false,
@@ -3470,7 +3470,7 @@ return [
             'reading'     => '',
         ],
         [
-            'value'       => "\u{2190}(>\u{25BD}<)ﾉ",
+            'value'       => '←(>▽<)ﾉ',
             'group'       => 'pointing',
             'description' => 'pointing left',
             'ascii'       => false,
@@ -3478,7 +3478,7 @@ return [
             'reading'     => '',
         ],
         [
-            'value'       => "\u{2190}(*\u{A4AA}ヮ\u{A4AA}*)",
+            'value'       => '←(*꒪ヮ꒪*)',
             'group'       => 'pointing',
             'description' => 'pointing left',
             'ascii'       => false,
@@ -3486,7 +3486,7 @@ return [
             'reading'     => '',
         ],
         [
-            'value'       => "(\u{261E}^o^) \u{261E}",
+            'value'       => '(☞^o^) ☞',
             'group'       => 'pointing',
             'description' => 'pointing right',
             'ascii'       => false,
@@ -3494,7 +3494,7 @@ return [
             'reading'     => '',
         ],
         [
-            'value'       => "(\u{256D}\u{261E}•́\u{235B}•̀)\u{256D}\u{261E}",
+            'value'       => '(╭☞•́⍛•̀)╭☞',
             'group'       => 'pointing',
             'description' => 'pointing right',
             'ascii'       => false,
@@ -3502,7 +3502,7 @@ return [
             'reading'     => '',
         ],
         [
-            'value'       => "〈(•ˇ‿ˇ•)-\u{2192}",
+            'value'       => '〈(•ˇ‿ˇ•)-→',
             'group'       => 'pointing',
             'description' => 'pointing right',
             'ascii'       => false,
@@ -3518,7 +3518,7 @@ return [
             'reading'     => '',
         ],
         [
-            'value'       => "(\u{2609}｡\u{2609})!\u{2192}",
+            'value'       => '(☉｡☉)!→',
             'group'       => 'pointing',
             'description' => 'pointing right',
             'ascii'       => false,
@@ -3526,7 +3526,7 @@ return [
             'reading'     => '',
         ],
         [
-            'value'       => "(ﾉﾟ0ﾟ)ﾉ\u{2192}",
+            'value'       => '(ﾉﾟ0ﾟ)ﾉ→',
             'group'       => 'pointing',
             'description' => 'pointing right',
             'ascii'       => false,
@@ -3534,7 +3534,7 @@ return [
             'reading'     => '',
         ],
         [
-            'value'       => "('\u{2299}ω\u{2299}`)\u{2192}",
+            'value'       => '(\'⊙ω⊙`)→',
             'group'       => 'pointing',
             'description' => 'pointing right',
             'ascii'       => false,
@@ -3542,7 +3542,7 @@ return [
             'reading'     => '',
         ],
         [
-            'value'       => "(\u{261E}ﾟヮﾟ)\u{261E}",
+            'value'       => '(☞ﾟヮﾟ)☞',
             'group'       => 'pointing',
             'description' => 'pointing right',
             'ascii'       => false,
@@ -3550,7 +3550,7 @@ return [
             'reading'     => '',
         ],
         [
-            'value'       => "(\u{261E} ͡\u{B0} ͜ʖ ͡\u{B0})\u{261E}",
+            'value'       => '(☞ ͡° ͜ʖ ͡°)☞',
             'group'       => 'pointing',
             'description' => 'pointing right',
             'ascii'       => false,
@@ -3558,7 +3558,7 @@ return [
             'reading'     => '',
         ],
         [
-            'value'       => "'\u{25D4}‿ゝ\u{25D4}`)\u{2501}\u{261E}",
+            'value'       => '\'◔‿ゝ◔`)━☞',
             'group'       => 'pointing',
             'description' => 'pointing right',
             'ascii'       => false,
@@ -3566,7 +3566,7 @@ return [
             'reading'     => '',
         ],
         [
-            'value'       => "( ՞ਊ ՞）\u{2192}",
+            'value'       => '( ՞ਊ ՞）→',
             'group'       => 'pointing',
             'description' => 'pointing right',
             'ascii'       => false,
@@ -3574,7 +3574,7 @@ return [
             'reading'     => '',
         ],
         [
-            'value'       => "(\u{3000}･ω･)\u{261E}",
+            'value'       => "(\u{3000}･ω･)☞",
             'group'       => 'pointing',
             'description' => 'pointing right',
             'ascii'       => false,
@@ -3582,7 +3582,7 @@ return [
             'reading'     => '',
         ],
         [
-            'value'       => "(*\u{275B}‿\u{275B})\u{2192}",
+            'value'       => '(*❛‿❛)→',
             'group'       => 'pointing',
             'description' => 'pointing right',
             'ascii'       => false,
@@ -3590,7 +3590,7 @@ return [
             'reading'     => '',
         ],
         [
-            'value'       => "\u{2570}( ･ ᗜ ･ )\u{279D}",
+            'value'       => '╰( ･ ᗜ ･ )➝',
             'group'       => 'pointing',
             'description' => 'pointing right',
             'ascii'       => false,
@@ -3598,7 +3598,7 @@ return [
             'reading'     => '',
         ],
         [
-            'value'       => "(\u{2727}Д\u{2727})\u{2192}",
+            'value'       => '(✧Д✧)→',
             'group'       => 'pointing',
             'description' => 'pointing right',
             'ascii'       => false,
@@ -3606,7 +3606,7 @@ return [
             'reading'     => '',
         ],
         [
-            'value'       => "(｡\u{25D5}‿\u{25D5}｡)\u{279C}",
+            'value'       => '(｡◕‿◕｡)➜',
             'group'       => 'pointing',
             'description' => 'pointing right',
             'ascii'       => false,
@@ -3614,7 +3614,7 @@ return [
             'reading'     => '',
         ],
         [
-            'value'       => "<(\u{FFE3}︶\u{FFE3})\u{2197}",
+            'value'       => '<(￣︶￣)↗',
             'group'       => 'pointing',
             'description' => 'pointing right',
             'ascii'       => false,
@@ -3622,7 +3622,7 @@ return [
             'reading'     => '',
         ],
         [
-            'value'       => "*･\u{309C}ﾟ(^O^)\u{219D}",
+            'value'       => '*･゜ﾟ(^O^)↝',
             'group'       => 'pointing',
             'description' => 'pointing right',
             'ascii'       => false,
@@ -3630,7 +3630,7 @@ return [
             'reading'     => '',
         ],
         [
-            'value'       => "\u{2727}･ﾟ:* *:･ﾟ\u{2727}",
+            'value'       => '✧･ﾟ:* *:･ﾟ✧',
             'group'       => 'sparkling',
             'description' => 'sparkles',
             'ascii'       => false,
@@ -3638,7 +3638,7 @@ return [
             'reading'     => '',
         ],
         [
-            'value'       => "*＊\u{273F}\u{2740}  \u{2740}\u{273F}＊*",
+            'value'       => '*＊✿❀  ❀✿＊*',
             'group'       => 'sparkling',
             'description' => 'flowers',
             'ascii'       => false,
@@ -3646,7 +3646,7 @@ return [
             'reading'     => '',
         ],
         [
-            'value'       => "\u{2606}*:..｡. .｡.:*\u{2606}",
+            'value'       => '☆*:..｡. .｡.:*☆',
             'group'       => 'sparkling',
             'description' => 'sparkles',
             'ascii'       => false,
@@ -3654,7 +3654,7 @@ return [
             'reading'     => '',
         ],
         [
-            'value'       => "\u{2669}\u{266A}\u{2669}\u{266C}   \u{266C}\u{2669}\u{266A}\u{2669}",
+            'value'       => '♩♪♩♬   ♬♩♪♩',
             'group'       => 'sparkling',
             'description' => 'music notes',
             'ascii'       => false,
@@ -3670,7 +3670,7 @@ return [
             'reading'     => '',
         ],
         [
-            'value'       => ".・\u{309C}-: \u{2727}\u{263E}\u{3000}\u{263D}\u{2727} :-\u{309C}・.",
+            'value'       => ".・゜-: ✧☾\u{3000}☽✧ :-゜・.",
             'group'       => 'sparkling',
             'description' => 'sparkles',
             'ascii'       => false,
@@ -3678,7 +3678,7 @@ return [
             'reading'     => '',
         ],
         [
-            'value'       => "\u{2606}\u{25CB}o。 。o\u{25CB}\u{2606}",
+            'value'       => '☆○o。 。o○☆',
             'group'       => 'sparkling',
             'description' => 'sparkles',
             'ascii'       => false,
@@ -3694,7 +3694,7 @@ return [
             'reading'     => '',
         ],
         [
-            'value'       => ".・\u{309C}\u{309C}・ ・\u{309C}\u{309C}・．",
+            'value'       => '.・゜゜・ ・゜゜・．',
             'group'       => 'sparkling',
             'description' => 'sparkles',
             'ascii'       => false,
@@ -3702,7 +3702,7 @@ return [
             'reading'     => '',
         ],
         [
-            'value'       => "。:+* \u{309C} \u{309C}\u{309C} *+:。",
+            'value'       => '。:+* ゜ ゜゜ *+:。',
             'group'       => 'sparkling',
             'description' => 'sparkles',
             'ascii'       => false,
@@ -3710,7 +3710,7 @@ return [
             'reading'     => '',
         ],
         [
-            'value'       => "\u{273C}\u{3000} ҉\u{3000} ҉\u{3000} ҉\u{3000} ҉\u{3000} ҉\u{3000} ҉\u{3000}\u{273C}",
+            'value'       => "✼\u{3000} ҉\u{3000} ҉\u{3000} ҉\u{3000} ҉\u{3000} ҉\u{3000} ҉\u{3000}✼",
             'group'       => 'sparkling',
             'description' => 'sparkles',
             'ascii'       => false,
@@ -3718,7 +3718,7 @@ return [
             'reading'     => '',
         ],
         [
-            'value'       => "\u{2606}.｡.:* .｡.:*\u{2606}",
+            'value'       => '☆.｡.:* .｡.:*☆',
             'group'       => 'sparkling',
             'description' => 'sparkles',
             'ascii'       => false,
@@ -3726,7 +3726,7 @@ return [
             'reading'     => '',
         ],
         [
-            'value'       => ". 。・\u{309C}\u{272D}・.・\u{272B}\u{309C}・。.",
+            'value'       => '. 。・゜✭・.・✫゜・。.',
             'group'       => 'sparkling',
             'description' => 'sparkles',
             'ascii'       => false,
@@ -3734,7 +3734,7 @@ return [
             'reading'     => '',
         ],
         [
-            'value'       => "ₓ\u{2DA}. ୭ \u{2DA}\u{25CB}\u{25E6}\u{2DA}.\u{2DA}\u{25E6}\u{25CB}\u{2DA} ୧ .\u{2DA}ₓ",
+            'value'       => 'ₓ˚. ୭ ˚○◦˚.˚◦○˚ ୧ .˚ₓ',
             'group'       => 'sparkling',
             'description' => 'sparkles',
             'ascii'       => false,
@@ -3758,7 +3758,7 @@ return [
             'reading'     => '',
         ],
         [
-            'value'       => "\u{B0}。\u{B0}。\u{B0}。\u{B0}。\u{B0}。\u{B0}。\u{B0}。\u{B0}。",
+            'value'       => '°。°。°。°。°。°。°。°。',
             'group'       => 'sparkling',
             'description' => 'sparkles',
             'ascii'       => false,
@@ -3766,7 +3766,7 @@ return [
             'reading'     => '',
         ],
         [
-            'value'       => "\u{25BC}\u{25B3}\u{25BC}\u{25B3}\u{25BC}\u{25B3}\u{25BC}\u{25B3}",
+            'value'       => '▼△▼△▼△▼△',
             'group'       => 'sparkling',
             'description' => 'triangles',
             'ascii'       => false,
@@ -3774,7 +3774,7 @@ return [
             'reading'     => '',
         ],
         [
-            'value'       => "\u{25CF}\u{25CB}\u{25CF}\u{25CB}\u{25CF}\u{25CB}\u{25CF}\u{25CB}\u{25CF}\u{25CB}",
+            'value'       => '●○●○●○●○●○',
             'group'       => 'sparkling',
             'description' => 'circles',
             'ascii'       => false,
@@ -3782,7 +3782,7 @@ return [
             'reading'     => '',
         ],
         [
-            'value'       => "\u{25CF}・\u{25CB}・\u{25CF}・\u{25CB}・\u{25CF}・\u{25CB}・",
+            'value'       => '●・○・●・○・●・○・',
             'group'       => 'sparkling',
             'description' => 'circles',
             'ascii'       => false,
@@ -3790,7 +3790,7 @@ return [
             'reading'     => '',
         ],
         [
-            'value'       => "\u{25A0}\u{25A1}\u{25A0}\u{25A1}\u{25A0}\u{25A1}\u{25A0}\u{25A1}\u{25A0}\u{25A1}",
+            'value'       => '■□■□■□■□■□',
             'group'       => 'sparkling',
             'description' => 'squares',
             'ascii'       => false,
@@ -3806,7 +3806,7 @@ return [
             'reading'     => 'ふきだし | もやもや',
         ],
         [
-            'value'       => ".｡o\u{25CB} ( 名前 )",
+            'value'       => '.｡o○ ( 名前 )',
             'group'       => 'ja_aa',
             'description' => 'AA',
             'ascii'       => false,
@@ -3814,7 +3814,7 @@ return [
             'reading'     => 'ふきだし | なまえ',
         ],
         [
-            'value'       => "(  \u{B4}ω`  )｡oо\u{25CB} \u{2661}",
+            'value'       => '(  ´ω`  )｡oо○ ♡',
             'group'       => 'ja_aa',
             'description' => 'AA',
             'ascii'       => false,
@@ -3822,7 +3822,7 @@ return [
             'reading'     => 'ふきだし | もやもや',
         ],
         [
-            'value'       => "· \u{2DA} \u{2727} \u{208A} \u{207A} \u{2661} \u{207A} \u{208A} \u{2727} \u{2DA} ·",
+            'value'       => '· ˚ ✧ ₊ ⁺ ♡ ⁺ ₊ ✧ ˚ ·',
             'group'       => 'ja_aa',
             'description' => 'AA',
             'ascii'       => false,
@@ -3830,7 +3830,7 @@ return [
             'reading'     => 'きらきら | くぎり',
         ],
         [
-            'value'       => "\u{22C6} \u{2DA}｡\u{22C6} \u{2661} \u{22C6} \u{2DA}｡\u{22C6}",
+            'value'       => '⋆ ˚｡⋆ ♡ ⋆ ˚｡⋆',
             'group'       => 'ja_aa',
             'description' => 'AA',
             'ascii'       => false,
@@ -3838,7 +3838,7 @@ return [
             'reading'     => 'きらきら | くぎり',
         ],
         [
-            'value'       => "( \u{B4}・ω・\u{FF40})",
+            'value'       => '( ´・ω・｀)',
             'group'       => 'ja_aa',
             'description' => 'AA',
             'ascii'       => false,
@@ -3846,7 +3846,7 @@ return [
             'reading'     => 'しょぼーん | にちゃんねる',
         ],
         [
-            'value'       => "ｷﾀ\u{2501}\u{2501}\u{2501}(ﾟ\u{2200}ﾟ)\u{2501}\u{2501}\u{2501}!!",
+            'value'       => 'ｷﾀ━━━(ﾟ∀ﾟ)━━━!!',
             'group'       => 'ja_aa',
             'description' => 'AA',
             'ascii'       => false,
@@ -3854,7 +3854,7 @@ return [
             'reading'     => 'きたー | にちゃんねる',
         ],
         [
-            'value'       => "ｱﾋｬ(\u{309C}\u{2200}\u{309C})",
+            'value'       => 'ｱﾋｬ(゜∀゜)',
             'group'       => 'ja_aa',
             'description' => 'AA',
             'ascii'       => false,
@@ -3870,7 +3870,7 @@ return [
             'reading'     => 'ごるぁ | にちゃんねる',
         ],
         [
-            'value'       => "(\u{B4}＿ゝ\u{FF40})",
+            'value'       => '(´＿ゝ｀)',
             'group'       => 'ja_aa',
             'description' => 'AA',
             'ascii'       => false,
@@ -3878,7 +3878,7 @@ return [
             'reading'     => 'やれやれ | にちゃんねる',
         ],
         [
-            'value'       => "(\u{B4}\u{2200}\u{FF40}*)ｳﾌﾌ",
+            'value'       => '(´∀｀*)ｳﾌﾌ',
             'group'       => 'ja_aa',
             'description' => 'AA',
             'ascii'       => false,
@@ -3902,7 +3902,7 @@ return [
             'reading'     => 'にゃー | ねこ',
         ],
         [
-            'value'       => "(=^\u{2500}^=)",
+            'value'       => '(=^─^=)',
             'group'       => 'ja_animal',
             'description' => '動物',
             'ascii'       => false,
@@ -3910,7 +3910,7 @@ return [
             'reading'     => 'にゃー | ねこ',
         ],
         [
-            'value'       => "(ฅ\u{B4}ω`ฅ)",
+            'value'       => '(ฅ´ω`ฅ)',
             'group'       => 'ja_animal',
             'description' => '動物',
             'ascii'       => false,
@@ -3934,7 +3934,7 @@ return [
             'reading'     => 'にゃー | ねこ',
         ],
         [
-            'value'       => "(=\u{FF40}ω\u{B4}=)ﾉ",
+            'value'       => '(=｀ω´=)ﾉ',
             'group'       => 'ja_animal',
             'description' => '動物',
             'ascii'       => false,
@@ -3950,7 +3950,7 @@ return [
             'reading'     => 'にゃー | ねこ',
         ],
         [
-            'value'       => "\u{222A}\u{25D5}ᴥ\u{25D5}\u{222A}",
+            'value'       => '∪◕ᴥ◕∪',
             'group'       => 'ja_animal',
             'description' => '動物',
             'ascii'       => false,
@@ -3958,7 +3958,7 @@ return [
             'reading'     => 'わん | いぬ',
         ],
         [
-            'value'       => "\u{25BD}・ᴥ・\u{25BD}",
+            'value'       => '▽・ᴥ・▽',
             'group'       => 'ja_animal',
             'description' => '動物',
             'ascii'       => false,
@@ -3982,7 +3982,7 @@ return [
             'reading'     => 'わん | いぬ',
         ],
         [
-            'value'       => "わん(\u{25BD}・ω・\u{25BD})",
+            'value'       => 'わん(▽・ω・▽)',
             'group'       => 'ja_animal',
             'description' => '動物',
             'ascii'       => false,
@@ -4006,7 +4006,7 @@ return [
             'reading'     => 'くま',
         ],
         [
-            'value'       => "ʕ\u{B4}•ᴥ•`ʔ",
+            'value'       => 'ʕ´•ᴥ•`ʔ',
             'group'       => 'ja_animal',
             'description' => '動物',
             'ascii'       => false,
@@ -4014,7 +4014,7 @@ return [
             'reading'     => 'くま',
         ],
         [
-            'value'       => "\u{2282}ʕ•ᴥ•\u{2282}ʔ",
+            'value'       => '⊂ʕ•ᴥ•⊂ʔ',
             'group'       => 'ja_animal',
             'description' => '動物',
             'ascii'       => false,
@@ -4078,7 +4078,7 @@ return [
             'reading'     => 'うさぎ',
         ],
         [
-            'value'       => "( \u{B4}(00)\u{FF40} )",
+            'value'       => '( ´(00)｀ )',
             'group'       => 'ja_animal',
             'description' => '動物',
             'ascii'       => false,
@@ -4094,7 +4094,7 @@ return [
             'reading'     => 'ぶた | ぶー',
         ],
         [
-            'value'       => "(・\u{D7}・)",
+            'value'       => '(・×・)',
             'group'       => 'ja_animal',
             'description' => '動物',
             'ascii'       => false,
@@ -4142,7 +4142,7 @@ return [
             'reading'     => 'びっくり | はっ',
         ],
         [
-            'value'       => "(\u{309C}o\u{309C})",
+            'value'       => '(゜o゜)',
             'group'       => 'ja_bikkuri',
             'description' => 'びっくり',
             'ascii'       => false,
@@ -4150,7 +4150,7 @@ return [
             'reading'     => 'びっくり',
         ],
         [
-            'value'       => "Σ(ﾟ\u{25BD}ﾟ)",
+            'value'       => 'Σ(ﾟ▽ﾟ)',
             'group'       => 'ja_bikkuri',
             'description' => 'びっくり',
             'ascii'       => false,
@@ -4158,7 +4158,7 @@ return [
             'reading'     => 'びっくり | はっ',
         ],
         [
-            'value'       => "(\u{309C}ロ\u{309C})",
+            'value'       => '(゜ロ゜)',
             'group'       => 'ja_bikkuri',
             'description' => 'びっくり',
             'ascii'       => false,
@@ -4174,7 +4174,7 @@ return [
             'reading'     => 'びっくり | はっ',
         ],
         [
-            'value'       => "Σ(\u{B0}ヮ\u{B0})",
+            'value'       => 'Σ(°ヮ°)',
             'group'       => 'ja_bikkuri',
             'description' => 'びっくり',
             'ascii'       => false,
@@ -4190,7 +4190,7 @@ return [
             'reading'     => 'びっくり | はっ',
         ],
         [
-            'value'       => "Σd(ﾟ\u{2200}ﾟd)",
+            'value'       => 'Σd(ﾟ∀ﾟd)',
             'group'       => 'ja_bikkuri',
             'description' => 'びっくり',
             'ascii'       => false,
@@ -4206,7 +4206,7 @@ return [
             'reading'     => 'びっくり',
         ],
         [
-            'value'       => "(\u{B0}o\u{B0})",
+            'value'       => '(°o°)',
             'group'       => 'ja_bikkuri',
             'description' => 'びっくり',
             'ascii'       => false,
@@ -4254,7 +4254,7 @@ return [
             'reading'     => 'ぎょうてん | がたがた',
         ],
         [
-            'value'       => "Σ(\u{B0}Д\u{B0})",
+            'value'       => 'Σ(°Д°)',
             'group'       => 'ja_bikkuri',
             'description' => 'びっくり',
             'ascii'       => false,
@@ -4262,7 +4262,7 @@ return [
             'reading'     => 'ぎょうてん | がーん',
         ],
         [
-            'value'       => "(\u{309C}Д\u{309C};)",
+            'value'       => '(゜Д゜;)',
             'group'       => 'ja_bikkuri',
             'description' => 'びっくり',
             'ascii'       => false,
@@ -4278,7 +4278,7 @@ return [
             'reading'     => 'ぎょうてん | がーん',
         ],
         [
-            'value'       => "Σ(\u{B0}ロ\u{B0})",
+            'value'       => 'Σ(°ロ°)',
             'group'       => 'ja_bikkuri',
             'description' => 'びっくり',
             'ascii'       => false,
@@ -4302,7 +4302,7 @@ return [
             'reading'     => 'ぎょうてん | あせあせ',
         ],
         [
-            'value'       => "Σ(ﾟ\u{2200}ﾟ)",
+            'value'       => 'Σ(ﾟ∀ﾟ)',
             'group'       => 'ja_bikkuri',
             'description' => 'びっくり',
             'ascii'       => false,
@@ -4310,7 +4310,7 @@ return [
             'reading'     => 'がーん | しょっく',
         ],
         [
-            'value'       => "Σ(っ\u{B0}Д\u{B0};)っ",
+            'value'       => 'Σ(っ°Д°;)っ',
             'group'       => 'ja_bikkuri',
             'description' => 'びっくり',
             'ascii'       => false,
@@ -4318,7 +4318,7 @@ return [
             'reading'     => 'がーん | しょっく',
         ],
         [
-            'value'       => "Σ(･`д･\u{B4})",
+            'value'       => 'Σ(･`д･´)',
             'group'       => 'ja_bikkuri',
             'description' => 'びっくり',
             'ascii'       => false,
@@ -4326,7 +4326,7 @@ return [
             'reading'     => 'がーん | しょっく',
         ],
         [
-            'value'       => "Σ(\u{FFE3}ロ\u{FFE3}lll)",
+            'value'       => 'Σ(￣ロ￣lll)',
             'group'       => 'ja_bikkuri',
             'description' => 'びっくり',
             'ascii'       => false,
@@ -4334,7 +4334,7 @@ return [
             'reading'     => 'がーん | しょっく',
         ],
         [
-            'value'       => "(ﾉ\u{309C}\u{22BF}\u{309C})ﾉ",
+            'value'       => '(ﾉ゜⊿゜)ﾉ',
             'group'       => 'ja_bikkuri',
             'description' => 'びっくり',
             'ascii'       => false,
@@ -4342,7 +4342,7 @@ return [
             'reading'     => 'がーん | しょっく',
         ],
         [
-            'value'       => "(\u{B4}Д\u{FF40}υ)",
+            'value'       => '(´Д｀υ)',
             'group'       => 'ja_bikkuri',
             'description' => 'びっくり',
             'ascii'       => false,
@@ -4350,7 +4350,7 @@ return [
             'reading'     => 'がーん | あせあせ',
         ],
         [
-            'value'       => "Σ(ﾟ\u{2200}ﾟノ)ノ",
+            'value'       => 'Σ(ﾟ∀ﾟノ)ノ',
             'group'       => 'ja_bikkuri',
             'description' => 'びっくり',
             'ascii'       => false,
@@ -4358,7 +4358,7 @@ return [
             'reading'     => 'がーん | しょっく',
         ],
         [
-            'value'       => "(ﾟ\u{25C7}ﾟ)ガーン",
+            'value'       => '(ﾟ◇ﾟ)ガーン',
             'group'       => 'ja_bikkuri',
             'description' => 'びっくり',
             'ascii'       => false,
@@ -4374,7 +4374,7 @@ return [
             'reading'     => 'えっ | あせあせ',
         ],
         [
-            'value'       => "Σ(ﾟ\u{2200}ﾟ;)",
+            'value'       => 'Σ(ﾟ∀ﾟ;)',
             'group'       => 'ja_bikkuri',
             'description' => 'びっくり',
             'ascii'       => false,
@@ -4382,7 +4382,7 @@ return [
             'reading'     => 'えっ | あせあせ',
         ],
         [
-            'value'       => "(；・\u{2200}・)",
+            'value'       => '(；・∀・)',
             'group'       => 'ja_bikkuri',
             'description' => 'びっくり',
             'ascii'       => false,
@@ -4390,7 +4390,7 @@ return [
             'reading'     => 'えっ | あせあせ',
         ],
         [
-            'value'       => "(・\u{2200}・;)",
+            'value'       => '(・∀・;)',
             'group'       => 'ja_bikkuri',
             'description' => 'びっくり',
             'ascii'       => false,
@@ -4406,7 +4406,7 @@ return [
             'reading'     => 'えっ | あせあせ',
         ],
         [
-            'value'       => "( \u{B0}_\u{B0})",
+            'value'       => '( °_°)',
             'group'       => 'ja_bikkuri',
             'description' => 'びっくり',
             'ascii'       => false,
@@ -4414,7 +4414,7 @@ return [
             'reading'     => 'えっ | ぽかーん',
         ],
         [
-            'value'       => "( ﾟ\u{22BF}ﾟ)?",
+            'value'       => '( ﾟ⊿ﾟ)?',
             'group'       => 'ja_bikkuri',
             'description' => 'びっくり',
             'ascii'       => false,
@@ -4438,7 +4438,7 @@ return [
             'reading'     => 'えっ | あせあせ',
         ],
         [
-            'value'       => "(\u{2299}o\u{2299})",
+            'value'       => '(⊙o⊙)',
             'group'       => 'ja_bikkuri',
             'description' => 'びっくり',
             'ascii'       => false,
@@ -4454,7 +4454,7 @@ return [
             'reading'     => 'びっくり | ぱちくり',
         ],
         [
-            'value'       => "(\u{25CE}_\u{25CE};)",
+            'value'       => '(◎_◎;)',
             'group'       => 'ja_bikkuri',
             'description' => 'びっくり',
             'ascii'       => false,
@@ -4462,7 +4462,7 @@ return [
             'reading'     => 'びっくり | ぐるぐる',
         ],
         [
-            'value'       => "(\u{2299}_\u{2299})",
+            'value'       => '(⊙_⊙)',
             'group'       => 'ja_bikkuri',
             'description' => 'びっくり',
             'ascii'       => false,
@@ -4478,7 +4478,7 @@ return [
             'reading'     => 'びっくり | ぽかーん',
         ],
         [
-            'value'       => "(\u{B0}\u{25BD}\u{B0})",
+            'value'       => '(°▽°)',
             'group'       => 'ja_bikkuri',
             'description' => 'びっくり',
             'ascii'       => false,
@@ -4486,7 +4486,7 @@ return [
             'reading'     => 'びっくり | ぱちくり',
         ],
         [
-            'value'       => "Σ(\u{25C9}\u{2299}\u{25C9})",
+            'value'       => 'Σ(◉⊙◉)',
             'group'       => 'ja_bikkuri',
             'description' => 'びっくり',
             'ascii'       => false,
@@ -4494,7 +4494,7 @@ return [
             'reading'     => 'びっくり | ぱちくり',
         ],
         [
-            'value'       => "(\u{273F}ºωº)",
+            'value'       => '(✿ºωº)',
             'group'       => 'ja_bikkuri',
             'description' => 'びっくり',
             'ascii'       => false,
@@ -4502,7 +4502,7 @@ return [
             'reading'     => 'びっくり | ぱちくり',
         ],
         [
-            'value'       => "( \u{2299}ヮ\u{2299})",
+            'value'       => '( ⊙ヮ⊙)',
             'group'       => 'ja_bikkuri',
             'description' => 'びっくり',
             'ascii'       => false,
@@ -4510,7 +4510,7 @@ return [
             'reading'     => 'びっくり | ぱちくり',
         ],
         [
-            'value'       => "(๑\u{B0}o\u{B0}๑)",
+            'value'       => '(๑°o°๑)',
             'group'       => 'ja_bikkuri',
             'description' => 'びっくり',
             'ascii'       => false,
@@ -4518,7 +4518,7 @@ return [
             'reading'     => 'びっくり | ぱちくり',
         ],
         [
-            'value'       => "(\u{B0}ロ\u{B0}) !",
+            'value'       => '(°ロ°) !',
             'group'       => 'ja_bikkuri',
             'description' => 'びっくり',
             'ascii'       => false,
@@ -4630,7 +4630,7 @@ return [
             'reading'     => 'ちらっ | ちらちら',
         ],
         [
-            'value'       => "| ⁰\u{2296}⁰)",
+            'value'       => '| ⁰⊖⁰)',
             'group'       => 'ja_chira',
             'description' => 'チラッ',
             'ascii'       => false,
@@ -4662,7 +4662,7 @@ return [
             'reading'     => 'ちらっ | てれてれ',
         ],
         [
-            'value'       => "(\u{FF40}・ω・)ﾁﾗｯ",
+            'value'       => '(｀・ω・)ﾁﾗｯ',
             'group'       => 'ja_chira',
             'description' => 'チラッ',
             'ascii'       => false,
@@ -4670,7 +4670,7 @@ return [
             'reading'     => 'ちらっ | ちらちら',
         ],
         [
-            'value'       => "ﾁﾗ(\u{B4}・ω・`)",
+            'value'       => 'ﾁﾗ(´・ω・`)',
             'group'       => 'ja_chira',
             'description' => 'チラッ',
             'ascii'       => false,
@@ -4686,7 +4686,7 @@ return [
             'reading'     => 'ちらっ | じー',
         ],
         [
-            'value'       => "ﾁﾗｯ( \u{2D9}\u{25BF}\u{2D9} )",
+            'value'       => 'ﾁﾗｯ( ˙▿˙ )',
             'group'       => 'ja_chira',
             'description' => 'チラッ',
             'ascii'       => false,
@@ -4718,7 +4718,7 @@ return [
             'reading'     => 'ちらっ | ちらちら',
         ],
         [
-            'value'       => "ﾁﾗﾁﾗ(*ﾟ\u{25BD}ﾟ*)",
+            'value'       => 'ﾁﾗﾁﾗ(*ﾟ▽ﾟ*)',
             'group'       => 'ja_chira',
             'description' => 'チラッ',
             'ascii'       => false,
@@ -4726,7 +4726,7 @@ return [
             'reading'     => 'ちらちら | わくわく',
         ],
         [
-            'value'       => "( \u{2D9}ᵕ\u{2D9} )ﾁﾗ",
+            'value'       => '( ˙ᵕ˙ )ﾁﾗ',
             'group'       => 'ja_chira',
             'description' => 'チラッ',
             'ascii'       => false,
@@ -4734,7 +4734,7 @@ return [
             'reading'     => 'ちらっ | ちらちら',
         ],
         [
-            'value'       => "(\u{B4}・ω・)っ ﾁﾗｯ",
+            'value'       => '(´・ω・)っ ﾁﾗｯ',
             'group'       => 'ja_chira',
             'description' => 'チラッ',
             'ascii'       => false,
@@ -4742,7 +4742,7 @@ return [
             'reading'     => 'ちらっ | ちらちら',
         ],
         [
-            'value'       => "ﾁﾗｯ(\u{B0}ω\u{B0}*)",
+            'value'       => 'ﾁﾗｯ(°ω°*)',
             'group'       => 'ja_chira',
             'description' => 'チラッ',
             'ascii'       => false,
@@ -4750,7 +4750,7 @@ return [
             'reading'     => 'ちらっ | てれてれ',
         ],
         [
-            'value'       => "(・\u{2200}・)ﾁﾗｯ",
+            'value'       => '(・∀・)ﾁﾗｯ',
             'group'       => 'ja_chira',
             'description' => 'チラッ',
             'ascii'       => false,
@@ -4758,7 +4758,7 @@ return [
             'reading'     => 'ちらっ | ちらちら',
         ],
         [
-            'value'       => "ﾁﾗｯ( ⁰ \u{2296} ⁰)",
+            'value'       => 'ﾁﾗｯ( ⁰ ⊖ ⁰)',
             'group'       => 'ja_chira',
             'description' => 'チラッ',
             'ascii'       => false,
@@ -4782,7 +4782,7 @@ return [
             'reading'     => 'ちらちら | てれてれ',
         ],
         [
-            'value'       => "\u{252C}\u{2534}\u{252C}\u{2534}\u{2524}(･_\u{251C} ﾁﾗ",
+            'value'       => '┬┴┬┴┤(･_├ ﾁﾗ',
             'group'       => 'ja_chira',
             'description' => 'チラッ',
             'ascii'       => false,
@@ -4790,7 +4790,7 @@ return [
             'reading'     => 'ちらっ | ちらちら',
         ],
         [
-            'value'       => "\u{252C}\u{2534}\u{252C}\u{2534}\u{2524}･ω･)ﾉ",
+            'value'       => '┬┴┬┴┤･ω･)ﾉ',
             'group'       => 'ja_chira',
             'description' => 'チラッ',
             'ascii'       => false,
@@ -4798,7 +4798,7 @@ return [
             'reading'     => 'ちらっ | ちらちら',
         ],
         [
-            'value'       => "\u{252C}\u{2534}\u{252C}\u{2534}\u{2524}(･ω･`)",
+            'value'       => '┬┴┬┴┤(･ω･`)',
             'group'       => 'ja_chira',
             'description' => 'チラッ',
             'ascii'       => false,
@@ -4806,7 +4806,7 @@ return [
             'reading'     => 'ちらっ | ちらちら',
         ],
         [
-            'value'       => "\u{252C}\u{2534}\u{252C}\u{2534}\u{2524} ﾟ-ﾟ)",
+            'value'       => '┬┴┬┴┤ ﾟ-ﾟ)',
             'group'       => 'ja_chira',
             'description' => 'チラッ',
             'ascii'       => false,
@@ -4814,7 +4814,7 @@ return [
             'reading'     => 'ちらっ | じー',
         ],
         [
-            'value'       => "\u{252C}\u{2534}\u{252C}\u{2534}\u{2524}ω・)ﾉﾞ",
+            'value'       => '┬┴┬┴┤ω・)ﾉﾞ',
             'group'       => 'ja_chira',
             'description' => 'チラッ',
             'ascii'       => false,
@@ -4822,7 +4822,7 @@ return [
             'reading'     => 'ちらっ | ちらちら',
         ],
         [
-            'value'       => "\u{252C}\u{2534}\u{252C}\u{2534}\u{2524}(\u{2D9}\u{2296}\u{2D9} )",
+            'value'       => '┬┴┬┴┤(˙⊖˙ )',
             'group'       => 'ja_chira',
             'description' => 'チラッ',
             'ascii'       => false,
@@ -4830,7 +4830,7 @@ return [
             'reading'     => 'ちらっ | じー',
         ],
         [
-            'value'       => "\u{252C}\u{2534}\u{252C}\u{2534}\u{2524}・ω・`)",
+            'value'       => '┬┴┬┴┤・ω・`)',
             'group'       => 'ja_chira',
             'description' => 'チラッ',
             'ascii'       => false,
@@ -4838,7 +4838,7 @@ return [
             'reading'     => 'ちらっ | ちらちら',
         ],
         [
-            'value'       => "\u{252C}\u{2534}\u{252C}\u{2534}\u{2524}_-)",
+            'value'       => '┬┴┬┴┤_-)',
             'group'       => 'ja_chira',
             'description' => 'チラッ',
             'ascii'       => false,
@@ -4846,7 +4846,7 @@ return [
             'reading'     => 'ちらっ | じー',
         ],
         [
-            'value'       => "\u{252C}\u{2534}\u{252C}\u{2534}\u{2524}・\u{2200}・)ﾉ",
+            'value'       => '┬┴┬┴┤・∀・)ﾉ',
             'group'       => 'ja_chira',
             'description' => 'チラッ',
             'ascii'       => false,
@@ -4854,7 +4854,7 @@ return [
             'reading'     => 'ちらっ | ちらちら',
         ],
         [
-            'value'       => "\u{252C}\u{2534}\u{252C}\u{2534}\u{2524}(ﾟ\u{2200}ﾟ)",
+            'value'       => '┬┴┬┴┤(ﾟ∀ﾟ)',
             'group'       => 'ja_chira',
             'description' => 'チラッ',
             'ascii'       => false,
@@ -4886,7 +4886,7 @@ return [
             'reading'     => 'じー | ちらっ',
         ],
         [
-            'value'       => "(\u{B0}_。)",
+            'value'       => '(°_。)',
             'group'       => 'ja_chira',
             'description' => 'チラッ',
             'ascii'       => false,
@@ -4894,7 +4894,7 @@ return [
             'reading'     => 'じー | ちらっ',
         ],
         [
-            'value'       => "(\u{FFE3}_\u{FFE3})ﾁﾗ",
+            'value'       => '(￣_￣)ﾁﾗ',
             'group'       => 'ja_chira',
             'description' => 'チラッ',
             'ascii'       => false,
@@ -4902,7 +4902,7 @@ return [
             'reading'     => 'じー | ちらっ',
         ],
         [
-            'value'       => "(\u{21BC}_\u{21BC})",
+            'value'       => '(↼_↼)',
             'group'       => 'ja_chira',
             'description' => 'チラッ',
             'ascii'       => false,
@@ -4910,7 +4910,7 @@ return [
             'reading'     => 'じー | ちらっ',
         ],
         [
-            'value'       => "(\u{AC}_\u{AC})",
+            'value'       => '(¬_¬)',
             'group'       => 'ja_chira',
             'description' => 'チラッ',
             'ascii'       => false,
@@ -4918,7 +4918,7 @@ return [
             'reading'     => 'じー | じとー',
         ],
         [
-            'value'       => "(\u{AC}‿\u{AC})",
+            'value'       => '(¬‿¬)',
             'group'       => 'ja_chira',
             'description' => 'チラッ',
             'ascii'       => false,
@@ -4926,7 +4926,7 @@ return [
             'reading'     => 'にやり | じー',
         ],
         [
-            'value'       => "( \u{2D8}･з･)",
+            'value'       => '( ˘･з･)',
             'group'       => 'ja_chira',
             'description' => 'チラッ',
             'ascii'       => false,
@@ -4934,7 +4934,7 @@ return [
             'reading'     => 'じー | ちらっ',
         ],
         [
-            'value'       => "(`ε\u{B4} )ﾁﾗ",
+            'value'       => '(`ε´ )ﾁﾗ',
             'group'       => 'ja_chira',
             'description' => 'チラッ',
             'ascii'       => false,
@@ -4958,7 +4958,7 @@ return [
             'reading'     => 'じー | ちらっ',
         ],
         [
-            'value'       => "( \u{25D1}‿\u{25D0} )",
+            'value'       => '( ◑‿◐ )',
             'group'       => 'ja_chira',
             'description' => 'チラッ',
             'ascii'       => false,
@@ -4966,7 +4966,7 @@ return [
             'reading'     => 'にやり | ちらっ',
         ],
         [
-            'value'       => "(\u{FF40}._.\u{B4})ﾁﾗ",
+            'value'       => '(｀._.´)ﾁﾗ',
             'group'       => 'ja_chira',
             'description' => 'チラッ',
             'ascii'       => false,
@@ -4974,7 +4974,7 @@ return [
             'reading'     => 'じー | ちらっ',
         ],
         [
-            'value'       => "(\u{2500}‿‿\u{2500})",
+            'value'       => '(─‿‿─)',
             'group'       => 'ja_chira',
             'description' => 'チラッ',
             'ascii'       => false,
@@ -4982,7 +4982,7 @@ return [
             'reading'     => 'にやり | ちらっ',
         ],
         [
-            'value'       => "( \u{AC}‿\u{AC} )ﾁﾗ",
+            'value'       => '( ¬‿¬ )ﾁﾗ',
             'group'       => 'ja_chira',
             'description' => 'チラッ',
             'ascii'       => false,
@@ -4990,7 +4990,7 @@ return [
             'reading'     => 'にやり | ちらっ',
         ],
         [
-            'value'       => "\u{2510}(\u{B4}д`)\u{250C}",
+            'value'       => '┐(´д`)┌',
             'group'       => 'ja_copype',
             'description' => 'コピペ',
             'ascii'       => false,
@@ -4998,7 +4998,7 @@ return [
             'reading'     => 'やれやれ',
         ],
         [
-            'value'       => "\u{2510}(\u{B4}〜\u{FF40})\u{250C}",
+            'value'       => '┐(´〜｀)┌',
             'group'       => 'ja_copype',
             'description' => 'コピペ',
             'ascii'       => false,
@@ -5006,7 +5006,7 @@ return [
             'reading'     => 'やれやれ',
         ],
         [
-            'value'       => "(\u{256F}\u{B0}\u{25A1}\u{B0})\u{256F}︵ \u{253B}\u{2501}\u{253B}",
+            'value'       => '(╯°□°)╯︵ ┻━┻',
             'group'       => 'ja_copype',
             'description' => 'コピペ',
             'ascii'       => false,
@@ -5014,7 +5014,7 @@ return [
             'reading'     => 'がしゃーん | ばーん | なげる | ちゃぶだいがえし',
         ],
         [
-            'value'       => "( ͡\u{B0} ͜ʖ ͡\u{B0})",
+            'value'       => '( ͡° ͜ʖ ͡°)',
             'group'       => 'ja_copype',
             'description' => 'コピペ',
             'ascii'       => false,
@@ -5030,7 +5030,7 @@ return [
             'reading'     => 'なぜ | やれやれ',
         ],
         [
-            'value'       => "\u{261C}(ﾟヮﾟ\u{261C})",
+            'value'       => '☜(ﾟヮﾟ☜)',
             'group'       => 'ja_copype',
             'description' => 'コピペ',
             'ascii'       => false,
@@ -5038,7 +5038,7 @@ return [
             'reading'     => 'きみだ | ゆびさし',
         ],
         [
-            'value'       => "(\u{2310}\u{25A0}_\u{25A0})",
+            'value'       => '(⌐■_■)',
             'group'       => 'ja_copype',
             'description' => 'コピペ',
             'ascii'       => false,
@@ -5046,7 +5046,7 @@ return [
             'reading'     => 'どや | きめ',
         ],
         [
-            'value'       => "( •_•)>\u{2310}\u{25A0}-\u{25A0}",
+            'value'       => '( •_•)>⌐■-■',
             'group'       => 'ja_copype',
             'description' => 'コピペ',
             'ascii'       => false,
@@ -5054,7 +5054,7 @@ return [
             'reading'     => 'どや | きめ',
         ],
         [
-            'value'       => "(\u{2580}̿Ĺ̯\u{2580}̿ ̿)",
+            'value'       => '(▀̿Ĺ̯▀̿ ̿)',
             'group'       => 'ja_copype',
             'description' => 'コピペ',
             'ascii'       => false,
@@ -5062,7 +5062,7 @@ return [
             'reading'     => 'どや | きめ',
         ],
         [
-            'value'       => "\u{AF}\\_(͡\u{B0} ͜ʖ ͡\u{B0})_/\u{AF}",
+            'value'       => '¯\\_(͡° ͜ʖ ͡°)_/¯',
             'group'       => 'ja_copype',
             'description' => 'コピペ',
             'ascii'       => false,
@@ -5086,7 +5086,7 @@ return [
             'reading'     => 'ばいばい | またね',
         ],
         [
-            'value'       => "(\u{B4}ω`)ﾉ",
+            'value'       => '(´ω`)ﾉ',
             'group'       => 'ja_copype',
             'description' => 'コピペ',
             'ascii'       => false,
@@ -5094,7 +5094,7 @@ return [
             'reading'     => 'やっほー',
         ],
         [
-            'value'       => "ヾ(*ﾟ\u{25BD}ﾟ*)",
+            'value'       => 'ヾ(*ﾟ▽ﾟ*)',
             'group'       => 'ja_copype',
             'description' => 'コピペ',
             'ascii'       => false,
@@ -5102,7 +5102,7 @@ return [
             'reading'     => 'やっほー | にこにこ',
         ],
         [
-            'value'       => "(`･ω･\u{B4})ゞ",
+            'value'       => '(`･ω･´)ゞ',
             'group'       => 'ja_copype',
             'description' => 'コピペ',
             'ascii'       => false,
@@ -5110,7 +5110,7 @@ return [
             'reading'     => 'びしっ | らじゃー',
         ],
         [
-            'value'       => "( ・\u{2200}・)ﾉ",
+            'value'       => '( ・∀・)ﾉ',
             'group'       => 'ja_copype',
             'description' => 'コピペ',
             'ascii'       => false,
@@ -5118,7 +5118,7 @@ return [
             'reading'     => 'やっほー',
         ],
         [
-            'value'       => "ﾊﾛｰ(\u{B4}･ω･`)ﾉ",
+            'value'       => 'ﾊﾛｰ(´･ω･`)ﾉ',
             'group'       => 'ja_copype',
             'description' => 'コピペ',
             'ascii'       => false,
@@ -5134,7 +5134,7 @@ return [
             'reading'     => 'やっほー | はーい',
         ],
         [
-            'value'       => "(*\u{B4}\u{2200}`)ﾉｼ",
+            'value'       => '(*´∀`)ﾉｼ',
             'group'       => 'ja_copype',
             'description' => 'コピペ',
             'ascii'       => false,
@@ -5142,7 +5142,7 @@ return [
             'reading'     => 'ばいばい | またね',
         ],
         [
-            'value'       => "ﾉ(\u{B4}ω\u{FF40})",
+            'value'       => 'ﾉ(´ω｀)',
             'group'       => 'ja_copype',
             'description' => 'コピペ',
             'ascii'       => false,
@@ -5158,7 +5158,7 @@ return [
             'reading'     => 'やっほー | はーい',
         ],
         [
-            'value'       => "ｵﾂｶﾚｰ(\u{B4}\u{2200}`*)",
+            'value'       => 'ｵﾂｶﾚｰ(´∀`*)',
             'group'       => 'ja_copype',
             'description' => 'コピペ',
             'ascii'       => false,
@@ -5166,7 +5166,7 @@ return [
             'reading'     => 'おつかれ',
         ],
         [
-            'value'       => "(`･ω･\u{B4})ゝ",
+            'value'       => '(`･ω･´)ゝ',
             'group'       => 'ja_copype',
             'description' => 'コピペ',
             'ascii'       => false,
@@ -5174,7 +5174,7 @@ return [
             'reading'     => 'びしっ | らじゃー',
         ],
         [
-            'value'       => "ヾ(\u{B4}\u{2200}`)ﾉ",
+            'value'       => 'ヾ(´∀`)ﾉ',
             'group'       => 'ja_copype',
             'description' => 'コピペ',
             'ascii'       => false,
@@ -5182,7 +5182,7 @@ return [
             'reading'     => 'やっほー | ばいばい',
         ],
         [
-            'value'       => "ｷﾀ\u{2501}\u{2501}\u{2501}\u{2501}(ﾟ\u{2200}ﾟ)\u{2501}\u{2501}\u{2501}\u{2501}!!",
+            'value'       => 'ｷﾀ━━━━(ﾟ∀ﾟ)━━━━!!',
             'group'       => 'ja_copype',
             'description' => 'コピペ',
             'ascii'       => false,
@@ -5190,7 +5190,7 @@ return [
             'reading'     => 'きたー',
         ],
         [
-            'value'       => "キタ\u{2501}(\u{309C}\u{2200}\u{309C})\u{2501}!",
+            'value'       => 'キタ━(゜∀゜)━!',
             'group'       => 'ja_copype',
             'description' => 'コピペ',
             'ascii'       => false,
@@ -5222,7 +5222,7 @@ return [
             'reading'     => 'がーん | びっくり',
         ],
         [
-            'value'       => "(ﾟ\u{2200}ﾟ)",
+            'value'       => '(ﾟ∀ﾟ)',
             'group'       => 'ja_copype',
             'description' => 'コピペ',
             'ascii'       => false,
@@ -5230,7 +5230,7 @@ return [
             'reading'     => 'にやり | あはは',
         ],
         [
-            'value'       => "(・\u{2200}・)ｲｲﾈ!!",
+            'value'       => '(・∀・)ｲｲﾈ!!',
             'group'       => 'ja_copype',
             'description' => 'コピペ',
             'ascii'       => false,
@@ -5238,7 +5238,7 @@ return [
             'reading'     => 'いいね',
         ],
         [
-            'value'       => "ヽ(ﾟ\u{2200}ﾟ)ﾉ",
+            'value'       => 'ヽ(ﾟ∀ﾟ)ﾉ',
             'group'       => 'ja_copype',
             'description' => 'コピペ',
             'ascii'       => false,
@@ -5246,7 +5246,7 @@ return [
             'reading'     => 'わーい | やったー',
         ],
         [
-            'value'       => "ｷﾀ\u{2501}\u{2501}(ﾟ\u{2200}ﾟ)\u{2501}\u{2501}ｯ!!",
+            'value'       => 'ｷﾀ━━(ﾟ∀ﾟ)━━ｯ!!',
             'group'       => 'ja_copype',
             'description' => 'コピペ',
             'ascii'       => false,
@@ -5270,7 +5270,7 @@ return [
             'reading'     => 'がーん | びっくり',
         ],
         [
-            'value'       => "(\u{2229}\u{B4}\u{2200}`)\u{2229}ﾜｰｲ",
+            'value'       => '(∩´∀`)∩ﾜｰｲ',
             'group'       => 'ja_copype',
             'description' => 'コピペ',
             'ascii'       => false,
@@ -5278,7 +5278,7 @@ return [
             'reading'     => 'わーい | やったー',
         ],
         [
-            'value'       => "ｷﾀ\u{2501}(*ﾟ\u{2200}ﾟ)\u{2501}!",
+            'value'       => 'ｷﾀ━(*ﾟ∀ﾟ)━!',
             'group'       => 'ja_copype',
             'description' => 'コピペ',
             'ascii'       => false,
@@ -5294,7 +5294,7 @@ return [
             'reading'     => 'わーい | やったー',
         ],
         [
-            'value'       => "(\u{2606}\u{2200}\u{2606})",
+            'value'       => '(☆∀☆)',
             'group'       => 'ja_copype',
             'description' => 'コピペ',
             'ascii'       => false,
@@ -5302,7 +5302,7 @@ return [
             'reading'     => 'きらきら | わくわく',
         ],
         [
-            'value'       => "Ｏ(\u{2267}\u{25BD}\u{2266})Ｏ",
+            'value'       => 'Ｏ(≧▽≦)Ｏ',
             'group'       => 'ja_copype',
             'description' => 'コピペ',
             'ascii'       => false,
@@ -5310,7 +5310,7 @@ return [
             'reading'     => 'わーい | うれしい',
         ],
         [
-            'value'       => "＿|\u{FFE3}|\u{25CB}",
+            'value'       => '＿|￣|○',
             'group'       => 'ja_copype',
             'description' => 'コピペ',
             'ascii'       => false,
@@ -5334,7 +5334,7 @@ return [
             'reading'     => 'がっくり | おてあげ',
         ],
         [
-            'value'       => "_(:3」\u{2220})_",
+            'value'       => '_(:3」∠)_',
             'group'       => 'ja_copype',
             'description' => 'コピペ',
             'ascii'       => false,
@@ -5342,7 +5342,7 @@ return [
             'reading'     => 'ぐったり | だらー',
         ],
         [
-            'value'       => "(\u{B4}；ω；\u{FF40})ﾌﾞﾜｯ",
+            'value'       => '(´；ω；｀)ﾌﾞﾜｯ',
             'group'       => 'ja_copype',
             'description' => 'コピペ',
             'ascii'       => false,
@@ -5382,7 +5382,7 @@ return [
             'reading'     => 'ぺこり',
         ],
         [
-            'value'       => "\u{25CB}| \u{FFE3}|＿",
+            'value'       => '○| ￣|＿',
             'group'       => 'ja_copype',
             'description' => 'コピペ',
             'ascii'       => false,
@@ -5406,7 +5406,7 @@ return [
             'reading'     => 'ぽかーん',
         ],
         [
-            'value'       => "(ゝ\u{2200}･)",
+            'value'       => '(ゝ∀･)',
             'group'       => 'ja_copype',
             'description' => 'コピペ',
             'ascii'       => false,
@@ -5422,7 +5422,7 @@ return [
             'reading'     => 'ういんく',
         ],
         [
-            'value'       => "(\u{B4}\u{2200}`)b",
+            'value'       => '(´∀`)b',
             'group'       => 'ja_copype',
             'description' => 'コピペ',
             'ascii'       => false,
@@ -5430,7 +5430,7 @@ return [
             'reading'     => 'ぐっ | いいね',
         ],
         [
-            'value'       => "d(\u{B4}\u{2200}`)b",
+            'value'       => 'd(´∀`)b',
             'group'       => 'ja_copype',
             'description' => 'コピペ',
             'ascii'       => false,
@@ -5438,7 +5438,7 @@ return [
             'reading'     => 'ぐっ | るんるん',
         ],
         [
-            'value'       => "(b\u{B4}\u{2200}`)ﾈﾞ",
+            'value'       => '(b´∀`)ﾈﾞ',
             'group'       => 'ja_copype',
             'description' => 'コピペ',
             'ascii'       => false,
@@ -5446,7 +5446,7 @@ return [
             'reading'     => 'ぐっ | いいね',
         ],
         [
-            'value'       => "\u{266A}(\u{B4}\u{25BD}\u{FF40})ﾉ",
+            'value'       => '♪(´▽｀)ﾉ',
             'group'       => 'ja_copype',
             'description' => 'コピペ',
             'ascii'       => false,
@@ -5454,7 +5454,7 @@ return [
             'reading'     => 'るんるん | ごきげん',
         ],
         [
-            'value'       => "ヾ(*\u{B4}ω`*)ﾉ",
+            'value'       => 'ヾ(*´ω`*)ﾉ',
             'group'       => 'ja_copype',
             'description' => 'コピペ',
             'ascii'       => false,
@@ -5462,7 +5462,7 @@ return [
             'reading'     => 'るんるん | にこにこ',
         ],
         [
-            'value'       => "(๑\u{2C3}ᴗ\u{2C2})b",
+            'value'       => '(๑˃ᴗ˂)b',
             'group'       => 'ja_copype',
             'description' => 'コピペ',
             'ascii'       => false,
@@ -5470,7 +5470,7 @@ return [
             'reading'     => 'ぐっ | がんばる',
         ],
         [
-            'value'       => "(・\u{2200}・)b",
+            'value'       => '(・∀・)b',
             'group'       => 'ja_copype',
             'description' => 'コピペ',
             'ascii'       => false,
@@ -5478,7 +5478,7 @@ return [
             'reading'     => 'ぐっ | いいね',
         ],
         [
-            'value'       => "ｸﾞｯ(๑•̀ㅂ•́)و\u{2727}",
+            'value'       => 'ｸﾞｯ(๑•̀ㅂ•́)و✧',
             'group'       => 'ja_copype',
             'description' => 'コピペ',
             'ascii'       => false,
@@ -5486,7 +5486,7 @@ return [
             'reading'     => 'ぐっ | がんばる',
         ],
         [
-            'value'       => "(\u{B4}；ω；`)",
+            'value'       => '(´；ω；`)',
             'group'       => 'ja_cry',
             'description' => '泣く',
             'ascii'       => false,
@@ -5590,7 +5590,7 @@ return [
             'reading'     => 'しょんぼり | ぐすん',
         ],
         [
-            'value'       => "(\u{25DE}‸\u{25DF})",
+            'value'       => '(◞‸◟)',
             'group'       => 'ja_cry',
             'description' => '泣く',
             'ascii'       => false,
@@ -5598,7 +5598,7 @@ return [
             'reading'     => 'しょんぼり | ずーん',
         ],
         [
-            'value'       => "(\u{B4}Д\u{FF40})",
+            'value'       => '(´Д｀)',
             'group'       => 'ja_cry',
             'description' => '泣く',
             'ascii'       => false,
@@ -5606,7 +5606,7 @@ return [
             'reading'     => 'がっくり',
         ],
         [
-            'value'       => "｡ﾟ(ﾟ\u{B4}Д\u{FF40}ﾟ)ﾟ｡",
+            'value'       => '｡ﾟ(ﾟ´Д｀ﾟ)ﾟ｡',
             'group'       => 'ja_cry',
             'description' => '泣く',
             'ascii'       => false,
@@ -5614,7 +5614,7 @@ return [
             'reading'     => 'わーん | えーん',
         ],
         [
-            'value'       => "｡ﾟ(ﾟ\u{2229}\u{B4}﹏`\u{2229}ﾟ)ﾟ｡",
+            'value'       => '｡ﾟ(ﾟ∩´﹏`∩ﾟ)ﾟ｡',
             'group'       => 'ja_cry',
             'description' => '泣く',
             'ascii'       => false,
@@ -5622,7 +5622,7 @@ return [
             'reading'     => 'えーん',
         ],
         [
-            'value'       => "・\u{309C}・(ノД`)・\u{309C}・",
+            'value'       => '・゜・(ノД`)・゜・',
             'group'       => 'ja_cry',
             'description' => '泣く',
             'ascii'       => false,
@@ -5646,7 +5646,7 @@ return [
             'reading'     => 'わーん | えーん',
         ],
         [
-            'value'       => "。\u{309C}\u{309C}(\u{B4}Ｏ\u{FF40})\u{B0}\u{309C}。",
+            'value'       => '。゜゜(´Ｏ｀)°゜。',
             'group'       => 'ja_cry',
             'description' => '泣く',
             'ascii'       => false,
@@ -5662,7 +5662,7 @@ return [
             'reading'     => 'わーん',
         ],
         [
-            'value'       => "｡ﾟ(ﾟ\u{B4}ω`ﾟ)ﾟ｡",
+            'value'       => '｡ﾟ(ﾟ´ω`ﾟ)ﾟ｡',
             'group'       => 'ja_cry',
             'description' => '泣く',
             'ascii'       => false,
@@ -5670,7 +5670,7 @@ return [
             'reading'     => 'えーん',
         ],
         [
-            'value'       => "(\u{FF1E}﹏\u{FF1C})",
+            'value'       => '(＞﹏＜)',
             'group'       => 'ja_cry',
             'description' => '泣く',
             'ascii'       => false,
@@ -5678,7 +5678,7 @@ return [
             'reading'     => 'ぐっ | じたばた',
         ],
         [
-            'value'       => "(；\u{25BD}；)",
+            'value'       => '(；▽；)',
             'group'       => 'ja_cry',
             'description' => '泣く',
             'ascii'       => false,
@@ -5686,7 +5686,7 @@ return [
             'reading'     => 'うるうる',
         ],
         [
-            'value'       => "(；\u{25B3}；)",
+            'value'       => '(；△；)',
             'group'       => 'ja_cry',
             'description' => '泣く',
             'ascii'       => false,
@@ -5694,7 +5694,7 @@ return [
             'reading'     => 'ぐすん',
         ],
         [
-            'value'       => "(つд\u{2282})",
+            'value'       => '(つд⊂)',
             'group'       => 'ja_cry',
             'description' => '泣く',
             'ascii'       => false,
@@ -5710,7 +5710,7 @@ return [
             'reading'     => 'しくしく',
         ],
         [
-            'value'       => "(\u{B4}；д；`)",
+            'value'       => '(´；д；`)',
             'group'       => 'ja_cry',
             'description' => '泣く',
             'ascii'       => false,
@@ -5718,7 +5718,7 @@ return [
             'reading'     => 'ぐすん | うるうる',
         ],
         [
-            'value'       => "(；\u{2200}；)",
+            'value'       => '(；∀；)',
             'group'       => 'ja_cry',
             'description' => '泣く',
             'ascii'       => false,
@@ -5734,7 +5734,7 @@ return [
             'reading'     => 'ぐすん | うるうる',
         ],
         [
-            'value'       => "( \u{2565}ω\u{2565} )",
+            'value'       => '( ╥ω╥ )',
             'group'       => 'ja_cry',
             'description' => '泣く',
             'ascii'       => false,
@@ -5742,7 +5742,7 @@ return [
             'reading'     => 'うるうる | ぐすん',
         ],
         [
-            'value'       => "(\u{B4}‸\u{FF40}。)",
+            'value'       => '(´‸｀。)',
             'group'       => 'ja_cry',
             'description' => '泣く',
             'ascii'       => false,
@@ -5750,7 +5750,7 @@ return [
             'reading'     => 'しょんぼり | ぐすん',
         ],
         [
-            'value'       => "(\u{B4}；﹏；`)",
+            'value'       => '(´；﹏；`)',
             'group'       => 'ja_cry',
             'description' => '泣く',
             'ascii'       => false,
@@ -5758,7 +5758,7 @@ return [
             'reading'     => 'ぐすん | うるうる',
         ],
         [
-            'value'       => "(｡\u{2565}﹏\u{2565}｡)",
+            'value'       => '(｡╥﹏╥｡)',
             'group'       => 'ja_cry',
             'description' => '泣く',
             'ascii'       => false,
@@ -5766,7 +5766,7 @@ return [
             'reading'     => 'うるうる | ぐすん',
         ],
         [
-            'value'       => "(\u{B4}•̥ω•̥`)",
+            'value'       => '(´•̥ω•̥`)',
             'group'       => 'ja_cry',
             'description' => '泣く',
             'ascii'       => false,
@@ -5774,7 +5774,7 @@ return [
             'reading'     => 'うるうる | ぐすん',
         ],
         [
-            'value'       => "(\u{B4}；ㅅ；`)",
+            'value'       => '(´；ㅅ；`)',
             'group'       => 'ja_cry',
             'description' => '泣く',
             'ascii'       => false,
@@ -5790,7 +5790,7 @@ return [
             'reading'     => 'うるうる',
         ],
         [
-            'value'       => "(\u{B4}；ェ；`)",
+            'value'       => '(´；ェ；`)',
             'group'       => 'ja_cry',
             'description' => '泣く',
             'ascii'       => false,
@@ -5798,7 +5798,7 @@ return [
             'reading'     => 'ぐすん',
         ],
         [
-            'value'       => "(\u{B4};ω; `)",
+            'value'       => '(´;ω; `)',
             'group'       => 'ja_cry',
             'description' => '泣く',
             'ascii'       => false,
@@ -5878,7 +5878,7 @@ return [
             'reading'     => 'ぐすん | しくしく',
         ],
         [
-            'value'       => "(\u{B4}ＴωＴ`)",
+            'value'       => '(´ＴωＴ`)',
             'group'       => 'ja_cry',
             'description' => '泣く',
             'ascii'       => false,
@@ -5886,7 +5886,7 @@ return [
             'reading'     => 'しくしく | ぐすん',
         ],
         [
-            'value'       => "(\u{B4}；Д；`)",
+            'value'       => '(´；Д；`)',
             'group'       => 'ja_cry',
             'description' => '泣く',
             'ascii'       => false,
@@ -5902,7 +5902,7 @@ return [
             'reading'     => 'しくしく',
         ],
         [
-            'value'       => "(\u{B4}・ω・`)",
+            'value'       => '(´・ω・`)',
             'group'       => 'ja_cry',
             'description' => '泣く',
             'ascii'       => false,
@@ -5910,7 +5910,7 @@ return [
             'reading'     => 'しょんぼり | がっかり',
         ],
         [
-            'value'       => "(\u{B4}ω\u{FF40})",
+            'value'       => '(´ω｀)',
             'group'       => 'ja_cry',
             'description' => '泣く',
             'ascii'       => false,
@@ -5918,7 +5918,7 @@ return [
             'reading'     => 'しょんぼり | ためいき',
         ],
         [
-            'value'       => "(\u{B4}д\u{FF40})",
+            'value'       => '(´д｀)',
             'group'       => 'ja_cry',
             'description' => '泣く',
             'ascii'       => false,
@@ -5926,7 +5926,7 @@ return [
             'reading'     => 'がっくり | ためいき',
         ],
         [
-            'value'       => "( \u{B4}•̥﹏•̥` )",
+            'value'       => '( ´•̥﹏•̥` )',
             'group'       => 'ja_cry',
             'description' => '泣く',
             'ascii'       => false,
@@ -5934,7 +5934,7 @@ return [
             'reading'     => 'しょんぼり | ずーん',
         ],
         [
-            'value'       => "(\u{B4}・_・`)",
+            'value'       => '(´・_・`)',
             'group'       => 'ja_cry',
             'description' => '泣く',
             'ascii'       => false,
@@ -5950,7 +5950,7 @@ return [
             'reading'     => 'しょんぼり | ずーん',
         ],
         [
-            'value'       => "(\u{B4}。＿。\u{FF40})",
+            'value'       => '(´。＿。｀)',
             'group'       => 'ja_cry',
             'description' => '泣く',
             'ascii'       => false,
@@ -5958,7 +5958,7 @@ return [
             'reading'     => 'しょんぼり | ぐすん',
         ],
         [
-            'value'       => "(\u{B4}；ω；)",
+            'value'       => '(´；ω；)',
             'group'       => 'ja_cry',
             'description' => '泣く',
             'ascii'       => false,
@@ -5966,7 +5966,7 @@ return [
             'reading'     => 'ぐすん | うるうる',
         ],
         [
-            'value'       => "( \u{B4}•̥ו̥` )",
+            'value'       => '( ´•̥ו̥` )',
             'group'       => 'ja_cry',
             'description' => '泣く',
             'ascii'       => false,
@@ -5982,7 +5982,7 @@ return [
             'reading'     => 'しょんぼり | ずーん',
         ],
         [
-            'value'       => "( \u{B4}•̥̥̥ω•̥̥̥` )",
+            'value'       => '( ´•̥̥̥ω•̥̥̥` )',
             'group'       => 'ja_cry',
             'description' => '泣く',
             'ascii'       => false,
@@ -5990,7 +5990,7 @@ return [
             'reading'     => 'うるうる | ぐすん',
         ],
         [
-            'value'       => "(\u{B4}ºωº`)",
+            'value'       => '(´ºωº`)',
             'group'       => 'ja_cry',
             'description' => '泣く',
             'ascii'       => false,
@@ -5998,7 +5998,7 @@ return [
             'reading'     => 'しょんぼり | ぐすん',
         ],
         [
-            'value'       => "(\u{B4}•̥̥̥﹏•̥̥̥`)",
+            'value'       => '(´•̥̥̥﹏•̥̥̥`)',
             'group'       => 'ja_cry',
             'description' => '泣く',
             'ascii'       => false,
@@ -6006,7 +6006,7 @@ return [
             'reading'     => 'うるうる | ぐすん',
         ],
         [
-            'value'       => "｡ﾟ(ﾟ\u{2283}Д\u{2282}ﾟ)ﾟ｡",
+            'value'       => '｡ﾟ(ﾟ⊃Д⊂ﾟ)ﾟ｡',
             'group'       => 'ja_cry',
             'description' => '泣く',
             'ascii'       => false,
@@ -6014,7 +6014,7 @@ return [
             'reading'     => 'わーん | えーん',
         ],
         [
-            'value'       => "(つ﹏\u{2282})",
+            'value'       => '(つ﹏⊂)',
             'group'       => 'ja_cry',
             'description' => '泣く',
             'ascii'       => false,
@@ -6022,7 +6022,7 @@ return [
             'reading'     => 'えーん | ぐすん',
         ],
         [
-            'value'       => "(；\u{B4}\u{2565}Д\u{2565}`)",
+            'value'       => '(；´╥Д╥`)',
             'group'       => 'ja_cry',
             'description' => '泣く',
             'ascii'       => false,
@@ -6062,7 +6062,7 @@ return [
             'reading'     => 'えーん | わーん',
         ],
         [
-            'value'       => "(ﾉ\u{2565}ω\u{2565})ﾉ",
+            'value'       => '(ﾉ╥ω╥)ﾉ',
             'group'       => 'ja_cry',
             'description' => '泣く',
             'ascii'       => false,
@@ -6070,7 +6070,7 @@ return [
             'reading'     => 'わーん | えーん',
         ],
         [
-            'value'       => "o(；\u{25B3}；)o",
+            'value'       => 'o(；△；)o',
             'group'       => 'ja_cry',
             'description' => '泣く',
             'ascii'       => false,
@@ -6086,7 +6086,7 @@ return [
             'reading'     => 'わーん',
         ],
         [
-            'value'       => "。\u{309C}(\u{309C}\u{B4}Д\u{FF40}\u{309C})\u{309C}。",
+            'value'       => '。゜(゜´Д｀゜)゜。',
             'group'       => 'ja_cry',
             'description' => '泣く',
             'ascii'       => false,
@@ -6094,7 +6094,7 @@ return [
             'reading'     => 'わーん | えーん',
         ],
         [
-            'value'       => "。・\u{309C}・(/Д\u{FF40})・\u{309C}・。",
+            'value'       => '。・゜・(/Д｀)・゜・。',
             'group'       => 'ja_cry',
             'description' => '泣く',
             'ascii'       => false,
@@ -6102,7 +6102,7 @@ return [
             'reading'     => 'わーん | えーん',
         ],
         [
-            'value'       => "。\u{309C}\u{309C}(\u{B4}\u{25A1}`。)\u{B0}\u{309C}。",
+            'value'       => '。゜゜(´□`。)°゜。',
             'group'       => 'ja_cry',
             'description' => '泣く',
             'ascii'       => false,
@@ -6110,7 +6110,7 @@ return [
             'reading'     => 'わーん | えーん',
         ],
         [
-            'value'       => "\u{309C}・(ﾉД`)・\u{309C}",
+            'value'       => '゜・(ﾉД`)・゜',
             'group'       => 'ja_cry',
             'description' => '泣く',
             'ascii'       => false,
@@ -6126,7 +6126,7 @@ return [
             'reading'     => 'えーん | わーん',
         ],
         [
-            'value'       => "\u{2565}‿\u{2565}",
+            'value'       => '╥‿╥',
             'group'       => 'ja_cry',
             'description' => '泣く',
             'ascii'       => false,
@@ -6182,7 +6182,7 @@ return [
             'reading'     => 'ぐっ | じたばた',
         ],
         [
-            'value'       => "(｡\u{FF1E}﹏\u{FF1C}｡)",
+            'value'       => '(｡＞﹏＜｡)',
             'group'       => 'ja_cry',
             'description' => '泣く',
             'ascii'       => false,
@@ -6198,7 +6198,7 @@ return [
             'reading'     => 'じたばた | わーん',
         ],
         [
-            'value'       => "(T\u{25BD}T)",
+            'value'       => '(T▽T)',
             'group'       => 'ja_cry',
             'description' => '泣く',
             'ascii'       => false,
@@ -6206,7 +6206,7 @@ return [
             'reading'     => 'うるうる | じーん',
         ],
         [
-            'value'       => "(\u{2661};\u{25B3};\u{2661})",
+            'value'       => '(♡;△;♡)',
             'group'       => 'ja_cry',
             'description' => '泣く',
             'ascii'       => false,
@@ -6214,7 +6214,7 @@ return [
             'reading'     => 'じーん | かんげき',
         ],
         [
-            'value'       => "ヽ(;\u{25BD};)ノ",
+            'value'       => 'ヽ(;▽;)ノ',
             'group'       => 'ja_cry',
             'description' => '泣く',
             'ascii'       => false,
@@ -6222,7 +6222,7 @@ return [
             'reading'     => 'うるうる | かんげき',
         ],
         [
-            'value'       => "(｡\u{2565}ᗝ\u{2565}｡)",
+            'value'       => '(｡╥ᗝ╥｡)',
             'group'       => 'ja_cry',
             'description' => '泣く',
             'ascii'       => false,
@@ -6238,7 +6238,7 @@ return [
             'reading'     => 'じーん | ぐすん',
         ],
         [
-            'value'       => "(ﾉ\u{25BD}ﾉ)",
+            'value'       => '(ﾉ▽ﾉ)',
             'group'       => 'ja_cry',
             'description' => '泣く',
             'ascii'       => false,
@@ -6254,7 +6254,7 @@ return [
             'reading'     => 'にこにこ | かわいい',
         ],
         [
-            'value'       => "( \u{B4} \u{25BD} ` )",
+            'value'       => '( ´ ▽ ` )',
             'group'       => 'ja_cute',
             'description' => '可愛い',
             'ascii'       => false,
@@ -6262,7 +6262,7 @@ return [
             'reading'     => 'にこにこ',
         ],
         [
-            'value'       => "(*\u{B4}︶`*)",
+            'value'       => '(*´︶`*)',
             'group'       => 'ja_cute',
             'description' => '可愛い',
             'ascii'       => false,
@@ -6270,7 +6270,7 @@ return [
             'reading'     => 'ほのぼの | ほっこり',
         ],
         [
-            'value'       => "(｡\u{25D5}‿\u{25D5}｡)",
+            'value'       => '(｡◕‿◕｡)',
             'group'       => 'ja_cute',
             'description' => '可愛い',
             'ascii'       => false,
@@ -6278,7 +6278,7 @@ return [
             'reading'     => 'にこにこ',
         ],
         [
-            'value'       => "(\u{25D5}‿\u{25D5}\u{273F})",
+            'value'       => '(◕‿◕✿)',
             'group'       => 'ja_cute',
             'description' => '可愛い',
             'ascii'       => false,
@@ -6286,7 +6286,7 @@ return [
             'reading'     => 'にこにこ',
         ],
         [
-            'value'       => "(\u{2267}\u{25E1}\u{2266})",
+            'value'       => '(≧◡≦)',
             'group'       => 'ja_cute',
             'description' => '可愛い',
             'ascii'       => false,
@@ -6294,7 +6294,7 @@ return [
             'reading'     => 'にこにこ | うれしい',
         ],
         [
-            'value'       => "(\u{FF3E}\u{25BD}\u{FF3E})",
+            'value'       => '(＾▽＾)',
             'group'       => 'ja_cute',
             'description' => '可愛い',
             'ascii'       => false,
@@ -6302,7 +6302,7 @@ return [
             'reading'     => 'にこにこ',
         ],
         [
-            'value'       => "( \u{2F6}ˆ\u{25BD}ˆ\u{2F5} )",
+            'value'       => '( ˶ˆ▽ˆ˵ )',
             'group'       => 'ja_cute',
             'description' => '可愛い',
             'ascii'       => false,
@@ -6310,7 +6310,7 @@ return [
             'reading'     => 'にこにこ',
         ],
         [
-            'value'       => "(ᵔ\u{25E1}ᵔ)",
+            'value'       => '(ᵔ◡ᵔ)',
             'group'       => 'ja_cute',
             'description' => '可愛い',
             'ascii'       => false,
@@ -6318,7 +6318,7 @@ return [
             'reading'     => 'にこにこ',
         ],
         [
-            'value'       => "(\u{2F6}ᵔ ᵕ ᵔ\u{2F6})",
+            'value'       => '(˶ᵔ ᵕ ᵔ˶)',
             'group'       => 'ja_cute',
             'description' => '可愛い',
             'ascii'       => false,
@@ -6326,7 +6326,7 @@ return [
             'reading'     => 'にこにこ',
         ],
         [
-            'value'       => "(\u{B4}｡• ᵕ •｡`)",
+            'value'       => '(´｡• ᵕ •｡`)',
             'group'       => 'ja_cute',
             'description' => '可愛い',
             'ascii'       => false,
@@ -6334,7 +6334,7 @@ return [
             'reading'     => 'うるうる | かわいい',
         ],
         [
-            'value'       => "(\u{2044} \u{2044}•\u{2044}ω\u{2044}•\u{2044} \u{2044})",
+            'value'       => '(⁄ ⁄•⁄ω⁄•⁄ ⁄)',
             'group'       => 'ja_cute',
             'description' => '可愛い',
             'ascii'       => false,
@@ -6350,7 +6350,7 @@ return [
             'reading'     => 'てれてれ | きゃー',
         ],
         [
-            'value'       => "(〃\u{25BD}〃)",
+            'value'       => '(〃▽〃)',
             'group'       => 'ja_cute',
             'description' => '可愛い',
             'ascii'       => false,
@@ -6382,7 +6382,7 @@ return [
             'reading'     => 'てれてれ',
         ],
         [
-            'value'       => "(\u{B4}• ω •`)",
+            'value'       => '(´• ω •`)',
             'group'       => 'ja_cute',
             'description' => '可愛い',
             'ascii'       => false,
@@ -6390,7 +6390,7 @@ return [
             'reading'     => 'もじもじ | かわいい',
         ],
         [
-            'value'       => "(\u{2661}\u{2D9}︶\u{2D9}\u{2661})",
+            'value'       => '(♡˙︶˙♡)',
             'group'       => 'ja_cute',
             'description' => '可愛い',
             'ascii'       => false,
@@ -6398,7 +6398,7 @@ return [
             'reading'     => 'だいすき | きゅん',
         ],
         [
-            'value'       => "\u{2661}(ᐢ ᵕ ᐢ)",
+            'value'       => '♡(ᐢ ᵕ ᐢ)',
             'group'       => 'ja_cute',
             'description' => '可愛い',
             'ascii'       => false,
@@ -6406,7 +6406,7 @@ return [
             'reading'     => 'ふわふわ | だいすき',
         ],
         [
-            'value'       => "(\u{B4}ε\u{FF40} )\u{2661}",
+            'value'       => '(´ε｀ )♡',
             'group'       => 'ja_cute',
             'description' => '可愛い',
             'ascii'       => false,
@@ -6414,7 +6414,7 @@ return [
             'reading'     => 'ちゅー | だいすき',
         ],
         [
-            'value'       => "\u{2661}＼(\u{FFE3}\u{25BD}\u{FFE3})／\u{2661}",
+            'value'       => '♡＼(￣▽￣)／♡',
             'group'       => 'ja_cute',
             'description' => '可愛い',
             'ascii'       => false,
@@ -6430,7 +6430,7 @@ return [
             'reading'     => 'にゃー | ねこ',
         ],
         [
-            'value'       => "(=\u{FF40}ω\u{B4}=)",
+            'value'       => '(=｀ω´=)',
             'group'       => 'ja_cute',
             'description' => '可愛い',
             'ascii'       => false,
@@ -6446,7 +6446,7 @@ return [
             'reading'     => 'にゃー | ねこ',
         ],
         [
-            'value'       => "(ↀ\u{2D9}\u{25BD}\u{2D9}ↀ)",
+            'value'       => '(ↀ˙▽˙ↀ)',
             'group'       => 'ja_cute',
             'description' => '可愛い',
             'ascii'       => false,
@@ -6470,7 +6470,7 @@ return [
             'reading'     => 'うさぎ | もふもふ',
         ],
         [
-            'value'       => "૮ \u{2F6}ᵔ ᵕ ᵔ\u{2F6} ა",
+            'value'       => '૮ ˶ᵔ ᵕ ᵔ˶ ა',
             'group'       => 'ja_cute',
             'description' => '可愛い',
             'ascii'       => false,
@@ -6486,7 +6486,7 @@ return [
             'reading'     => 'わーい',
         ],
         [
-            'value'       => "\u{266A}(\u{B4}\u{25BD}\u{FF40})",
+            'value'       => '♪(´▽｀)',
             'group'       => 'ja_cute',
             'description' => '可愛い',
             'ascii'       => false,
@@ -6494,7 +6494,7 @@ return [
             'reading'     => 'るんるん | ごきげん',
         ],
         [
-            'value'       => "٩(\u{25D5}‿\u{25D5})۶",
+            'value'       => '٩(◕‿◕)۶',
             'group'       => 'ja_cute',
             'description' => '可愛い',
             'ascii'       => false,
@@ -6502,7 +6502,7 @@ return [
             'reading'     => 'わーい',
         ],
         [
-            'value'       => "(๑\u{2C3}ᴗ\u{2C2})ﻭ",
+            'value'       => '(๑˃ᴗ˂)ﻭ',
             'group'       => 'ja_cute',
             'description' => '可愛い',
             'ascii'       => false,
@@ -6510,7 +6510,7 @@ return [
             'reading'     => 'がんばる | ふぁいと',
         ],
         [
-            'value'       => "(*\u{2D8}︶\u{2D8}*)",
+            'value'       => '(*˘︶˘*)',
             'group'       => 'ja_cute',
             'description' => '可愛い',
             'ascii'       => false,
@@ -6518,7 +6518,7 @@ return [
             'reading'     => 'にこにこ | ほっこり',
         ],
         [
-            'value'       => "(っ\u{2D8}ω\u{2D8}ς )",
+            'value'       => '(っ˘ω˘ς )',
             'group'       => 'ja_cute',
             'description' => '可愛い',
             'ascii'       => false,
@@ -6526,7 +6526,7 @@ return [
             'reading'     => 'ねむねむ | うとうと',
         ],
         [
-            'value'       => "(\u{B4}\u{2200}\u{FF40})",
+            'value'       => '(´∀｀)',
             'group'       => 'ja_cute',
             'description' => '可愛い',
             'ascii'       => false,
@@ -6534,7 +6534,7 @@ return [
             'reading'     => 'にこにこ',
         ],
         [
-            'value'       => "(*^\u{25BD}^*)",
+            'value'       => '(*^▽^*)',
             'group'       => 'ja_cute',
             'description' => '可愛い',
             'ascii'       => false,
@@ -6542,7 +6542,7 @@ return [
             'reading'     => 'にこにこ | うれしい',
         ],
         [
-            'value'       => "( \u{25DC}‿\u{25DD} )",
+            'value'       => '( ◜‿◝ )',
             'group'       => 'ja_cute',
             'description' => '可愛い',
             'ascii'       => false,
@@ -6550,7 +6550,7 @@ return [
             'reading'     => 'にこにこ',
         ],
         [
-            'value'       => "(\u{2C3}ᴗ\u{2C2})",
+            'value'       => '(˃ᴗ˂)',
             'group'       => 'ja_cute',
             'description' => '可愛い',
             'ascii'       => false,
@@ -6558,7 +6558,7 @@ return [
             'reading'     => 'にこにこ | わくわく',
         ],
         [
-            'value'       => "( \u{B4} ω ` )",
+            'value'       => '( ´ ω ` )',
             'group'       => 'ja_cute',
             'description' => '可愛い',
             'ascii'       => false,
@@ -6566,7 +6566,7 @@ return [
             'reading'     => 'ほのぼの | にこにこ',
         ],
         [
-            'value'       => "(\u{25DE}･౪･)",
+            'value'       => '(◞･౪･)',
             'group'       => 'ja_cute',
             'description' => '可愛い',
             'ascii'       => false,
@@ -6574,7 +6574,7 @@ return [
             'reading'     => 'にこにこ | へへっ',
         ],
         [
-            'value'       => "( \u{2D9}\u{25BD}\u{2D9} )",
+            'value'       => '( ˙▽˙ )',
             'group'       => 'ja_cute',
             'description' => '可愛い',
             'ascii'       => false,
@@ -6590,7 +6590,7 @@ return [
             'reading'     => 'にこにこ | かわいい',
         ],
         [
-            'value'       => "(ㅅ\u{B4} \u{2D8} `)",
+            'value'       => '(ㅅ´ ˘ `)',
             'group'       => 'ja_cute',
             'description' => '可愛い',
             'ascii'       => false,
@@ -6598,7 +6598,7 @@ return [
             'reading'     => 'にこにこ | ほっこり',
         ],
         [
-            'value'       => "(*\u{B4}\u{25BD}`*)",
+            'value'       => '(*´▽`*)',
             'group'       => 'ja_cute',
             'description' => '可愛い',
             'ascii'       => false,
@@ -6606,7 +6606,7 @@ return [
             'reading'     => 'にこにこ | うっとり',
         ],
         [
-            'value'       => "( \u{B4}• ω •` )",
+            'value'       => '( ´• ω •` )',
             'group'       => 'ja_cute',
             'description' => '可愛い',
             'ascii'       => false,
@@ -6630,7 +6630,7 @@ return [
             'reading'     => 'にこにこ | うっとり',
         ],
         [
-            'value'       => "( \u{B4}͈ ᵕ `͈ )",
+            'value'       => '( ´͈ ᵕ `͈ )',
             'group'       => 'ja_cute',
             'description' => '可愛い',
             'ascii'       => false,
@@ -6654,7 +6654,7 @@ return [
             'reading'     => 'にこにこ | ふんふん',
         ],
         [
-            'value'       => "(*\u{2D8}ᗨ\u{2D8}*)",
+            'value'       => '(*˘ᗨ˘*)',
             'group'       => 'ja_cute',
             'description' => '可愛い',
             'ascii'       => false,
@@ -6662,7 +6662,7 @@ return [
             'reading'     => 'にこにこ | ほっこり',
         ],
         [
-            'value'       => "( \u{25E1}‿\u{25E1} )",
+            'value'       => '( ◡‿◡ )',
             'group'       => 'ja_cute',
             'description' => '可愛い',
             'ascii'       => false,
@@ -6678,7 +6678,7 @@ return [
             'reading'     => 'てれてれ | はずかしい',
         ],
         [
-            'value'       => "(*\u{2267}\u{2200}\u{2266}*)",
+            'value'       => '(*≧∀≦*)',
             'group'       => 'ja_cute',
             'description' => '可愛い',
             'ascii'       => false,
@@ -6694,7 +6694,7 @@ return [
             'reading'     => 'てれてれ | きゃー',
         ],
         [
-            'value'       => "(*/\u{25BD}＼*)",
+            'value'       => '(*/▽＼*)',
             'group'       => 'ja_cute',
             'description' => '可愛い',
             'ascii'       => false,
@@ -6702,7 +6702,7 @@ return [
             'reading'     => 'てれてれ | はずかしい',
         ],
         [
-            'value'       => "(\u{2044} \u{2044}>\u{2044} \u{25BD} \u{2044}<\u{2044} \u{2044})",
+            'value'       => '(⁄ ⁄>⁄ ▽ ⁄<⁄ ⁄)',
             'group'       => 'ja_cute',
             'description' => '可愛い',
             'ascii'       => false,
@@ -6710,7 +6710,7 @@ return [
             'reading'     => 'てれてれ | もじもじ',
         ],
         [
-            'value'       => "(*ﾉ\u{2200}`*)",
+            'value'       => '(*ﾉ∀`*)',
             'group'       => 'ja_cute',
             'description' => '可愛い',
             'ascii'       => false,
@@ -6718,7 +6718,7 @@ return [
             'reading'     => 'てれてれ | えへへ',
         ],
         [
-            'value'       => "(*ﾉ\u{25BD}ﾉ)",
+            'value'       => '(*ﾉ▽ﾉ)',
             'group'       => 'ja_cute',
             'description' => '可愛い',
             'ascii'       => false,
@@ -6734,7 +6734,7 @@ return [
             'reading'     => 'てれてれ | ぽっ',
         ],
         [
-            'value'       => "(〃’\u{25BD}’〃)",
+            'value'       => '(〃’▽’〃)',
             'group'       => 'ja_cute',
             'description' => '可愛い',
             'ascii'       => false,
@@ -6742,7 +6742,7 @@ return [
             'reading'     => 'てれてれ | ぽっ',
         ],
         [
-            'value'       => "( \u{2044} \u{2044}•\u{2044}-\u{2044}•\u{2044} \u{2044})",
+            'value'       => '( ⁄ ⁄•⁄-⁄•⁄ ⁄)',
             'group'       => 'ja_cute',
             'description' => '可愛い',
             'ascii'       => false,
@@ -6750,7 +6750,7 @@ return [
             'reading'     => 'てれてれ | もじもじ',
         ],
         [
-            'value'       => "(*\u{B4}\u{2200}`*)",
+            'value'       => '(*´∀`*)',
             'group'       => 'ja_cute',
             'description' => '可愛い',
             'ascii'       => false,
@@ -6766,7 +6766,7 @@ return [
             'reading'     => 'てれてれ | ぽっ',
         ],
         [
-            'value'       => "(//\u{2207}//)",
+            'value'       => '(//∇//)',
             'group'       => 'ja_cute',
             'description' => '可愛い',
             'ascii'       => false,
@@ -6774,7 +6774,7 @@ return [
             'reading'     => 'てれてれ | はずかしい',
         ],
         [
-            'value'       => "ﾟ+｡:.ﾟ(*\u{B4}ヮ`*)ﾟ.:｡+ﾟ",
+            'value'       => 'ﾟ+｡:.ﾟ(*´ヮ`*)ﾟ.:｡+ﾟ',
             'group'       => 'ja_cute',
             'description' => '可愛い',
             'ascii'       => false,
@@ -6782,7 +6782,7 @@ return [
             'reading'     => 'てれてれ | きらきら',
         ],
         [
-            'value'       => "(\u{2661}\u{B4}艸`)",
+            'value'       => '(♡´艸`)',
             'group'       => 'ja_cute',
             'description' => '可愛い',
             'ascii'       => false,
@@ -6790,7 +6790,7 @@ return [
             'reading'     => 'きゅん | だいすき',
         ],
         [
-            'value'       => "(*\u{2665}ω\u{2665}*)",
+            'value'       => '(*♥ω♥*)',
             'group'       => 'ja_cute',
             'description' => '可愛い',
             'ascii'       => false,
@@ -6798,7 +6798,7 @@ return [
             'reading'     => 'だいすき | きゅん',
         ],
         [
-            'value'       => "ヽ(\u{2661}‿\u{2661})ノ",
+            'value'       => 'ヽ(♡‿♡)ノ',
             'group'       => 'ja_cute',
             'description' => '可愛い',
             'ascii'       => false,
@@ -6806,7 +6806,7 @@ return [
             'reading'     => 'だいすき | わーい',
         ],
         [
-            'value'       => "(\u{25CD}•ᴗ•\u{25CD})\u{2661}",
+            'value'       => '(◍•ᴗ•◍)♡',
             'group'       => 'ja_cute',
             'description' => '可愛い',
             'ascii'       => false,
@@ -6814,7 +6814,7 @@ return [
             'reading'     => 'だいすき | きゅん',
         ],
         [
-            'value'       => "(*\u{2D8}︶\u{2D8}*).｡.:*\u{2661}",
+            'value'       => '(*˘︶˘*).｡.:*♡',
             'group'       => 'ja_cute',
             'description' => '可愛い',
             'ascii'       => false,
@@ -6822,7 +6822,7 @@ return [
             'reading'     => 'だいすき | うっとり',
         ],
         [
-            'value'       => "\u{2661}\u{FF3E}\u{25BD}\u{FF3E}\u{2661}",
+            'value'       => '♡＾▽＾♡',
             'group'       => 'ja_cute',
             'description' => '可愛い',
             'ascii'       => false,
@@ -6830,7 +6830,7 @@ return [
             'reading'     => 'だいすき | にこにこ',
         ],
         [
-            'value'       => "(\u{B4} \u{25BD}\u{FF40})ﾉ\u{2661}",
+            'value'       => '(´ ▽｀)ﾉ♡',
             'group'       => 'ja_cute',
             'description' => '可愛い',
             'ascii'       => false,
@@ -6838,7 +6838,7 @@ return [
             'reading'     => 'だいすき',
         ],
         [
-            'value'       => "(｡•ᴗ-)\u{2661}",
+            'value'       => '(｡•ᴗ-)♡',
             'group'       => 'ja_cute',
             'description' => '可愛い',
             'ascii'       => false,
@@ -6846,7 +6846,7 @@ return [
             'reading'     => 'だいすき | ういんく',
         ],
         [
-            'value'       => "(\u{2661}ω\u{2661} )",
+            'value'       => '(♡ω♡ )',
             'group'       => 'ja_cute',
             'description' => '可愛い',
             'ascii'       => false,
@@ -6854,7 +6854,7 @@ return [
             'reading'     => 'きゅん | うっとり',
         ],
         [
-            'value'       => "(\u{25D5}‿\u{25D5})\u{2661}",
+            'value'       => '(◕‿◕)♡',
             'group'       => 'ja_cute',
             'description' => '可愛い',
             'ascii'       => false,
@@ -6862,7 +6862,7 @@ return [
             'reading'     => 'だいすき | にこにこ',
         ],
         [
-            'value'       => "(\u{2661}-_-\u{2661})",
+            'value'       => '(♡-_-♡)',
             'group'       => 'ja_cute',
             'description' => '可愛い',
             'ascii'       => false,
@@ -6870,7 +6870,7 @@ return [
             'reading'     => 'きゅん | うっとり',
         ],
         [
-            'value'       => "(\u{B4}ω\u{FF40}\u{2661})",
+            'value'       => '(´ω｀♡)',
             'group'       => 'ja_cute',
             'description' => '可愛い',
             'ascii'       => false,
@@ -6878,7 +6878,7 @@ return [
             'reading'     => 'だいすき | ほっこり',
         ],
         [
-            'value'       => "(*\u{2D8} ³\u{2D8})\u{2665}",
+            'value'       => '(*˘ ³˘)♥',
             'group'       => 'ja_cute',
             'description' => '可愛い',
             'ascii'       => false,
@@ -6886,7 +6886,7 @@ return [
             'reading'     => 'ちゅー | だいすき',
         ],
         [
-            'value'       => "( \u{25E1}‿\u{25E1} \u{2661})",
+            'value'       => '( ◡‿◡ ♡)',
             'group'       => 'ja_cute',
             'description' => '可愛い',
             'ascii'       => false,
@@ -6894,7 +6894,7 @@ return [
             'reading'     => 'だいすき | ほのぼの',
         ],
         [
-            'value'       => "ʕ\u{2661}ᴥ\u{2661}ʔ",
+            'value'       => 'ʕ♡ᴥ♡ʔ',
             'group'       => 'ja_cute',
             'description' => '可愛い',
             'ascii'       => false,
@@ -6910,7 +6910,7 @@ return [
             'reading'     => 'きゅん | おねがい',
         ],
         [
-            'value'       => "( \u{B4} \u{2200} `)ノ\u{2661}",
+            'value'       => '( ´ ∀ `)ノ♡',
             'group'       => 'ja_cute',
             'description' => '可愛い',
             'ascii'       => false,
@@ -6974,7 +6974,7 @@ return [
             'reading'     => 'にゃー | ねこ',
         ],
         [
-            'value'       => "=^._.^= \u{222B}",
+            'value'       => '=^._.^= ∫',
             'group'       => 'ja_cute',
             'description' => '可愛い',
             'ascii'       => false,
@@ -6982,7 +6982,7 @@ return [
             'reading'     => 'にゃー | ねこ',
         ],
         [
-            'value'       => "(⁎\u{2C3}ᆺ\u{2C2})",
+            'value'       => '(⁎˃ᆺ˂)',
             'group'       => 'ja_cute',
             'description' => '可愛い',
             'ascii'       => false,
@@ -6998,7 +6998,7 @@ return [
             'reading'     => 'にゃー | ねこ',
         ],
         [
-            'value'       => "(ﾐ\u{24DB} ﻌ \u{24DB}ﾐ)",
+            'value'       => '(ﾐⓛ ﻌ ⓛﾐ)',
             'group'       => 'ja_cute',
             'description' => '可愛い',
             'ascii'       => false,
@@ -7014,7 +7014,7 @@ return [
             'reading'     => 'にゃー | ねこ',
         ],
         [
-            'value'       => "(\u{FFE3}ω\u{FFE3})",
+            'value'       => '(￣ω￣)',
             'group'       => 'ja_cute',
             'description' => '可愛い',
             'ascii'       => false,
@@ -7022,7 +7022,7 @@ return [
             'reading'     => 'わんわん | いぬ',
         ],
         [
-            'value'       => "\u{222A}･ω･\u{222A}",
+            'value'       => '∪･ω･∪',
             'group'       => 'ja_cute',
             'description' => '可愛い',
             'ascii'       => false,
@@ -7030,7 +7030,7 @@ return [
             'reading'     => 'わんわん | いぬ',
         ],
         [
-            'value'       => "(\u{25BD}･ω･\u{25BD})",
+            'value'       => '(▽･ω･▽)',
             'group'       => 'ja_cute',
             'description' => '可愛い',
             'ascii'       => false,
@@ -7046,7 +7046,7 @@ return [
             'reading'     => 'わんわん | いぬ',
         ],
         [
-            'value'       => "ʕ\u{25CD}·ᴥ·\u{25CD}ʔ",
+            'value'       => 'ʕ◍·ᴥ·◍ʔ',
             'group'       => 'ja_cute',
             'description' => '可愛い',
             'ascii'       => false,
@@ -7070,7 +7070,7 @@ return [
             'reading'     => 'くま | ふんふん',
         ],
         [
-            'value'       => "(\u{B4}(ｴ)\u{FF40})",
+            'value'       => '(´(ｴ)｀)',
             'group'       => 'ja_cute',
             'description' => '可愛い',
             'ascii'       => false,
@@ -7078,7 +7078,7 @@ return [
             'reading'     => 'くま | もふもふ',
         ],
         [
-            'value'       => "\u{2282}((・x・))\u{2283}",
+            'value'       => '⊂((・x・))⊃',
             'group'       => 'ja_cute',
             'description' => '可愛い',
             'ascii'       => false,
@@ -7086,7 +7086,7 @@ return [
             'reading'     => 'うさぎ | ぴょん',
         ],
         [
-            'value'       => "(\u{2F5}• ﻌ •\u{2F5})",
+            'value'       => '(˵• ﻌ •˵)',
             'group'       => 'ja_cute',
             'description' => '可愛い',
             'ascii'       => false,
@@ -7110,7 +7110,7 @@ return [
             'reading'     => 'くま | ふんふん',
         ],
         [
-            'value'       => "(\u{B4}･(ｪ)･`)",
+            'value'       => '(´･(ｪ)･`)',
             'group'       => 'ja_cute',
             'description' => '可愛い',
             'ascii'       => false,
@@ -7118,7 +7118,7 @@ return [
             'reading'     => 'くま | しょんぼり',
         ],
         [
-            'value'       => "(\u{FF40}(エ)\u{B4})",
+            'value'       => '(｀(エ)´)',
             'group'       => 'ja_cute',
             'description' => '可愛い',
             'ascii'       => false,
@@ -7134,7 +7134,7 @@ return [
             'reading'     => 'くま | もふもふ',
         ],
         [
-            'value'       => "ヽ(\u{B4}\u{25BD}`)/",
+            'value'       => 'ヽ(´▽`)/',
             'group'       => 'ja_cute',
             'description' => '可愛い',
             'ascii'       => false,
@@ -7142,7 +7142,7 @@ return [
             'reading'     => 'わーい',
         ],
         [
-            'value'       => "ヽ(・\u{2200}・)ﾉ",
+            'value'       => 'ヽ(・∀・)ﾉ',
             'group'       => 'ja_cute',
             'description' => '可愛い',
             'ascii'       => false,
@@ -7150,7 +7150,7 @@ return [
             'reading'     => 'わーい',
         ],
         [
-            'value'       => "＼(\u{2267}\u{25BD}\u{2266})／",
+            'value'       => '＼(≧▽≦)／',
             'group'       => 'ja_cute',
             'description' => '可愛い',
             'ascii'       => false,
@@ -7158,7 +7158,7 @@ return [
             'reading'     => 'わーい | やったー',
         ],
         [
-            'value'       => "ヽ(>\u{2200}<\u{2606})ノ",
+            'value'       => 'ヽ(>∀<☆)ノ',
             'group'       => 'ja_cute',
             'description' => '可愛い',
             'ascii'       => false,
@@ -7166,7 +7166,7 @@ return [
             'reading'     => 'わーい | やったー | なげる | ばんざい',
         ],
         [
-            'value'       => "o(\u{2267}\u{25BD}\u{2266})o",
+            'value'       => 'o(≧▽≦)o',
             'group'       => 'ja_cute',
             'description' => '可愛い',
             'ascii'       => false,
@@ -7174,7 +7174,7 @@ return [
             'reading'     => 'わくわく | うれしい',
         ],
         [
-            'value'       => "(((o(*ﾟ\u{25BD}ﾟ*)o)))",
+            'value'       => '(((o(*ﾟ▽ﾟ*)o)))',
             'group'       => 'ja_cute',
             'description' => '可愛い',
             'ascii'       => false,
@@ -7182,7 +7182,7 @@ return [
             'reading'     => 'わくわく | どきどき',
         ],
         [
-            'value'       => "ヾ(\u{2267}\u{25BD}\u{2266}*)o",
+            'value'       => 'ヾ(≧▽≦*)o',
             'group'       => 'ja_cute',
             'description' => '可愛い',
             'ascii'       => false,
@@ -7190,7 +7190,7 @@ return [
             'reading'     => 'わーい | うれしい',
         ],
         [
-            'value'       => "＼(\u{FFE3}\u{25BD}\u{FFE3})／",
+            'value'       => '＼(￣▽￣)／',
             'group'       => 'ja_cute',
             'description' => '可愛い',
             'ascii'       => false,
@@ -7198,7 +7198,7 @@ return [
             'reading'     => 'わーい',
         ],
         [
-            'value'       => "ヽ(*ﾟ\u{2200}ﾟ*)ﾉ",
+            'value'       => 'ヽ(*ﾟ∀ﾟ*)ﾉ',
             'group'       => 'ja_cute',
             'description' => '可愛い',
             'ascii'       => false,
@@ -7214,7 +7214,7 @@ return [
             'reading'     => 'わーい',
         ],
         [
-            'value'       => "\u{266A}~(\u{B4}ε\u{FF40} )",
+            'value'       => '♪~(´ε｀ )',
             'group'       => 'ja_cute',
             'description' => '可愛い',
             'ascii'       => false,
@@ -7222,7 +7222,7 @@ return [
             'reading'     => 'るんるん | ごきげん',
         ],
         [
-            'value'       => "ヽ(\u{B4}\u{25BD}`)/\u{266A}",
+            'value'       => 'ヽ(´▽`)/♪',
             'group'       => 'ja_cute',
             'description' => '可愛い',
             'ascii'       => false,
@@ -7230,7 +7230,7 @@ return [
             'reading'     => 'るんるん | わーい',
         ],
         [
-            'value'       => "(っ\u{B4}ω`c)\u{266A}",
+            'value'       => '(っ´ω`c)♪',
             'group'       => 'ja_cute',
             'description' => '可愛い',
             'ascii'       => false,
@@ -7238,7 +7238,7 @@ return [
             'reading'     => 'るんるん | ごきげん',
         ],
         [
-            'value'       => "ﾉﾞ(\u{B4}\u{25BD}`*)",
+            'value'       => 'ﾉﾞ(´▽`*)',
             'group'       => 'ja_cute',
             'description' => '可愛い',
             'ascii'       => false,
@@ -7246,7 +7246,7 @@ return [
             'reading'     => 'るんるん | にこにこ',
         ],
         [
-            'value'       => "〜(\u{FFE3}\u{25BD}\u{FFE3}〜)",
+            'value'       => '〜(￣▽￣〜)',
             'group'       => 'ja_cute',
             'description' => '可愛い',
             'ascii'       => false,
@@ -7254,7 +7254,7 @@ return [
             'reading'     => 'ゆらゆら | るんるん',
         ],
         [
-            'value'       => "(〜\u{FFE3}\u{25BD}\u{FFE3})〜",
+            'value'       => '(〜￣▽￣)〜',
             'group'       => 'ja_cute',
             'description' => '可愛い',
             'ascii'       => false,
@@ -7262,7 +7262,7 @@ return [
             'reading'     => 'ゆらゆら | るんるん',
         ],
         [
-            'value'       => "＼(\u{309C}\u{2200}\u{309C})／",
+            'value'       => '＼(゜∀゜)／',
             'group'       => 'ja_cute',
             'description' => '可愛い',
             'ascii'       => false,
@@ -7270,7 +7270,7 @@ return [
             'reading'     => 'わーい | やったー',
         ],
         [
-            'value'       => "o(*\u{2267}\u{25BD}\u{2266})ツ",
+            'value'       => 'o(*≧▽≦)ツ',
             'group'       => 'ja_cute',
             'description' => '可愛い',
             'ascii'       => false,
@@ -7278,7 +7278,7 @@ return [
             'reading'     => 'わーい | うれしい',
         ],
         [
-            'value'       => "ヾ(*\u{B4}\u{2200}`*)ﾉ",
+            'value'       => 'ヾ(*´∀`*)ﾉ',
             'group'       => 'ja_cute',
             'description' => '可愛い',
             'ascii'       => false,
@@ -7286,7 +7286,7 @@ return [
             'reading'     => 'わーい | にこにこ',
         ],
         [
-            'value'       => "o(`･ω･\u{B4})o",
+            'value'       => 'o(`･ω･´)o',
             'group'       => 'ja_cute',
             'description' => '可愛い',
             'ascii'       => false,
@@ -7294,7 +7294,7 @@ return [
             'reading'     => 'がんばる | ふぁいと',
         ],
         [
-            'value'       => "(๑\u{2C3}̵ᴗ\u{2C2}̵)و",
+            'value'       => '(๑˃̵ᴗ˂̵)و',
             'group'       => 'ja_cute',
             'description' => '可愛い',
             'ascii'       => false,
@@ -7318,7 +7318,7 @@ return [
             'reading'     => 'がんばる | ふぁいと',
         ],
         [
-            'value'       => "( •̀ᄇ•́)ﻭ\u{2727}",
+            'value'       => '( •̀ᄇ•́)ﻭ✧',
             'group'       => 'ja_cute',
             'description' => '可愛い',
             'ascii'       => false,
@@ -7350,7 +7350,7 @@ return [
             'reading'     => 'がんばる | うんしょ',
         ],
         [
-            'value'       => "(๑•̀ㅂ•́)و\u{2727}",
+            'value'       => '(๑•̀ㅂ•́)و✧',
             'group'       => 'ja_cute',
             'description' => '可愛い',
             'ascii'       => false,
@@ -7366,7 +7366,7 @@ return [
             'reading'     => 'がんばる | るんるん',
         ],
         [
-            'value'       => "( •̀ ᴗ •́ )\u{2727}",
+            'value'       => '( •̀ ᴗ •́ )✧',
             'group'       => 'ja_cute',
             'description' => '可愛い',
             'ascii'       => false,
@@ -7374,7 +7374,7 @@ return [
             'reading'     => 'きらり | やるき',
         ],
         [
-            'value'       => "\u{2606}\u{2312}ヽ(*'､^*)",
+            'value'       => '☆⌒ヽ(*\'､^*)',
             'group'       => 'ja_cute',
             'description' => '可愛い',
             'ascii'       => false,
@@ -7382,7 +7382,7 @@ return [
             'reading'     => 'ういんく | きらり',
         ],
         [
-            'value'       => "(^_-)\u{2261}\u{2605}",
+            'value'       => '(^_-)≡★',
             'group'       => 'ja_cute',
             'description' => '可愛い',
             'ascii'       => false,
@@ -7398,7 +7398,7 @@ return [
             'reading'     => 'るんるん | ぐっ',
         ],
         [
-            'value'       => "(\u{2605}ω\u{2605})",
+            'value'       => '(★ω★)',
             'group'       => 'ja_cute',
             'description' => '可愛い',
             'ascii'       => false,
@@ -7406,7 +7406,7 @@ return [
             'reading'     => 'きらきら | わくわく',
         ],
         [
-            'value'       => "\u{2727}\u{2661}(๑•̀ᗜ•́)",
+            'value'       => '✧♡(๑•̀ᗜ•́)',
             'group'       => 'ja_cute',
             'description' => '可愛い',
             'ascii'       => false,
@@ -7414,7 +7414,7 @@ return [
             'reading'     => 'きらきら | だいすき',
         ],
         [
-            'value'       => ".｡.:*・(*\u{B4}ω`*)",
+            'value'       => '.｡.:*・(*´ω`*)',
             'group'       => 'ja_cute',
             'description' => '可愛い',
             'ascii'       => false,
@@ -7422,7 +7422,7 @@ return [
             'reading'     => 'きらきら | うっとり',
         ],
         [
-            'value'       => "(灬\u{2665}ω\u{2665}灬)",
+            'value'       => '(灬♥ω♥灬)',
             'group'       => 'ja_cute',
             'description' => '可愛い',
             'ascii'       => false,
@@ -7430,7 +7430,7 @@ return [
             'reading'     => 'きらきら | うっとり',
         ],
         [
-            'value'       => "ヽ(\u{273F}ﾟ\u{25BD}ﾟ)ノ",
+            'value'       => 'ヽ(✿ﾟ▽ﾟ)ノ',
             'group'       => 'ja_cute',
             'description' => '可愛い',
             'ascii'       => false,
@@ -7438,7 +7438,7 @@ return [
             'reading'     => 'わーい | にこにこ',
         ],
         [
-            'value'       => "( \u{25CD}•\u{3268}•\u{25CD} )\u{2727}",
+            'value'       => '( ◍•㉨•◍ )✧',
             'group'       => 'ja_cute',
             'description' => '可愛い',
             'ascii'       => false,
@@ -7446,7 +7446,7 @@ return [
             'reading'     => 'きらきら | くま',
         ],
         [
-            'value'       => "\u{2729}\u{B0}｡\u{22C6}⸜(ˊᗜˋ*)",
+            'value'       => '✩°｡⋆⸜(ˊᗜˋ*)',
             'group'       => 'ja_cute',
             'description' => '可愛い',
             'ascii'       => false,
@@ -7454,7 +7454,7 @@ return [
             'reading'     => 'きらきら | わーい',
         ],
         [
-            'value'       => "(ﾉ\u{25D5}ヮ\u{25D5})ﾉ*:･ﾟ\u{2727}",
+            'value'       => '(ﾉ◕ヮ◕)ﾉ*:･ﾟ✧',
             'group'       => 'ja_cute',
             'description' => '可愛い',
             'ascii'       => false,
@@ -7462,7 +7462,7 @@ return [
             'reading'     => 'きらきら | わーい',
         ],
         [
-            'value'       => "(\u{FFEB}ε\u{FFE9})",
+            'value'       => '(￫ε￩)',
             'group'       => 'ja_cute',
             'description' => '可愛い',
             'ascii'       => false,
@@ -7470,7 +7470,7 @@ return [
             'reading'     => 'すやすや | うとうと',
         ],
         [
-            'value'       => "( \u{2D8}ω\u{2D8} )",
+            'value'       => '( ˘ω˘ )',
             'group'       => 'ja_cute',
             'description' => '可愛い',
             'ascii'       => false,
@@ -7478,7 +7478,7 @@ return [
             'reading'     => 'すやすや | うとうと',
         ],
         [
-            'value'       => "(\u{B4}ぅω・\u{FF40})",
+            'value'       => '(´ぅω・｀)',
             'group'       => 'ja_cute',
             'description' => '可愛い',
             'ascii'       => false,
@@ -7494,7 +7494,7 @@ return [
             'reading'     => 'すやすや | ねむねむ',
         ],
         [
-            'value'       => "(\u{B4}-ω-`)",
+            'value'       => '(´-ω-`)',
             'group'       => 'ja_cute',
             'description' => '可愛い',
             'ascii'       => false,
@@ -7518,7 +7518,7 @@ return [
             'reading'     => 'すやすや | ぐーぐー',
         ],
         [
-            'value'       => "(\u{B4}\u{FF5E}\u{FF40})ﾉﾞ",
+            'value'       => '(´～｀)ﾉﾞ',
             'group'       => 'ja_cute',
             'description' => '可愛い',
             'ascii'       => false,
@@ -7526,7 +7526,7 @@ return [
             'reading'     => 'まったり | のんびり',
         ],
         [
-            'value'       => "(ᴗ\u{2F3}ᴗ)",
+            'value'       => '(ᴗ˳ᴗ)',
             'group'       => 'ja_cute',
             'description' => '可愛い',
             'ascii'       => false,
@@ -7534,7 +7534,7 @@ return [
             'reading'     => 'すやすや | うとうと',
         ],
         [
-            'value'       => "( \u{2D8}ㅂ\u{2D8} )",
+            'value'       => '( ˘ㅂ˘ )',
             'group'       => 'ja_cute',
             'description' => '可愛い',
             'ascii'       => false,
@@ -7542,7 +7542,7 @@ return [
             'reading'     => 'まったり | うとうと',
         ],
         [
-            'value'       => "(\u{B4}ぅ\u{24DB} ω \u{24DB}ぅ`)",
+            'value'       => '(´ぅⓛ ω ⓛぅ`)',
             'group'       => 'ja_cute',
             'description' => '可愛い',
             'ascii'       => false,
@@ -7550,7 +7550,7 @@ return [
             'reading'     => 'ねむねむ | うとうと',
         ],
         [
-            'value'       => "( \u{24DB} ω \u{24DB} *)",
+            'value'       => '( ⓛ ω ⓛ *)',
             'group'       => 'ja_cute',
             'description' => '可愛い',
             'ascii'       => false,
@@ -7558,7 +7558,7 @@ return [
             'reading'     => 'ねむねむ | とろん',
         ],
         [
-            'value'       => "( \u{2D8}•ω•\u{2D8} )",
+            'value'       => '( ˘•ω•˘ )',
             'group'       => 'ja_cute',
             'description' => '可愛い',
             'ascii'       => false,
@@ -7590,7 +7590,7 @@ return [
             'reading'     => 'きょとん | はてな',
         ],
         [
-            'value'       => "(・\u{2200}・)?",
+            'value'       => '(・∀・)?',
             'group'       => 'ja_cute',
             'description' => '可愛い',
             'ascii'       => false,
@@ -7598,7 +7598,7 @@ return [
             'reading'     => 'はてな | きょとん',
         ],
         [
-            'value'       => "( ๑‾̀\u{25E1}‾́)",
+            'value'       => '( ๑‾̀◡‾́)',
             'group'       => 'ja_cute',
             'description' => '可愛い',
             'ascii'       => false,
@@ -7606,7 +7606,7 @@ return [
             'reading'     => 'きょとん | にこにこ',
         ],
         [
-            'value'       => "(\u{B4}･ ᴗ･ ` )",
+            'value'       => '(´･ ᴗ･ ` )',
             'group'       => 'ja_cute',
             'description' => '可愛い',
             'ascii'       => false,
@@ -7614,7 +7614,7 @@ return [
             'reading'     => 'きょとん | ほのぼの',
         ],
         [
-            'value'       => "( ﾟ\u{25BD}ﾟ)/",
+            'value'       => '( ﾟ▽ﾟ)/',
             'group'       => 'ja_cute',
             'description' => '可愛い',
             'ascii'       => false,
@@ -7622,7 +7622,7 @@ return [
             'reading'     => 'やっほー | にこにこ',
         ],
         [
-            'value'       => "(｡\u{2579}ω\u{2579}｡)",
+            'value'       => '(｡╹ω╹｡)',
             'group'       => 'ja_cute',
             'description' => '可愛い',
             'ascii'       => false,
@@ -7638,7 +7638,7 @@ return [
             'reading'     => 'きょとん | はてな',
         ],
         [
-            'value'       => "(\u{25D4}\u{25E1}\u{25D4})",
+            'value'       => '(◔◡◔)',
             'group'       => 'ja_cute',
             'description' => '可愛い',
             'ascii'       => false,
@@ -7646,7 +7646,7 @@ return [
             'reading'     => 'きょとん | にこにこ',
         ],
         [
-            'value'       => "(っ\u{B4}ω`c)",
+            'value'       => '(っ´ω`c)',
             'group'       => 'ja_cute',
             'description' => '可愛い',
             'ascii'       => false,
@@ -7654,7 +7654,7 @@ return [
             'reading'     => 'ぎゅー | ほっこり',
         ],
         [
-            'value'       => "\u{2282}(\u{B4}• ω •`\u{2282})",
+            'value'       => '⊂(´• ω •`⊂)',
             'group'       => 'ja_cute',
             'description' => '可愛い',
             'ascii'       => false,
@@ -7662,7 +7662,7 @@ return [
             'reading'     => 'ぎゅー | ふわふわ',
         ],
         [
-            'value'       => "ლ(\u{2579}\u{25E1}\u{2579}ლ)",
+            'value'       => 'ლ(╹◡╹ლ)',
             'group'       => 'ja_cute',
             'description' => '可愛い',
             'ascii'       => false,
@@ -7670,7 +7670,7 @@ return [
             'reading'     => 'ぎゅー | おいで',
         ],
         [
-            'value'       => "c\u{2312}っ\u{2579}v\u{2579} )っ",
+            'value'       => 'c⌒っ╹v╹ )っ',
             'group'       => 'ja_cute',
             'description' => '可愛い',
             'ascii'       => false,
@@ -7686,7 +7686,7 @@ return [
             'reading'     => 'ぎゅー | えいっ',
         ],
         [
-            'value'       => "(ﾉ\u{B4}ヮ`)ﾉ*:･ﾟ",
+            'value'       => '(ﾉ´ヮ`)ﾉ*:･ﾟ',
             'group'       => 'ja_cute',
             'description' => '可愛い',
             'ascii'       => false,
@@ -7694,7 +7694,7 @@ return [
             'reading'     => 'ぎゅー | きらきら',
         ],
         [
-            'value'       => "(*\u{B4}ω`*)",
+            'value'       => '(*´ω`*)',
             'group'       => 'ja_cute',
             'description' => '可愛い',
             'ascii'       => false,
@@ -7710,7 +7710,7 @@ return [
             'reading'     => 'もふもふ | ふわふわ',
         ],
         [
-            'value'       => "( \u{2C3} ᵕ \u{2C2} )",
+            'value'       => '( ˃ ᵕ ˂ )',
             'group'       => 'ja_cute',
             'description' => '可愛い',
             'ascii'       => false,
@@ -7734,7 +7734,7 @@ return [
             'reading'     => 'てれてれ | うるうる',
         ],
         [
-            'value'       => "(\u{25D5}\u{25BD}\u{25D5})",
+            'value'       => '(◕▽◕)',
             'group'       => 'ja_egao',
             'description' => '笑顔',
             'ascii'       => false,
@@ -7742,7 +7742,7 @@ return [
             'reading'     => 'にっこり | えがお',
         ],
         [
-            'value'       => "( \u{25E0}‿\u{25E0} )",
+            'value'       => '( ◠‿◠ )',
             'group'       => 'ja_egao',
             'description' => '笑顔',
             'ascii'       => false,
@@ -7750,7 +7750,7 @@ return [
             'reading'     => 'ほほえみ | にっこり',
         ],
         [
-            'value'       => "( \u{2D9}\u{25BF}\u{2D9} )",
+            'value'       => '( ˙▿˙ )',
             'group'       => 'ja_egao',
             'description' => '笑顔',
             'ascii'       => false,
@@ -7758,7 +7758,7 @@ return [
             'reading'     => 'にっこり | えがお',
         ],
         [
-            'value'       => "(\u{B4} \u{2D8} `๑)",
+            'value'       => '(´ ˘ `๑)',
             'group'       => 'ja_egao',
             'description' => '笑顔',
             'ascii'       => false,
@@ -7766,7 +7766,7 @@ return [
             'reading'     => 'ほほえみ | にっこり',
         ],
         [
-            'value'       => "(\u{25D5}‿\u{25D5})",
+            'value'       => '(◕‿◕)',
             'group'       => 'ja_egao',
             'description' => '笑顔',
             'ascii'       => false,
@@ -7774,7 +7774,7 @@ return [
             'reading'     => 'にこにこ | えがお',
         ],
         [
-            'value'       => "(=^\u{25BD}^=)",
+            'value'       => '(=^▽^=)',
             'group'       => 'ja_egao',
             'description' => '笑顔',
             'ascii'       => false,
@@ -7782,7 +7782,7 @@ return [
             'reading'     => 'にこにこ | えがお',
         ],
         [
-            'value'       => "(*^\u{25E1}^*)",
+            'value'       => '(*^◡^*)',
             'group'       => 'ja_egao',
             'description' => '笑顔',
             'ascii'       => false,
@@ -7790,7 +7790,7 @@ return [
             'reading'     => 'にこにこ | えがお',
         ],
         [
-            'value'       => "(*\u{2267}ω\u{2266}*)",
+            'value'       => '(*≧ω≦*)',
             'group'       => 'ja_egao',
             'description' => '笑顔',
             'ascii'       => false,
@@ -7798,7 +7798,7 @@ return [
             'reading'     => 'にこにこ | えがお',
         ],
         [
-            'value'       => "(\u{B4}\u{2200}`*)",
+            'value'       => '(´∀`*)',
             'group'       => 'ja_egao',
             'description' => '笑顔',
             'ascii'       => false,
@@ -7806,7 +7806,7 @@ return [
             'reading'     => 'にこにこ | えがお',
         ],
         [
-            'value'       => "(\u{25CB}\u{B4}\u{2200}`\u{25CB})",
+            'value'       => '(○´∀`○)',
             'group'       => 'ja_egao',
             'description' => '笑顔',
             'ascii'       => false,
@@ -7814,7 +7814,7 @@ return [
             'reading'     => 'にこにこ | えがお',
         ],
         [
-            'value'       => "(*\u{B4}\u{2207}`*)",
+            'value'       => '(*´∇`*)',
             'group'       => 'ja_egao',
             'description' => '笑顔',
             'ascii'       => false,
@@ -7822,7 +7822,7 @@ return [
             'reading'     => 'にこにこ | えがお',
         ],
         [
-            'value'       => "( \u{B4} \u{2200} ` )",
+            'value'       => '( ´ ∀ ` )',
             'group'       => 'ja_egao',
             'description' => '笑顔',
             'ascii'       => false,
@@ -7830,7 +7830,7 @@ return [
             'reading'     => 'にこにこ | えがお',
         ],
         [
-            'value'       => "(\u{B4}ω\u{FF40}*)",
+            'value'       => '(´ω｀*)',
             'group'       => 'ja_egao',
             'description' => '笑顔',
             'ascii'       => false,
@@ -7838,7 +7838,7 @@ return [
             'reading'     => 'にこにこ | ほっこり',
         ],
         [
-            'value'       => "ヾ(\u{25D5}‿\u{25D5})ﾉ",
+            'value'       => 'ヾ(◕‿◕)ﾉ',
             'group'       => 'ja_egao',
             'description' => '笑顔',
             'ascii'       => false,
@@ -7846,7 +7846,7 @@ return [
             'reading'     => 'にこにこ | えがお',
         ],
         [
-            'value'       => "(\u{2267}\u{2200}\u{2266})",
+            'value'       => '(≧∀≦)',
             'group'       => 'ja_egao',
             'description' => '笑顔',
             'ascii'       => false,
@@ -7854,7 +7854,7 @@ return [
             'reading'     => 'わらう | ばくしょう',
         ],
         [
-            'value'       => "(*\u{2267}\u{25BD}\u{2266})",
+            'value'       => '(*≧▽≦)',
             'group'       => 'ja_egao',
             'description' => '笑顔',
             'ascii'       => false,
@@ -7862,7 +7862,7 @@ return [
             'reading'     => 'わらう | ばくしょう',
         ],
         [
-            'value'       => "ヽ(\u{2267}\u{2200}\u{2266})ﾉ",
+            'value'       => 'ヽ(≧∀≦)ﾉ',
             'group'       => 'ja_egao',
             'description' => '笑顔',
             'ascii'       => false,
@@ -7870,7 +7870,7 @@ return [
             'reading'     => 'わらう | ばくしょう',
         ],
         [
-            'value'       => "o(\u{2267}\u{2207}\u{2266})o",
+            'value'       => 'o(≧∇≦)o',
             'group'       => 'ja_egao',
             'description' => '笑顔',
             'ascii'       => false,
@@ -7878,7 +7878,7 @@ return [
             'reading'     => 'わらう | おおわらい',
         ],
         [
-            'value'       => "(\u{B4}\u{2200}\u{FF40})ﾊﾊ",
+            'value'       => '(´∀｀)ﾊﾊ',
             'group'       => 'ja_egao',
             'description' => '笑顔',
             'ascii'       => false,
@@ -7886,7 +7886,7 @@ return [
             'reading'     => 'はは | わらう',
         ],
         [
-            'value'       => "(*ﾟ\u{2200}ﾟ*)",
+            'value'       => '(*ﾟ∀ﾟ*)',
             'group'       => 'ja_egao',
             'description' => '笑顔',
             'ascii'       => false,
@@ -7894,7 +7894,7 @@ return [
             'reading'     => 'わらう | おおわらい',
         ],
         [
-            'value'       => "ヾ(\u{2267}\u{2207}\u{2266}*)ゝ",
+            'value'       => 'ヾ(≧∇≦*)ゝ',
             'group'       => 'ja_egao',
             'description' => '笑顔',
             'ascii'       => false,
@@ -7902,7 +7902,7 @@ return [
             'reading'     => 'わらう | おおわらい',
         ],
         [
-            'value'       => "(\u{2267}艸\u{2266})",
+            'value'       => '(≧艸≦)',
             'group'       => 'ja_egao',
             'description' => '笑顔',
             'ascii'       => false,
@@ -7910,7 +7910,7 @@ return [
             'reading'     => 'わらう | うける',
         ],
         [
-            'value'       => "( \u{B4}艸`)",
+            'value'       => '( ´艸`)',
             'group'       => 'ja_egao',
             'description' => '笑顔',
             'ascii'       => false,
@@ -7918,7 +7918,7 @@ return [
             'reading'     => 'くすくす | うける',
         ],
         [
-            'value'       => "(*\u{B4}艸`*)",
+            'value'       => '(*´艸`*)',
             'group'       => 'ja_egao',
             'description' => '笑顔',
             'ascii'       => false,
@@ -7934,7 +7934,7 @@ return [
             'reading'     => 'わらう | うける',
         ],
         [
-            'value'       => "(o\u{309C}\u{25BD}\u{309C})o",
+            'value'       => '(o゜▽゜)o',
             'group'       => 'ja_egao',
             'description' => '笑顔',
             'ascii'       => false,
@@ -7942,7 +7942,7 @@ return [
             'reading'     => 'わらう | おおわらい',
         ],
         [
-            'value'       => "(*\u{FF3E}\u{25BD}\u{FF3E}*)",
+            'value'       => '(*＾▽＾*)',
             'group'       => 'ja_egao',
             'description' => '笑顔',
             'ascii'       => false,
@@ -7950,7 +7950,7 @@ return [
             'reading'     => 'わらう | おおわらい',
         ],
         [
-            'value'       => "ヽ(*\u{2267}ω\u{2266})ﾉ",
+            'value'       => 'ヽ(*≧ω≦)ﾉ',
             'group'       => 'ja_egao',
             'description' => '笑顔',
             'ascii'       => false,
@@ -7958,7 +7958,7 @@ return [
             'reading'     => 'わらう | おおわらい',
         ],
         [
-            'value'       => "( \u{B4}\u{25DE}ิ౪\u{25DF}ิ`)",
+            'value'       => '( ´◞ิ౪◟ิ`)',
             'group'       => 'ja_egao',
             'description' => '笑顔',
             'ascii'       => false,
@@ -7966,7 +7966,7 @@ return [
             'reading'     => 'にやにや | にやり',
         ],
         [
-            'value'       => "(\u{B4}\u{2200}\u{FF40}*)",
+            'value'       => '(´∀｀*)',
             'group'       => 'ja_egao',
             'description' => '笑顔',
             'ascii'       => false,
@@ -7974,7 +7974,7 @@ return [
             'reading'     => 'にやにや | にやり',
         ],
         [
-            'value'       => "(\u{FF40}\u{2200}\u{B4})",
+            'value'       => '(｀∀´)',
             'group'       => 'ja_egao',
             'description' => '笑顔',
             'ascii'       => false,
@@ -7982,7 +7982,7 @@ return [
             'reading'     => 'にやり | どや',
         ],
         [
-            'value'       => "(\u{FFE3}ー\u{FFE3})",
+            'value'       => '(￣ー￣)',
             'group'       => 'ja_egao',
             'description' => '笑顔',
             'ascii'       => false,
@@ -7990,7 +7990,7 @@ return [
             'reading'     => 'にやり | にやにや',
         ],
         [
-            'value'       => "(\u{FFE3}\u{25BD}\u{FFE3})",
+            'value'       => '(￣▽￣)',
             'group'       => 'ja_egao',
             'description' => '笑顔',
             'ascii'       => false,
@@ -7998,7 +7998,7 @@ return [
             'reading'     => 'にやり | にやにや',
         ],
         [
-            'value'       => "(*\u{FFE3}\u{25BD}\u{FFE3}*)",
+            'value'       => '(*￣▽￣*)',
             'group'       => 'ja_egao',
             'description' => '笑顔',
             'ascii'       => false,
@@ -8006,7 +8006,7 @@ return [
             'reading'     => 'にやにや | にやり',
         ],
         [
-            'value'       => "(\u{FFE3}\u{2200}\u{FFE3})",
+            'value'       => '(￣∀￣)',
             'group'       => 'ja_egao',
             'description' => '笑顔',
             'ascii'       => false,
@@ -8014,7 +8014,7 @@ return [
             'reading'     => 'にやり | にやにや',
         ],
         [
-            'value'       => "(\u{B4}ー\u{FF40})",
+            'value'       => '(´ー｀)',
             'group'       => 'ja_egao',
             'description' => '笑顔',
             'ascii'       => false,
@@ -8022,7 +8022,7 @@ return [
             'reading'     => 'にやり | まったり',
         ],
         [
-            'value'       => "( ﾟ\u{2200}ﾟ)ｱﾊﾊ",
+            'value'       => '( ﾟ∀ﾟ)ｱﾊﾊ',
             'group'       => 'ja_egao',
             'description' => '笑顔',
             'ascii'       => false,
@@ -8030,7 +8030,7 @@ return [
             'reading'     => 'あはは | わらう',
         ],
         [
-            'value'       => "(\u{B4}ε\u{FF40} )",
+            'value'       => '(´ε｀ )',
             'group'       => 'ja_egao',
             'description' => '笑顔',
             'ascii'       => false,
@@ -8054,7 +8054,7 @@ return [
             'reading'     => 'わらう | えがお',
         ],
         [
-            'value'       => "(^\u{25BD}^)",
+            'value'       => '(^▽^)',
             'group'       => 'ja_egao',
             'description' => '笑顔',
             'ascii'       => false,
@@ -8062,7 +8062,7 @@ return [
             'reading'     => 'にこにこ | えがお',
         ],
         [
-            'value'       => "(・\u{2200}・)ﾉ",
+            'value'       => '(・∀・)ﾉ',
             'group'       => 'ja_egao',
             'description' => '笑顔',
             'ascii'       => false,
@@ -8070,7 +8070,7 @@ return [
             'reading'     => 'にっこり | やっほー',
         ],
         [
-            'value'       => "(\u{B4}\u{25BD}`)",
+            'value'       => '(´▽`)',
             'group'       => 'ja_egao',
             'description' => '笑顔',
             'ascii'       => false,
@@ -8078,7 +8078,7 @@ return [
             'reading'     => 'にこにこ | えがお',
         ],
         [
-            'value'       => "(^\u{25C7}^)",
+            'value'       => '(^◇^)',
             'group'       => 'ja_egao',
             'description' => '笑顔',
             'ascii'       => false,
@@ -8110,7 +8110,7 @@ return [
             'reading'     => 'わーい | えがお',
         ],
         [
-            'value'       => "(\u{FF3E}\u{2207}\u{FF3E})",
+            'value'       => '(＾∇＾)',
             'group'       => 'ja_egao',
             'description' => '笑顔',
             'ascii'       => false,
@@ -8134,7 +8134,7 @@ return [
             'reading'     => 'にっこり | えがお',
         ],
         [
-            'value'       => "(`･ω･\u{B4})",
+            'value'       => '(`･ω･´)',
             'group'       => 'ja_egao',
             'description' => '笑顔',
             'ascii'       => false,
@@ -8150,7 +8150,7 @@ return [
             'reading'     => 'どや | えがお',
         ],
         [
-            'value'       => "(\u{FFE3}ー\u{FFE3})b",
+            'value'       => '(￣ー￣)b',
             'group'       => 'ja_egao',
             'description' => '笑顔',
             'ascii'       => false,
@@ -8158,7 +8158,7 @@ return [
             'reading'     => 'どや | にやり',
         ],
         [
-            'value'       => "\u{2728}(ﾉ\u{25D5}ヮ\u{25D5})ﾉ\u{2728}",
+            'value'       => '✨(ﾉ◕ヮ◕)ﾉ✨',
             'group'       => 'ja_cute',
             'description' => '絵文字',
             'ascii'       => false,
@@ -8166,7 +8166,7 @@ return [
             'reading'     => 'きらきら | ぴかーん',
         ],
         [
-            'value'       => "(｡\u{2665}‿\u{2665}｡)\u{1F4AB}",
+            'value'       => '(｡♥‿♥｡)💫',
             'group'       => 'ja_cute',
             'description' => '絵文字',
             'ascii'       => false,
@@ -8174,7 +8174,7 @@ return [
             'reading'     => 'うっとり | きらきら',
         ],
         [
-            'value'       => "\u{2728}(\u{2D8}\u{25BE}\u{2D8}~)",
+            'value'       => '✨(˘▾˘~)',
             'group'       => 'ja_cute',
             'description' => '絵文字',
             'ascii'       => false,
@@ -8182,7 +8182,7 @@ return [
             'reading'     => 'きらきら | ふんふん',
         ],
         [
-            'value'       => "(っ\u{2D8}ω\u{2D8}ς)\u{2728}",
+            'value'       => '(っ˘ω˘ς)✨',
             'group'       => 'ja_cute',
             'description' => '絵文字',
             'ascii'       => false,
@@ -8190,7 +8190,7 @@ return [
             'reading'     => 'きらきら | ほっこり',
         ],
         [
-            'value'       => "ヽ(*・ω・)ﾉ\u{2728}",
+            'value'       => 'ヽ(*・ω・)ﾉ✨',
             'group'       => 'ja_cute',
             'description' => '絵文字',
             'ascii'       => false,
@@ -8198,7 +8198,7 @@ return [
             'reading'     => 'きらきら | わーい',
         ],
         [
-            'value'       => "\u{2728}٩(ˊᗜˋ*)و\u{2728}",
+            'value'       => '✨٩(ˊᗜˋ*)و✨',
             'group'       => 'ja_cute',
             'description' => '絵文字',
             'ascii'       => false,
@@ -8206,7 +8206,7 @@ return [
             'reading'     => 'きらきら | がんばる',
         ],
         [
-            'value'       => "(\u{2605}ω\u{2605})\u{2B50}",
+            'value'       => '(★ω★)⭐',
             'group'       => 'ja_cute',
             'description' => '絵文字',
             'ascii'       => false,
@@ -8214,7 +8214,7 @@ return [
             'reading'     => 'きらきら | わくわく',
         ],
         [
-            'value'       => "\u{1F31F}( \u{2F6}ˆᵕˆ\u{2F5} )\u{1F31F}",
+            'value'       => '🌟( ˶ˆᵕˆ˵ )🌟',
             'group'       => 'ja_cute',
             'description' => '絵文字',
             'ascii'       => false,
@@ -8222,7 +8222,7 @@ return [
             'reading'     => 'きらきら | にこにこ',
         ],
         [
-            'value'       => "(\u{2727}ω\u{2727})\u{1F4AB}",
+            'value'       => '(✧ω✧)💫',
             'group'       => 'ja_cute',
             'description' => '絵文字',
             'ascii'       => false,
@@ -8230,7 +8230,7 @@ return [
             'reading'     => 'きらきら | うっとり',
         ],
         [
-            'value'       => "(\u{25CD}•ᴗ•\u{25CD})\u{1F338}",
+            'value'       => '(◍•ᴗ•◍)🌸',
             'group'       => 'ja_cute',
             'description' => '絵文字',
             'ascii'       => false,
@@ -8238,7 +8238,7 @@ return [
             'reading'     => 'にこにこ | ふんわり',
         ],
         [
-            'value'       => "\u{1F33F}(\u{3000}\u{2F6}\u{2D9}ᵕ\u{2D9}\u{2F6}\u{3000})\u{1F33F}",
+            'value'       => "🌿(\u{3000}˶˙ᵕ˙˶\u{3000})🌿",
             'group'       => 'ja_cute',
             'description' => '絵文字',
             'ascii'       => false,
@@ -8246,7 +8246,7 @@ return [
             'reading'     => 'ほっこり | ふんわり',
         ],
         [
-            'value'       => "(\u{273F}\u{25E1}‿\u{25E1})\u{1F33B}",
+            'value'       => '(✿◡‿◡)🌻',
             'group'       => 'ja_cute',
             'description' => '絵文字',
             'ascii'       => false,
@@ -8254,7 +8254,7 @@ return [
             'reading'     => 'にこにこ | ふんわり',
         ],
         [
-            'value'       => "(„• ᴗ •„)\u{1F337}",
+            'value'       => '(„• ᴗ •„)🌷',
             'group'       => 'ja_cute',
             'description' => '絵文字',
             'ascii'       => false,
@@ -8262,7 +8262,7 @@ return [
             'reading'     => 'にこにこ | ふんわり',
         ],
         [
-            'value'       => "\u{1F338}(\u{B4}｡• ᵕ •｡`)",
+            'value'       => '🌸(´｡• ᵕ •｡`)',
             'group'       => 'ja_cute',
             'description' => '絵文字',
             'ascii'       => false,
@@ -8270,7 +8270,7 @@ return [
             'reading'     => 'にこにこ | ふんわり',
         ],
         [
-            'value'       => "(\u{25D5}‿\u{25D5})\u{1F340}",
+            'value'       => '(◕‿◕)🍀',
             'group'       => 'ja_cute',
             'description' => '絵文字',
             'ascii'       => false,
@@ -8278,7 +8278,7 @@ return [
             'reading'     => 'にこにこ | ほのぼの',
         ],
         [
-            'value'       => "\u{1F337}ʕ•ᴥ•ʔ",
+            'value'       => '🌷ʕ•ᴥ•ʔ',
             'group'       => 'ja_cute',
             'description' => '絵文字',
             'ascii'       => false,
@@ -8286,7 +8286,7 @@ return [
             'reading'     => 'くま | ふんわり',
         ],
         [
-            'value'       => "(*ˊ\u{2D7}ˋ*)\u{1F33F}",
+            'value'       => '(*ˊ˗ˋ*)🌿',
             'group'       => 'ja_cute',
             'description' => '絵文字',
             'ascii'       => false,
@@ -8294,7 +8294,7 @@ return [
             'reading'     => 'ほっこり | ふんわり',
         ],
         [
-            'value'       => "(\u{2565}_\u{2565})\u{1F4A7}",
+            'value'       => '(╥_╥)💧',
             'group'       => 'ja_cry',
             'description' => '絵文字',
             'ascii'       => false,
@@ -8302,7 +8302,7 @@ return [
             'reading'     => 'ぐすん | しくしく',
         ],
         [
-            'value'       => "(っ\u{2D8}̩\u{256D}\u{256E}\u{2D8}̩)っ\u{1F327}\u{FE0F}",
+            'value'       => "(っ˘̩╭╮˘̩)っ🌧\u{FE0F}",
             'group'       => 'ja_cry',
             'description' => '絵文字',
             'ascii'       => false,
@@ -8310,7 +8310,7 @@ return [
             'reading'     => 'どんより | しょんぼり',
         ],
         [
-            'value'       => "\u{1F62D}(っ \u{B0}Д \u{B0})っ",
+            'value'       => '😭(っ °Д °)っ',
             'group'       => 'ja_cry',
             'description' => '絵文字',
             'ascii'       => false,
@@ -8318,7 +8318,7 @@ return [
             'reading'     => 'わーん | えーん',
         ],
         [
-            'value'       => "(ノД`)\u{1F4A6}",
+            'value'       => '(ノД`)💦',
             'group'       => 'ja_cry',
             'description' => '絵文字',
             'ascii'       => false,
@@ -8326,7 +8326,7 @@ return [
             'reading'     => 'わーん | あせあせ',
         ],
         [
-            'value'       => "(；ω；)\u{1F4A7}",
+            'value'       => '(；ω；)💧',
             'group'       => 'ja_cry',
             'description' => '絵文字',
             'ascii'       => false,
@@ -8334,7 +8334,7 @@ return [
             'reading'     => 'ぐすん | うるうる',
         ],
         [
-            'value'       => "\u{1F327}\u{FE0F}(\u{B4}；ω；`)",
+            'value'       => "🌧\u{FE0F}(´；ω；`)",
             'group'       => 'ja_cry',
             'description' => '絵文字',
             'ascii'       => false,
@@ -8342,7 +8342,7 @@ return [
             'reading'     => 'どんより | ぐすん',
         ],
         [
-            'value'       => "(πーπ)\u{1F4A7}",
+            'value'       => '(πーπ)💧',
             'group'       => 'ja_cry',
             'description' => '絵文字',
             'ascii'       => false,
@@ -8350,7 +8350,7 @@ return [
             'reading'     => 'しくしく | ぐすん',
         ],
         [
-            'value'       => "\u{1F62D}(ﾉд・｡)",
+            'value'       => '😭(ﾉд・｡)',
             'group'       => 'ja_cry',
             'description' => '絵文字',
             'ascii'       => false,
@@ -8358,7 +8358,7 @@ return [
             'reading'     => 'わーん | えーん',
         ],
         [
-            'value'       => "(ง •̀_•́)ง\u{1F525}",
+            'value'       => '(ง •̀_•́)ง🔥',
             'group'       => 'ja_cute',
             'description' => '絵文字',
             'ascii'       => false,
@@ -8366,7 +8366,7 @@ return [
             'reading'     => 'めらめら | がんばる',
         ],
         [
-            'value'       => "\u{1F525}٩(•̀ᴗ•́)و\u{1F525}",
+            'value'       => '🔥٩(•̀ᴗ•́)و🔥',
             'group'       => 'ja_cute',
             'description' => '絵文字',
             'ascii'       => false,
@@ -8374,7 +8374,7 @@ return [
             'reading'     => 'めらめら | がんばる',
         ],
         [
-            'value'       => "\u{1F525}(\u{256F}\u{B0}\u{25A1}\u{B0}）\u{256F}",
+            'value'       => '🔥(╯°□°）╯',
             'group'       => 'ja_copype',
             'description' => '絵文字',
             'ascii'       => false,
@@ -8382,7 +8382,7 @@ return [
             'reading'     => 'めらめら | ばーん',
         ],
         [
-            'value'       => "(`Д\u{B4})ง\u{26A1}",
+            'value'       => '(`Д´)ง⚡',
             'group'       => 'ja_emoji',
             'description' => '絵文字',
             'ascii'       => false,
@@ -8390,7 +8390,7 @@ return [
             'reading'     => 'びりびり | ふんすか',
         ],
         [
-            'value'       => "\u{1F4A5}٩(ఠ益ఠ)۶",
+            'value'       => '💥٩(ఠ益ఠ)۶',
             'group'       => 'ja_emoji',
             'description' => '絵文字',
             'ascii'       => false,
@@ -8398,7 +8398,7 @@ return [
             'reading'     => 'ばーん | ぷんすか',
         ],
         [
-            'value'       => "(ﾉಠ益ಠ)ﾉ\u{1F4A5}",
+            'value'       => '(ﾉಠ益ಠ)ﾉ💥',
             'group'       => 'ja_emoji',
             'description' => '絵文字',
             'ascii'       => false,
@@ -8406,7 +8406,7 @@ return [
             'reading'     => 'ばーん | ぷんすか',
         ],
         [
-            'value'       => "(－_－) zzZ\u{1F4A4}",
+            'value'       => '(－_－) zzZ💤',
             'group'       => 'ja_cute',
             'description' => '絵文字',
             'ascii'       => false,
@@ -8414,7 +8414,7 @@ return [
             'reading'     => 'すやすや | ねむねむ',
         ],
         [
-            'value'       => "(\u{B4}-ω-`)\u{1F4A4}",
+            'value'       => '(´-ω-`)💤',
             'group'       => 'ja_cute',
             'description' => '絵文字',
             'ascii'       => false,
@@ -8422,7 +8422,7 @@ return [
             'reading'     => 'すやすや | ねむねむ',
         ],
         [
-            'value'       => "(｡-ω-)zzZ\u{1F319}",
+            'value'       => '(｡-ω-)zzZ🌙',
             'group'       => 'ja_cute',
             'description' => '絵文字',
             'ascii'       => false,
@@ -8430,7 +8430,7 @@ return [
             'reading'     => 'すやすや | ぐーぐー',
         ],
         [
-            'value'       => "\u{1F634}(ᴗ\u{2F3}ᴗ)",
+            'value'       => '😴(ᴗ˳ᴗ)',
             'group'       => 'ja_cute',
             'description' => '絵文字',
             'ascii'       => false,
@@ -8438,7 +8438,7 @@ return [
             'reading'     => 'すやすや | うとうと',
         ],
         [
-            'value'       => "\u{1F319}(ᴗ\u{2F3}ᴗ)zzZ",
+            'value'       => '🌙(ᴗ˳ᴗ)zzZ',
             'group'       => 'ja_cute',
             'description' => '絵文字',
             'ascii'       => false,
@@ -8446,7 +8446,7 @@ return [
             'reading'     => 'すやすや | おやすみ',
         ],
         [
-            'value'       => "( \u{2D8}ω\u{2D8} )\u{1F4A4}",
+            'value'       => '( ˘ω˘ )💤',
             'group'       => 'ja_cute',
             'description' => '絵文字',
             'ascii'       => false,
@@ -8454,7 +8454,7 @@ return [
             'reading'     => 'すやすや | うとうと',
         ],
         [
-            'value'       => "(\u{FF3E}ᴗ\u{FF3E})\u{1F370}",
+            'value'       => '(＾ᴗ＾)🍰',
             'group'       => 'ja_mogumogu',
             'description' => '絵文字',
             'ascii'       => false,
@@ -8462,7 +8462,7 @@ return [
             'reading'     => 'じゅるり | もぐもぐ',
         ],
         [
-            'value'       => "(*\u{B4}﹃\u{FF40}*)\u{1F35C}",
+            'value'       => '(*´﹃｀*)🍜',
             'group'       => 'ja_mogumogu',
             'description' => '絵文字',
             'ascii'       => false,
@@ -8470,7 +8470,7 @@ return [
             'reading'     => 'じゅるり | もぐもぐ',
         ],
         [
-            'value'       => "(っ\u{2D8}ڡ\u{2D8}ς)\u{1F353}",
+            'value'       => '(っ˘ڡ˘ς)🍓',
             'group'       => 'ja_mogumogu',
             'description' => '絵文字',
             'ascii'       => false,
@@ -8478,7 +8478,7 @@ return [
             'reading'     => 'もぐもぐ | じゅるり',
         ],
         [
-            'value'       => "( \u{2D8} ³\u{2D8})\u{1F36B}",
+            'value'       => '( ˘ ³˘)🍫',
             'group'       => 'ja_mogumogu',
             'description' => '絵文字',
             'ascii'       => false,
@@ -8486,7 +8486,7 @@ return [
             'reading'     => 'もぐもぐ | うっとり',
         ],
         [
-            'value'       => "\u{1F375}( \u{B4}ω` )",
+            'value'       => '🍵( ´ω` )',
             'group'       => 'ja_mogumogu',
             'description' => '絵文字',
             'ascii'       => false,
@@ -8494,7 +8494,7 @@ return [
             'reading'     => 'ほっこり | ずずっ',
         ],
         [
-            'value'       => "(\u{B4}ڡ`)\u{1F361}",
+            'value'       => '(´ڡ`)🍡',
             'group'       => 'ja_mogumogu',
             'description' => '絵文字',
             'ascii'       => false,
@@ -8502,7 +8502,7 @@ return [
             'reading'     => 'もぐもぐ | じゅるり',
         ],
         [
-            'value'       => "( \u{2F6}^ᗜ^\u{2F6} )\u{1F370}",
+            'value'       => '( ˶^ᗜ^˶ )🍰',
             'group'       => 'ja_mogumogu',
             'description' => '絵文字',
             'ascii'       => false,
@@ -8510,7 +8510,7 @@ return [
             'reading'     => 'わくわく | もぐもぐ',
         ],
         [
-            'value'       => "\u{2600}\u{FE0F}( \u{B4} \u{25BD} ` )ﾉ",
+            'value'       => "☀\u{FE0F}( ´ ▽ ` )ﾉ",
             'group'       => 'ja_cute',
             'description' => '絵文字',
             'ascii'       => false,
@@ -8518,7 +8518,7 @@ return [
             'reading'     => 'にこにこ | おはよう',
         ],
         [
-            'value'       => "(\u{25CD}•ᴗ•\u{25CD})\u{1F308}",
+            'value'       => '(◍•ᴗ•◍)🌈',
             'group'       => 'ja_cute',
             'description' => '絵文字',
             'ascii'       => false,
@@ -8526,7 +8526,7 @@ return [
             'reading'     => 'にこにこ | るんるん',
         ],
         [
-            'value'       => "\u{26C4}(\u{B4}･ω･`)",
+            'value'       => '⛄(´･ω･`)',
             'group'       => 'ja_emoji',
             'description' => '絵文字',
             'ascii'       => false,
@@ -8534,7 +8534,7 @@ return [
             'reading'     => 'さむい | ぶるぶる',
         ],
         [
-            'value'       => "\u{2744}\u{FE0F}(｡•́︿•̀｡)",
+            'value'       => "❄\u{FE0F}(｡•́︿•̀｡)",
             'group'       => 'ja_cry',
             'description' => '絵文字',
             'ascii'       => false,
@@ -8542,7 +8542,7 @@ return [
             'reading'     => 'さむい | しょんぼり',
         ],
         [
-            'value'       => "(｡\u{2665}‿\u{2665}｡)\u{1F495}",
+            'value'       => '(｡♥‿♥｡)💕',
             'group'       => 'ja_cute',
             'description' => '絵文字',
             'ascii'       => false,
@@ -8550,7 +8550,7 @@ return [
             'reading'     => 'だいすき | きゅん',
         ],
         [
-            'value'       => "\u{1F497}( \u{2F6}ˆᵕˆ\u{2F5} )",
+            'value'       => '💗( ˶ˆᵕˆ˵ )',
             'group'       => 'ja_cute',
             'description' => '絵文字',
             'ascii'       => false,
@@ -8558,7 +8558,7 @@ return [
             'reading'     => 'だいすき | きゅん',
         ],
         [
-            'value'       => "( \u{2D8} ³\u{2D8})\u{2764}\u{FE0F}",
+            'value'       => "( ˘ ³˘)❤\u{FE0F}",
             'group'       => 'ja_cute',
             'description' => '絵文字',
             'ascii'       => false,
@@ -8566,7 +8566,7 @@ return [
             'reading'     => 'ちゅー | だいすき',
         ],
         [
-            'value'       => "ヽ(\u{2661}ω\u{2661})ﾉ\u{1F498}",
+            'value'       => 'ヽ(♡ω♡)ﾉ💘',
             'group'       => 'ja_cute',
             'description' => '絵文字',
             'ascii'       => false,
@@ -8574,7 +8574,7 @@ return [
             'reading'     => 'だいすき | きゅん',
         ],
         [
-            'value'       => "\u{266A}(\u{B4}\u{25BD}\u{FF40})\u{1F3B6}",
+            'value'       => '♪(´▽｀)🎶',
             'group'       => 'ja_cute',
             'description' => '絵文字',
             'ascii'       => false,
@@ -8582,7 +8582,7 @@ return [
             'reading'     => 'るんるん | ごきげん',
         ],
         [
-            'value'       => "\u{1F3B5}(っ\u{B4}ω`c)",
+            'value'       => '🎵(っ´ω`c)',
             'group'       => 'ja_cute',
             'description' => '絵文字',
             'ascii'       => false,
@@ -8590,7 +8590,7 @@ return [
             'reading'     => 'るんるん | ごきげん',
         ],
         [
-            'value'       => "(ﾉ\u{B4}ヮ`)ﾉ\u{1F3B6}",
+            'value'       => '(ﾉ´ヮ`)ﾉ🎶',
             'group'       => 'ja_cute',
             'description' => '絵文字',
             'ascii'       => false,
@@ -8598,7 +8598,7 @@ return [
             'reading'     => 'るんるん | わーい',
         ],
         [
-            'value'       => "\u{1F3A4}(\u{2606}\u{25BD}\u{2606})",
+            'value'       => '🎤(☆▽☆)',
             'group'       => 'ja_cute',
             'description' => '絵文字',
             'ascii'       => false,
@@ -8606,7 +8606,7 @@ return [
             'reading'     => 'るんるん | わくわく',
         ],
         [
-            'value'       => "(\u{B4}ω\u{FF40})ﾉ\u{1F431}",
+            'value'       => '(´ω｀)ﾉ🐱',
             'group'       => 'ja_nadenade',
             'description' => '絵文字',
             'ascii'       => false,
@@ -8614,7 +8614,7 @@ return [
             'reading'     => 'なでなで | ねこ',
         ],
         [
-            'value'       => "ヾ(\u{B4}ー\u{FF40})ﾉ\u{1F436}",
+            'value'       => 'ヾ(´ー｀)ﾉ🐶',
             'group'       => 'ja_nadenade',
             'description' => '絵文字',
             'ascii'       => false,
@@ -8622,7 +8622,7 @@ return [
             'reading'     => 'よしよし | いぬ',
         ],
         [
-            'value'       => "\u{1F430}(\u{B4}-ω-`)ﾉ",
+            'value'       => '🐰(´-ω-`)ﾉ',
             'group'       => 'ja_nadenade',
             'description' => '絵文字',
             'ascii'       => false,
@@ -8630,7 +8630,7 @@ return [
             'reading'     => 'なでなで | うさぎ',
         ],
         [
-            'value'       => "(っ\u{B4}ω`)ﾉ\u{1F43B}",
+            'value'       => '(っ´ω`)ﾉ🐻',
             'group'       => 'ja_nadenade',
             'description' => '絵文字',
             'ascii'       => false,
@@ -8638,7 +8638,7 @@ return [
             'reading'     => 'なでなで | くま',
         ],
         [
-            'value'       => "ﾅﾃﾞﾅﾃﾞ(\u{B4}ω\u{FF40}*)\u{1F431}",
+            'value'       => 'ﾅﾃﾞﾅﾃﾞ(´ω｀*)🐱',
             'group'       => 'ja_nadenade',
             'description' => '絵文字',
             'ascii'       => false,
@@ -8646,7 +8646,7 @@ return [
             'reading'     => 'なでなで | ねこ',
         ],
         [
-            'value'       => "\u{1F436}(*\u{B4}\u{A4B3}`*)ﾖｼﾖｼ",
+            'value'       => '🐶(*´꒳`*)ﾖｼﾖｼ',
             'group'       => 'ja_nadenade',
             'description' => '絵文字',
             'ascii'       => false,
@@ -8654,7 +8654,7 @@ return [
             'reading'     => 'よしよし | いぬ',
         ],
         [
-            'value'       => "(\u{B4}\u{2200}\u{FF40})ﾉ\u{1F439}",
+            'value'       => '(´∀｀)ﾉ🐹',
             'group'       => 'ja_nadenade',
             'description' => '絵文字',
             'ascii'       => false,
@@ -8662,7 +8662,7 @@ return [
             'reading'     => 'なでなで | はむすたー',
         ],
         [
-            'value'       => "ヽ(\u{B4}ω\u{FF40})ﾉ\u{1F430}\u{1F495}",
+            'value'       => 'ヽ(´ω｀)ﾉ🐰💕',
             'group'       => 'ja_nadenade',
             'description' => '絵文字',
             'ascii'       => false,
@@ -8670,7 +8670,7 @@ return [
             'reading'     => 'なでなで | うさぎ | ほっこり',
         ],
         [
-            'value'       => "(*\u{B4}ー`)ﾉ\u{1F408}",
+            'value'       => '(*´ー`)ﾉ🐈',
             'group'       => 'ja_nadenade',
             'description' => '絵文字',
             'ascii'       => false,
@@ -8678,7 +8678,7 @@ return [
             'reading'     => 'なでなで | ねこ',
         ],
         [
-            'value'       => "\u{1F43B}(\u{B4}ー\u{FF40}*)ﾅﾃﾞﾅﾃﾞ",
+            'value'       => '🐻(´ー｀*)ﾅﾃﾞﾅﾃﾞ',
             'group'       => 'ja_nadenade',
             'description' => '絵文字',
             'ascii'       => false,
@@ -8686,7 +8686,7 @@ return [
             'reading'     => 'なでなで | くま | よしよし',
         ],
         [
-            'value'       => "|ω・)\u{1F440}",
+            'value'       => '|ω・)👀',
             'group'       => 'ja_chira',
             'description' => '絵文字',
             'ascii'       => false,
@@ -8694,7 +8694,7 @@ return [
             'reading'     => 'ちらっ | ちらちら',
         ],
         [
-            'value'       => "|д･)\u{1F440}",
+            'value'       => '|д･)👀',
             'group'       => 'ja_chira',
             'description' => '絵文字',
             'ascii'       => false,
@@ -8702,7 +8702,7 @@ return [
             'reading'     => 'ちらっ | ちらちら',
         ],
         [
-            'value'       => "\u{1F440}|ω・)",
+            'value'       => '👀|ω・)',
             'group'       => 'ja_chira',
             'description' => '絵文字',
             'ascii'       => false,
@@ -8710,7 +8710,7 @@ return [
             'reading'     => 'ちらっ | ちらちら',
         ],
         [
-            'value'       => "|・ω・)ﾉ\u{1F440}",
+            'value'       => '|・ω・)ﾉ👀',
             'group'       => 'ja_chira',
             'description' => '絵文字',
             'ascii'       => false,
@@ -8718,7 +8718,7 @@ return [
             'reading'     => 'ちらっ | ちらちら',
         ],
         [
-            'value'       => "|ω・`)\u{1F440}",
+            'value'       => '|ω・`)👀',
             'group'       => 'ja_chira',
             'description' => '絵文字',
             'ascii'       => false,
@@ -8726,7 +8726,7 @@ return [
             'reading'     => 'ちらっ | ちらちら',
         ],
         [
-            'value'       => "(・ω・`)\u{1F440}",
+            'value'       => '(・ω・`)👀',
             'group'       => 'ja_chira',
             'description' => '絵文字',
             'ascii'       => false,
@@ -8734,7 +8734,7 @@ return [
             'reading'     => 'ちらっ | じー',
         ],
         [
-            'value'       => "(\u{AC}‿\u{AC})\u{1F440}",
+            'value'       => '(¬‿¬)👀',
             'group'       => 'ja_chira',
             'description' => '絵文字',
             'ascii'       => false,
@@ -8742,7 +8742,7 @@ return [
             'reading'     => 'じー | ちらっ',
         ],
         [
-            'value'       => "ﾁﾗ(\u{B4}・ω・`)\u{1F440}",
+            'value'       => 'ﾁﾗ(´・ω・`)👀',
             'group'       => 'ja_chira',
             'description' => '絵文字',
             'ascii'       => false,
@@ -8750,7 +8750,7 @@ return [
             'reading'     => 'ちらっ | ちらちら',
         ],
         [
-            'value'       => "|ω・)\u{1F441}",
+            'value'       => '|ω・)👁',
             'group'       => 'ja_chira',
             'description' => '絵文字',
             'ascii'       => false,
@@ -8758,7 +8758,7 @@ return [
             'reading'     => 'ちらっ | ちらちら',
         ],
         [
-            'value'       => "(-_・)\u{1F441}",
+            'value'       => '(-_・)👁',
             'group'       => 'ja_chira',
             'description' => '絵文字',
             'ascii'       => false,
@@ -8766,7 +8766,7 @@ return [
             'reading'     => 'じー | ちらっ',
         ],
         [
-            'value'       => "|・ω・)\u{2728}",
+            'value'       => '|・ω・)✨',
             'group'       => 'ja_chira',
             'description' => '絵文字',
             'ascii'       => false,
@@ -8774,7 +8774,7 @@ return [
             'reading'     => 'ちらっ | きらり',
         ],
         [
-            'value'       => "|ω・*)\u{2728}",
+            'value'       => '|ω・*)✨',
             'group'       => 'ja_chira',
             'description' => '絵文字',
             'ascii'       => false,
@@ -8782,7 +8782,7 @@ return [
             'reading'     => 'ちらっ | てれてれ',
         ],
         [
-            'value'       => "ﾁﾗｯ(・ω・`*)\u{1F4AD}",
+            'value'       => 'ﾁﾗｯ(・ω・`*)💭',
             'group'       => 'ja_chira',
             'description' => '絵文字',
             'ascii'       => false,
@@ -8790,7 +8790,7 @@ return [
             'reading'     => 'ちらっ | てれてれ',
         ],
         [
-            'value'       => "|ω・)\u{1F4AD}",
+            'value'       => '|ω・)💭',
             'group'       => 'ja_chira',
             'description' => '絵文字',
             'ascii'       => false,
@@ -8798,7 +8798,7 @@ return [
             'reading'     => 'ちらっ | ちらちら',
         ],
         [
-            'value'       => "(\u{B4}・ω・)っ\u{1F440}",
+            'value'       => '(´・ω・)っ👀',
             'group'       => 'ja_chira',
             'description' => '絵文字',
             'ascii'       => false,
@@ -8806,7 +8806,7 @@ return [
             'reading'     => 'ちらっ | ちらちら',
         ],
         [
-            'value'       => "|・)\u{1F440}",
+            'value'       => '|・)👀',
             'group'       => 'ja_chira',
             'description' => '絵文字',
             'ascii'       => false,
@@ -8814,7 +8814,7 @@ return [
             'reading'     => 'ちらっ | ちらちら',
         ],
         [
-            'value'       => "\u{1F440}(・ω・`)",
+            'value'       => '👀(・ω・`)',
             'group'       => 'ja_chira',
             'description' => '絵文字',
             'ascii'       => false,
@@ -8822,7 +8822,7 @@ return [
             'reading'     => 'じー | ちらっ',
         ],
         [
-            'value'       => "ﾁﾗﾁﾗ(*ﾟ\u{25BD}ﾟ*)\u{1F440}",
+            'value'       => 'ﾁﾗﾁﾗ(*ﾟ▽ﾟ*)👀',
             'group'       => 'ja_chira',
             'description' => '絵文字',
             'ascii'       => false,
@@ -8830,7 +8830,7 @@ return [
             'reading'     => 'ちらちら | わくわく',
         ],
         [
-            'value'       => "( \u{2D9}ᵕ\u{2D9} )ﾁﾗ\u{1F440}",
+            'value'       => '( ˙ᵕ˙ )ﾁﾗ👀',
             'group'       => 'ja_chira',
             'description' => '絵文字',
             'ascii'       => false,
@@ -8838,7 +8838,7 @@ return [
             'reading'     => 'ちらっ | ちらちら',
         ],
         [
-            'value'       => "|д`)\u{2728}",
+            'value'       => '|д`)✨',
             'group'       => 'ja_chira',
             'description' => '絵文字',
             'ascii'       => false,
@@ -8846,7 +8846,7 @@ return [
             'reading'     => 'ちらっ | ちらちら',
         ],
         [
-            'value'       => "(\u{B4}\u{2200}`)b\u{1F44D}",
+            'value'       => '(´∀`)b👍',
             'group'       => 'ja_copype',
             'description' => '絵文字',
             'ascii'       => false,
@@ -8854,7 +8854,7 @@ return [
             'reading'     => 'ぐっ | いいね',
         ],
         [
-            'value'       => "(・\u{2200}・)ｲｲﾈ!!\u{1F44D}",
+            'value'       => '(・∀・)ｲｲﾈ!!👍',
             'group'       => 'ja_copype',
             'description' => '絵文字',
             'ascii'       => false,
@@ -8862,7 +8862,7 @@ return [
             'reading'     => 'いいね',
         ],
         [
-            'value'       => "d(\u{B4}\u{2200}`)b\u{1F44D}",
+            'value'       => 'd(´∀`)b👍',
             'group'       => 'ja_copype',
             'description' => '絵文字',
             'ascii'       => false,
@@ -8870,7 +8870,7 @@ return [
             'reading'     => 'ぐっ | いいね',
         ],
         [
-            'value'       => "(\u{2310}\u{25A0}_\u{25A0})\u{2728}",
+            'value'       => '(⌐■_■)✨',
             'group'       => 'ja_copype',
             'description' => '絵文字',
             'ascii'       => false,
@@ -8878,7 +8878,7 @@ return [
             'reading'     => 'どや | きめ',
         ],
         [
-            'value'       => "(ﾟ\u{2200}ﾟ)\u{2728}",
+            'value'       => '(ﾟ∀ﾟ)✨',
             'group'       => 'ja_copype',
             'description' => '絵文字',
             'ascii'       => false,
@@ -8886,7 +8886,7 @@ return [
             'reading'     => 'にやり | きらり',
         ],
         [
-            'value'       => "\u{266A}(\u{B4}\u{25BD}\u{FF40})ﾉ\u{1F3B6}",
+            'value'       => '♪(´▽｀)ﾉ🎶',
             'group'       => 'ja_copype',
             'description' => '絵文字',
             'ascii'       => false,
@@ -8894,7 +8894,7 @@ return [
             'reading'     => 'るんるん | ごきげん',
         ],
         [
-            'value'       => "ヾ(*\u{B4}ω`*)ﾉ\u{1F3B6}",
+            'value'       => 'ヾ(*´ω`*)ﾉ🎶',
             'group'       => 'ja_copype',
             'description' => '絵文字',
             'ascii'       => false,
@@ -8902,7 +8902,7 @@ return [
             'reading'     => 'るんるん | にこにこ',
         ],
         [
-            'value'       => "(=ﾟωﾟ)ﾉ\u{2728}",
+            'value'       => '(=ﾟωﾟ)ﾉ✨',
             'group'       => 'ja_copype',
             'description' => '絵文字',
             'ascii'       => false,
@@ -8910,7 +8910,7 @@ return [
             'reading'     => 'やっほー | やあ',
         ],
         [
-            'value'       => "(・ω・)ﾉ\u{2728}",
+            'value'       => '(・ω・)ﾉ✨',
             'group'       => 'ja_copype',
             'description' => '絵文字',
             'ascii'       => false,
@@ -8918,7 +8918,7 @@ return [
             'reading'     => 'やっほー | はーい',
         ],
         [
-            'value'       => "ｷﾀ\u{2501}(ﾟ\u{2200}ﾟ)\u{2501}!\u{2B50}",
+            'value'       => 'ｷﾀ━(ﾟ∀ﾟ)━!⭐',
             'group'       => 'ja_copype',
             'description' => '絵文字',
             'ascii'       => false,
@@ -8926,7 +8926,7 @@ return [
             'reading'     => 'きたー',
         ],
         [
-            'value'       => "(\u{2606}\u{2200}\u{2606})\u{2B50}",
+            'value'       => '(☆∀☆)⭐',
             'group'       => 'ja_copype',
             'description' => '絵文字',
             'ascii'       => false,
@@ -8934,7 +8934,7 @@ return [
             'reading'     => 'きらきら | わくわく',
         ],
         [
-            'value'       => "Σ(ﾟДﾟ)\u{1F4AB}",
+            'value'       => 'Σ(ﾟДﾟ)💫',
             'group'       => 'ja_copype',
             'description' => '絵文字',
             'ascii'       => false,
@@ -8942,7 +8942,7 @@ return [
             'reading'     => 'がーん | びっくり',
         ],
         [
-            'value'       => "ヽ(ﾟ\u{2200}ﾟ)ﾉ\u{2728}",
+            'value'       => 'ヽ(ﾟ∀ﾟ)ﾉ✨',
             'group'       => 'ja_copype',
             'description' => '絵文字',
             'ascii'       => false,
@@ -8950,7 +8950,7 @@ return [
             'reading'     => 'わーい | やったー',
         ],
         [
-            'value'       => "(\u{2229}\u{B4}\u{2200}`)\u{2229}\u{2728}",
+            'value'       => '(∩´∀`)∩✨',
             'group'       => 'ja_copype',
             'description' => '絵文字',
             'ascii'       => false,
@@ -8958,7 +8958,7 @@ return [
             'reading'     => 'わーい | やったー',
         ],
         [
-            'value'       => "(\u{B4}\u{2200}`)b\u{2B50}",
+            'value'       => '(´∀`)b⭐',
             'group'       => 'ja_copype',
             'description' => '絵文字',
             'ascii'       => false,
@@ -8966,7 +8966,7 @@ return [
             'reading'     => 'ぐっ | いいね',
         ],
         [
-            'value'       => "( ・\u{2200}・)ﾉ\u{1F3B6}",
+            'value'       => '( ・∀・)ﾉ🎶',
             'group'       => 'ja_copype',
             'description' => '絵文字',
             'ascii'       => false,
@@ -8974,7 +8974,7 @@ return [
             'reading'     => 'やっほー',
         ],
         [
-            'value'       => "(ゝ\u{2200}･)\u{2728}",
+            'value'       => '(ゝ∀･)✨',
             'group'       => 'ja_copype',
             'description' => '絵文字',
             'ascii'       => false,
@@ -8982,7 +8982,7 @@ return [
             'reading'     => 'ういんく | きらり',
         ],
         [
-            'value'       => "( ͡\u{B0} ͜ʖ ͡\u{B0})\u{2728}",
+            'value'       => '( ͡° ͜ʖ ͡°)✨',
             'group'       => 'ja_copype',
             'description' => '絵文字',
             'ascii'       => false,
@@ -8990,7 +8990,7 @@ return [
             'reading'     => 'にやり',
         ],
         [
-            'value'       => "ヾ(\u{B4}\u{2200}`)ﾉ\u{1F3B6}",
+            'value'       => 'ヾ(´∀`)ﾉ🎶',
             'group'       => 'ja_copype',
             'description' => '絵文字',
             'ascii'       => false,
@@ -8998,7 +8998,7 @@ return [
             'reading'     => 'やっほー | ばいばい',
         ],
         [
-            'value'       => "(\u{256F}\u{B0}\u{25A1}\u{B0})\u{256F}︵ \u{253B}\u{2501}\u{253B}\u{1F4A5}",
+            'value'       => '(╯°□°)╯︵ ┻━┻💥',
             'group'       => 'ja_nageru',
             'description' => '絵文字',
             'ascii'       => false,
@@ -9006,7 +9006,7 @@ return [
             'reading'     => 'なげる | ちゃぶだいがえし | ばーん',
         ],
         [
-            'value'       => "(ノ\u{B0}Д\u{B0})ノ︵ \u{253B}\u{2501}\u{253B}\u{1F4A5}",
+            'value'       => '(ノ°Д°)ノ︵ ┻━┻💥',
             'group'       => 'ja_nageru',
             'description' => '絵文字',
             'ascii'       => false,
@@ -9014,7 +9014,7 @@ return [
             'reading'     => 'なげる | ちゃぶだいがえし | ばーん',
         ],
         [
-            'value'       => "(ノಠ益ಠ)ノ彡\u{253B}\u{2501}\u{253B}\u{1F4A5}",
+            'value'       => '(ノಠ益ಠ)ノ彡┻━┻💥',
             'group'       => 'ja_nageru',
             'description' => '絵文字',
             'ascii'       => false,
@@ -9022,7 +9022,7 @@ return [
             'reading'     => 'なげる | ちゃぶだいがえし | いかり',
         ],
         [
-            'value'       => "(ノ`Д\u{B4})ノ彡\u{253B}\u{2501}\u{253B}\u{26A1}",
+            'value'       => '(ノ`Д´)ノ彡┻━┻⚡',
             'group'       => 'ja_nageru',
             'description' => '絵文字',
             'ascii'       => false,
@@ -9030,7 +9030,7 @@ return [
             'reading'     => 'なげる | ちゃぶだいがえし | ぷんぷん',
         ],
         [
-            'value'       => "ヽ(\u{FF40}Д\u{B4})ﾉ︵ \u{253B}\u{2501}\u{253B}\u{26A1}",
+            'value'       => 'ヽ(｀Д´)ﾉ︵ ┻━┻⚡',
             'group'       => 'ja_nageru',
             'description' => '絵文字',
             'ascii'       => false,
@@ -9038,7 +9038,7 @@ return [
             'reading'     => 'なげる | ちゃぶだいがえし | ぷんぷん',
         ],
         [
-            'value'       => "(\u{256F}\u{B0}\u{25A1}\u{B0})\u{256F}︵ \u{253B}\u{2501}\u{253B}\u{1F525}",
+            'value'       => '(╯°□°)╯︵ ┻━┻🔥',
             'group'       => 'ja_nageru',
             'description' => '絵文字',
             'ascii'       => false,
@@ -9046,7 +9046,7 @@ return [
             'reading'     => 'なげる | ちゃぶだいがえし | めらめら',
         ],
         [
-            'value'       => "(ノಠ益ಠ)ノ彡\u{253B}\u{2501}\u{253B}\u{1F525}",
+            'value'       => '(ノಠ益ಠ)ノ彡┻━┻🔥',
             'group'       => 'ja_nageru',
             'description' => '絵文字',
             'ascii'       => false,
@@ -9054,7 +9054,7 @@ return [
             'reading'     => 'なげる | ちゃぶだいがえし | めらめら',
         ],
         [
-            'value'       => "ヽ(ﾟ\u{25A1}ﾟ)ﾉ \u{2312}\u{1F4A5}",
+            'value'       => 'ヽ(ﾟ□ﾟ)ﾉ ⌒💥',
             'group'       => 'ja_nageru',
             'description' => '絵文字',
             'ascii'       => false,
@@ -9062,7 +9062,7 @@ return [
             'reading'     => 'なげる | ぽいっ',
         ],
         [
-            'value'       => "(ノ ﾟДﾟ)ノ \u{2312}\u{1F4A5}",
+            'value'       => '(ノ ﾟДﾟ)ノ ⌒💥',
             'group'       => 'ja_nageru',
             'description' => '絵文字',
             'ascii'       => false,
@@ -9070,7 +9070,7 @@ return [
             'reading'     => 'なげる | ぽいっ',
         ],
         [
-            'value'       => "( ﾉ ﾟｰﾟ)ﾉ \u{2312}\u{1F300}",
+            'value'       => '( ﾉ ﾟｰﾟ)ﾉ ⌒🌀',
             'group'       => 'ja_nageru',
             'description' => '絵文字',
             'ascii'       => false,
@@ -9078,7 +9078,7 @@ return [
             'reading'     => 'なげる | ぽいっ',
         ],
         [
-            'value'       => "(／･ω･)／ \u{2312}\u{1F300}",
+            'value'       => '(／･ω･)／ ⌒🌀',
             'group'       => 'ja_nageru',
             'description' => '絵文字',
             'ascii'       => false,
@@ -9086,7 +9086,7 @@ return [
             'reading'     => 'なげる | ぽいっ',
         ],
         [
-            'value'       => "＼(>o<)ノ \u{2312}\u{1F4A5}",
+            'value'       => '＼(>o<)ノ ⌒💥',
             'group'       => 'ja_nageru',
             'description' => '絵文字',
             'ascii'       => false,
@@ -9094,7 +9094,7 @@ return [
             'reading'     => 'なげる | やけくそ',
         ],
         [
-            'value'       => "ε\u{2261}\u{2261}ﾍ( \u{B4}Д`)ﾉ\u{1F4A8}",
+            'value'       => 'ε≡≡ﾍ( ´Д`)ﾉ💨',
             'group'       => 'ja_nageru',
             'description' => '絵文字',
             'ascii'       => false,
@@ -9102,7 +9102,7 @@ return [
             'reading'     => 'なげる | やけくそ',
         ],
         [
-            'value'       => "(ノ ﾟДﾟ)ノ \u{2312}\u{26A1}",
+            'value'       => '(ノ ﾟДﾟ)ノ ⌒⚡',
             'group'       => 'ja_nageru',
             'description' => '絵文字',
             'ascii'       => false,
@@ -9110,7 +9110,7 @@ return [
             'reading'     => 'なげる | ぽいっ',
         ],
         [
-            'value'       => "(\u{256F}︿\u{2570})\u{256F} \u{2312}\u{1F300}",
+            'value'       => '(╯︿╰)╯ ⌒🌀',
             'group'       => 'ja_nageru',
             'description' => '絵文字',
             'ascii'       => false,
@@ -9118,7 +9118,7 @@ return [
             'reading'     => 'なげる | あきらめ',
         ],
         [
-            'value'       => "(ノToT)ノ︵ \u{253B}\u{2501}\u{253B}\u{1F4A5}",
+            'value'       => '(ノToT)ノ︵ ┻━┻💥',
             'group'       => 'ja_nageru',
             'description' => '絵文字',
             'ascii'       => false,
@@ -9126,7 +9126,7 @@ return [
             'reading'     => 'なげる | ちゃぶだいがえし | やけくそ',
         ],
         [
-            'value'       => "(ノ\u{2312}-\u{2312})ノ︵ \u{253B}\u{2501}\u{253B}\u{1F300}",
+            'value'       => '(ノ⌒-⌒)ノ︵ ┻━┻🌀',
             'group'       => 'ja_nageru',
             'description' => '絵文字',
             'ascii'       => false,
@@ -9134,7 +9134,7 @@ return [
             'reading'     => 'なげる | ちゃぶだいがえし',
         ],
         [
-            'value'       => "ヽ(`Д\u{B4})ﾉ \u{2312}\u{1F525}",
+            'value'       => 'ヽ(`Д´)ﾉ ⌒🔥',
             'group'       => 'ja_nageru',
             'description' => '絵文字',
             'ascii'       => false,
@@ -9142,7 +9142,7 @@ return [
             'reading'     => 'なげる | ぷんぷん',
         ],
         [
-            'value'       => "(ノ\u{B0}Д\u{B0})ノ \u{2312}\u{26A1}",
+            'value'       => '(ノ°Д°)ノ ⌒⚡',
             'group'       => 'ja_nageru',
             'description' => '絵文字',
             'ascii'       => false,
@@ -9150,7 +9150,7 @@ return [
             'reading'     => 'なげる | ぽいっ',
         ],
         [
-            'value'       => "(ノ ﾟｰﾟ)ﾉ \u{2312}\u{1F4A5}",
+            'value'       => '(ノ ﾟｰﾟ)ﾉ ⌒💥',
             'group'       => 'ja_nageru',
             'description' => '絵文字',
             'ascii'       => false,
@@ -9158,7 +9158,7 @@ return [
             'reading'     => 'なげる | ぽいっ',
         ],
         [
-            'value'       => "(=^･ω･^=)\u{1F43E}",
+            'value'       => '(=^･ω･^=)🐾',
             'group'       => 'ja_animal',
             'description' => '絵文字',
             'ascii'       => false,
@@ -9166,7 +9166,7 @@ return [
             'reading'     => 'にゃー | ねこ',
         ],
         [
-            'value'       => "(=•ω•=)\u{1F431}",
+            'value'       => '(=•ω•=)🐱',
             'group'       => 'ja_animal',
             'description' => '絵文字',
             'ascii'       => false,
@@ -9174,7 +9174,7 @@ return [
             'reading'     => 'にゃー | ねこ',
         ],
         [
-            'value'       => "(ฅ\u{B4}ω`ฅ)\u{1F43E}",
+            'value'       => '(ฅ´ω`ฅ)🐾',
             'group'       => 'ja_animal',
             'description' => '絵文字',
             'ascii'       => false,
@@ -9182,7 +9182,7 @@ return [
             'reading'     => 'にゃー | ねこ',
         ],
         [
-            'value'       => "(=ΦωΦ=)\u{1F431}",
+            'value'       => '(=ΦωΦ=)🐱',
             'group'       => 'ja_animal',
             'description' => '絵文字',
             'ascii'       => false,
@@ -9190,7 +9190,7 @@ return [
             'reading'     => 'にゃー | ねこ',
         ],
         [
-            'value'       => "\u{222A}･ω･\u{222A}\u{1F436}",
+            'value'       => '∪･ω･∪🐶',
             'group'       => 'ja_animal',
             'description' => '絵文字',
             'ascii'       => false,
@@ -9198,7 +9198,7 @@ return [
             'reading'     => 'わん | いぬ',
         ],
         [
-            'value'       => "U・ᴥ・U\u{1F436}",
+            'value'       => 'U・ᴥ・U🐶',
             'group'       => 'ja_animal',
             'description' => '絵文字',
             'ascii'       => false,
@@ -9206,7 +9206,7 @@ return [
             'reading'     => 'わん | いぬ',
         ],
         [
-            'value'       => "(\u{25BD}･ω･\u{25BD})\u{1F43E}",
+            'value'       => '(▽･ω･▽)🐾',
             'group'       => 'ja_animal',
             'description' => '絵文字',
             'ascii'       => false,
@@ -9214,7 +9214,7 @@ return [
             'reading'     => 'わん | いぬ',
         ],
         [
-            'value'       => "ʕ•ᴥ•ʔ\u{1F43B}",
+            'value'       => 'ʕ•ᴥ•ʔ🐻',
             'group'       => 'ja_animal',
             'description' => '絵文字',
             'ascii'       => false,
@@ -9222,7 +9222,7 @@ return [
             'reading'     => 'くま',
         ],
         [
-            'value'       => "ʕ\u{B4}•ᴥ•`ʔ\u{1F43B}",
+            'value'       => 'ʕ´•ᴥ•`ʔ🐻',
             'group'       => 'ja_animal',
             'description' => '絵文字',
             'ascii'       => false,
@@ -9230,7 +9230,7 @@ return [
             'reading'     => 'くま',
         ],
         [
-            'value'       => "ʕ•ᴥ•ʔﾉ\u{1F43E}",
+            'value'       => 'ʕ•ᴥ•ʔﾉ🐾',
             'group'       => 'ja_animal',
             'description' => '絵文字',
             'ascii'       => false,
@@ -9238,7 +9238,7 @@ return [
             'reading'     => 'くま',
         ],
         [
-            'value'       => "(•ㅅ•)\u{1F430}",
+            'value'       => '(•ㅅ•)🐰',
             'group'       => 'ja_animal',
             'description' => '絵文字',
             'ascii'       => false,
@@ -9246,7 +9246,7 @@ return [
             'reading'     => 'うさぎ',
         ],
         [
-            'value'       => "( ･ㅅ･ )\u{1F430}",
+            'value'       => '( ･ㅅ･ )🐰',
             'group'       => 'ja_animal',
             'description' => '絵文字',
             'ascii'       => false,
@@ -9254,7 +9254,7 @@ return [
             'reading'     => 'うさぎ',
         ],
         [
-            'value'       => "(=•ㅅ•=)\u{1F43E}",
+            'value'       => '(=•ㅅ•=)🐾',
             'group'       => 'ja_animal',
             'description' => '絵文字',
             'ascii'       => false,
@@ -9262,7 +9262,7 @@ return [
             'reading'     => 'うさぎ',
         ],
         [
-            'value'       => "( \u{B4}(00)\u{FF40} )\u{1F437}",
+            'value'       => '( ´(00)｀ )🐷',
             'group'       => 'ja_animal',
             'description' => '絵文字',
             'ascii'       => false,
@@ -9270,7 +9270,7 @@ return [
             'reading'     => 'ぶた | ぶー',
         ],
         [
-            'value'       => "(・\u{D7}・)\u{1F439}",
+            'value'       => '(・×・)🐹',
             'group'       => 'ja_animal',
             'description' => '絵文字',
             'ascii'       => false,
@@ -9278,7 +9278,7 @@ return [
             'reading'     => 'はむすたー | ちゅー',
         ],
         [
-            'value'       => "(=^‥^=)\u{1F431}",
+            'value'       => '(=^‥^=)🐱',
             'group'       => 'ja_animal',
             'description' => '絵文字',
             'ascii'       => false,
@@ -9286,7 +9286,7 @@ return [
             'reading'     => 'にゃー | ねこ',
         ],
         [
-            'value'       => "ฅ(^•ω•^ฅ)\u{1F43E}",
+            'value'       => 'ฅ(^•ω•^ฅ)🐾',
             'group'       => 'ja_animal',
             'description' => '絵文字',
             'ascii'       => false,
@@ -9294,7 +9294,7 @@ return [
             'reading'     => 'にゃー | ねこ',
         ],
         [
-            'value'       => "(ᵔᴥᵔ)\u{1F436}",
+            'value'       => '(ᵔᴥᵔ)🐶',
             'group'       => 'ja_animal',
             'description' => '絵文字',
             'ascii'       => false,
@@ -9302,7 +9302,7 @@ return [
             'reading'     => 'わん | いぬ',
         ],
         [
-            'value'       => "ʕ ·ᴥ· ʔ\u{1F43E}",
+            'value'       => 'ʕ ·ᴥ· ʔ🐾',
             'group'       => 'ja_animal',
             'description' => '絵文字',
             'ascii'       => false,
@@ -9310,7 +9310,7 @@ return [
             'reading'     => 'くま',
         ],
         [
-            'value'       => "\\(•ㅅ•)/\u{1F430}",
+            'value'       => '\\(•ㅅ•)/🐰',
             'group'       => 'ja_animal',
             'description' => '絵文字',
             'ascii'       => false,
@@ -9318,7 +9318,7 @@ return [
             'reading'     => 'うさぎ',
         ],
         [
-            'value'       => "(\u{2267}\u{25BD}\u{2266})\u{1F389}",
+            'value'       => '(≧▽≦)🎉',
             'group'       => 'ja_ureshii',
             'description' => '絵文字',
             'ascii'       => false,
@@ -9326,7 +9326,7 @@ return [
             'reading'     => 'うれしい | やったー',
         ],
         [
-            'value'       => "(*\u{2267}\u{25BD}\u{2266})\u{1F389}",
+            'value'       => '(*≧▽≦)🎉',
             'group'       => 'ja_ureshii',
             'description' => '絵文字',
             'ascii'       => false,
@@ -9334,7 +9334,7 @@ return [
             'reading'     => 'うれしい | やったー',
         ],
         [
-            'value'       => "ヽ(\u{2267}\u{2200}\u{2266})ﾉ\u{1F389}",
+            'value'       => 'ヽ(≧∀≦)ﾉ🎉',
             'group'       => 'ja_ureshii',
             'description' => '絵文字',
             'ascii'       => false,
@@ -9342,7 +9342,7 @@ return [
             'reading'     => 'やったー | わーい',
         ],
         [
-            'value'       => "＼(^\u{25BD}^)／\u{1F64C}",
+            'value'       => '＼(^▽^)／🙌',
             'group'       => 'ja_ureshii',
             'description' => '絵文字',
             'ascii'       => false,
@@ -9350,7 +9350,7 @@ return [
             'reading'     => 'ばんざい | わーい',
         ],
         [
-            'value'       => "＼(\u{2267}\u{2200}\u{2266})／\u{1F64C}",
+            'value'       => '＼(≧∀≦)／🙌',
             'group'       => 'ja_ureshii',
             'description' => '絵文字',
             'ascii'       => false,
@@ -9358,7 +9358,7 @@ return [
             'reading'     => 'ばんざい | やったー',
         ],
         [
-            'value'       => "ヽ(^o^)ノ\u{1F64C}",
+            'value'       => 'ヽ(^o^)ノ🙌',
             'group'       => 'ja_ureshii',
             'description' => '絵文字',
             'ascii'       => false,
@@ -9366,7 +9366,7 @@ return [
             'reading'     => 'わーい | やったー',
         ],
         [
-            'value'       => "(\u{25CD}•ᗜ•\u{25CD})\u{2728}",
+            'value'       => '(◍•ᗜ•◍)✨',
             'group'       => 'ja_ureshii',
             'description' => '絵文字',
             'ascii'       => false,
@@ -9374,7 +9374,7 @@ return [
             'reading'     => 'にこにこ | うれしい',
         ],
         [
-            'value'       => "(*\u{B4}\u{25BF}`*)\u{2728}",
+            'value'       => '(*´▿`*)✨',
             'group'       => 'ja_ureshii',
             'description' => '絵文字',
             'ascii'       => false,
@@ -9382,7 +9382,7 @@ return [
             'reading'     => 'にこにこ | うれしい',
         ],
         [
-            'value'       => "(\u{2267}\u{25BD}\u{2266})\u{1F31F}",
+            'value'       => '(≧▽≦)🌟',
             'group'       => 'ja_ureshii',
             'description' => '絵文字',
             'ascii'       => false,
@@ -9390,7 +9390,7 @@ return [
             'reading'     => 'うれしい | やったー',
         ],
         [
-            'value'       => "( \u{B4} \u{2200} ` )\u{1F495}",
+            'value'       => '( ´ ∀ ` )💕',
             'group'       => 'ja_ureshii',
             'description' => '絵文字',
             'ascii'       => false,
@@ -9398,7 +9398,7 @@ return [
             'reading'     => 'にこにこ | うれしい',
         ],
         [
-            'value'       => "(*\u{B4}\u{2207}`*)\u{1F495}",
+            'value'       => '(*´∇`*)💕',
             'group'       => 'ja_ureshii',
             'description' => '絵文字',
             'ascii'       => false,
@@ -9406,7 +9406,7 @@ return [
             'reading'     => 'にこにこ | うれしい',
         ],
         [
-            'value'       => "o(\u{2267}\u{2207}\u{2266})o\u{1F389}",
+            'value'       => 'o(≧∇≦)o🎉',
             'group'       => 'ja_ureshii',
             'description' => '絵文字',
             'ascii'       => false,
@@ -9414,7 +9414,7 @@ return [
             'reading'     => 'うれしい | やったー',
         ],
         [
-            'value'       => "\u{266A}(\u{B4}\u{25BD}`)ﾉ\u{1F31F}",
+            'value'       => '♪(´▽`)ﾉ🌟',
             'group'       => 'ja_ureshii',
             'description' => '絵文字',
             'ascii'       => false,
@@ -9422,7 +9422,7 @@ return [
             'reading'     => 'るんるん | ごきげん',
         ],
         [
-            'value'       => "ヽ(\u{B4}\u{2200}`)ﾉ\u{2728}",
+            'value'       => 'ヽ(´∀`)ﾉ✨',
             'group'       => 'ja_ureshii',
             'description' => '絵文字',
             'ascii'       => false,
@@ -9430,7 +9430,7 @@ return [
             'reading'     => 'ばんざい | わーい',
         ],
         [
-            'value'       => "(((o(*ﾟ\u{2200}ﾟ*)o)))\u{1F389}",
+            'value'       => '(((o(*ﾟ∀ﾟ*)o)))🎉',
             'group'       => 'ja_ureshii',
             'description' => '絵文字',
             'ascii'       => false,
@@ -9438,7 +9438,7 @@ return [
             'reading'     => 'わくわく | どきどき',
         ],
         [
-            'value'       => "(๑\u{2C3}ᴗ\u{2C2})\u{1F31F}",
+            'value'       => '(๑˃ᴗ˂)🌟',
             'group'       => 'ja_ureshii',
             'description' => '絵文字',
             'ascii'       => false,
@@ -9446,7 +9446,7 @@ return [
             'reading'     => 'わくわく | うれしい',
         ],
         [
-            'value'       => "(*ﾟ\u{2200}ﾟ*)\u{2728}",
+            'value'       => '(*ﾟ∀ﾟ*)✨',
             'group'       => 'ja_ureshii',
             'description' => '絵文字',
             'ascii'       => false,
@@ -9454,7 +9454,7 @@ return [
             'reading'     => 'わくわく | うれしい',
         ],
         [
-            'value'       => "ヾ(\u{FF3E}\u{2207}\u{FF3E})\u{1F64C}",
+            'value'       => 'ヾ(＾∇＾)🙌',
             'group'       => 'ja_ureshii',
             'description' => '絵文字',
             'ascii'       => false,
@@ -9462,7 +9462,7 @@ return [
             'reading'     => 'ばんざい | わーい',
         ],
         [
-            'value'       => "(o\u{B4}\u{2200}`o)\u{266A}\u{1F3B6}",
+            'value'       => '(o´∀`o)♪🎶',
             'group'       => 'ja_ureshii',
             'description' => '絵文字',
             'ascii'       => false,
@@ -9470,7 +9470,7 @@ return [
             'reading'     => 'るんるん | ごきげん',
         ],
         [
-            'value'       => "＼(*\u{2267}\u{2207}\u{2266}*)／\u{1F389}",
+            'value'       => '＼(*≧∇≦*)／🎉',
             'group'       => 'ja_ureshii',
             'description' => '絵文字',
             'ascii'       => false,
@@ -9478,7 +9478,7 @@ return [
             'reading'     => 'ばんざい | わーい',
         ],
         [
-            'value'       => "(*ノωノ)\u{1F495}",
+            'value'       => '(*ノωノ)💕',
             'group'       => 'ja_tereru',
             'description' => '絵文字',
             'ascii'       => false,
@@ -9486,7 +9486,7 @@ return [
             'reading'     => 'もじもじ | てれてれ',
         ],
         [
-            'value'       => "(/ω＼*)\u{1F495}",
+            'value'       => '(/ω＼*)💕',
             'group'       => 'ja_tereru',
             'description' => '絵文字',
             'ascii'       => false,
@@ -9494,7 +9494,7 @@ return [
             'reading'     => 'もじもじ | はずかしい',
         ],
         [
-            'value'       => "(๑\u{B4}ω`๑)\u{1F497}",
+            'value'       => '(๑´ω`๑)💗',
             'group'       => 'ja_tereru',
             'description' => '絵文字',
             'ascii'       => false,
@@ -9502,7 +9502,7 @@ return [
             'reading'     => 'もじもじ | てれてれ',
         ],
         [
-            'value'       => "(*//\u{2207}//*)\u{1F633}",
+            'value'       => '(*//∇//*)😳',
             'group'       => 'ja_tereru',
             'description' => '絵文字',
             'ascii'       => false,
@@ -9510,7 +9510,7 @@ return [
             'reading'     => 'ぽっ | あかめん',
         ],
         [
-            'value'       => "(〃\u{25BD}〃*)\u{1F633}",
+            'value'       => '(〃▽〃*)😳',
             'group'       => 'ja_tereru',
             'description' => '絵文字',
             'ascii'       => false,
@@ -9518,7 +9518,7 @@ return [
             'reading'     => 'ぽっ | てれてれ',
         ],
         [
-            'value'       => "(〃\u{2200}〃)\u{1F497}",
+            'value'       => '(〃∀〃)💗',
             'group'       => 'ja_tereru',
             'description' => '絵文字',
             'ascii'       => false,
@@ -9526,7 +9526,7 @@ return [
             'reading'     => 'ぽっ | てれてれ',
         ],
         [
-            'value'       => "(*ﾉ\u{2661} ω\u{2661})\u{1F495}",
+            'value'       => '(*ﾉ♡ ω♡)💕',
             'group'       => 'ja_tereru',
             'description' => '絵文字',
             'ascii'       => false,
@@ -9534,7 +9534,7 @@ return [
             'reading'     => 'きゅん | どきどき',
         ],
         [
-            'value'       => "(*\u{B4}ω`*)\u{1F495}",
+            'value'       => '(*´ω`*)💕',
             'group'       => 'ja_tereru',
             'description' => '絵文字',
             'ascii'       => false,
@@ -9542,7 +9542,7 @@ return [
             'reading'     => 'きゅん | てれてれ',
         ],
         [
-            'value'       => "(//ω//)\u{1F497}",
+            'value'       => '(//ω//)💗',
             'group'       => 'ja_tereru',
             'description' => '絵文字',
             'ascii'       => false,
@@ -9550,7 +9550,7 @@ return [
             'reading'     => 'きゅん | ぽっ',
         ],
         [
-            'value'       => "(〃ﾉωﾉ)\u{1F338}",
+            'value'       => '(〃ﾉωﾉ)🌸',
             'group'       => 'ja_tereru',
             'description' => '絵文字',
             'ascii'       => false,
@@ -9558,7 +9558,7 @@ return [
             'reading'     => 'ぽっ | てれてれ',
         ],
         [
-            'value'       => "(*ﾉ。ﾉ)\u{1F495}",
+            'value'       => '(*ﾉ。ﾉ)💕',
             'group'       => 'ja_tereru',
             'description' => '絵文字',
             'ascii'       => false,
@@ -9566,7 +9566,7 @@ return [
             'reading'     => 'もじもじ | てれてれ',
         ],
         [
-            'value'       => "( \u{B4}• ω •` )ゞ\u{1F497}",
+            'value'       => '( ´• ω •` )ゞ💗',
             'group'       => 'ja_tereru',
             'description' => '絵文字',
             'ascii'       => false,
@@ -9574,7 +9574,7 @@ return [
             'reading'     => 'もじもじ | てれてれ',
         ],
         [
-            'value'       => "(〃ω〃)ﾉ\u{1F338}",
+            'value'       => '(〃ω〃)ﾉ🌸',
             'group'       => 'ja_tereru',
             'description' => '絵文字',
             'ascii'       => false,
@@ -9582,7 +9582,7 @@ return [
             'reading'     => 'ぽっ | てれてれ',
         ],
         [
-            'value'       => "(๑\u{2C3}ᴗ\u{2C2})ゞ\u{1F495}",
+            'value'       => '(๑˃ᴗ˂)ゞ💕',
             'group'       => 'ja_tereru',
             'description' => '絵文字',
             'ascii'       => false,
@@ -9590,7 +9590,7 @@ return [
             'reading'     => 'はにかみ | えへへ',
         ],
         [
-            'value'       => "(*\u{B4}\u{2200}`*)ゞ\u{1F633}",
+            'value'       => '(*´∀`*)ゞ😳',
             'group'       => 'ja_tereru',
             'description' => '絵文字',
             'ascii'       => false,
@@ -9598,7 +9598,7 @@ return [
             'reading'     => 'でれでれ | えへへ',
         ],
         [
-            'value'       => "(\u{2661}ω\u{2661}*)\u{1F497}",
+            'value'       => '(♡ω♡*)💗',
             'group'       => 'ja_tereru',
             'description' => '絵文字',
             'ascii'       => false,
@@ -9606,7 +9606,7 @@ return [
             'reading'     => 'きゅん | うっとり',
         ],
         [
-            'value'       => "( \u{2044}•\u{2044}ω\u{2044}•\u{2044} )\u{1F495}",
+            'value'       => '( ⁄•⁄ω⁄•⁄ )💕',
             'group'       => 'ja_tereru',
             'description' => '絵文字',
             'ascii'       => false,
@@ -9614,7 +9614,7 @@ return [
             'reading'     => 'もじもじ | てれてれ',
         ],
         [
-            'value'       => "(ﾉ\u{2661}\u{2200}\u{2661})ﾉ\u{1F495}",
+            'value'       => '(ﾉ♡∀♡)ﾉ💕',
             'group'       => 'ja_tereru',
             'description' => '絵文字',
             'ascii'       => false,
@@ -9622,7 +9622,7 @@ return [
             'reading'     => 'きゅん | どきどき',
         ],
         [
-            'value'       => "( ๑ \u{FF1E}ᴗ\u{FF1C} ๑)\u{1F338}",
+            'value'       => '( ๑ ＞ᴗ＜ ๑)🌸',
             'group'       => 'ja_tereru',
             'description' => '絵文字',
             'ascii'       => false,
@@ -9630,7 +9630,7 @@ return [
             'reading'     => 'はにかみ | てれてれ',
         ],
         [
-            'value'       => "(/\u{25BD}＼)\u{1F633}",
+            'value'       => '(/▽＼)😳',
             'group'       => 'ja_tereru',
             'description' => '絵文字',
             'ascii'       => false,
@@ -9638,7 +9638,7 @@ return [
             'reading'     => 'ぽっ | はずかしい',
         ],
         [
-            'value'       => "Σ(ﾟωﾟ)\u{26A1}",
+            'value'       => 'Σ(ﾟωﾟ)⚡',
             'group'       => 'ja_bikkuri',
             'description' => '絵文字',
             'ascii'       => false,
@@ -9646,7 +9646,7 @@ return [
             'reading'     => 'びっくり | はっ',
         ],
         [
-            'value'       => "Σ(･ω･ﾉ)\u{2757}",
+            'value'       => 'Σ(･ω･ﾉ)❗',
             'group'       => 'ja_bikkuri',
             'description' => '絵文字',
             'ascii'       => false,
@@ -9654,7 +9654,7 @@ return [
             'reading'     => 'びっくり | はっ',
         ],
         [
-            'value'       => "Σ(ﾟ\u{25BD}ﾟ)\u{26A1}",
+            'value'       => 'Σ(ﾟ▽ﾟ)⚡',
             'group'       => 'ja_bikkuri',
             'description' => '絵文字',
             'ascii'       => false,
@@ -9662,7 +9662,7 @@ return [
             'reading'     => 'びっくり | はっ',
         ],
         [
-            'value'       => "(\u{309C}o\u{309C})\u{1F632}",
+            'value'       => '(゜o゜)😲',
             'group'       => 'ja_bikkuri',
             'description' => '絵文字',
             'ascii'       => false,
@@ -9670,7 +9670,7 @@ return [
             'reading'     => 'びっくり',
         ],
         [
-            'value'       => "(((ﾟдﾟ)))\u{1F4A5}",
+            'value'       => '(((ﾟдﾟ)))💥',
             'group'       => 'ja_bikkuri',
             'description' => '絵文字',
             'ascii'       => false,
@@ -9678,7 +9678,7 @@ return [
             'reading'     => 'ぎょうてん | がたがた',
         ],
         [
-            'value'       => "Σ(ﾟДﾟ；)\u{1F4A5}",
+            'value'       => 'Σ(ﾟДﾟ；)💥',
             'group'       => 'ja_bikkuri',
             'description' => '絵文字',
             'ascii'       => false,
@@ -9686,7 +9686,7 @@ return [
             'reading'     => 'ぎょうてん | がーん',
         ],
         [
-            'value'       => "Σ(ﾟдﾟlll)\u{1F4A5}",
+            'value'       => 'Σ(ﾟдﾟlll)💥',
             'group'       => 'ja_bikkuri',
             'description' => '絵文字',
             'ascii'       => false,
@@ -9694,7 +9694,7 @@ return [
             'reading'     => 'ぎょうてん | がーん',
         ],
         [
-            'value'       => "Σ(\u{B0}Д\u{B0})\u{26A1}",
+            'value'       => 'Σ(°Д°)⚡',
             'group'       => 'ja_bikkuri',
             'description' => '絵文字',
             'ascii'       => false,
@@ -9702,7 +9702,7 @@ return [
             'reading'     => 'ぎょうてん | がーん',
         ],
         [
-            'value'       => "Σ(ﾟ\u{2200}ﾟ)\u{1F4A5}",
+            'value'       => 'Σ(ﾟ∀ﾟ)💥',
             'group'       => 'ja_bikkuri',
             'description' => '絵文字',
             'ascii'       => false,
@@ -9710,7 +9710,7 @@ return [
             'reading'     => 'がーん | しょっく',
         ],
         [
-            'value'       => "(ﾟ\u{25C7}ﾟ)ガーン\u{26A1}",
+            'value'       => '(ﾟ◇ﾟ)ガーン⚡',
             'group'       => 'ja_bikkuri',
             'description' => '絵文字',
             'ascii'       => false,
@@ -9718,7 +9718,7 @@ return [
             'reading'     => 'がーん | しょっく',
         ],
         [
-            'value'       => "( ﾟ\u{22BF}ﾟ)?⁉",
+            'value'       => '( ﾟ⊿ﾟ)?⁉',
             'group'       => 'ja_bikkuri',
             'description' => '絵文字',
             'ascii'       => false,
@@ -9726,7 +9726,7 @@ return [
             'reading'     => 'えっ | はてな',
         ],
         [
-            'value'       => "(･_･;)\u{2757}",
+            'value'       => '(･_･;)❗',
             'group'       => 'ja_bikkuri',
             'description' => '絵文字',
             'ascii'       => false,
@@ -9734,7 +9734,7 @@ return [
             'reading'     => 'えっ | あせあせ',
         ],
         [
-            'value'       => "(\u{2299}o\u{2299})\u{1F632}",
+            'value'       => '(⊙o⊙)😲',
             'group'       => 'ja_bikkuri',
             'description' => '絵文字',
             'ascii'       => false,
@@ -9742,7 +9742,7 @@ return [
             'reading'     => 'びっくり | ぱちくり',
         ],
         [
-            'value'       => "(\u{2299}_\u{2299})\u{2757}",
+            'value'       => '(⊙_⊙)❗',
             'group'       => 'ja_bikkuri',
             'description' => '絵文字',
             'ascii'       => false,
@@ -9750,7 +9750,7 @@ return [
             'reading'     => 'びっくり | ぱちくり',
         ],
         [
-            'value'       => "(\u{309C}ロ\u{309C})\u{1F632}",
+            'value'       => '(゜ロ゜)😲',
             'group'       => 'ja_bikkuri',
             'description' => '絵文字',
             'ascii'       => false,
@@ -9758,7 +9758,7 @@ return [
             'reading'     => 'びっくり',
         ],
         [
-            'value'       => "Σ(ﾉﾟДﾟ)ﾉ\u{1F4A5}",
+            'value'       => 'Σ(ﾉﾟДﾟ)ﾉ💥',
             'group'       => 'ja_bikkuri',
             'description' => '絵文字',
             'ascii'       => false,
@@ -9774,7 +9774,7 @@ return [
             'reading'     => 'ぎょうてん',
         ],
         [
-            'value'       => "(ﾟдﾟ)!\u{2757}",
+            'value'       => '(ﾟдﾟ)!❗',
             'group'       => 'ja_bikkuri',
             'description' => '絵文字',
             'ascii'       => false,
@@ -9782,7 +9782,7 @@ return [
             'reading'     => 'がーん | びっくり',
         ],
         [
-            'value'       => "Σ(\u{B0}ロ\u{B0})\u{1F4A5}",
+            'value'       => 'Σ(°ロ°)💥',
             'group'       => 'ja_bikkuri',
             'description' => '絵文字',
             'ascii'       => false,
@@ -9790,7 +9790,7 @@ return [
             'reading'     => 'ぎょうてん',
         ],
         [
-            'value'       => "(\u{B0}ロ\u{B0}) !\u{2757}",
+            'value'       => '(°ロ°) !❗',
             'group'       => 'ja_bikkuri',
             'description' => '絵文字',
             'ascii'       => false,
@@ -9798,7 +9798,7 @@ return [
             'reading'     => 'びっくり | はっ',
         ],
         [
-            'value'       => "(\u{B4}；ω；`)\u{1F4A7}",
+            'value'       => '(´；ω；`)💧',
             'group'       => 'ja_cry',
             'description' => '絵文字',
             'ascii'       => false,
@@ -9806,7 +9806,7 @@ return [
             'reading'     => 'ぐすん | うるうる',
         ],
         [
-            'value'       => "(;_;)\u{1F4A7}",
+            'value'       => '(;_;)💧',
             'group'       => 'ja_cry',
             'description' => '絵文字',
             'ascii'       => false,
@@ -9814,7 +9814,7 @@ return [
             'reading'     => 'しくしく | ぐすん',
         ],
         [
-            'value'       => "(\u{2565}﹏\u{2565})\u{1F4A7}",
+            'value'       => '(╥﹏╥)💧',
             'group'       => 'ja_cry',
             'description' => '絵文字',
             'ascii'       => false,
@@ -9822,7 +9822,7 @@ return [
             'reading'     => 'ぐすん | うるうる',
         ],
         [
-            'value'       => "\u{1F622}(\u{B4}；ω；`)",
+            'value'       => '😢(´；ω；`)',
             'group'       => 'ja_cry',
             'description' => '絵文字',
             'ascii'       => false,
@@ -9830,7 +9830,7 @@ return [
             'reading'     => 'ぐすん | しょんぼり',
         ],
         [
-            'value'       => "(ノДヽ)\u{1F4A6}",
+            'value'       => '(ノДヽ)💦',
             'group'       => 'ja_cry',
             'description' => '絵文字',
             'ascii'       => false,
@@ -9838,7 +9838,7 @@ return [
             'reading'     => 'わーん | あせあせ',
         ],
         [
-            'value'       => "(>_<。)\u{1F4A7}",
+            'value'       => '(>_<。)💧',
             'group'       => 'ja_cry',
             'description' => '絵文字',
             'ascii'       => false,
@@ -9846,7 +9846,7 @@ return [
             'reading'     => 'うるうる',
         ],
         [
-            'value'       => "\u{1F327}(｡•́︿•̀｡)",
+            'value'       => '🌧(｡•́︿•̀｡)',
             'group'       => 'ja_cry',
             'description' => '絵文字',
             'ascii'       => false,
@@ -9854,7 +9854,7 @@ return [
             'reading'     => 'どんより | しょんぼり',
         ],
         [
-            'value'       => "(T_T)\u{1F4A7}",
+            'value'       => '(T_T)💧',
             'group'       => 'ja_cry',
             'description' => '絵文字',
             'ascii'       => false,
@@ -9862,7 +9862,7 @@ return [
             'reading'     => 'しくしく',
         ],
         [
-            'value'       => "\u{1F622}(ﾉД`)",
+            'value'       => '😢(ﾉД`)',
             'group'       => 'ja_cry',
             'description' => '絵文字',
             'ascii'       => false,
@@ -9870,7 +9870,7 @@ return [
             'reading'     => 'わーん | えーん',
         ],
         [
-            'value'       => "(\u{B4}•̥ω•̥`)\u{1F4A7}",
+            'value'       => '(´•̥ω•̥`)💧',
             'group'       => 'ja_cry',
             'description' => '絵文字',
             'ascii'       => false,
@@ -9878,7 +9878,7 @@ return [
             'reading'     => 'うるうる | ぐすん',
         ],
         [
-            'value'       => "(つд\u{2282})\u{1F4A6}",
+            'value'       => '(つд⊂)💦',
             'group'       => 'ja_cry',
             'description' => '絵文字',
             'ascii'       => false,
@@ -9886,7 +9886,7 @@ return [
             'reading'     => 'ぐすん | じたばた',
         ],
         [
-            'value'       => "(\u{B4}ω\u{FF40})ﾉﾅﾃﾞﾅﾃﾞ\u{1F495}",
+            'value'       => '(´ω｀)ﾉﾅﾃﾞﾅﾃﾞ💕',
             'group'       => 'ja_nadenade',
             'description' => '絵文字',
             'ascii'       => false,
@@ -9894,7 +9894,7 @@ return [
             'reading'     => 'なでなで',
         ],
         [
-            'value'       => "ﾅﾃﾞﾅﾃﾞ(*\u{B4}ω`*)\u{1F495}",
+            'value'       => 'ﾅﾃﾞﾅﾃﾞ(*´ω`*)💕',
             'group'       => 'ja_nadenade',
             'description' => '絵文字',
             'ascii'       => false,
@@ -9902,7 +9902,7 @@ return [
             'reading'     => 'なでなで | ほっこり',
         ],
         [
-            'value'       => "ヾ(\u{B4}ー\u{FF40})ﾉﾞﾅﾃﾞﾅﾃﾞ\u{2728}",
+            'value'       => 'ヾ(´ー｀)ﾉﾞﾅﾃﾞﾅﾃﾞ✨',
             'group'       => 'ja_nadenade',
             'description' => '絵文字',
             'ascii'       => false,
@@ -9910,7 +9910,7 @@ return [
             'reading'     => 'なでなで | よしよし',
         ],
         [
-            'value'       => "(*\u{B4}ω`)ﾉ\u{1F431}",
+            'value'       => '(*´ω`)ﾉ🐱',
             'group'       => 'ja_nadenade',
             'description' => '絵文字',
             'ascii'       => false,
@@ -9918,7 +9918,7 @@ return [
             'reading'     => 'なでなで | ねこ',
         ],
         [
-            'value'       => "ヾ(\u{B4}\u{2200}`)ﾉ\u{1F436}",
+            'value'       => 'ヾ(´∀`)ﾉ🐶',
             'group'       => 'ja_nadenade',
             'description' => '絵文字',
             'ascii'       => false,
@@ -9926,7 +9926,7 @@ return [
             'reading'     => 'よしよし | いぬ',
         ],
         [
-            'value'       => "(\u{B4}\u{2200}\u{FF40})ﾉﾅﾃﾞﾅﾃﾞ\u{2728}",
+            'value'       => '(´∀｀)ﾉﾅﾃﾞﾅﾃﾞ✨',
             'group'       => 'ja_nadenade',
             'description' => '絵文字',
             'ascii'       => false,
@@ -9934,7 +9934,7 @@ return [
             'reading'     => 'なでなで | にこにこ',
         ],
         [
-            'value'       => "ﾖｼﾖｼ( \u{B4} \u{25BD} ` )ﾉ\u{1F495}",
+            'value'       => 'ﾖｼﾖｼ( ´ ▽ ` )ﾉ💕',
             'group'       => 'ja_nadenade',
             'description' => '絵文字',
             'ascii'       => false,
@@ -9942,7 +9942,7 @@ return [
             'reading'     => 'よしよし',
         ],
         [
-            'value'       => "(*\u{2D8}︶\u{2D8}*)ﾉﾅﾃﾞﾅﾃﾞ\u{1F495}",
+            'value'       => '(*˘︶˘*)ﾉﾅﾃﾞﾅﾃﾞ💕',
             'group'       => 'ja_nadenade',
             'description' => '絵文字',
             'ascii'       => false,
@@ -9950,7 +9950,7 @@ return [
             'reading'     => 'なでなで | ほっこり',
         ],
         [
-            'value'       => "ﾅﾃﾞﾅﾃﾞ(\u{B4}\u{2207}\u{FF40}*)\u{1F431}",
+            'value'       => 'ﾅﾃﾞﾅﾃﾞ(´∇｀*)🐱',
             'group'       => 'ja_nadenade',
             'description' => '絵文字',
             'ascii'       => false,
@@ -9958,7 +9958,7 @@ return [
             'reading'     => 'なでなで | ねこ',
         ],
         [
-            'value'       => "ヾ(\u{B4}\u{2207}\u{FF40}*)ﾉ ﾖｼﾖｼ\u{2728}",
+            'value'       => 'ヾ(´∇｀*)ﾉ ﾖｼﾖｼ✨',
             'group'       => 'ja_nadenade',
             'description' => '絵文字',
             'ascii'       => false,
@@ -9966,7 +9966,7 @@ return [
             'reading'     => 'よしよし',
         ],
         [
-            'value'       => "(\u{B4}ڡ`)\u{1F359}",
+            'value'       => '(´ڡ`)🍙',
             'group'       => 'ja_mogumogu',
             'description' => '絵文字',
             'ascii'       => false,
@@ -9974,7 +9974,7 @@ return [
             'reading'     => 'もぐもぐ | たべる',
         ],
         [
-            'value'       => "(｡\u{B4}ڡ`｡)\u{1F370}",
+            'value'       => '(｡´ڡ`｡)🍰',
             'group'       => 'ja_mogumogu',
             'description' => '絵文字',
             'ascii'       => false,
@@ -9982,7 +9982,7 @@ return [
             'reading'     => 'もぐもぐ | おいしい',
         ],
         [
-            'value'       => "(*\u{B4}﹃\u{FF40}*)\u{1F60B}",
+            'value'       => '(*´﹃｀*)😋',
             'group'       => 'ja_mogumogu',
             'description' => '絵文字',
             'ascii'       => false,
@@ -9990,7 +9990,7 @@ return [
             'reading'     => 'じゅるり | おいしい',
         ],
         [
-            'value'       => "(っ\u{2D8}ڡ\u{2D8}ς)\u{1F361}",
+            'value'       => '(っ˘ڡ˘ς)🍡',
             'group'       => 'ja_mogumogu',
             'description' => '絵文字',
             'ascii'       => false,
@@ -9998,7 +9998,7 @@ return [
             'reading'     => 'おいしい | うっとり',
         ],
         [
-            'value'       => "もぐもぐ(\u{B4}ω`)\u{1F359}",
+            'value'       => 'もぐもぐ(´ω`)🍙',
             'group'       => 'ja_mogumogu',
             'description' => '絵文字',
             'ascii'       => false,
@@ -10006,7 +10006,7 @@ return [
             'reading'     => 'もぐもぐ | たべる',
         ],
         [
-            'value'       => "( \u{B4} \u{25BD} ` )旦\u{1F375}",
+            'value'       => '( ´ ▽ ` )旦🍵',
             'group'       => 'ja_mogumogu',
             'description' => '絵文字',
             'ascii'       => false,
@@ -10014,7 +10014,7 @@ return [
             'reading'     => 'のむ | ずずっ',
         ],
         [
-            'value'       => "( \u{2D8}ω\u{2D8})旦\u{1F375}",
+            'value'       => '( ˘ω˘)旦🍵',
             'group'       => 'ja_mogumogu',
             'description' => '絵文字',
             'ascii'       => false,
@@ -10022,7 +10022,7 @@ return [
             'reading'     => 'のむ | まったり',
         ],
         [
-            'value'       => "(๑\u{B4}ڡ`๑)\u{1F60B}",
+            'value'       => '(๑´ڡ`๑)😋',
             'group'       => 'ja_mogumogu',
             'description' => '絵文字',
             'ascii'       => false,
@@ -10030,7 +10030,7 @@ return [
             'reading'     => 'おいしい | もぐもぐ',
         ],
         [
-            'value'       => "ﾊﾟｸﾊﾟｸ( ﾟ\u{2200}ﾟ)\u{1F370}",
+            'value'       => 'ﾊﾟｸﾊﾟｸ( ﾟ∀ﾟ)🍰',
             'group'       => 'ja_mogumogu',
             'description' => '絵文字',
             'ascii'       => false,
@@ -10038,7 +10038,7 @@ return [
             'reading'     => 'ぱくぱく | たべる',
         ],
         [
-            'value'       => "＼(\u{B4}ڡ`)／\u{1F361}",
+            'value'       => '＼(´ڡ`)／🍡',
             'group'       => 'ja_mogumogu',
             'description' => '絵文字',
             'ascii'       => false,
@@ -10046,7 +10046,7 @@ return [
             'reading'     => 'おいしい | わーい',
         ],
         [
-            'value'       => "(*\u{2D8}ڡ\u{2D8}*)\u{1F60B}",
+            'value'       => '(*˘ڡ˘*)😋',
             'group'       => 'ja_mogumogu',
             'description' => '絵文字',
             'ascii'       => false,
@@ -10054,7 +10054,7 @@ return [
             'reading'     => 'おいしい | うっとり',
         ],
         [
-            'value'       => "(ﾟдﾟ)ｳﾏｰ\u{1F370}",
+            'value'       => '(ﾟдﾟ)ｳﾏｰ🍰',
             'group'       => 'ja_mogumogu',
             'description' => '絵文字',
             'ascii'       => false,
@@ -10062,7 +10062,7 @@ return [
             'reading'     => 'うまー | おいしい',
         ],
         [
-            'value'       => "(\u{B4} ー`)旦~~\u{1F375}",
+            'value'       => '(´ ー`)旦~~🍵',
             'group'       => 'ja_mogumogu',
             'description' => '絵文字',
             'ascii'       => false,
@@ -10070,7 +10070,7 @@ return [
             'reading'     => 'のむ | ほっこり',
         ],
         [
-            'value'       => "(\u{2605}\u{25BD}\u{2605})",
+            'value'       => '(★▽★)',
             'group'       => 'ja_kirakira',
             'description' => 'キラキラ',
             'ascii'       => false,
@@ -10078,7 +10078,7 @@ return [
             'reading'     => 'きらきら | きらり',
         ],
         [
-            'value'       => "( \u{2727}ω\u{2727} )",
+            'value'       => '( ✧ω✧ )',
             'group'       => 'ja_kirakira',
             'description' => 'キラキラ',
             'ascii'       => false,
@@ -10086,7 +10086,7 @@ return [
             'reading'     => 'きらきら | きらり',
         ],
         [
-            'value'       => "(\u{2727}\u{25BD}\u{2727})",
+            'value'       => '(✧▽✧)',
             'group'       => 'ja_kirakira',
             'description' => 'キラキラ',
             'ascii'       => false,
@@ -10094,7 +10094,7 @@ return [
             'reading'     => 'きらきら | きらり',
         ],
         [
-            'value'       => "(\u{2726}ω\u{2726})",
+            'value'       => '(✦ω✦)',
             'group'       => 'ja_kirakira',
             'description' => 'キラキラ',
             'ascii'       => false,
@@ -10102,7 +10102,7 @@ return [
             'reading'     => 'きらきら | きらり',
         ],
         [
-            'value'       => "(\u{2605}w\u{2605})",
+            'value'       => '(★w★)',
             'group'       => 'ja_kirakira',
             'description' => 'キラキラ',
             'ascii'       => false,
@@ -10110,7 +10110,7 @@ return [
             'reading'     => 'きらきら | きらり',
         ],
         [
-            'value'       => "(\u{2606}ω\u{2606})",
+            'value'       => '(☆ω☆)',
             'group'       => 'ja_kirakira',
             'description' => 'キラキラ',
             'ascii'       => false,
@@ -10118,7 +10118,7 @@ return [
             'reading'     => 'きらきら | きらり',
         ],
         [
-            'value'       => "(\u{2605}ヮ\u{2605})",
+            'value'       => '(★ヮ★)',
             'group'       => 'ja_kirakira',
             'description' => 'キラキラ',
             'ascii'       => false,
@@ -10126,7 +10126,7 @@ return [
             'reading'     => 'きらきら | きらり',
         ],
         [
-            'value'       => "(\u{2727}ヮ\u{2727})",
+            'value'       => '(✧ヮ✧)',
             'group'       => 'ja_kirakira',
             'description' => 'キラキラ',
             'ascii'       => false,
@@ -10134,7 +10134,7 @@ return [
             'reading'     => 'きらきら | きらり',
         ],
         [
-            'value'       => "(\u{2729}ᗜ\u{2729})",
+            'value'       => '(✩ᗜ✩)',
             'group'       => 'ja_kirakira',
             'description' => 'キラキラ',
             'ascii'       => false,
@@ -10142,7 +10142,7 @@ return [
             'reading'     => 'きらきら | きらり',
         ],
         [
-            'value'       => "(*\u{2605}ω\u{2605}*)",
+            'value'       => '(*★ω★*)',
             'group'       => 'ja_kirakira',
             'description' => 'キラキラ',
             'ascii'       => false,
@@ -10150,7 +10150,7 @@ return [
             'reading'     => 'きらきら | きらり',
         ],
         [
-            'value'       => "(๑\u{2727}ω\u{2727}๑)",
+            'value'       => '(๑✧ω✧๑)',
             'group'       => 'ja_kirakira',
             'description' => 'キラキラ',
             'ascii'       => false,
@@ -10158,7 +10158,7 @@ return [
             'reading'     => 'きらきら | きらり',
         ],
         [
-            'value'       => "( \u{2606}ω\u{2606} )",
+            'value'       => '( ☆ω☆ )',
             'group'       => 'ja_kirakira',
             'description' => 'キラキラ',
             'ascii'       => false,
@@ -10166,7 +10166,7 @@ return [
             'reading'     => 'きらきら | きらり',
         ],
         [
-            'value'       => "(\u{2661}\u{2727}ω\u{2727}\u{2661})",
+            'value'       => '(♡✧ω✧♡)',
             'group'       => 'ja_kirakira',
             'description' => 'キラキラ',
             'ascii'       => false,
@@ -10174,7 +10174,7 @@ return [
             'reading'     => 'きらきら | きゅん',
         ],
         [
-            'value'       => "ヽ(\u{2605}ω\u{2605})ﾉ",
+            'value'       => 'ヽ(★ω★)ﾉ',
             'group'       => 'ja_kirakira',
             'description' => 'キラキラ',
             'ascii'       => false,
@@ -10182,7 +10182,7 @@ return [
             'reading'     => 'きらきら | わーい',
         ],
         [
-            'value'       => "(\u{2727}Д\u{2727})",
+            'value'       => '(✧Д✧)',
             'group'       => 'ja_kirakira',
             'description' => 'キラキラ',
             'ascii'       => false,
@@ -10190,7 +10190,7 @@ return [
             'reading'     => 'きらきら | かんどう',
         ],
         [
-            'value'       => "(\u{2605}Д\u{2605})",
+            'value'       => '(★Д★)',
             'group'       => 'ja_kirakira',
             'description' => 'キラキラ',
             'ascii'       => false,
@@ -10198,7 +10198,7 @@ return [
             'reading'     => 'きらきら | かんどう',
         ],
         [
-            'value'       => "( \u{2727} Д\u{2727})",
+            'value'       => '( ✧ Д✧)',
             'group'       => 'ja_kirakira',
             'description' => 'キラキラ',
             'ascii'       => false,
@@ -10206,7 +10206,7 @@ return [
             'reading'     => 'きらきら | かんどう',
         ],
         [
-            'value'       => "｡ﾟ(*\u{B4}\u{2200}`*)ﾟ｡",
+            'value'       => '｡ﾟ(*´∀`*)ﾟ｡',
             'group'       => 'ja_kirakira',
             'description' => 'キラキラ',
             'ascii'       => false,
@@ -10214,7 +10214,7 @@ return [
             'reading'     => 'きらきら | にこにこ',
         ],
         [
-            'value'       => "\u{2727}*。(*\u{B4}\u{2200}`*)",
+            'value'       => '✧*。(*´∀`*)',
             'group'       => 'ja_kirakira',
             'description' => 'キラキラ',
             'ascii'       => false,
@@ -10222,7 +10222,7 @@ return [
             'reading'     => 'きらきら | にこにこ',
         ],
         [
-            'value'       => "ヽ(\u{25D5}ヮ\u{25D5})ﾉ*:･ﾟ\u{2727}",
+            'value'       => 'ヽ(◕ヮ◕)ﾉ*:･ﾟ✧',
             'group'       => 'ja_kirakira',
             'description' => 'キラキラ',
             'ascii'       => false,
@@ -10230,7 +10230,7 @@ return [
             'reading'     => 'きらきら | わーい',
         ],
         [
-            'value'       => "\u{2727}･ﾟ:* (*\u{B4}ω`*) *:･ﾟ\u{2727}",
+            'value'       => '✧･ﾟ:* (*´ω`*) *:･ﾟ✧',
             'group'       => 'ja_kirakira',
             'description' => 'キラキラ',
             'ascii'       => false,
@@ -10238,7 +10238,7 @@ return [
             'reading'     => 'きらきら | うっとり',
         ],
         [
-            'value'       => ".｡.:*・\u{309C}(\u{2605}ω\u{2605})\u{309C}・*:.｡",
+            'value'       => '.｡.:*・゜(★ω★)゜・*:.｡',
             'group'       => 'ja_kirakira',
             'description' => 'キラキラ',
             'ascii'       => false,
@@ -10246,7 +10246,7 @@ return [
             'reading'     => 'きらきら | きらり',
         ],
         [
-            'value'       => "ﾟ+｡:.ﾟ(*\u{B4}\u{2200}`*)ﾟ.:｡+ﾟ",
+            'value'       => 'ﾟ+｡:.ﾟ(*´∀`*)ﾟ.:｡+ﾟ',
             'group'       => 'ja_kirakira',
             'description' => 'キラキラ',
             'ascii'       => false,
@@ -10254,7 +10254,7 @@ return [
             'reading'     => 'きらきら | にこにこ',
         ],
         [
-            'value'       => "\u{2727}.*(\u{25CD}•ᴗ•\u{25CD})*.\u{2727}",
+            'value'       => '✧.*(◍•ᴗ•◍)*.✧',
             'group'       => 'ja_kirakira',
             'description' => 'キラキラ',
             'ascii'       => false,
@@ -10262,7 +10262,7 @@ return [
             'reading'     => 'きらきら | にこにこ',
         ],
         [
-            'value'       => "\u{2606}*:.｡.(\u{B4}\u{25BD}`).｡.:*\u{2606}",
+            'value'       => '☆*:.｡.(´▽`).｡.:*☆',
             'group'       => 'ja_kirakira',
             'description' => 'キラキラ',
             'ascii'       => false,
@@ -10270,7 +10270,7 @@ return [
             'reading'     => 'きらきら | にこにこ',
         ],
         [
-            'value'       => "+｡:.ﾟ(\u{B4}\u{2200}`)ﾟ.:｡+",
+            'value'       => '+｡:.ﾟ(´∀`)ﾟ.:｡+',
             'group'       => 'ja_kirakira',
             'description' => 'キラキラ',
             'ascii'       => false,
@@ -10278,7 +10278,7 @@ return [
             'reading'     => 'きらきら | にこにこ',
         ],
         [
-            'value'       => "\u{2729}\u{B0}｡\u{22C6}(ˊᗜˋ*)",
+            'value'       => '✩°｡⋆(ˊᗜˋ*)',
             'group'       => 'ja_kirakira',
             'description' => 'キラキラ',
             'ascii'       => false,
@@ -10286,7 +10286,7 @@ return [
             'reading'     => 'きらきら | わーい',
         ],
         [
-            'value'       => "\u{22C6}｡\u{B0}\u{2729}(\u{25D5}ᴗ\u{25D5})\u{2729}\u{B0}｡\u{22C6}",
+            'value'       => '⋆｡°✩(◕ᴗ◕)✩°｡⋆',
             'group'       => 'ja_kirakira',
             'description' => 'キラキラ',
             'ascii'       => false,
@@ -10294,7 +10294,7 @@ return [
             'reading'     => 'きらきら | にこにこ',
         ],
         [
-            'value'       => "｡ﾟ\u{2727}(\u{B4}\u{25BD}`)\u{2727}ﾟ｡",
+            'value'       => '｡ﾟ✧(´▽`)✧ﾟ｡',
             'group'       => 'ja_kirakira',
             'description' => 'キラキラ',
             'ascii'       => false,
@@ -10302,7 +10302,7 @@ return [
             'reading'     => 'きらきら | にこにこ',
         ],
         [
-            'value'       => "\u{2726}.｡.:*(\u{2F6}ˆ\u{25BD}ˆ\u{2F5}):*.｡.\u{2726}",
+            'value'       => '✦.｡.:*(˶ˆ▽ˆ˵):*.｡.✦',
             'group'       => 'ja_kirakira',
             'description' => 'キラキラ',
             'ascii'       => false,
@@ -10310,7 +10310,7 @@ return [
             'reading'     => 'きらきら | にこにこ',
         ],
         [
-            'value'       => "\u{2606}彡(\u{B4}\u{25BD}`)",
+            'value'       => '☆彡(´▽`)',
             'group'       => 'ja_kirakira',
             'description' => 'キラキラ',
             'ascii'       => false,
@@ -10318,7 +10318,7 @@ return [
             'reading'     => 'きらきら | ながれぼし',
         ],
         [
-            'value'       => "(\u{B4}\u{25BD}`)ﾉ\u{2606}彡",
+            'value'       => '(´▽`)ﾉ☆彡',
             'group'       => 'ja_kirakira',
             'description' => 'キラキラ',
             'ascii'       => false,
@@ -10326,7 +10326,7 @@ return [
             'reading'     => 'きらきら | ながれぼし',
         ],
         [
-            'value'       => "\u{2605}彡(\u{25D5}ᴗ\u{25D5})彡\u{2606}",
+            'value'       => '★彡(◕ᴗ◕)彡☆',
             'group'       => 'ja_kirakira',
             'description' => 'キラキラ',
             'ascii'       => false,
@@ -10334,7 +10334,7 @@ return [
             'reading'     => 'きらきら | ながれぼし',
         ],
         [
-            'value'       => "\u{2727}\u{2DA}*(*\u{B4}ω`*)*\u{2DA}\u{2727}",
+            'value'       => '✧˚*(*´ω`*)*˚✧',
             'group'       => 'ja_kirakira',
             'description' => 'キラキラ',
             'ascii'       => false,
@@ -10342,7 +10342,7 @@ return [
             'reading'     => 'きらきら | うっとり',
         ],
         [
-            'value'       => "｡+ﾟ\u{2727}(\u{25CD}•ᗜ•\u{25CD})\u{2727}ﾟ+｡",
+            'value'       => '｡+ﾟ✧(◍•ᗜ•◍)✧ﾟ+｡',
             'group'       => 'ja_kirakira',
             'description' => 'キラキラ',
             'ascii'       => false,
@@ -10350,7 +10350,7 @@ return [
             'reading'     => 'きらきら | にこにこ',
         ],
         [
-            'value'       => "\u{2729}*｡(*\u{B4}\u{25BD}`*)",
+            'value'       => '✩*｡(*´▽`*)',
             'group'       => 'ja_kirakira',
             'description' => 'キラキラ',
             'ascii'       => false,
@@ -10358,7 +10358,7 @@ return [
             'reading'     => 'きらきら | うっとり',
         ],
         [
-            'value'       => "(\u{2605}ｰ\u{2605})",
+            'value'       => '(★ｰ★)',
             'group'       => 'ja_kirakira',
             'description' => 'キラキラ',
             'ascii'       => false,
@@ -10366,7 +10366,7 @@ return [
             'reading'     => 'きらきら | わくわく',
         ],
         [
-            'value'       => "(\u{2606}ｰ\u{2606})",
+            'value'       => '(☆ｰ☆)',
             'group'       => 'ja_kirakira',
             'description' => 'キラキラ',
             'ascii'       => false,
@@ -10374,7 +10374,7 @@ return [
             'reading'     => 'きらきら | わくわく',
         ],
         [
-            'value'       => "(*\u{2605}\u{2200}\u{2605}*)",
+            'value'       => '(*★∀★*)',
             'group'       => 'ja_kirakira',
             'description' => 'キラキラ',
             'ascii'       => false,
@@ -10382,7 +10382,7 @@ return [
             'reading'     => 'きらきら | わくわく',
         ],
         [
-            'value'       => "(((o(\u{2605}ω\u{2605})o)))",
+            'value'       => '(((o(★ω★)o)))',
             'group'       => 'ja_kirakira',
             'description' => 'キラキラ',
             'ascii'       => false,
@@ -10390,7 +10390,7 @@ return [
             'reading'     => 'わくわく | きらきら',
         ],
         [
-            'value'       => "o(\u{2605}ω\u{2605})o",
+            'value'       => 'o(★ω★)o',
             'group'       => 'ja_kirakira',
             'description' => 'キラキラ',
             'ascii'       => false,
@@ -10398,7 +10398,7 @@ return [
             'reading'     => 'わくわく | きらきら',
         ],
         [
-            'value'       => "(๑\u{2727}\u{2200}\u{2727}๑)",
+            'value'       => '(๑✧∀✧๑)',
             'group'       => 'ja_kirakira',
             'description' => 'キラキラ',
             'ascii'       => false,
@@ -10406,7 +10406,7 @@ return [
             'reading'     => 'きらきら | わくわく',
         ],
         [
-            'value'       => "ヽ(\u{2727}\u{2200}\u{2727})ﾉ",
+            'value'       => 'ヽ(✧∀✧)ﾉ',
             'group'       => 'ja_kirakira',
             'description' => 'キラキラ',
             'ascii'       => false,
@@ -10414,7 +10414,7 @@ return [
             'reading'     => 'きらきら | わーい',
         ],
         [
-            'value'       => "(\u{2606}\u{25BD}\u{2606})/",
+            'value'       => '(☆▽☆)/',
             'group'       => 'ja_kirakira',
             'description' => 'キラキラ',
             'ascii'       => false,
@@ -10422,7 +10422,7 @@ return [
             'reading'     => 'わくわく | きらきら',
         ],
         [
-            'value'       => "＼(\u{2605}ω\u{2605})／",
+            'value'       => '＼(★ω★)／',
             'group'       => 'ja_kirakira',
             'description' => 'キラキラ',
             'ascii'       => false,
@@ -10430,7 +10430,7 @@ return [
             'reading'     => 'きらきら | わーい',
         ],
         [
-            'value'       => "(o\u{2727}\u{2200}\u{2727}o)",
+            'value'       => '(o✧∀✧o)',
             'group'       => 'ja_kirakira',
             'description' => 'キラキラ',
             'ascii'       => false,
@@ -10438,7 +10438,7 @@ return [
             'reading'     => 'きらきら | わくわく',
         ],
         [
-            'value'       => "(\u{2727} \u{2200} \u{2727})",
+            'value'       => '(✧ ∀ ✧)',
             'group'       => 'ja_kirakira',
             'description' => 'キラキラ',
             'ascii'       => false,
@@ -10446,7 +10446,7 @@ return [
             'reading'     => 'きらきら | あこがれ',
         ],
         [
-            'value'       => "(\u{2729} \u{2200} \u{2729})",
+            'value'       => '(✩ ∀ ✩)',
             'group'       => 'ja_kirakira',
             'description' => 'キラキラ',
             'ascii'       => false,
@@ -10454,7 +10454,7 @@ return [
             'reading'     => 'きらきら | あこがれ',
         ],
         [
-            'value'       => "ヾ(\u{2605}ω\u{2605})ノ",
+            'value'       => 'ヾ(★ω★)ノ',
             'group'       => 'ja_kirakira',
             'description' => 'キラキラ',
             'ascii'       => false,
@@ -10462,7 +10462,7 @@ return [
             'reading'     => 'きらきら | わーい',
         ],
         [
-            'value'       => "(\u{2605}\u{2200}\u{2605})b",
+            'value'       => '(★∀★)b',
             'group'       => 'ja_kirakira',
             'description' => 'キラキラ',
             'ascii'       => false,
@@ -10470,7 +10470,7 @@ return [
             'reading'     => 'きらきら | ぐっ',
         ],
         [
-            'value'       => "(\u{2661}\u{2D9}︶\u{2D9}\u{2661})\u{2727}",
+            'value'       => '(♡˙︶˙♡)✧',
             'group'       => 'ja_kirakira',
             'description' => 'キラキラ',
             'ascii'       => false,
@@ -10478,7 +10478,7 @@ return [
             'reading'     => 'きらきら | きゅん',
         ],
         [
-            'value'       => "(\u{25D5}‿\u{25D5}\u{273F})\u{2727}",
+            'value'       => '(◕‿◕✿)✧',
             'group'       => 'ja_kirakira',
             'description' => 'キラキラ',
             'ascii'       => false,
@@ -10486,7 +10486,7 @@ return [
             'reading'     => 'きらきら | にこにこ',
         ],
         [
-            'value'       => "(\u{273F}\u{2727}ᴗ\u{2727})",
+            'value'       => '(✿✧ᴗ✧)',
             'group'       => 'ja_kirakira',
             'description' => 'キラキラ',
             'ascii'       => false,
@@ -10494,7 +10494,7 @@ return [
             'reading'     => 'きらきら | にこにこ',
         ],
         [
-            'value'       => "\u{2729}(\u{2F6}ᵔ ᵕ ᵔ\u{2F6})\u{2729}",
+            'value'       => '✩(˶ᵔ ᵕ ᵔ˶)✩',
             'group'       => 'ja_kirakira',
             'description' => 'キラキラ',
             'ascii'       => false,
@@ -10502,7 +10502,7 @@ return [
             'reading'     => 'きらきら | にこにこ',
         ],
         [
-            'value'       => "(\u{2661}\u{B4}\u{25BD}`\u{2661})\u{2727}",
+            'value'       => '(♡´▽`♡)✧',
             'group'       => 'ja_kirakira',
             'description' => 'キラキラ',
             'ascii'       => false,
@@ -10510,7 +10510,7 @@ return [
             'reading'     => 'きらきら | だいすき',
         ],
         [
-            'value'       => "\u{2727}(\u{2267}\u{25E1}\u{2266})\u{2727}",
+            'value'       => '✧(≧◡≦)✧',
             'group'       => 'ja_kirakira',
             'description' => 'キラキラ',
             'ascii'       => false,
@@ -10518,7 +10518,7 @@ return [
             'reading'     => 'きらきら | にこにこ',
         ],
         [
-            'value'       => "(*\u{2727}‿\u{2727}*)",
+            'value'       => '(*✧‿✧*)',
             'group'       => 'ja_kirakira',
             'description' => 'キラキラ',
             'ascii'       => false,
@@ -10526,7 +10526,7 @@ return [
             'reading'     => 'きらきら | にこにこ',
         ],
         [
-            'value'       => "( \u{25D5}‿\u{25D5} )｡ﾟ\u{2727}",
+            'value'       => '( ◕‿◕ )｡ﾟ✧',
             'group'       => 'ja_kirakira',
             'description' => 'キラキラ',
             'ascii'       => false,
@@ -10534,7 +10534,7 @@ return [
             'reading'     => 'きらきら | にこにこ',
         ],
         [
-            'value'       => "\u{2727}*。٩(ˊᗜˋ*)و *。\u{2727}",
+            'value'       => '✧*。٩(ˊᗜˋ*)و *。✧',
             'group'       => 'ja_kirakira',
             'description' => 'キラキラ',
             'ascii'       => false,
@@ -10542,7 +10542,7 @@ return [
             'reading'     => 'きらきら | がんばる',
         ],
         [
-            'value'       => "｡\u{2727}*ﾟ(っ\u{25D4}\u{25E1}\u{25D4})っ \u{2665}",
+            'value'       => '｡✧*ﾟ(っ◔◡◔)っ ♥',
             'group'       => 'ja_kirakira',
             'description' => 'キラキラ',
             'ascii'       => false,
@@ -10550,7 +10550,7 @@ return [
             'reading'     => 'きらめき | まほう',
         ],
         [
-            'value'       => "(っ・ω・)っ \u{2727}*。",
+            'value'       => '(っ・ω・)っ ✧*。',
             'group'       => 'ja_kirakira',
             'description' => 'キラキラ',
             'ascii'       => false,
@@ -10558,7 +10558,7 @@ return [
             'reading'     => 'きらめき | まほう',
         ],
         [
-            'value'       => "\u{2727}･ﾟ:*\u{2727}･ﾟ:*(\u{B4}\u{25BD}`)*:･ﾟ\u{2727}*:･ﾟ\u{2727}",
+            'value'       => '✧･ﾟ:*✧･ﾟ:*(´▽`)*:･ﾟ✧*:･ﾟ✧',
             'group'       => 'ja_kirakira',
             'description' => 'キラキラ',
             'ascii'       => false,
@@ -10566,7 +10566,7 @@ return [
             'reading'     => 'きらめき | まほう',
         ],
         [
-            'value'       => "(ﾉ\u{2727}ω\u{2727})ﾉ*:･ﾟ\u{2727}",
+            'value'       => '(ﾉ✧ω✧)ﾉ*:･ﾟ✧',
             'group'       => 'ja_kirakira',
             'description' => 'キラキラ',
             'ascii'       => false,
@@ -10574,7 +10574,7 @@ return [
             'reading'     => 'きらめき | まほう',
         ],
         [
-            'value'       => "\u{2606}.｡.:*・\u{B0}\u{2606}.｡.:*・\u{B0}\u{2606}",
+            'value'       => '☆.｡.:*・°☆.｡.:*・°☆',
             'group'       => 'ja_kirakira',
             'description' => 'キラキラ',
             'ascii'       => false,
@@ -10582,7 +10582,7 @@ return [
             'reading'     => 'きらめき | きらきら',
         ],
         [
-            'value'       => "\u{2727}\u{22C6}｡\u{B0}\u{2729}\u{22C6}｡\u{B0}\u{2727}",
+            'value'       => '✧⋆｡°✩⋆｡°✧',
             'group'       => 'ja_kirakira',
             'description' => 'キラキラ',
             'ascii'       => false,
@@ -10590,7 +10590,7 @@ return [
             'reading'     => 'きらめき | きらきら',
         ],
         [
-            'value'       => "ヽ(\u{2727}ω\u{2727})ﾉ\u{2606}.｡.:*",
+            'value'       => 'ヽ(✧ω✧)ﾉ☆.｡.:*',
             'group'       => 'ja_kirakira',
             'description' => 'キラキラ',
             'ascii'       => false,
@@ -10598,7 +10598,7 @@ return [
             'reading'     => 'きらめき | まほう',
         ],
         [
-            'value'       => "(\u{B4}ڡ`)",
+            'value'       => '(´ڡ`)',
             'group'       => 'ja_mogumogu',
             'description' => 'もぐもぐ',
             'ascii'       => false,
@@ -10606,7 +10606,7 @@ return [
             'reading'     => 'もぐもぐ | たべる',
         ],
         [
-            'value'       => "(｡\u{B4}ڡ`｡)",
+            'value'       => '(｡´ڡ`｡)',
             'group'       => 'ja_mogumogu',
             'description' => 'もぐもぐ',
             'ascii'       => false,
@@ -10614,7 +10614,7 @@ return [
             'reading'     => 'もぐもぐ | おいしい',
         ],
         [
-            'value'       => "もぐもぐ(\u{B4}ω`)",
+            'value'       => 'もぐもぐ(´ω`)',
             'group'       => 'ja_mogumogu',
             'description' => 'もぐもぐ',
             'ascii'       => false,
@@ -10622,7 +10622,7 @@ return [
             'reading'     => 'もぐもぐ | たべる',
         ],
         [
-            'value'       => "ﾓｸﾞﾓｸﾞ(`･ω･\u{B4})",
+            'value'       => 'ﾓｸﾞﾓｸﾞ(`･ω･´)',
             'group'       => 'ja_mogumogu',
             'description' => 'もぐもぐ',
             'ascii'       => false,
@@ -10646,7 +10646,7 @@ return [
             'reading'     => 'もぐもぐ | まったり',
         ],
         [
-            'value'       => "(*\u{B4}﹃\u{FF40}*)",
+            'value'       => '(*´﹃｀*)',
             'group'       => 'ja_mogumogu',
             'description' => 'もぐもぐ',
             'ascii'       => false,
@@ -10654,7 +10654,7 @@ return [
             'reading'     => 'じゅるり | おいしい',
         ],
         [
-            'value'       => "(\u{B4}~`)もぐもぐ",
+            'value'       => '(´~`)もぐもぐ',
             'group'       => 'ja_mogumogu',
             'description' => 'もぐもぐ',
             'ascii'       => false,
@@ -10662,7 +10662,7 @@ return [
             'reading'     => 'もぐもぐ | たべる',
         ],
         [
-            'value'       => "( \u{2D8} ﾟ \u{2D8} )もぐもぐ",
+            'value'       => '( ˘ ﾟ ˘ )もぐもぐ',
             'group'       => 'ja_mogumogu',
             'description' => 'もぐもぐ',
             'ascii'       => false,
@@ -10670,7 +10670,7 @@ return [
             'reading'     => 'もぐもぐ | たべる',
         ],
         [
-            'value'       => "ﾊﾟｸﾊﾟｸ( ﾟ\u{2200}ﾟ)",
+            'value'       => 'ﾊﾟｸﾊﾟｸ( ﾟ∀ﾟ)',
             'group'       => 'ja_mogumogu',
             'description' => 'もぐもぐ',
             'ascii'       => false,
@@ -10678,7 +10678,7 @@ return [
             'reading'     => 'ぱくぱく | たべる',
         ],
         [
-            'value'       => "(っ\u{2D8}ڡ\u{2D8}ς)",
+            'value'       => '(っ˘ڡ˘ς)',
             'group'       => 'ja_mogumogu',
             'description' => 'もぐもぐ',
             'ascii'       => false,
@@ -10686,7 +10686,7 @@ return [
             'reading'     => 'おいしい | うっとり',
         ],
         [
-            'value'       => "(๑\u{B4}ڡ`๑)",
+            'value'       => '(๑´ڡ`๑)',
             'group'       => 'ja_mogumogu',
             'description' => 'もぐもぐ',
             'ascii'       => false,
@@ -10694,7 +10694,7 @@ return [
             'reading'     => 'おいしい | もぐもぐ',
         ],
         [
-            'value'       => "( \u{2F6}\u{2D8} ³\u{2D8}\u{2F6} )",
+            'value'       => '( ˶˘ ³˘˶ )',
             'group'       => 'ja_mogumogu',
             'description' => 'もぐもぐ',
             'ascii'       => false,
@@ -10702,7 +10702,7 @@ return [
             'reading'     => 'おいしい | うっとり',
         ],
         [
-            'value'       => "(*\u{2D8}ڡ\u{2D8}*)",
+            'value'       => '(*˘ڡ˘*)',
             'group'       => 'ja_mogumogu',
             'description' => 'もぐもぐ',
             'ascii'       => false,
@@ -10710,7 +10710,7 @@ return [
             'reading'     => 'おいしい | うっとり',
         ],
         [
-            'value'       => "(\u{B4}\u{B0}ω\u{B0}`)じゅるり",
+            'value'       => '(´°ω°`)じゅるり',
             'group'       => 'ja_mogumogu',
             'description' => 'もぐもぐ',
             'ascii'       => false,
@@ -10718,7 +10718,7 @@ return [
             'reading'     => 'じゅるり | おいしい',
         ],
         [
-            'value'       => "ヽ(\u{B4}ڡ`ﾒ)",
+            'value'       => 'ヽ(´ڡ`ﾒ)',
             'group'       => 'ja_mogumogu',
             'description' => 'もぐもぐ',
             'ascii'       => false,
@@ -10726,7 +10726,7 @@ return [
             'reading'     => 'おいしい | もぐもぐ',
         ],
         [
-            'value'       => "(\u{FF3E}人\u{FF3E})",
+            'value'       => '(＾人＾)',
             'group'       => 'ja_mogumogu',
             'description' => 'もぐもぐ',
             'ascii'       => false,
@@ -10742,7 +10742,7 @@ return [
             'reading'     => 'いただきます',
         ],
         [
-            'value'       => "いただきます(\u{FF3E}\u{2200}\u{FF3E})",
+            'value'       => 'いただきます(＾∀＾)',
             'group'       => 'ja_mogumogu',
             'description' => 'もぐもぐ',
             'ascii'       => false,
@@ -10750,7 +10750,7 @@ return [
             'reading'     => 'いただきます',
         ],
         [
-            'value'       => "ごちそうさま( \u{B4} \u{25BD} ` )",
+            'value'       => 'ごちそうさま( ´ ▽ ` )',
             'group'       => 'ja_mogumogu',
             'description' => 'もぐもぐ',
             'ascii'       => false,
@@ -10758,7 +10758,7 @@ return [
             'reading'     => 'ごちそうさま',
         ],
         [
-            'value'       => "( \u{B4} \u{25BD} ` )旦",
+            'value'       => '( ´ ▽ ` )旦',
             'group'       => 'ja_mogumogu',
             'description' => 'もぐもぐ',
             'ascii'       => false,
@@ -10766,7 +10766,7 @@ return [
             'reading'     => 'のむ | ずずっ',
         ],
         [
-            'value'       => "( \u{2D8}ω\u{2D8})旦",
+            'value'       => '( ˘ω˘)旦',
             'group'       => 'ja_mogumogu',
             'description' => 'もぐもぐ',
             'ascii'       => false,
@@ -10774,7 +10774,7 @@ return [
             'reading'     => 'のむ | まったり',
         ],
         [
-            'value'       => "(\u{B4} ー`)旦~~",
+            'value'       => '(´ ー`)旦~~',
             'group'       => 'ja_mogumogu',
             'description' => 'もぐもぐ',
             'ascii'       => false,
@@ -10790,7 +10790,7 @@ return [
             'reading'     => 'のむ | どうぞ',
         ],
         [
-            'value'       => "( \u{B4}ω`)っ旦~",
+            'value'       => '( ´ω`)っ旦~',
             'group'       => 'ja_mogumogu',
             'description' => 'もぐもぐ',
             'ascii'       => false,
@@ -10798,7 +10798,7 @@ return [
             'reading'     => 'のむ | どうぞ',
         ],
         [
-            'value'       => "ヽ(\u{309C}ﾛ\u{309C})ﾉ いただきっ",
+            'value'       => 'ヽ(゜ﾛ゜)ﾉ いただきっ',
             'group'       => 'ja_mogumogu',
             'description' => 'もぐもぐ',
             'ascii'       => false,
@@ -10806,7 +10806,7 @@ return [
             'reading'     => 'わくわく | がっつき',
         ],
         [
-            'value'       => "＼(\u{B4}ڡ`)／",
+            'value'       => '＼(´ڡ`)／',
             'group'       => 'ja_mogumogu',
             'description' => 'もぐもぐ',
             'ascii'       => false,
@@ -10822,7 +10822,7 @@ return [
             'reading'     => 'うまー | おいしい',
         ],
         [
-            'value'       => "(\u{B4}ω\u{FF40})ﾉﾅﾃﾞﾅﾃﾞ",
+            'value'       => '(´ω｀)ﾉﾅﾃﾞﾅﾃﾞ',
             'group'       => 'ja_nadenade',
             'description' => 'なでなで',
             'ascii'       => false,
@@ -10830,7 +10830,7 @@ return [
             'reading'     => 'なでなで',
         ],
         [
-            'value'       => "(\u{B4}-ω-)ﾉﾞﾅﾃﾞﾅﾃﾞ",
+            'value'       => '(´-ω-)ﾉﾞﾅﾃﾞﾅﾃﾞ',
             'group'       => 'ja_nadenade',
             'description' => 'なでなで',
             'ascii'       => false,
@@ -10838,7 +10838,7 @@ return [
             'reading'     => 'なでなで',
         ],
         [
-            'value'       => "ﾅﾃﾞﾅﾃﾞ(*\u{B4}ω`*)",
+            'value'       => 'ﾅﾃﾞﾅﾃﾞ(*´ω`*)',
             'group'       => 'ja_nadenade',
             'description' => 'なでなで',
             'ascii'       => false,
@@ -10846,7 +10846,7 @@ return [
             'reading'     => 'なでなで | ほっこり',
         ],
         [
-            'value'       => "ヾ(\u{B4}ー\u{FF40})ﾉﾞﾅﾃﾞﾅﾃﾞ",
+            'value'       => 'ヾ(´ー｀)ﾉﾞﾅﾃﾞﾅﾃﾞ',
             'group'       => 'ja_nadenade',
             'description' => 'なでなで',
             'ascii'       => false,
@@ -10854,7 +10854,7 @@ return [
             'reading'     => 'なでなで | よしよし',
         ],
         [
-            'value'       => "(\u{B4}\u{2200}\u{FF40})ﾉﾅﾃﾞﾅﾃﾞ",
+            'value'       => '(´∀｀)ﾉﾅﾃﾞﾅﾃﾞ',
             'group'       => 'ja_nadenade',
             'description' => 'なでなで',
             'ascii'       => false,
@@ -10870,7 +10870,7 @@ return [
             'reading'     => 'なでなで',
         ],
         [
-            'value'       => "(*\u{B4}ω`)ﾉﾅﾃﾞﾅﾃﾞ",
+            'value'       => '(*´ω`)ﾉﾅﾃﾞﾅﾃﾞ',
             'group'       => 'ja_nadenade',
             'description' => 'なでなで',
             'ascii'       => false,
@@ -10878,7 +10878,7 @@ return [
             'reading'     => 'なでなで | ほっこり',
         ],
         [
-            'value'       => "〜ヾ(\u{B4}ω\u{FF40})ﾉﾅﾃﾞﾅﾃﾞ",
+            'value'       => '〜ヾ(´ω｀)ﾉﾅﾃﾞﾅﾃﾞ',
             'group'       => 'ja_nadenade',
             'description' => 'なでなで',
             'ascii'       => false,
@@ -10886,7 +10886,7 @@ return [
             'reading'     => 'なでなで',
         ],
         [
-            'value'       => "(っ\u{B4}ω`)ﾉﾅﾃﾞﾅﾃﾞ",
+            'value'       => '(っ´ω`)ﾉﾅﾃﾞﾅﾃﾞ',
             'group'       => 'ja_nadenade',
             'description' => 'なでなで',
             'ascii'       => false,
@@ -10894,7 +10894,7 @@ return [
             'reading'     => 'なでなで',
         ],
         [
-            'value'       => "ﾅﾃﾞﾅﾃﾞ(っ・\u{2200}・)っ",
+            'value'       => 'ﾅﾃﾞﾅﾃﾞ(っ・∀・)っ',
             'group'       => 'ja_nadenade',
             'description' => 'なでなで',
             'ascii'       => false,
@@ -10902,7 +10902,7 @@ return [
             'reading'     => 'なでなで',
         ],
         [
-            'value'       => "( \u{B4} \u{25BD} ` )ﾉﾅﾃﾞﾅﾃﾞ",
+            'value'       => '( ´ ▽ ` )ﾉﾅﾃﾞﾅﾃﾞ',
             'group'       => 'ja_nadenade',
             'description' => 'なでなで',
             'ascii'       => false,
@@ -10910,7 +10910,7 @@ return [
             'reading'     => 'なでなで | にこにこ',
         ],
         [
-            'value'       => "ヾ(*\u{B4}\u{2200}`*)ﾉﾅﾃﾞﾅﾃﾞ",
+            'value'       => 'ヾ(*´∀`*)ﾉﾅﾃﾞﾅﾃﾞ',
             'group'       => 'ja_nadenade',
             'description' => 'なでなで',
             'ascii'       => false,
@@ -10918,7 +10918,7 @@ return [
             'reading'     => 'なでなで | にこにこ',
         ],
         [
-            'value'       => "(\u{B4}ー`)ﾉ\u{2312}ﾅﾃﾞﾅﾃﾞ",
+            'value'       => '(´ー`)ﾉ⌒ﾅﾃﾞﾅﾃﾞ',
             'group'       => 'ja_nadenade',
             'description' => 'なでなで',
             'ascii'       => false,
@@ -10926,7 +10926,7 @@ return [
             'reading'     => 'なでなで | よしよし',
         ],
         [
-            'value'       => "ﾅﾃﾞﾅﾃﾞ( \u{2D8}ω\u{2D8} )",
+            'value'       => 'ﾅﾃﾞﾅﾃﾞ( ˘ω˘ )',
             'group'       => 'ja_nadenade',
             'description' => 'なでなで',
             'ascii'       => false,
@@ -10934,7 +10934,7 @@ return [
             'reading'     => 'なでなで | うとうと',
         ],
         [
-            'value'       => "(*\u{2D8}︶\u{2D8}*)ﾉﾅﾃﾞﾅﾃﾞ",
+            'value'       => '(*˘︶˘*)ﾉﾅﾃﾞﾅﾃﾞ',
             'group'       => 'ja_nadenade',
             'description' => 'なでなで',
             'ascii'       => false,
@@ -10942,7 +10942,7 @@ return [
             'reading'     => 'なでなで | ほっこり',
         ],
         [
-            'value'       => "ヽ(\u{B4}ω\u{FF40})ﾉﾅﾃﾞﾅﾃﾞ",
+            'value'       => 'ヽ(´ω｀)ﾉﾅﾃﾞﾅﾃﾞ',
             'group'       => 'ja_nadenade',
             'description' => 'なでなで',
             'ascii'       => false,
@@ -10958,7 +10958,7 @@ return [
             'reading'     => 'なでなで | かわいい',
         ],
         [
-            'value'       => "ﾅﾃﾞﾅﾃﾞ(\u{B4}\u{2207}\u{FF40}*)",
+            'value'       => 'ﾅﾃﾞﾅﾃﾞ(´∇｀*)',
             'group'       => 'ja_nadenade',
             'description' => 'なでなで',
             'ascii'       => false,
@@ -10966,7 +10966,7 @@ return [
             'reading'     => 'なでなで | にこにこ',
         ],
         [
-            'value'       => "ヾ(\u{B4}\u{2207}\u{FF40}*)ﾉ ﾖｼﾖｼ",
+            'value'       => 'ヾ(´∇｀*)ﾉ ﾖｼﾖｼ',
             'group'       => 'ja_nadenade',
             'description' => 'なでなで',
             'ascii'       => false,
@@ -10974,7 +10974,7 @@ return [
             'reading'     => 'よしよし',
         ],
         [
-            'value'       => "(\u{B4}ー\u{FF40})ﾉ ﾖｼﾖｼ",
+            'value'       => '(´ー｀)ﾉ ﾖｼﾖｼ',
             'group'       => 'ja_nadenade',
             'description' => 'なでなで',
             'ascii'       => false,
@@ -10982,7 +10982,7 @@ return [
             'reading'     => 'よしよし',
         ],
         [
-            'value'       => "＼(\u{B4}ω\u{FF40}＼)ﾖｼﾖｼ",
+            'value'       => '＼(´ω｀＼)ﾖｼﾖｼ',
             'group'       => 'ja_nadenade',
             'description' => 'なでなで',
             'ascii'       => false,
@@ -10990,7 +10990,7 @@ return [
             'reading'     => 'よしよし',
         ],
         [
-            'value'       => "ﾖｼﾖｼ( \u{B4} \u{25BD} ` )ﾉ",
+            'value'       => 'ﾖｼﾖｼ( ´ ▽ ` )ﾉ',
             'group'       => 'ja_nadenade',
             'description' => 'なでなで',
             'ascii'       => false,
@@ -10998,7 +10998,7 @@ return [
             'reading'     => 'よしよし',
         ],
         [
-            'value'       => "(ﾉ*\u{B4}ω`)ﾉ ﾖｼﾖｼ",
+            'value'       => '(ﾉ*´ω`)ﾉ ﾖｼﾖｼ',
             'group'       => 'ja_nadenade',
             'description' => 'なでなで',
             'ascii'       => false,
@@ -11014,7 +11014,7 @@ return [
             'reading'     => 'よしよし',
         ],
         [
-            'value'       => "(\u{B4}ω\u{FF40}*)ﾖｼﾖｼ",
+            'value'       => '(´ω｀*)ﾖｼﾖｼ',
             'group'       => 'ja_nadenade',
             'description' => 'なでなで',
             'ascii'       => false,
@@ -11022,7 +11022,7 @@ return [
             'reading'     => 'よしよし',
         ],
         [
-            'value'       => "ｲｲｺｲｲｺ(\u{B4} \u{25BD}`*)",
+            'value'       => 'ｲｲｺｲｲｺ(´ ▽`*)',
             'group'       => 'ja_nadenade',
             'description' => 'なでなで',
             'ascii'       => false,
@@ -11030,7 +11030,7 @@ return [
             'reading'     => 'いいこいいこ | よしよし',
         ],
         [
-            'value'       => "ヽ(\u{B4}ー\u{FF40})ﾉ ﾖｼﾖｼ",
+            'value'       => 'ヽ(´ー｀)ﾉ ﾖｼﾖｼ',
             'group'       => 'ja_nadenade',
             'description' => 'なでなで',
             'ascii'       => false,
@@ -11038,7 +11038,7 @@ return [
             'reading'     => 'よしよし',
         ],
         [
-            'value'       => "(*\u{B4}ー`)ﾉ ｲｲｺ",
+            'value'       => '(*´ー`)ﾉ ｲｲｺ',
             'group'       => 'ja_nadenade',
             'description' => 'なでなで',
             'ascii'       => false,
@@ -11046,7 +11046,7 @@ return [
             'reading'     => 'いいこいいこ | よしよし',
         ],
         [
-            'value'       => "ﾖｼﾖｼ(ﾉ\u{B4}ω`)ﾉ",
+            'value'       => 'ﾖｼﾖｼ(ﾉ´ω`)ﾉ',
             'group'       => 'ja_nadenade',
             'description' => 'なでなで',
             'ascii'       => false,
@@ -11054,7 +11054,7 @@ return [
             'reading'     => 'よしよし',
         ],
         [
-            'value'       => "(っ\u{2D8}ω\u{2D8})っ ﾖｼﾖｼ",
+            'value'       => '(っ˘ω˘)っ ﾖｼﾖｼ',
             'group'       => 'ja_nadenade',
             'description' => 'なでなで',
             'ascii'       => false,
@@ -11062,7 +11062,7 @@ return [
             'reading'     => 'よしよし',
         ],
         [
-            'value'       => "ヾ(\u{2D8}ω\u{2D8} )ﾉ ﾖｼﾖｼ",
+            'value'       => 'ヾ(˘ω˘ )ﾉ ﾖｼﾖｼ',
             'group'       => 'ja_nadenade',
             'description' => 'なでなで',
             'ascii'       => false,
@@ -11070,7 +11070,7 @@ return [
             'reading'     => 'よしよし',
         ],
         [
-            'value'       => "(\u{B4} ᵕ `)ﾉ ｲｲｺｲｲｺ",
+            'value'       => '(´ ᵕ `)ﾉ ｲｲｺｲｲｺ',
             'group'       => 'ja_nadenade',
             'description' => 'なでなで',
             'ascii'       => false,
@@ -11078,7 +11078,7 @@ return [
             'reading'     => 'いいこいいこ',
         ],
         [
-            'value'       => "ﾖｼﾖｼ(\u{B4}ε\u{FF40} )",
+            'value'       => 'ﾖｼﾖｼ(´ε｀ )',
             'group'       => 'ja_nadenade',
             'description' => 'なでなで',
             'ascii'       => false,
@@ -11086,7 +11086,7 @@ return [
             'reading'     => 'よしよし',
         ],
         [
-            'value'       => "(*\u{B4}\u{2200}`)ﾉ ﾖｼﾖｼ",
+            'value'       => '(*´∀`)ﾉ ﾖｼﾖｼ',
             'group'       => 'ja_nadenade',
             'description' => 'なでなで',
             'ascii'       => false,
@@ -11094,7 +11094,7 @@ return [
             'reading'     => 'よしよし',
         ],
         [
-            'value'       => "(ノ_;)ヾ(\u{B4}ω\u{FF40}*)",
+            'value'       => '(ノ_;)ヾ(´ω｀*)',
             'group'       => 'ja_nadenade',
             'description' => 'なでなで',
             'ascii'       => false,
@@ -11102,7 +11102,7 @@ return [
             'reading'     => 'よしよし | なでなで',
         ],
         [
-            'value'       => "(\u{B4}；ω；`)ヾ(･ω･`)ﾖｼﾖｼ",
+            'value'       => '(´；ω；`)ヾ(･ω･`)ﾖｼﾖｼ',
             'group'       => 'ja_nadenade',
             'description' => 'なでなで',
             'ascii'       => false,
@@ -11110,7 +11110,7 @@ return [
             'reading'     => 'よしよし | なでなで',
         ],
         [
-            'value'       => "(\u{B4}；д；`)ヾ(\u{B4}\u{2200}`*)",
+            'value'       => '(´；д；`)ヾ(´∀`*)',
             'group'       => 'ja_nadenade',
             'description' => 'なでなで',
             'ascii'       => false,
@@ -11118,7 +11118,7 @@ return [
             'reading'     => 'よしよし | なでなで',
         ],
         [
-            'value'       => "ﾅﾃﾞﾅﾃﾞ(\u{B4}；ω；`)",
+            'value'       => 'ﾅﾃﾞﾅﾃﾞ(´；ω；`)',
             'group'       => 'ja_nadenade',
             'description' => 'なでなで',
             'ascii'       => false,
@@ -11126,7 +11126,7 @@ return [
             'reading'     => 'なでなで | よしよし',
         ],
         [
-            'value'       => "ヾ(\u{B4}ー\u{FF40})ﾉ(；ω；)",
+            'value'       => 'ヾ(´ー｀)ﾉ(；ω；)',
             'group'       => 'ja_nadenade',
             'description' => 'なでなで',
             'ascii'       => false,
@@ -11134,7 +11134,7 @@ return [
             'reading'     => 'よしよし | なでなで',
         ],
         [
-            'value'       => "(つ\u{B4}ω`)つ(\u{B4}；ω；`)",
+            'value'       => '(つ´ω`)つ(´；ω；`)',
             'group'       => 'ja_nadenade',
             'description' => 'なでなで',
             'ascii'       => false,
@@ -11142,7 +11142,7 @@ return [
             'reading'     => 'よしよし | ぎゅー',
         ],
         [
-            'value'       => "ヽ(\u{B4}ー\u{FF40})ﾉ(ノД`)",
+            'value'       => 'ヽ(´ー｀)ﾉ(ノД`)',
             'group'       => 'ja_nadenade',
             'description' => 'なでなで',
             'ascii'       => false,
@@ -11150,7 +11150,7 @@ return [
             'reading'     => 'よしよし | なでなで',
         ],
         [
-            'value'       => "(ﾉ;ω;)ﾉ\u{2312}ヾ(\u{B4}\u{2200}`*)",
+            'value'       => '(ﾉ;ω;)ﾉ⌒ヾ(´∀`*)',
             'group'       => 'ja_nadenade',
             'description' => 'なでなで',
             'ascii'       => false,
@@ -11158,7 +11158,7 @@ return [
             'reading'     => 'よしよし | なでなで',
         ],
         [
-            'value'       => "ヾ(\u{B4}ω\u{FF40}=)ﾖｼﾖｼ(;_;)",
+            'value'       => 'ヾ(´ω｀=)ﾖｼﾖｼ(;_;)',
             'group'       => 'ja_nadenade',
             'description' => 'なでなで',
             'ascii'       => false,
@@ -11166,7 +11166,7 @@ return [
             'reading'     => 'よしよし',
         ],
         [
-            'value'       => "(\u{B4}\u{2200}`*)ﾉ(\u{B4}；ェ；`)",
+            'value'       => '(´∀`*)ﾉ(´；ェ；`)',
             'group'       => 'ja_nadenade',
             'description' => 'なでなで',
             'ascii'       => false,
@@ -11174,7 +11174,7 @@ return [
             'reading'     => 'よしよし | なでなで',
         ],
         [
-            'value'       => "ﾖｼﾖｼ(\u{B4}ω\u{FF40}*)(T_T)",
+            'value'       => 'ﾖｼﾖｼ(´ω｀*)(T_T)',
             'group'       => 'ja_nadenade',
             'description' => 'なでなで',
             'ascii'       => false,
@@ -11182,7 +11182,7 @@ return [
             'reading'     => 'よしよし',
         ],
         [
-            'value'       => "(\u{B4}；﹏；`)ヾ(\u{B4}ー`*)",
+            'value'       => '(´；﹏；`)ヾ(´ー`*)',
             'group'       => 'ja_nadenade',
             'description' => 'なでなで',
             'ascii'       => false,
@@ -11190,7 +11190,7 @@ return [
             'reading'     => 'よしよし | なでなで',
         ],
         [
-            'value'       => "(｡>﹏<｡)ヾ(\u{B4}\u{2200}`)",
+            'value'       => '(｡>﹏<｡)ヾ(´∀`)',
             'group'       => 'ja_nadenade',
             'description' => 'なでなで',
             'ascii'       => false,
@@ -11198,7 +11198,7 @@ return [
             'reading'     => 'よしよし | なでなで',
         ],
         [
-            'value'       => "ヾ(･ω･`)ﾉ(\u{B4}·ω·`)",
+            'value'       => 'ヾ(･ω･`)ﾉ(´·ω·`)',
             'group'       => 'ja_nadenade',
             'description' => 'なでなで',
             'ascii'       => false,
@@ -11206,7 +11206,7 @@ return [
             'reading'     => 'よしよし | なでなで',
         ],
         [
-            'value'       => "(〃\u{B4}ω`〃)",
+            'value'       => '(〃´ω`〃)',
             'group'       => 'ja_nadenade',
             'description' => 'なでなで',
             'ascii'       => false,
@@ -11214,7 +11214,7 @@ return [
             'reading'     => 'てれてれ | うっとり',
         ],
         [
-            'value'       => "(\u{B4}ω\u{FF40}*)ゝ",
+            'value'       => '(´ω｀*)ゝ',
             'group'       => 'ja_nadenade',
             'description' => 'なでなで',
             'ascii'       => false,
@@ -11222,7 +11222,7 @@ return [
             'reading'     => 'うっとり',
         ],
         [
-            'value'       => "(\u{B4}﹃\u{FF40})",
+            'value'       => '(´﹃｀)',
             'group'       => 'ja_nadenade',
             'description' => 'なでなで',
             'ascii'       => false,
@@ -11230,7 +11230,7 @@ return [
             'reading'     => 'うっとり | とろん',
         ],
         [
-            'value'       => "(\u{2F6}\u{B4}ω`\u{2F6})",
+            'value'       => '(˶´ω`˶)',
             'group'       => 'ja_nadenade',
             'description' => 'なでなで',
             'ascii'       => false,
@@ -11238,7 +11238,7 @@ return [
             'reading'     => 'うっとり | ほっこり',
         ],
         [
-            'value'       => "( \u{B4}ω` )ﾉ\"",
+            'value'       => '( ´ω` )ﾉ"',
             'group'       => 'ja_nadenade',
             'description' => 'なでなで',
             'ascii'       => false,
@@ -11246,7 +11246,7 @@ return [
             'reading'     => 'なでなで',
         ],
         [
-            'value'       => "(\u{2229}\u{B4}ω`\u{2229})",
+            'value'       => '(∩´ω`∩)',
             'group'       => 'ja_nadenade',
             'description' => 'なでなで',
             'ascii'       => false,
@@ -11254,7 +11254,7 @@ return [
             'reading'     => 'てれてれ | うっとり',
         ],
         [
-            'value'       => "(*ﾟ\u{25BD}ﾟ*)",
+            'value'       => '(*ﾟ▽ﾟ*)',
             'group'       => 'ja_nadenade',
             'description' => 'なでなで',
             'ascii'       => false,
@@ -11262,7 +11262,7 @@ return [
             'reading'     => 'うれしい | にこにこ',
         ],
         [
-            'value'       => "(っ\u{2D8}ω\u{2D8}っ )",
+            'value'       => '(っ˘ω˘っ )',
             'group'       => 'ja_nadenade',
             'description' => 'なでなで',
             'ascii'       => false,
@@ -11270,7 +11270,7 @@ return [
             'reading'     => 'うっとり | うとうと',
         ],
         [
-            'value'       => "(\u{B4} \u{2D8} `*)",
+            'value'       => '(´ ˘ `*)',
             'group'       => 'ja_nadenade',
             'description' => 'なでなで',
             'ascii'       => false,
@@ -11278,7 +11278,7 @@ return [
             'reading'     => 'うっとり | ほっこり',
         ],
         [
-            'value'       => "( ⸝⸝\u{B4}ω`⸝⸝ )",
+            'value'       => '( ⸝⸝´ω`⸝⸝ )',
             'group'       => 'ja_nadenade',
             'description' => 'なでなで',
             'ascii'       => false,
@@ -11286,7 +11286,7 @@ return [
             'reading'     => 'てれてれ | うっとり',
         ],
         [
-            'value'       => "(\u{B4}~`*)",
+            'value'       => '(´~`*)',
             'group'       => 'ja_nadenade',
             'description' => 'なでなで',
             'ascii'       => false,
@@ -11294,7 +11294,7 @@ return [
             'reading'     => 'まったり | うっとり',
         ],
         [
-            'value'       => "(ノ\u{B0}Д\u{B0})ノ︵ \u{253B}\u{2501}\u{253B}",
+            'value'       => '(ノ°Д°)ノ︵ ┻━┻',
             'group'       => 'ja_nageru',
             'description' => '投げる',
             'ascii'       => false,
@@ -11302,7 +11302,7 @@ return [
             'reading'     => 'なげる | ちゃぶだいがえし | ばーん',
         ],
         [
-            'value'       => "\u{253B}\u{2501}\u{253B} ︵\u{2570}(\u{B0}\u{25A1}\u{B0})\u{256F}︵ \u{253B}\u{2501}\u{253B}",
+            'value'       => '┻━┻ ︵╰(°□°)╯︵ ┻━┻',
             'group'       => 'ja_nageru',
             'description' => '投げる',
             'ascii'       => false,
@@ -11310,7 +11310,7 @@ return [
             'reading'     => 'なげる | ちゃぶだいがえし | ばーん',
         ],
         [
-            'value'       => "(ノ`Д\u{B4})ノ彡\u{253B}\u{2501}\u{253B}",
+            'value'       => '(ノ`Д´)ノ彡┻━┻',
             'group'       => 'ja_nageru',
             'description' => '投げる',
             'ascii'       => false,
@@ -11318,7 +11318,7 @@ return [
             'reading'     => 'なげる | ちゃぶだいがえし | ぷんぷん',
         ],
         [
-            'value'       => "(ﾉಠ益ಠ)ﾉ彡\u{253B}\u{2501}\u{253B}\u{2606}",
+            'value'       => '(ﾉಠ益ಠ)ﾉ彡┻━┻☆',
             'group'       => 'ja_nageru',
             'description' => '投げる',
             'ascii'       => false,
@@ -11326,7 +11326,7 @@ return [
             'reading'     => 'なげる | ちゃぶだいがえし | いかり',
         ],
         [
-            'value'       => "\u{256F}‵Д′)\u{256F}彡\u{253B}\u{2501}\u{253B}",
+            'value'       => '╯‵Д′)╯彡┻━┻',
             'group'       => 'ja_nageru',
             'description' => '投げる',
             'ascii'       => false,
@@ -11334,7 +11334,7 @@ return [
             'reading'     => 'なげる | ちゃぶだいがえし',
         ],
         [
-            'value'       => "(ノ\u{2312}-\u{2312})ノ︵ \u{253B}\u{2501}\u{253B}",
+            'value'       => '(ノ⌒-⌒)ノ︵ ┻━┻',
             'group'       => 'ja_nageru',
             'description' => '投げる',
             'ascii'       => false,
@@ -11342,7 +11342,7 @@ return [
             'reading'     => 'なげる | ちゃぶだいがえし',
         ],
         [
-            'value'       => "ヽ(\u{FF40}Д\u{B4})ﾉ︵ \u{253B}\u{2501}\u{253B}",
+            'value'       => 'ヽ(｀Д´)ﾉ︵ ┻━┻',
             'group'       => 'ja_nageru',
             'description' => '投げる',
             'ascii'       => false,
@@ -11350,7 +11350,7 @@ return [
             'reading'     => 'なげる | ちゃぶだいがえし | ぷんぷん',
         ],
         [
-            'value'       => "(ノToT)ノ︵ \u{253B}\u{2501}\u{253B}",
+            'value'       => '(ノToT)ノ︵ ┻━┻',
             'group'       => 'ja_nageru',
             'description' => '投げる',
             'ascii'       => false,
@@ -11358,7 +11358,7 @@ return [
             'reading'     => 'なげる | ちゃぶだいがえし | やけくそ',
         ],
         [
-            'value'       => "\u{252C}\u{2500}\u{2500}\u{252C} ノ( \u{309C}-\u{309C}ノ)",
+            'value'       => '┬──┬ ノ( ゜-゜ノ)',
             'group'       => 'ja_nageru',
             'description' => '投げる',
             'ascii'       => false,
@@ -11366,7 +11366,7 @@ return [
             'reading'     => 'もとにもどす | やれやれ',
         ],
         [
-            'value'       => "\u{252C}\u{2500}\u{252C} ノ( \u{2312}-\u{2312}ノ)",
+            'value'       => '┬─┬ ノ( ⌒-⌒ノ)',
             'group'       => 'ja_nageru',
             'description' => '投げる',
             'ascii'       => false,
@@ -11374,7 +11374,7 @@ return [
             'reading'     => 'もとにもどす | やれやれ',
         ],
         [
-            'value'       => "ヽ(ﾟ\u{25A1}ﾟ)ﾉ \u{2312}ﾟ",
+            'value'       => 'ヽ(ﾟ□ﾟ)ﾉ ⌒ﾟ',
             'group'       => 'ja_nageru',
             'description' => '投げる',
             'ascii'       => false,
@@ -11382,7 +11382,7 @@ return [
             'reading'     => 'なげる | ぽいっ',
         ],
         [
-            'value'       => "(ノ ﾟДﾟ)ノ \u{2312} 卍",
+            'value'       => '(ノ ﾟДﾟ)ノ ⌒ 卍',
             'group'       => 'ja_nageru',
             'description' => '投げる',
             'ascii'       => false,
@@ -11390,7 +11390,7 @@ return [
             'reading'     => 'なげる | ぽいっ',
         ],
         [
-            'value'       => "( ﾉ ﾟｰﾟ)ﾉ \u{2312} \u{25CF}",
+            'value'       => '( ﾉ ﾟｰﾟ)ﾉ ⌒ ●',
             'group'       => 'ja_nageru',
             'description' => '投げる',
             'ascii'       => false,
@@ -11398,7 +11398,7 @@ return [
             'reading'     => 'なげる | ぽいっ',
         ],
         [
-            'value'       => "ε\u{2261}\u{2261}ﾍ( \u{B4}Д`)ﾉ",
+            'value'       => 'ε≡≡ﾍ( ´Д`)ﾉ',
             'group'       => 'ja_nageru',
             'description' => '投げる',
             'ascii'       => false,
@@ -11406,7 +11406,7 @@ return [
             'reading'     => 'なげる | やけくそ',
         ],
         [
-            'value'       => "(／･ω･)／ \u{2312} \u{2312}",
+            'value'       => '(／･ω･)／ ⌒ ⌒',
             'group'       => 'ja_nageru',
             'description' => '投げる',
             'ascii'       => false,
@@ -11414,7 +11414,7 @@ return [
             'reading'     => 'なげる | ぽいっ',
         ],
         [
-            'value'       => "＼(>o<)ノ \u{2312} \u{2312}",
+            'value'       => '＼(>o<)ノ ⌒ ⌒',
             'group'       => 'ja_nageru',
             'description' => '投げる',
             'ascii'       => false,
@@ -11422,7 +11422,7 @@ return [
             'reading'     => 'なげる | やけくそ',
         ],
         [
-            'value'       => "(\u{256F}︿\u{2570})\u{256F} \u{2312} \u{253B}",
+            'value'       => '(╯︿╰)╯ ⌒ ┻',
             'group'       => 'ja_nageru',
             'description' => '投げる',
             'ascii'       => false,
@@ -11430,7 +11430,7 @@ return [
             'reading'     => 'なげる | あきらめ',
         ],
         [
-            'value'       => "(ノ・\u{2200}・)ノ",
+            'value'       => '(ノ・∀・)ノ',
             'group'       => 'ja_nageru',
             'description' => '投げる',
             'ascii'       => false,
@@ -11438,7 +11438,7 @@ return [
             'reading'     => 'なげる | わーい',
         ],
         [
-            'value'       => "＼(^o^)／ \u{2312} \u{2606}",
+            'value'       => '＼(^o^)／ ⌒ ☆',
             'group'       => 'ja_nageru',
             'description' => '投げる',
             'ascii'       => false,
@@ -11446,7 +11446,7 @@ return [
             'reading'     => 'なげる | ばんざい | わーい',
         ],
         [
-            'value'       => "(\u{2229}\u{B4}\u{2200}\u{FF40})\u{2229} \u{2312} \u{B0}\u{2D6}\u{2727}",
+            'value'       => '(∩´∀｀)∩ ⌒ °˖✧',
             'group'       => 'ja_nageru',
             'description' => '投げる',
             'ascii'       => false,
@@ -11454,7 +11454,7 @@ return [
             'reading'     => 'なげる | きらきら',
         ],
         [
-            'value'       => "ヽ(ﾟ\u{25BD}ﾟ)ノ \u{2312} \u{266A}",
+            'value'       => 'ヽ(ﾟ▽ﾟ)ノ ⌒ ♪',
             'group'       => 'ja_nageru',
             'description' => '投げる',
             'ascii'       => false,
@@ -11462,7 +11462,7 @@ return [
             'reading'     => 'なげる | るんるん',
         ],
         [
-            'value'       => "( \u{B4} \u{25BD} ` )ﾉ \u{2312} \u{2661}",
+            'value'       => '( ´ ▽ ` )ﾉ ⌒ ♡',
             'group'       => 'ja_nageru',
             'description' => '投げる',
             'ascii'       => false,
@@ -11470,7 +11470,7 @@ return [
             'reading'     => 'なげる | なげちゅー',
         ],
         [
-            'value'       => "٩(ˊᗜˋ*)و \u{2312} \u{2661}",
+            'value'       => '٩(ˊᗜˋ*)و ⌒ ♡',
             'group'       => 'ja_nageru',
             'description' => '投げる',
             'ascii'       => false,
@@ -11478,7 +11478,7 @@ return [
             'reading'     => 'なげる | わーい',
         ],
         [
-            'value'       => "(づ｡\u{25D5}‿‿\u{25D5}｡)づ \u{2312} \u{2661}",
+            'value'       => '(づ｡◕‿‿◕｡)づ ⌒ ♡',
             'group'       => 'ja_nageru',
             'description' => '投げる',
             'ascii'       => false,
@@ -11486,7 +11486,7 @@ return [
             'reading'     => 'なげる | なげちゅー',
         ],
         [
-            'value'       => "(ﾉ\u{B4}ヮ`)ﾉ*: ･ﾟ",
+            'value'       => '(ﾉ´ヮ`)ﾉ*: ･ﾟ',
             'group'       => 'ja_nageru',
             'description' => '投げる',
             'ascii'       => false,
@@ -11494,7 +11494,7 @@ return [
             'reading'     => 'なげる | きらきら',
         ],
         [
-            'value'       => "ﾟ+｡:.ヽ(*\u{B4}\u{2200}`)ﾉ.:｡+ﾟ",
+            'value'       => 'ﾟ+｡:.ヽ(*´∀`)ﾉ.:｡+ﾟ',
             'group'       => 'ja_nageru',
             'description' => '投げる',
             'ascii'       => false,
@@ -11502,7 +11502,7 @@ return [
             'reading'     => 'なげる | きらきら',
         ],
         [
-            'value'       => "(\u{2D8}ω\u{2D8})ｽﾔｧ",
+            'value'       => '(˘ω˘)ｽﾔｧ',
             'group'       => 'ja_nemui',
             'description' => '眠い',
             'ascii'       => false,
@@ -11518,7 +11518,7 @@ return [
             'reading'     => 'ねむい | ぐーぐー',
         ],
         [
-            'value'       => "( \u{2D8}ω\u{2D8} )zZ",
+            'value'       => '( ˘ω˘ )zZ',
             'group'       => 'ja_nemui',
             'description' => '眠い',
             'ascii'       => false,
@@ -11534,7 +11534,7 @@ return [
             'reading'     => 'ねむい',
         ],
         [
-            'value'       => "( \u{2D8}ω\u{2D8})ｽﾔ",
+            'value'       => '( ˘ω˘)ｽﾔ',
             'group'       => 'ja_nemui',
             'description' => '眠い',
             'ascii'       => false,
@@ -11542,7 +11542,7 @@ return [
             'reading'     => 'すやぁ | ねむい',
         ],
         [
-            'value'       => "(\u{B4}-ω-`)zzZ",
+            'value'       => '(´-ω-`)zzZ',
             'group'       => 'ja_nemui',
             'description' => '眠い',
             'ascii'       => false,
@@ -11550,7 +11550,7 @@ return [
             'reading'     => 'ねむい',
         ],
         [
-            'value'       => "( \u{2D8} ³\u{2D8})ｽﾔｧ",
+            'value'       => '( ˘ ³˘)ｽﾔｧ',
             'group'       => 'ja_nemui',
             'description' => '眠い',
             'ascii'       => false,
@@ -11558,7 +11558,7 @@ return [
             'reading'     => 'すやぁ | ねむい',
         ],
         [
-            'value'       => "(｡\u{2D8}ω\u{2D8}｡)ｽﾔｧ",
+            'value'       => '(｡˘ω˘｡)ｽﾔｧ',
             'group'       => 'ja_nemui',
             'description' => '眠い',
             'ascii'       => false,
@@ -11566,7 +11566,7 @@ return [
             'reading'     => 'すやぁ | ねむい',
         ],
         [
-            'value'       => "( \u{2D8}ω\u{2D8} )｡oO",
+            'value'       => '( ˘ω˘ )｡oO',
             'group'       => 'ja_nemui',
             'description' => '眠い',
             'ascii'       => false,
@@ -11582,7 +11582,7 @@ return [
             'reading'     => 'ねむい',
         ],
         [
-            'value'       => "(\u{2D8}‿\u{2D8})ｽﾔｧ",
+            'value'       => '(˘‿˘)ｽﾔｧ',
             'group'       => 'ja_nemui',
             'description' => '眠い',
             'ascii'       => false,
@@ -11590,7 +11590,7 @@ return [
             'reading'     => 'すやぁ | ねむい',
         ],
         [
-            'value'       => "( \u{2D9} ω \u{2D9} )ｽﾔ",
+            'value'       => '( ˙ ω ˙ )ｽﾔ',
             'group'       => 'ja_nemui',
             'description' => '眠い',
             'ascii'       => false,
@@ -11606,7 +11606,7 @@ return [
             'reading'     => 'ねむい | うとうと',
         ],
         [
-            'value'       => "( \u{2D8}-\u{2D8} )",
+            'value'       => '( ˘-˘ )',
             'group'       => 'ja_nemui',
             'description' => '眠い',
             'ascii'       => false,
@@ -11630,7 +11630,7 @@ return [
             'reading'     => 'ねむい | とろん',
         ],
         [
-            'value'       => "( \u{2D8} . \u{2D8} )",
+            'value'       => '( ˘ . ˘ )',
             'group'       => 'ja_nemui',
             'description' => '眠い',
             'ascii'       => false,
@@ -11654,7 +11654,7 @@ return [
             'reading'     => 'ねむい',
         ],
         [
-            'value'       => "( \u{2D8}ω\u{2D8} ).｡o",
+            'value'       => '( ˘ω˘ ).｡o',
             'group'       => 'ja_nemui',
             'description' => '眠い',
             'ascii'       => false,
@@ -11670,7 +11670,7 @@ return [
             'reading'     => 'ねむい | とろん',
         ],
         [
-            'value'       => "( \u{B4}Ａ\u{FF40})ﾌｧ",
+            'value'       => '( ´Ａ｀)ﾌｧ',
             'group'       => 'ja_nemui',
             'description' => '眠い',
             'ascii'       => false,
@@ -11678,7 +11678,7 @@ return [
             'reading'     => 'あくび | ふぁー',
         ],
         [
-            'value'       => "(\u{B4}〜\u{FF40})ﾌｧ",
+            'value'       => '(´〜｀)ﾌｧ',
             'group'       => 'ja_nemui',
             'description' => '眠い',
             'ascii'       => false,
@@ -11686,7 +11686,7 @@ return [
             'reading'     => 'あくび | ふぁー',
         ],
         [
-            'value'       => "ﾌｧ-ｱ(\u{B4}\u{2207}\u{FF40})",
+            'value'       => 'ﾌｧ-ｱ(´∇｀)',
             'group'       => 'ja_nemui',
             'description' => '眠い',
             'ascii'       => false,
@@ -11694,7 +11694,7 @@ return [
             'reading'     => 'あくび | ふぁー',
         ],
         [
-            'value'       => "( \u{2D8}ｪ\u{2D8} )ﾌｧ",
+            'value'       => '( ˘ｪ˘ )ﾌｧ',
             'group'       => 'ja_nemui',
             'description' => '眠い',
             'ascii'       => false,
@@ -11710,7 +11710,7 @@ return [
             'reading'     => 'あくび | ふぁー',
         ],
         [
-            'value'       => "( \u{FF1E}ω\u{FF1C})ﾌｧｱ",
+            'value'       => '( ＞ω＜)ﾌｧｱ',
             'group'       => 'ja_nemui',
             'description' => '眠い',
             'ascii'       => false,
@@ -11726,7 +11726,7 @@ return [
             'reading'     => 'おやすみ',
         ],
         [
-            'value'       => "( \u{2D8}ω\u{2D8})ﾉ おやすみ",
+            'value'       => '( ˘ω˘)ﾉ おやすみ',
             'group'       => 'ja_nemui',
             'description' => '眠い',
             'ascii'       => false,
@@ -11742,7 +11742,7 @@ return [
             'reading'     => 'すやり | おやすみ',
         ],
         [
-            'value'       => "( \u{2D8}ω\u{2D8} )ﾉﾞ",
+            'value'       => '( ˘ω˘ )ﾉﾞ',
             'group'       => 'ja_nemui',
             'description' => '眠い',
             'ascii'       => false,
@@ -11750,7 +11750,7 @@ return [
             'reading'     => 'おやすみ',
         ],
         [
-            'value'       => "おやすみ(\u{2D8}ω\u{2D8})",
+            'value'       => 'おやすみ(˘ω˘)',
             'group'       => 'ja_nemui',
             'description' => '眠い',
             'ascii'       => false,
@@ -11758,7 +11758,7 @@ return [
             'reading'     => 'おやすみ',
         ],
         [
-            'value'       => "( \u{B4}-ω-)ﾉ~",
+            'value'       => '( ´-ω-)ﾉ~',
             'group'       => 'ja_nemui',
             'description' => '眠い',
             'ascii'       => false,
@@ -11766,7 +11766,7 @@ return [
             'reading'     => 'おやすみ',
         ],
         [
-            'value'       => "( \u{2D8} ᴗ \u{2D8} )zzz",
+            'value'       => '( ˘ ᴗ ˘ )zzz',
             'group'       => 'ja_nemui',
             'description' => '眠い',
             'ascii'       => false,
@@ -11782,7 +11782,7 @@ return [
             'reading'     => 'ねむい | すやすや',
         ],
         [
-            'value'       => "( \u{B4}-ᴗ-`)",
+            'value'       => '( ´-ᴗ-`)',
             'group'       => 'ja_nemui',
             'description' => '眠い',
             'ascii'       => false,
@@ -11790,7 +11790,7 @@ return [
             'reading'     => 'ねむい | とろん',
         ],
         [
-            'value'       => "( \u{2F6}-ω-\u{2F6} )",
+            'value'       => '( ˶-ω-˶ )',
             'group'       => 'ja_nemui',
             'description' => '眠い',
             'ascii'       => false,
@@ -11798,7 +11798,7 @@ return [
             'reading'     => 'ねむい',
         ],
         [
-            'value'       => "( ⸝⸝\u{2D8}ω\u{2D8}⸝⸝ )",
+            'value'       => '( ⸝⸝˘ω˘⸝⸝ )',
             'group'       => 'ja_nemui',
             'description' => '眠い',
             'ascii'       => false,
@@ -11806,7 +11806,7 @@ return [
             'reading'     => 'ねむい | すやぁ',
         ],
         [
-            'value'       => "(\u{2D8}͈ᵕ\u{2D8}͈)",
+            'value'       => '(˘͈ᵕ˘͈)',
             'group'       => 'ja_nemui',
             'description' => '眠い',
             'ascii'       => false,
@@ -11822,7 +11822,7 @@ return [
             'reading'     => 'ねむい | すやすや',
         ],
         [
-            'value'       => "( ｡\u{2D8} -\u{2D8}｡)",
+            'value'       => '( ｡˘ -˘｡)',
             'group'       => 'ja_nemui',
             'description' => '眠い',
             'ascii'       => false,
@@ -11830,7 +11830,7 @@ return [
             'reading'     => 'ねむい',
         ],
         [
-            'value'       => "(=\u{2D8}ω\u{2D8}=)zzz",
+            'value'       => '(=˘ω˘=)zzz',
             'group'       => 'ja_nemui',
             'description' => '眠い',
             'ascii'       => false,
@@ -11838,7 +11838,7 @@ return [
             'reading'     => 'ねむい | ねこ',
         ],
         [
-            'value'       => "( \u{2D8}ω\u{2D8})っ ﾌﾟｯ",
+            'value'       => '( ˘ω˘)っ ﾌﾟｯ',
             'group'       => 'ja_nemui',
             'description' => '眠い',
             'ascii'       => false,
@@ -11846,7 +11846,7 @@ return [
             'reading'     => 'すやぁ',
         ],
         [
-            'value'       => "(\u{2D8}ω\u{2D8})\u{1F4A4}",
+            'value'       => '(˘ω˘)💤',
             'group'       => 'ja_nemui',
             'description' => '眠い',
             'ascii'       => false,
@@ -11854,7 +11854,7 @@ return [
             'reading'     => 'すやぁ | ねむい',
         ],
         [
-            'value'       => "(-ω-)\u{1F634}",
+            'value'       => '(-ω-)😴',
             'group'       => 'ja_nemui',
             'description' => '眠い',
             'ascii'       => false,
@@ -11862,7 +11862,7 @@ return [
             'reading'     => 'ねむい',
         ],
         [
-            'value'       => "( \u{2D8}ω\u{2D8} )zzz\u{1F4A4}",
+            'value'       => '( ˘ω˘ )zzz💤',
             'group'       => 'ja_nemui',
             'description' => '眠い',
             'ascii'       => false,
@@ -11870,7 +11870,7 @@ return [
             'reading'     => 'ねむい | すやすや',
         ],
         [
-            'value'       => "ﾈﾑｲ(-ω-)\u{1F4A4}",
+            'value'       => 'ﾈﾑｲ(-ω-)💤',
             'group'       => 'ja_nemui',
             'description' => '眠い',
             'ascii'       => false,
@@ -11878,7 +11878,7 @@ return [
             'reading'     => 'ねむい',
         ],
         [
-            'value'       => "(\u{FF40}ω\u{B4})",
+            'value'       => '(｀ω´)',
             'group'       => 'ja_okoru',
             'description' => '怒る',
             'ascii'       => false,
@@ -11894,7 +11894,7 @@ return [
             'reading'     => 'ぷんぷん | おこ',
         ],
         [
-            'value'       => "(`ω\u{B4}*)",
+            'value'       => '(`ω´*)',
             'group'       => 'ja_okoru',
             'description' => '怒る',
             'ascii'       => false,
@@ -11902,7 +11902,7 @@ return [
             'reading'     => 'ぷんぷん',
         ],
         [
-            'value'       => "ﾌﾟﾝﾌﾟﾝ(\u{FF40}ω\u{B4})",
+            'value'       => 'ﾌﾟﾝﾌﾟﾝ(｀ω´)',
             'group'       => 'ja_okoru',
             'description' => '怒る',
             'ascii'       => false,
@@ -11910,7 +11910,7 @@ return [
             'reading'     => 'ぷんぷん',
         ],
         [
-            'value'       => "( \u{FF1E}﹏\u{FF1C})",
+            'value'       => '( ＞﹏＜)',
             'group'       => 'ja_okoru',
             'description' => '怒る',
             'ascii'       => false,
@@ -11926,7 +11926,7 @@ return [
             'reading'     => 'ぷんぷん | おこ',
         ],
         [
-            'value'       => "(\u{FF40}ε\u{B4})",
+            'value'       => '(｀ε´)',
             'group'       => 'ja_okoru',
             'description' => '怒る',
             'ascii'       => false,
@@ -11934,7 +11934,7 @@ return [
             'reading'     => 'ぷんぷん | むー',
         ],
         [
-            'value'       => "(\u{FF40}へ\u{B4})",
+            'value'       => '(｀へ´)',
             'group'       => 'ja_okoru',
             'description' => '怒る',
             'ascii'       => false,
@@ -11942,7 +11942,7 @@ return [
             'reading'     => 'ぷんぷん',
         ],
         [
-            'value'       => "プンスカ(\u{FF40}ω\u{B4})",
+            'value'       => 'プンスカ(｀ω´)',
             'group'       => 'ja_okoru',
             'description' => '怒る',
             'ascii'       => false,
@@ -11950,7 +11950,7 @@ return [
             'reading'     => 'ぷんすか',
         ],
         [
-            'value'       => "(\u{FF40}ω\u{B4} )",
+            'value'       => '(｀ω´ )',
             'group'       => 'ja_okoru',
             'description' => '怒る',
             'ascii'       => false,
@@ -11958,7 +11958,7 @@ return [
             'reading'     => 'ぷんぷん | おこ',
         ],
         [
-            'value'       => "(#`Д\u{B4})",
+            'value'       => '(#`Д´)',
             'group'       => 'ja_okoru',
             'description' => '怒る',
             'ascii'       => false,
@@ -11966,7 +11966,7 @@ return [
             'reading'     => 'むかっ | むかー',
         ],
         [
-            'value'       => "(#\u{FF40}皿\u{B4})",
+            'value'       => '(#｀皿´)',
             'group'       => 'ja_okoru',
             'description' => '怒る',
             'ascii'       => false,
@@ -11974,7 +11974,7 @@ return [
             'reading'     => 'むかっ | ぶちぎれ',
         ],
         [
-            'value'       => "( \u{FF40}д\u{B4})",
+            'value'       => '( ｀д´)',
             'group'       => 'ja_okoru',
             'description' => '怒る',
             'ascii'       => false,
@@ -11982,7 +11982,7 @@ return [
             'reading'     => 'むかっ',
         ],
         [
-            'value'       => "ﾑｶｯ(\u{266F}`\u{2227}\u{B4})",
+            'value'       => 'ﾑｶｯ(♯`∧´)',
             'group'       => 'ja_okoru',
             'description' => '怒る',
             'ascii'       => false,
@@ -11998,7 +11998,7 @@ return [
             'reading'     => 'むかっ | むすっ',
         ],
         [
-            'value'       => "( \u{FF40}Д\u{B4})",
+            'value'       => '( ｀Д´)',
             'group'       => 'ja_okoru',
             'description' => '怒る',
             'ascii'       => false,
@@ -12006,7 +12006,7 @@ return [
             'reading'     => 'むかっ',
         ],
         [
-            'value'       => "(#\u{FF1E}﹏\u{FF1C})",
+            'value'       => '(#＞﹏＜)',
             'group'       => 'ja_okoru',
             'description' => '怒る',
             'ascii'       => false,
@@ -12014,7 +12014,7 @@ return [
             'reading'     => 'むかっ | ぷんぷん',
         ],
         [
-            'value'       => "ﾑｶ-(#\u{FF40}ω\u{B4})",
+            'value'       => 'ﾑｶ-(#｀ω´)',
             'group'       => 'ja_okoru',
             'description' => '怒る',
             'ascii'       => false,
@@ -12030,7 +12030,7 @@ return [
             'reading'     => 'むすっ | おこ',
         ],
         [
-            'value'       => "( \u{FF40}ー\u{B4})",
+            'value'       => '( ｀ー´)',
             'group'       => 'ja_okoru',
             'description' => '怒る',
             'ascii'       => false,
@@ -12038,7 +12038,7 @@ return [
             'reading'     => 'むすっ | おこ',
         ],
         [
-            'value'       => "( ` ε \u{B4} )",
+            'value'       => '( ` ε ´ )',
             'group'       => 'ja_okoru',
             'description' => '怒る',
             'ascii'       => false,
@@ -12054,7 +12054,7 @@ return [
             'reading'     => 'おこ | むかっ',
         ],
         [
-            'value'       => "(\u{FF40}^\u{B4})",
+            'value'       => '(｀^´)',
             'group'       => 'ja_okoru',
             'description' => '怒る',
             'ascii'       => false,
@@ -12062,7 +12062,7 @@ return [
             'reading'     => 'むすっ',
         ],
         [
-            'value'       => "(\u{FFE3}^\u{FFE3})",
+            'value'       => '(￣^￣)',
             'group'       => 'ja_okoru',
             'description' => '怒る',
             'ascii'       => false,
@@ -12070,7 +12070,7 @@ return [
             'reading'     => 'むすっ | ぶすっ',
         ],
         [
-            'value'       => "( ・`ω・\u{B4})",
+            'value'       => '( ・`ω・´)',
             'group'       => 'ja_okoru',
             'description' => '怒る',
             'ascii'       => false,
@@ -12094,7 +12094,7 @@ return [
             'reading'     => 'ぷんぷん | むー',
         ],
         [
-            'value'       => "(っ`ω\u{B4}c)",
+            'value'       => '(っ`ω´c)',
             'group'       => 'ja_okoru',
             'description' => '怒る',
             'ascii'       => false,
@@ -12110,7 +12110,7 @@ return [
             'reading'     => 'ぷんぷん | おこ',
         ],
         [
-            'value'       => "( ⸝⸝`^\u{B4}⸝⸝ )",
+            'value'       => '( ⸝⸝`^´⸝⸝ )',
             'group'       => 'ja_okoru',
             'description' => '怒る',
             'ascii'       => false,
@@ -12142,7 +12142,7 @@ return [
             'reading'     => 'ぷんぷん',
         ],
         [
-            'value'       => "( \u{2C3}\u{2311}\u{2C2} )",
+            'value'       => '( ˃⌑˂ )',
             'group'       => 'ja_okoru',
             'description' => '怒る',
             'ascii'       => false,
@@ -12150,7 +12150,7 @@ return [
             'reading'     => 'ぷんぷん | むー',
         ],
         [
-            'value'       => "( •̀\u{2313}•́ )",
+            'value'       => '( •̀⌓•́ )',
             'group'       => 'ja_okoru',
             'description' => '怒る',
             'ascii'       => false,
@@ -12158,7 +12158,7 @@ return [
             'reading'     => 'ぷんぷん | むすっ',
         ],
         [
-            'value'       => "ヽ(\u{FF40}Д\u{B4})ﾉ",
+            'value'       => 'ヽ(｀Д´)ﾉ',
             'group'       => 'ja_okoru',
             'description' => '怒る',
             'ascii'       => false,
@@ -12166,7 +12166,7 @@ return [
             'reading'     => 'どなる | ぶちぎれ',
         ],
         [
-            'value'       => "凸(\u{FF40}皿\u{B4}#)",
+            'value'       => '凸(｀皿´#)',
             'group'       => 'ja_okoru',
             'description' => '怒る',
             'ascii'       => false,
@@ -12174,7 +12174,7 @@ return [
             'reading'     => 'ぶちぎれ | おこ',
         ],
         [
-            'value'       => "(ﾉ\u{FF40}\u{22BF}\u{B4})ﾉ",
+            'value'       => '(ﾉ｀⊿´)ﾉ',
             'group'       => 'ja_okoru',
             'description' => '怒る',
             'ascii'       => false,
@@ -12182,7 +12182,7 @@ return [
             'reading'     => 'どなる',
         ],
         [
-            'value'       => "o(\u{FF40}ω\u{B4} )o",
+            'value'       => 'o(｀ω´ )o',
             'group'       => 'ja_okoru',
             'description' => '怒る',
             'ascii'       => false,
@@ -12190,7 +12190,7 @@ return [
             'reading'     => 'ぷんぷん | おこ',
         ],
         [
-            'value'       => "( \u{256C}\u{FF40}ω\u{B4})",
+            'value'       => '( ╬｀ω´)',
             'group'       => 'ja_okoru',
             'description' => '怒る',
             'ascii'       => false,
@@ -12206,7 +12206,7 @@ return [
             'reading'     => 'おこ | ちっ',
         ],
         [
-            'value'       => "(\u{256C} Ò﹏Ó)",
+            'value'       => '(╬ Ò﹏Ó)',
             'group'       => 'ja_okoru',
             'description' => '怒る',
             'ascii'       => false,
@@ -12214,7 +12214,7 @@ return [
             'reading'     => 'ぶちぎれ | ぎれ',
         ],
         [
-            'value'       => "ヽ(#\u{FF40}Д\u{B4})ﾉ",
+            'value'       => 'ヽ(#｀Д´)ﾉ',
             'group'       => 'ja_okoru',
             'description' => '怒る',
             'ascii'       => false,
@@ -12222,7 +12222,7 @@ return [
             'reading'     => 'どなる | ぶちぎれ',
         ],
         [
-            'value'       => "(\u{B4}･ω･`)ﾌﾞｽｯ",
+            'value'       => '(´･ω･`)ﾌﾞｽｯ',
             'group'       => 'ja_okoru',
             'description' => '怒る',
             'ascii'       => false,
@@ -12230,7 +12230,7 @@ return [
             'reading'     => 'むすっ | ぶすっ',
         ],
         [
-            'value'       => "( \u{B4}＿ゝ`)",
+            'value'       => '( ´＿ゝ`)',
             'group'       => 'ja_okoru',
             'description' => '怒る',
             'ascii'       => false,
@@ -12238,7 +12238,7 @@ return [
             'reading'     => 'ふん | やれやれ',
         ],
         [
-            'value'       => "(\u{FF40}ω\u{B4})\u{1F4A2}",
+            'value'       => '(｀ω´)💢',
             'group'       => 'ja_okoru',
             'description' => '怒る',
             'ascii'       => false,
@@ -12246,7 +12246,7 @@ return [
             'reading'     => 'ぷんぷん | おこ',
         ],
         [
-            'value'       => "(#\u{FF40}Д\u{B4})\u{1F4A2}",
+            'value'       => '(#｀Д´)💢',
             'group'       => 'ja_okoru',
             'description' => '怒る',
             'ascii'       => false,
@@ -12254,7 +12254,7 @@ return [
             'reading'     => 'むかっ',
         ],
         [
-            'value'       => "( \u{FF40}皿\u{B4})\u{1F4A2}",
+            'value'       => '( ｀皿´)💢',
             'group'       => 'ja_okoru',
             'description' => '怒る',
             'ascii'       => false,
@@ -12262,7 +12262,7 @@ return [
             'reading'     => 'ぶちぎれ',
         ],
         [
-            'value'       => "ﾑｶｯ\u{1F4A2}(#\u{FF40}ω\u{B4})",
+            'value'       => 'ﾑｶｯ💢(#｀ω´)',
             'group'       => 'ja_okoru',
             'description' => '怒る',
             'ascii'       => false,
@@ -12278,7 +12278,7 @@ return [
             'reading'     => 'とうとい | おたく',
         ],
         [
-            'value'       => "尊い…(\u{B4}；ω；`)",
+            'value'       => '尊い…(´；ω；`)',
             'group'       => 'ja_otaku',
             'description' => 'オタク',
             'ascii'       => false,
@@ -12286,7 +12286,7 @@ return [
             'reading'     => 'とうとい | ごいりょくそうしつ',
         ],
         [
-            'value'       => "尊すぎる(*ﾟ\u{2200}ﾟ*)",
+            'value'       => '尊すぎる(*ﾟ∀ﾟ*)',
             'group'       => 'ja_otaku',
             'description' => 'オタク',
             'ascii'       => false,
@@ -12310,7 +12310,7 @@ return [
             'reading'     => 'ごいりょく | むり',
         ],
         [
-            'value'       => "( \u{B4} ﾟдﾟ`)尊い",
+            'value'       => '( ´ ﾟдﾟ`)尊い',
             'group'       => 'ja_otaku',
             'description' => 'オタク',
             'ascii'       => false,
@@ -12326,7 +12326,7 @@ return [
             'reading'     => 'とうとい | なき',
         ],
         [
-            'value'       => "尊死(\u{2D8}ω\u{2D8})",
+            'value'       => '尊死(˘ω˘)',
             'group'       => 'ja_otaku',
             'description' => 'オタク',
             'ascii'       => false,
@@ -12334,7 +12334,7 @@ return [
             'reading'     => 'とうとし | しょうてん',
         ],
         [
-            'value'       => "ほんと尊い(つ﹏\u{2282})",
+            'value'       => 'ほんと尊い(つ﹏⊂)',
             'group'       => 'ja_otaku',
             'description' => 'オタク',
             'ascii'       => false,
@@ -12342,7 +12342,7 @@ return [
             'reading'     => 'とうとい | ごいりょく',
         ],
         [
-            'value'       => "は？尊い(ﾟ\u{2200}ﾟ)",
+            'value'       => 'は？尊い(ﾟ∀ﾟ)',
             'group'       => 'ja_otaku',
             'description' => 'オタク',
             'ascii'       => false,
@@ -12358,7 +12358,7 @@ return [
             'reading'     => 'とうとみ | おたく',
         ],
         [
-            'value'       => "語彙力消えた(\u{B0}﹃\u{B0})",
+            'value'       => '語彙力消えた(°﹃°)',
             'group'       => 'ja_otaku',
             'description' => 'オタク',
             'ascii'       => false,
@@ -12366,7 +12366,7 @@ return [
             'reading'     => 'ごいりょく | きえた',
         ],
         [
-            'value'       => "ﾟ\u{2200}ﾟ)\u{2501}\u{2501}\u{2501}!!",
+            'value'       => 'ﾟ∀ﾟ)━━━!!',
             'group'       => 'ja_otaku',
             'description' => 'オタク',
             'ascii'       => false,
@@ -12374,7 +12374,7 @@ return [
             'reading'     => 'きた | こうふん',
         ],
         [
-            'value'       => "ｷﾀ\u{2501}(ﾟ\u{2200}ﾟ)\u{2501}!",
+            'value'       => 'ｷﾀ━(ﾟ∀ﾟ)━!',
             'group'       => 'ja_otaku',
             'description' => 'オタク',
             'ascii'       => false,
@@ -12382,7 +12382,7 @@ return [
             'reading'     => 'きた | こうふん',
         ],
         [
-            'value'       => "ｷﾀ\u{2501}(ﾟ\u{2200}ﾟ)\u{2501}(ﾟ\u{2200}ﾟ)\u{2501}!",
+            'value'       => 'ｷﾀ━(ﾟ∀ﾟ)━(ﾟ∀ﾟ)━!',
             'group'       => 'ja_otaku',
             'description' => 'オタク',
             'ascii'       => false,
@@ -12390,7 +12390,7 @@ return [
             'reading'     => 'きた | こうふん',
         ],
         [
-            'value'       => "テンアゲ(ﾟ\u{2200}ﾟ)",
+            'value'       => 'テンアゲ(ﾟ∀ﾟ)',
             'group'       => 'ja_otaku',
             'description' => 'オタク',
             'ascii'       => false,
@@ -12406,7 +12406,7 @@ return [
             'reading'     => 'こうふん | てんしょん',
         ],
         [
-            'value'       => "ﾜｧｧ(ﾉﾟ\u{2200}ﾟ)ﾉ",
+            'value'       => 'ﾜｧｧ(ﾉﾟ∀ﾟ)ﾉ',
             'group'       => 'ja_otaku',
             'description' => 'オタク',
             'ascii'       => false,
@@ -12414,7 +12414,7 @@ return [
             'reading'     => 'わー | こうふん',
         ],
         [
-            'value'       => "推し尊すぎ(((ﾟ\u{2200}ﾟ)))",
+            'value'       => '推し尊すぎ(((ﾟ∀ﾟ)))',
             'group'       => 'ja_otaku',
             'description' => 'オタク',
             'ascii'       => false,
@@ -12422,7 +12422,7 @@ return [
             'reading'     => 'おし | こうふん',
         ],
         [
-            'value'       => "ｷﾀ\u{2501}(･\u{2200}･)\u{2501}!",
+            'value'       => 'ｷﾀ━(･∀･)━!',
             'group'       => 'ja_otaku',
             'description' => 'オタク',
             'ascii'       => false,
@@ -12430,7 +12430,7 @@ return [
             'reading'     => 'きた | こうふん',
         ],
         [
-            'value'       => "ｷﾀｺﾚ(ﾟ\u{2200}ﾟ)",
+            'value'       => 'ｷﾀｺﾚ(ﾟ∀ﾟ)',
             'group'       => 'ja_otaku',
             'description' => 'オタク',
             'ascii'       => false,
@@ -12438,7 +12438,7 @@ return [
             'reading'     => 'きたこれ | こうふん',
         ],
         [
-            'value'       => "(ﾉ\u{2200}`)ﾟ。ﾟ",
+            'value'       => '(ﾉ∀`)ﾟ。ﾟ',
             'group'       => 'ja_otaku',
             'description' => 'オタク',
             'ascii'       => false,
@@ -12446,7 +12446,7 @@ return [
             'reading'     => 'こうふん | やばい',
         ],
         [
-            'value'       => "ﾃﾝｼｮﾝ爆上げ(*ﾟ\u{2200}ﾟ*)",
+            'value'       => 'ﾃﾝｼｮﾝ爆上げ(*ﾟ∀ﾟ*)',
             'group'       => 'ja_otaku',
             'description' => 'オタク',
             'ascii'       => false,
@@ -12462,7 +12462,7 @@ return [
             'reading'     => 'うおー | こうふん',
         ],
         [
-            'value'       => "ヤバ(ﾟ\u{2200}ﾟ屮)屮",
+            'value'       => 'ヤバ(ﾟ∀ﾟ屮)屮',
             'group'       => 'ja_otaku',
             'description' => 'オタク',
             'ascii'       => false,
@@ -12470,7 +12470,7 @@ return [
             'reading'     => 'やばい | こうふん',
         ],
         [
-            'value'       => "神(((o(*ﾟ\u{2200}ﾟ*)o)))",
+            'value'       => '神(((o(*ﾟ∀ﾟ*)o)))',
             'group'       => 'ja_otaku',
             'description' => 'オタク',
             'ascii'       => false,
@@ -12486,7 +12486,7 @@ return [
             'reading'     => 'よだれ | うっとり',
         ],
         [
-            'value'       => "(\u{B4}ºωº`)﹃",
+            'value'       => '(´ºωº`)﹃',
             'group'       => 'ja_otaku',
             'description' => 'オタク',
             'ascii'       => false,
@@ -12494,7 +12494,7 @@ return [
             'reading'     => 'よだれ | こうこつ',
         ],
         [
-            'value'       => "じゅるり(\u{B4}﹃`)",
+            'value'       => 'じゅるり(´﹃`)',
             'group'       => 'ja_otaku',
             'description' => 'オタク',
             'ascii'       => false,
@@ -12510,7 +12510,7 @@ return [
             'reading'     => 'よだれ | おたく',
         ],
         [
-            'value'       => "恍惚(\u{2661}ω\u{2661})",
+            'value'       => '恍惚(♡ω♡)',
             'group'       => 'ja_otaku',
             'description' => 'オタク',
             'ascii'       => false,
@@ -12518,7 +12518,7 @@ return [
             'reading'     => 'こうこつ | うっとり',
         ],
         [
-            'value'       => "(*\u{2661}\u{2200}\u{2661}*)推し",
+            'value'       => '(*♡∀♡*)推し',
             'group'       => 'ja_otaku',
             'description' => 'オタク',
             'ascii'       => false,
@@ -12526,7 +12526,7 @@ return [
             'reading'     => 'こうこつ | おし',
         ],
         [
-            'value'       => "うっとり(\u{B4}ω\u{FF40}\u{2661})",
+            'value'       => 'うっとり(´ω｀♡)',
             'group'       => 'ja_otaku',
             'description' => 'オタク',
             'ascii'       => false,
@@ -12534,7 +12534,7 @@ return [
             'reading'     => 'うっとり | こうこつ',
         ],
         [
-            'value'       => "(*\u{B4}﹃`*)",
+            'value'       => '(*´﹃`*)',
             'group'       => 'ja_otaku',
             'description' => 'オタク',
             'ascii'       => false,
@@ -12542,7 +12542,7 @@ return [
             'reading'     => 'よだれ | うっとり',
         ],
         [
-            'value'       => "ﾊｱﾊｱ(\u{B4}Д\u{FF40})﹃",
+            'value'       => 'ﾊｱﾊｱ(´Д｀)﹃',
             'group'       => 'ja_otaku',
             'description' => 'オタク',
             'ascii'       => false,
@@ -12550,7 +12550,7 @@ return [
             'reading'     => 'はあはあ | こうこつ',
         ],
         [
-            'value'       => "(๑\u{B4}﹃`๑)",
+            'value'       => '(๑´﹃`๑)',
             'group'       => 'ja_otaku',
             'description' => 'オタク',
             'ascii'       => false,
@@ -12558,7 +12558,7 @@ return [
             'reading'     => 'よだれ | うっとり',
         ],
         [
-            'value'       => "推し見てたら(\u{B4}﹃`)",
+            'value'       => '推し見てたら(´﹃`)',
             'group'       => 'ja_otaku',
             'description' => 'オタク',
             'ascii'       => false,
@@ -12566,7 +12566,7 @@ return [
             'reading'     => 'よだれ | おし',
         ],
         [
-            'value'       => "(\u{2D8}ω\u{2D8})昇天",
+            'value'       => '(˘ω˘)昇天',
             'group'       => 'ja_otaku',
             'description' => 'オタク',
             'ascii'       => false,
@@ -12574,7 +12574,7 @@ return [
             'reading'     => 'しょうてん | おたく',
         ],
         [
-            'value'       => "もう無理(\u{2D8}ω\u{2D8})死んだ",
+            'value'       => 'もう無理(˘ω˘)死んだ',
             'group'       => 'ja_otaku',
             'description' => 'オタク',
             'ascii'       => false,
@@ -12582,7 +12582,7 @@ return [
             'reading'     => 'むり | しんだ',
         ],
         [
-            'value'       => "ﾟ。( \u{2D8}ω\u{2D8} )｡ﾟ",
+            'value'       => 'ﾟ。( ˘ω˘ )｡ﾟ',
             'group'       => 'ja_otaku',
             'description' => 'オタク',
             'ascii'       => false,
@@ -12590,7 +12590,7 @@ return [
             'reading'     => 'しょうてん | おたく',
         ],
         [
-            'value'       => "尊死した(\u{2D8}ω\u{2D8})",
+            'value'       => '尊死した(˘ω˘)',
             'group'       => 'ja_otaku',
             'description' => 'オタク',
             'ascii'       => false,
@@ -12606,7 +12606,7 @@ return [
             'reading'     => 'じょうぶつ | しょうてん',
         ],
         [
-            'value'       => "ﾊﾟﾀ(\u{2D8}ω\u{2D8})ﾘ",
+            'value'       => 'ﾊﾟﾀ(˘ω˘)ﾘ',
             'group'       => 'ja_otaku',
             'description' => 'オタク',
             'ascii'       => false,
@@ -12614,7 +12614,7 @@ return [
             'reading'     => 'ぱたり | しんだ',
         ],
         [
-            'value'       => "(\u{2D8}ω\u{2D8})Zzz昇天",
+            'value'       => '(˘ω˘)Zzz昇天',
             'group'       => 'ja_otaku',
             'description' => 'オタク',
             'ascii'       => false,
@@ -12622,7 +12622,7 @@ return [
             'reading'     => 'しょうてん | しんだ',
         ],
         [
-            'value'       => "墓(\u{B4}；ω；`)",
+            'value'       => '墓(´；ω；`)',
             'group'       => 'ja_otaku',
             'description' => 'オタク',
             'ascii'       => false,
@@ -12630,7 +12630,7 @@ return [
             'reading'     => 'はか | しんだ',
         ],
         [
-            'value'       => "バタンキュー(\u{2D8}ω\u{2D8})",
+            'value'       => 'バタンキュー(˘ω˘)',
             'group'       => 'ja_otaku',
             'description' => 'オタク',
             'ascii'       => false,
@@ -12646,7 +12646,7 @@ return [
             'reading'     => 'しょうてん | しんだ',
         ],
         [
-            'value'       => "私が死んだ(\u{2D8}ω\u{2D8})",
+            'value'       => '私が死んだ(˘ω˘)',
             'group'       => 'ja_otaku',
             'description' => 'オタク',
             'ascii'       => false,
@@ -12662,7 +12662,7 @@ return [
             'reading'     => 'じょうぶつ | しょうてん',
         ],
         [
-            'value'       => "(\u{B4}･ω･`)",
+            'value'       => '(´･ω･`)',
             'group'       => 'ja_otaku',
             'description' => 'オタク',
             'ascii'       => false,
@@ -12670,7 +12670,7 @@ return [
             'reading'     => 'しょぼーん | おたく',
         ],
         [
-            'value'       => "( \u{B4}\u{2200}`)",
+            'value'       => '( ´∀`)',
             'group'       => 'ja_otaku',
             'description' => 'オタク',
             'ascii'       => false,
@@ -12678,7 +12678,7 @@ return [
             'reading'     => 'おたく | にやり',
         ],
         [
-            'value'       => "( ･`ω･\u{B4})",
+            'value'       => '( ･`ω･´)',
             'group'       => 'ja_otaku',
             'description' => 'オタク',
             'ascii'       => false,
@@ -12686,7 +12686,7 @@ return [
             'reading'     => 'きりっ | おたく',
         ],
         [
-            'value'       => "(`ω\u{B4})",
+            'value'       => '(`ω´)',
             'group'       => 'ja_otaku',
             'description' => 'オタク',
             'ascii'       => false,
@@ -12694,7 +12694,7 @@ return [
             'reading'     => 'どや | おたく',
         ],
         [
-            'value'       => "(\u{B4}ﾟдﾟ`)",
+            'value'       => '(´ﾟдﾟ`)',
             'group'       => 'ja_otaku',
             'description' => 'オタク',
             'ascii'       => false,
@@ -12702,7 +12702,7 @@ return [
             'reading'     => 'ぽかーん | おたく',
         ],
         [
-            'value'       => "(・\u{2200}・)ニヤニヤ",
+            'value'       => '(・∀・)ニヤニヤ',
             'group'       => 'ja_otaku',
             'description' => 'オタク',
             'ascii'       => false,
@@ -12710,7 +12710,7 @@ return [
             'reading'     => 'にやにや | おたく',
         ],
         [
-            'value'       => "(ﾟ\u{2200}ﾟ)アヒャ",
+            'value'       => '(ﾟ∀ﾟ)アヒャ',
             'group'       => 'ja_otaku',
             'description' => 'オタク',
             'ascii'       => false,
@@ -12718,7 +12718,7 @@ return [
             'reading'     => 'あひゃ | おたく',
         ],
         [
-            'value'       => "(\u{B4}・ω・)ﾉ",
+            'value'       => '(´・ω・)ﾉ',
             'group'       => 'ja_otaku',
             'description' => 'オタク',
             'ascii'       => false,
@@ -12726,7 +12726,7 @@ return [
             'reading'     => 'おたく | ノシ',
         ],
         [
-            'value'       => "ｷﾞｺﾞｺﾞ(ﾟ\u{2200}ﾟ)",
+            'value'       => 'ｷﾞｺﾞｺﾞ(ﾟ∀ﾟ)',
             'group'       => 'ja_otaku',
             'description' => 'オタク',
             'ascii'       => false,
@@ -12734,7 +12734,7 @@ return [
             'reading'     => 'おたく | ぎゃー',
         ],
         [
-            'value'       => "( \u{B4}д`)",
+            'value'       => '( ´д`)',
             'group'       => 'ja_otaku',
             'description' => 'オタク',
             'ascii'       => false,
@@ -12742,7 +12742,7 @@ return [
             'reading'     => 'はぁ | おたく',
         ],
         [
-            'value'       => "(ﾟ\u{2200}ﾟ)イラッシャイ!",
+            'value'       => '(ﾟ∀ﾟ)イラッシャイ!',
             'group'       => 'ja_otaku',
             'description' => 'オタク',
             'ascii'       => false,
@@ -12750,7 +12750,7 @@ return [
             'reading'     => 'いらっしゃい | おたく',
         ],
         [
-            'value'       => "\u{FF1E}\u{FF1C}",
+            'value'       => '＞＜',
             'group'       => 'ja_otaku',
             'description' => 'オタク',
             'ascii'       => false,
@@ -12758,7 +12758,7 @@ return [
             'reading'     => 'きゃー | おたく',
         ],
         [
-            'value'       => "( \u{FF1E}\u{FF1C})",
+            'value'       => '( ＞＜)',
             'group'       => 'ja_otaku',
             'description' => 'オタク',
             'ascii'       => false,
@@ -12766,7 +12766,7 @@ return [
             'reading'     => 'きゃー | おたく',
         ],
         [
-            'value'       => "(つ\u{FF1E}\u{FF1C}\u{2282})",
+            'value'       => '(つ＞＜⊂)',
             'group'       => 'ja_otaku',
             'description' => 'オタク',
             'ascii'       => false,
@@ -12774,7 +12774,7 @@ return [
             'reading'     => 'きゃー | むり',
         ],
         [
-            'value'       => "ﾝ ﾅｰﾝ(ﾟ\u{2200}ﾟ)",
+            'value'       => 'ﾝ ﾅｰﾝ(ﾟ∀ﾟ)',
             'group'       => 'ja_otaku',
             'description' => 'オタク',
             'ascii'       => false,
@@ -12782,7 +12782,7 @@ return [
             'reading'     => 'なーん | おたく',
         ],
         [
-            'value'       => "(\u{FF40}•ω•\u{B4})ﾉ",
+            'value'       => '(｀•ω•´)ﾉ',
             'group'       => 'ja_ouen',
             'description' => '応援',
             'ascii'       => false,
@@ -12798,7 +12798,7 @@ return [
             'reading'     => 'ふぁいと',
         ],
         [
-            'value'       => "がんばれ( \u{B4}\u{2200}\u{FF40})ﾉ",
+            'value'       => 'がんばれ( ´∀｀)ﾉ',
             'group'       => 'ja_ouen',
             'description' => '応援',
             'ascii'       => false,
@@ -12814,7 +12814,7 @@ return [
             'reading'     => 'ふぁいと | がんばれ',
         ],
         [
-            'value'       => "o( \u{FF40}•ω•\u{B4} )o",
+            'value'       => 'o( ｀•ω•´ )o',
             'group'       => 'ja_ouen',
             'description' => '応援',
             'ascii'       => false,
@@ -12862,7 +12862,7 @@ return [
             'reading'     => 'がんばって | ぐっ',
         ],
         [
-            'value'       => "( \u{2F6}•̀ω•́\u{2F6} )ﾉ",
+            'value'       => '( ˶•̀ω•́˶ )ﾉ',
             'group'       => 'ja_ouen',
             'description' => '応援',
             'ascii'       => false,
@@ -12910,7 +12910,7 @@ return [
             'reading'     => 'ふれー',
         ],
         [
-            'value'       => "フレフレ＼( ﾟ\u{25BD}ﾟ )／",
+            'value'       => 'フレフレ＼( ﾟ▽ﾟ )／',
             'group'       => 'ja_ouen',
             'description' => '応援',
             'ascii'       => false,
@@ -12942,7 +12942,7 @@ return [
             'reading'     => 'おうえん',
         ],
         [
-            'value'       => "＼ フレー ／( \u{B4}\u{2200}\u{FF40})",
+            'value'       => '＼ フレー ／( ´∀｀)',
             'group'       => 'ja_ouen',
             'description' => '応援',
             'ascii'       => false,
@@ -12966,7 +12966,7 @@ return [
             'reading'     => 'ふれふれ',
         ],
         [
-            'value'       => "応援してる( \u{B4} ᵕ ` )\u{2661}",
+            'value'       => '応援してる( ´ ᵕ ` )♡',
             'group'       => 'ja_ouen',
             'description' => '応援',
             'ascii'       => false,
@@ -12974,7 +12974,7 @@ return [
             'reading'     => 'おうえん | だいすき',
         ],
         [
-            'value'       => "\u{2661}( •̀ω•́ )ﾉ",
+            'value'       => '♡( •̀ω•́ )ﾉ',
             'group'       => 'ja_ouen',
             'description' => '応援',
             'ascii'       => false,
@@ -12982,7 +12982,7 @@ return [
             'reading'     => 'おうえん | だいすき',
         ],
         [
-            'value'       => "推し( \u{2F6}• ᴗ •\u{2F6} )\u{2661}",
+            'value'       => '推し( ˶• ᴗ •˶ )♡',
             'group'       => 'ja_ouen',
             'description' => '応援',
             'ascii'       => false,
@@ -12990,7 +12990,7 @@ return [
             'reading'     => 'おしかつ | だいすき',
         ],
         [
-            'value'       => "( •̀ ᴗ •́ )ﾉ\u{2661}",
+            'value'       => '( •̀ ᴗ •́ )ﾉ♡',
             'group'       => 'ja_ouen',
             'description' => '応援',
             'ascii'       => false,
@@ -12998,7 +12998,7 @@ return [
             'reading'     => 'おうえん | ふぁいと',
         ],
         [
-            'value'       => "＼( •̀ ᴗ •́ )／\u{2661}",
+            'value'       => '＼( •̀ ᴗ •́ )／♡',
             'group'       => 'ja_ouen',
             'description' => '応援',
             'ascii'       => false,
@@ -13006,7 +13006,7 @@ return [
             'reading'     => 'おうえん | だいすき',
         ],
         [
-            'value'       => "( \u{2F6}ᵔ ᵕ ᵔ\u{2F6} )ﾉ 応援",
+            'value'       => '( ˶ᵔ ᵕ ᵔ˶ )ﾉ 応援',
             'group'       => 'ja_ouen',
             'description' => '応援',
             'ascii'       => false,
@@ -13014,7 +13014,7 @@ return [
             'reading'     => 'おうえん',
         ],
         [
-            'value'       => "( \u{B4}\u{2200}\u{FF40})つ\u{2661} がんばれ",
+            'value'       => '( ´∀｀)つ♡ がんばれ',
             'group'       => 'ja_ouen',
             'description' => '応援',
             'ascii'       => false,
@@ -13022,7 +13022,7 @@ return [
             'reading'     => 'がんばれ | だいすき',
         ],
         [
-            'value'       => "\u{2661}⸜( •̀ω•́ )⸝\u{2661}",
+            'value'       => '♡⸜( •̀ω•́ )⸝♡',
             'group'       => 'ja_ouen',
             'description' => '応援',
             'ascii'       => false,
@@ -13038,7 +13038,7 @@ return [
             'reading'     => 'おねがい | おうえん',
         ],
         [
-            'value'       => "応援( \u{2F6}\u{2C3}ᴗ\u{2C2} )ﾉ",
+            'value'       => '応援( ˶˃ᴗ˂ )ﾉ',
             'group'       => 'ja_ouen',
             'description' => '応援',
             'ascii'       => false,
@@ -13054,7 +13054,7 @@ return [
             'reading'     => 'ごうかく | がんばれ',
         ],
         [
-            'value'       => "がんばって( \u{B4}\u{2200}\u{FF40})ﾉ",
+            'value'       => 'がんばって( ´∀｀)ﾉ',
             'group'       => 'ja_ouen',
             'description' => '応援',
             'ascii'       => false,
@@ -13078,7 +13078,7 @@ return [
             'reading'     => 'じゅけん | ふぁいと',
         ],
         [
-            'value'       => "きっと大丈夫( \u{B4} ᵕ ` )ﾉ",
+            'value'       => 'きっと大丈夫( ´ ᵕ ` )ﾉ',
             'group'       => 'ja_ouen',
             'description' => '応援',
             'ascii'       => false,
@@ -13086,7 +13086,7 @@ return [
             'reading'     => 'だいじょうぶ | おうえん',
         ],
         [
-            'value'       => "ドンマイ( \u{B4}\u{2200}\u{FF40})ﾉ",
+            'value'       => 'ドンマイ( ´∀｀)ﾉ',
             'group'       => 'ja_ouen',
             'description' => '応援',
             'ascii'       => false,
@@ -13094,7 +13094,7 @@ return [
             'reading'     => 'どんまい',
         ],
         [
-            'value'       => "元気だして( \u{B4}• ω •` )ﾉ",
+            'value'       => '元気だして( ´• ω •` )ﾉ',
             'group'       => 'ja_ouen',
             'description' => '応援',
             'ascii'       => false,
@@ -13102,7 +13102,7 @@ return [
             'reading'     => 'げんきだして',
         ],
         [
-            'value'       => "( \u{B4}\u{2200}\u{FF40})ﾉ ﾖｼﾖｼ",
+            'value'       => '( ´∀｀)ﾉ ﾖｼﾖｼ',
             'group'       => 'ja_ouen',
             'description' => '応援',
             'ascii'       => false,
@@ -13110,7 +13110,7 @@ return [
             'reading'     => 'よしよし | おうえん',
         ],
         [
-            'value'       => "( \u{2D8}ω\u{2D8} )ﾉ むりしないで",
+            'value'       => '( ˘ω˘ )ﾉ むりしないで',
             'group'       => 'ja_ouen',
             'description' => '応援',
             'ascii'       => false,
@@ -13118,7 +13118,7 @@ return [
             'reading'     => 'むりしないで',
         ],
         [
-            'value'       => "( \u{B4} ᵕ ` )ﾉ そばにいる",
+            'value'       => '( ´ ᵕ ` )ﾉ そばにいる',
             'group'       => 'ja_ouen',
             'description' => '応援',
             'ascii'       => false,
@@ -13142,7 +13142,7 @@ return [
             'reading'     => 'むてき | がんばれ',
         ],
         [
-            'value'       => "おうえんしてる( \u{B4} ᵕ ` )",
+            'value'       => 'おうえんしてる( ´ ᵕ ` )',
             'group'       => 'ja_ouen',
             'description' => '応援',
             'ascii'       => false,
@@ -13150,7 +13150,7 @@ return [
             'reading'     => 'おうえん',
         ],
         [
-            'value'       => "( •̀ω•́ )ﾉ\u{270A}",
+            'value'       => '( •̀ω•́ )ﾉ✊',
             'group'       => 'ja_ouen',
             'description' => '応援',
             'ascii'       => false,
@@ -13158,7 +13158,7 @@ return [
             'reading'     => 'ふぁいと | がんばれ',
         ],
         [
-            'value'       => "がんばれ\u{1F4E3}( •̀ω•́ )",
+            'value'       => 'がんばれ📣( •̀ω•́ )',
             'group'       => 'ja_ouen',
             'description' => '応援',
             'ascii'       => false,
@@ -13166,7 +13166,7 @@ return [
             'reading'     => 'がんばれ',
         ],
         [
-            'value'       => "( •̀ω•́ )b\u{1F4AA}",
+            'value'       => '( •̀ω•́ )b💪',
             'group'       => 'ja_ouen',
             'description' => '応援',
             'ascii'       => false,
@@ -13174,7 +13174,7 @@ return [
             'reading'     => 'ふぁいと | ぐっ',
         ],
         [
-            'value'       => "フレー\u{1F6A9}( •̀ω•́ )ﾉ",
+            'value'       => 'フレー🚩( •̀ω•́ )ﾉ',
             'group'       => 'ja_ouen',
             'description' => '応援',
             'ascii'       => false,
@@ -13190,7 +13190,7 @@ return [
             'reading'     => 'がんばれにっぽん',
         ],
         [
-            'value'       => "ｺﾞｰﾙ!ヽ( ﾟ\u{25BD}ﾟ )ﾉ",
+            'value'       => 'ｺﾞｰﾙ!ヽ( ﾟ▽ﾟ )ﾉ',
             'group'       => 'ja_ouen',
             'description' => '応援',
             'ascii'       => false,
@@ -13222,7 +13222,7 @@ return [
             'reading'     => 'かて | しょうり',
         ],
         [
-            'value'       => "＼ ﾆｯﾎﾟﾝ ／( \u{B4}\u{2200}\u{FF40})",
+            'value'       => '＼ ﾆｯﾎﾟﾝ ／( ´∀｀)',
             'group'       => 'ja_ouen',
             'description' => '応援',
             'ascii'       => false,
@@ -13230,7 +13230,7 @@ return [
             'reading'     => 'にっぽん',
         ],
         [
-            'value'       => "\u{26BD}ﾌｧｲﾄ!( •̀ω•́ )",
+            'value'       => '⚽ﾌｧｲﾄ!( •̀ω•́ )',
             'group'       => 'ja_ouen',
             'description' => '応援',
             'ascii'       => false,
@@ -13238,7 +13238,7 @@ return [
             'reading'     => 'ふぁいと | さっかー',
         ],
         [
-            'value'       => "\u{26BD}( •̀ω•́ )ﾉ ｺﾞｰﾙ",
+            'value'       => '⚽( •̀ω•́ )ﾉ ｺﾞｰﾙ',
             'group'       => 'ja_ouen',
             'description' => '応援',
             'ascii'       => false,
@@ -13254,7 +13254,7 @@ return [
             'reading'     => 'にこにこ | かわいい',
         ],
         [
-            'value'       => "( \u{B4} ᵕ ` )",
+            'value'       => '( ´ ᵕ ` )',
             'group'       => 'ja_ryosangata',
             'description' => '量産型',
             'ascii'       => false,
@@ -13262,7 +13262,7 @@ return [
             'reading'     => 'にこにこ',
         ],
         [
-            'value'       => "( \u{2F6}•ᴗ•\u{2F6} )",
+            'value'       => '( ˶•ᴗ•˶ )',
             'group'       => 'ja_ryosangata',
             'description' => '量産型',
             'ascii'       => false,
@@ -13278,7 +13278,7 @@ return [
             'reading'     => 'にこにこ',
         ],
         [
-            'value'       => "( \u{B4}• ᵕ •` )",
+            'value'       => '( ´• ᵕ •` )',
             'group'       => 'ja_ryosangata',
             'description' => '量産型',
             'ascii'       => false,
@@ -13286,7 +13286,7 @@ return [
             'reading'     => 'にこにこ | かわいい',
         ],
         [
-            'value'       => "(*\u{B4}ᵕ`*)",
+            'value'       => '(*´ᵕ`*)',
             'group'       => 'ja_ryosangata',
             'description' => '量産型',
             'ascii'       => false,
@@ -13294,7 +13294,7 @@ return [
             'reading'     => 'にこにこ | ほっこり',
         ],
         [
-            'value'       => "( \u{2D8} ᵕ \u{2D8} )",
+            'value'       => '( ˘ ᵕ ˘ )',
             'group'       => 'ja_ryosangata',
             'description' => '量産型',
             'ascii'       => false,
@@ -13318,7 +13318,7 @@ return [
             'reading'     => 'にこにこ',
         ],
         [
-            'value'       => "(｡\u{2C3} ᵕ \u{2C2}｡)",
+            'value'       => '(｡˃ ᵕ ˂｡)',
             'group'       => 'ja_ryosangata',
             'description' => '量産型',
             'ascii'       => false,
@@ -13334,7 +13334,7 @@ return [
             'reading'     => 'にこにこ',
         ],
         [
-            'value'       => "( \u{2F6}ˊ ᵕ ˋ\u{2F6} )",
+            'value'       => '( ˶ˊ ᵕ ˋ˶ )',
             'group'       => 'ja_ryosangata',
             'description' => '量産型',
             'ascii'       => false,
@@ -13374,7 +13374,7 @@ return [
             'reading'     => 'きゅるん | うれしい',
         ],
         [
-            'value'       => "( \u{2F6}\u{2C3} ᵕ \u{2C2}\u{2F6} )",
+            'value'       => '( ˶˃ ᵕ ˂˶ )',
             'group'       => 'ja_ryosangata',
             'description' => '量産型',
             'ascii'       => false,
@@ -13390,7 +13390,7 @@ return [
             'reading'     => 'きゅるん',
         ],
         [
-            'value'       => "( ੭ \u{2C3} ᵕ \u{2C2} )੭",
+            'value'       => '( ੭ ˃ ᵕ ˂ )੭',
             'group'       => 'ja_ryosangata',
             'description' => '量産型',
             'ascii'       => false,
@@ -13398,7 +13398,7 @@ return [
             'reading'     => 'きゅるん | ぎゅー',
         ],
         [
-            'value'       => "( ⸜\u{2C3} ᵕ \u{2C2}⸝ )",
+            'value'       => '( ⸜˃ ᵕ ˂⸝ )',
             'group'       => 'ja_ryosangata',
             'description' => '量産型',
             'ascii'       => false,
@@ -13406,7 +13406,7 @@ return [
             'reading'     => 'きゅるん',
         ],
         [
-            'value'       => "(\u{2C3} ᵕ \u{2C2} )\u{2661}",
+            'value'       => '(˃ ᵕ ˂ )♡',
             'group'       => 'ja_ryosangata',
             'description' => '量産型',
             'ascii'       => false,
@@ -13414,7 +13414,7 @@ return [
             'reading'     => 'きゅるん | だいすき',
         ],
         [
-            'value'       => "( ｡\u{2C3} ᵕ \u{2C2}｡)",
+            'value'       => '( ｡˃ ᵕ ˂｡)',
             'group'       => 'ja_ryosangata',
             'description' => '量産型',
             'ascii'       => false,
@@ -13422,7 +13422,7 @@ return [
             'reading'     => 'きゅるん',
         ],
         [
-            'value'       => "( \u{2C3} \u{2D5} \u{2C2} )",
+            'value'       => '( ˃ ˕ ˂ )',
             'group'       => 'ja_ryosangata',
             'description' => '量産型',
             'ascii'       => false,
@@ -13430,7 +13430,7 @@ return [
             'reading'     => 'きゅるん',
         ],
         [
-            'value'       => "ʚ( \u{2C3} ᵕ \u{2C2} )ɞ",
+            'value'       => 'ʚ( ˃ ᵕ ˂ )ɞ',
             'group'       => 'ja_ryosangata',
             'description' => '量産型',
             'ascii'       => false,
@@ -13446,7 +13446,7 @@ return [
             'reading'     => 'きゅるん | どや',
         ],
         [
-            'value'       => "( \u{2C3}ᴗ\u{2C2} )",
+            'value'       => '( ˃ᴗ˂ )',
             'group'       => 'ja_ryosangata',
             'description' => '量産型',
             'ascii'       => false,
@@ -13566,7 +13566,7 @@ return [
             'reading'     => 'てれてれ | きゅん',
         ],
         [
-            'value'       => "( \u{2F6}ˊᵕˋ\u{2F6} )",
+            'value'       => '( ˶ˊᵕˋ˶ )',
             'group'       => 'ja_ryosangata',
             'description' => '量産型',
             'ascii'       => false,
@@ -13574,7 +13574,7 @@ return [
             'reading'     => 'てれてれ',
         ],
         [
-            'value'       => "(/ \u{2F6}• ᴗ •\u{2F6} )/",
+            'value'       => '(/ ˶• ᴗ •˶ )/',
             'group'       => 'ja_ryosangata',
             'description' => '量産型',
             'ascii'       => false,
@@ -13582,7 +13582,7 @@ return [
             'reading'     => 'てれてれ | もじもじ',
         ],
         [
-            'value'       => "( \u{2F6}ᴗ\u{2F6} )",
+            'value'       => '( ˶ᴗ˶ )',
             'group'       => 'ja_ryosangata',
             'description' => '量産型',
             'ascii'       => false,
@@ -13622,7 +13622,7 @@ return [
             'reading'     => 'てれてれ | もじもじ',
         ],
         [
-            'value'       => "( \u{2F6}\u{2C3} ᴗ \u{2C2}\u{2F6} )",
+            'value'       => '( ˶˃ ᴗ ˂˶ )',
             'group'       => 'ja_ryosangata',
             'description' => '量産型',
             'ascii'       => false,
@@ -13630,7 +13630,7 @@ return [
             'reading'     => 'てれてれ',
         ],
         [
-            'value'       => "( \u{2F6}• ᴗ •\u{2F6} )\u{2661}",
+            'value'       => '( ˶• ᴗ •˶ )♡',
             'group'       => 'ja_ryosangata',
             'description' => '量産型',
             'ascii'       => false,
@@ -13638,7 +13638,7 @@ return [
             'reading'     => 'きゅん | だいすき',
         ],
         [
-            'value'       => "(ᵔᴗᵔ)\u{2661}",
+            'value'       => '(ᵔᴗᵔ)♡',
             'group'       => 'ja_ryosangata',
             'description' => '量産型',
             'ascii'       => false,
@@ -13646,7 +13646,7 @@ return [
             'reading'     => 'だいすき | きゅん',
         ],
         [
-            'value'       => "\u{2661}(ᵔᴗᵔ)\u{2661}",
+            'value'       => '♡(ᵔᴗᵔ)♡',
             'group'       => 'ja_ryosangata',
             'description' => '量産型',
             'ascii'       => false,
@@ -13654,7 +13654,7 @@ return [
             'reading'     => 'だいすき',
         ],
         [
-            'value'       => "( \u{B4} ᵕ ` )\u{2661}",
+            'value'       => '( ´ ᵕ ` )♡',
             'group'       => 'ja_ryosangata',
             'description' => '量産型',
             'ascii'       => false,
@@ -13662,7 +13662,7 @@ return [
             'reading'     => 'だいすき | きゅん',
         ],
         [
-            'value'       => "\u{2661}⸜( \u{2F6}ᵔ ᵕ ᵔ\u{2F6} )⸝\u{2661}",
+            'value'       => '♡⸜( ˶ᵔ ᵕ ᵔ˶ )⸝♡',
             'group'       => 'ja_ryosangata',
             'description' => '量産型',
             'ascii'       => false,
@@ -13670,7 +13670,7 @@ return [
             'reading'     => 'だいすき | きゅん',
         ],
         [
-            'value'       => "(｡\u{2661} ᵕ \u{2661}｡)",
+            'value'       => '(｡♡ ᵕ ♡｡)',
             'group'       => 'ja_ryosangata',
             'description' => '量産型',
             'ascii'       => false,
@@ -13678,7 +13678,7 @@ return [
             'reading'     => 'きゅん | だいすき',
         ],
         [
-            'value'       => "( \u{2661}ᴗ\u{2661} )",
+            'value'       => '( ♡ᴗ♡ )',
             'group'       => 'ja_ryosangata',
             'description' => '量産型',
             'ascii'       => false,
@@ -13686,7 +13686,7 @@ return [
             'reading'     => 'うっとり | だいすき',
         ],
         [
-            'value'       => "( \u{2F6}ᵔ ³ᵔ\u{2F6} )",
+            'value'       => '( ˶ᵔ ³ᵔ˶ )',
             'group'       => 'ja_ryosangata',
             'description' => '量産型',
             'ascii'       => false,
@@ -13694,7 +13694,7 @@ return [
             'reading'     => 'ちゅー | だいすき',
         ],
         [
-            'value'       => "\u{2661} ( ᵕ ᴗ ᵕ ) \u{2661}",
+            'value'       => '♡ ( ᵕ ᴗ ᵕ ) ♡',
             'group'       => 'ja_ryosangata',
             'description' => '量産型',
             'ascii'       => false,
@@ -13702,7 +13702,7 @@ return [
             'reading'     => 'だいすき',
         ],
         [
-            'value'       => "( ⸝⸝ᵔ ᵕ ᵔ⸝⸝ )\u{2661}",
+            'value'       => '( ⸝⸝ᵔ ᵕ ᵔ⸝⸝ )♡',
             'group'       => 'ja_ryosangata',
             'description' => '量産型',
             'ascii'       => false,
@@ -13710,7 +13710,7 @@ return [
             'reading'     => 'きゅん | だいすき',
         ],
         [
-            'value'       => "(づ ᵕ ᵕ )づ\u{2661}",
+            'value'       => '(づ ᵕ ᵕ )づ♡',
             'group'       => 'ja_ryosangata',
             'description' => '量産型',
             'ascii'       => false,
@@ -13718,7 +13718,7 @@ return [
             'reading'     => 'ぎゅー | だいすき',
         ],
         [
-            'value'       => "(っ\u{B4} ᵕ `c)\u{2661}",
+            'value'       => '(っ´ ᵕ `c)♡',
             'group'       => 'ja_ryosangata',
             'description' => '量産型',
             'ascii'       => false,
@@ -13726,7 +13726,7 @@ return [
             'reading'     => 'ぎゅー | だいすき',
         ],
         [
-            'value'       => "( \u{2661} \u{2C3} ᵕ \u{2C2} \u{2661} )",
+            'value'       => '( ♡ ˃ ᵕ ˂ ♡ )',
             'group'       => 'ja_ryosangata',
             'description' => '量産型',
             'ascii'       => false,
@@ -13734,7 +13734,7 @@ return [
             'reading'     => 'きゅるん | だいすき',
         ],
         [
-            'value'       => "ෆ( \u{2F6}ᵕ ᵕ\u{2F6} )ෆ",
+            'value'       => 'ෆ( ˶ᵕ ᵕ˶ )ෆ',
             'group'       => 'ja_ryosangata',
             'description' => '量産型',
             'ascii'       => false,
@@ -13742,7 +13742,7 @@ return [
             'reading'     => 'だいすき | きゅん',
         ],
         [
-            'value'       => "( \u{2F6}_ᴗ_\u{2F6} )",
+            'value'       => '( ˶_ᴗ_˶ )',
             'group'       => 'ja_ryosangata',
             'description' => '量産型',
             'ascii'       => false,
@@ -13750,7 +13750,7 @@ return [
             'reading'     => 'ぺこり | ありがとう',
         ],
         [
-            'value'       => "⸜( \u{2F6}_ᴗ_\u{2F6} )⸝",
+            'value'       => '⸜( ˶_ᴗ_˶ )⸝',
             'group'       => 'ja_ryosangata',
             'description' => '量産型',
             'ascii'       => false,
@@ -13766,7 +13766,7 @@ return [
             'reading'     => 'ぺこり | ごめん',
         ],
         [
-            'value'       => "( \u{2F6}• ᴗ •\u{2F6} )⸝",
+            'value'       => '( ˶• ᴗ •˶ )⸝',
             'group'       => 'ja_ryosangata',
             'description' => '量産型',
             'ascii'       => false,
@@ -13774,7 +13774,7 @@ return [
             'reading'     => 'おねがい | ぺこり',
         ],
         [
-            'value'       => "( >ᴗ< )੭ \u{2661}",
+            'value'       => '( >ᴗ< )੭ ♡',
             'group'       => 'ja_ryosangata',
             'description' => '量産型',
             'ascii'       => false,
@@ -13790,7 +13790,7 @@ return [
             'reading'     => 'ぺこり | ありがとう',
         ],
         [
-            'value'       => "( \u{2F6}•ᴗ•\u{2F6} )/ \u{2661}",
+            'value'       => '( ˶•ᴗ•˶ )/ ♡',
             'group'       => 'ja_ryosangata',
             'description' => '量産型',
             'ascii'       => false,
@@ -13806,7 +13806,7 @@ return [
             'reading'     => 'ぺこり | ごめん',
         ],
         [
-            'value'       => "( \u{2F6}• ᴥ •\u{2F6} )",
+            'value'       => '( ˶• ᴥ •˶ )',
             'group'       => 'ja_ryosangata',
             'description' => '量産型',
             'ascii'       => false,
@@ -13846,7 +13846,7 @@ return [
             'reading'     => 'にゃー | ねこ',
         ],
         [
-            'value'       => "( \u{2261}ᵔ ᴥ ᵔ\u{2261} )",
+            'value'       => '( ≡ᵔ ᴥ ᵔ≡ )',
             'group'       => 'ja_ryosangata',
             'description' => '量産型',
             'ascii'       => false,
@@ -13878,7 +13878,7 @@ return [
             'reading'     => 'うさぎ | もふもふ',
         ],
         [
-            'value'       => "( \u{B4}• ᴥ •` )",
+            'value'       => '( ´• ᴥ •` )',
             'group'       => 'ja_ryosangata',
             'description' => '量産型',
             'ascii'       => false,
@@ -13902,7 +13902,7 @@ return [
             'reading'     => 'くま',
         ],
         [
-            'value'       => "( \u{2D9}ᵕ\u{2D9} )",
+            'value'       => '( ˙ᵕ˙ )',
             'group'       => 'ja_ryosangata',
             'description' => '量産型',
             'ascii'       => false,
@@ -13918,7 +13918,7 @@ return [
             'reading'     => 'くま | もふもふ',
         ],
         [
-            'value'       => "( \u{2312} ᴥ \u{2312} )",
+            'value'       => '( ⌒ ᴥ ⌒ )',
             'group'       => 'ja_ryosangata',
             'description' => '量産型',
             'ascii'       => false,
@@ -13934,7 +13934,7 @@ return [
             'reading'     => 'うさぎ | もふもふ',
         ],
         [
-            'value'       => "( \u{B4}ᴥ` )",
+            'value'       => '( ´ᴥ` )',
             'group'       => 'ja_ryosangata',
             'description' => '量産型',
             'ascii'       => false,
@@ -13982,7 +13982,7 @@ return [
             'reading'     => 'ぴえん | うるうる',
         ],
         [
-            'value'       => "( \u{2F6}• ᴗ •\u{2F6} );",
+            'value'       => '( ˶• ᴗ •˶ );',
             'group'       => 'ja_ryosangata',
             'description' => '量産型',
             'ascii'       => false,
@@ -13990,7 +13990,7 @@ return [
             'reading'     => 'あせあせ | たじたじ',
         ],
         [
-            'value'       => "( \u{B4}• ᴗ •` ; )",
+            'value'       => '( ´• ᴗ •` ; )',
             'group'       => 'ja_ryosangata',
             'description' => '量産型',
             'ascii'       => false,
@@ -14006,7 +14006,7 @@ return [
             'reading'     => 'あせあせ',
         ],
         [
-            'value'       => "( ; \u{B4} ᵕ ` )",
+            'value'       => '( ; ´ ᵕ ` )',
             'group'       => 'ja_ryosangata',
             'description' => '量産型',
             'ascii'       => false,
@@ -14014,7 +14014,7 @@ return [
             'reading'     => 'あせあせ | たじたじ',
         ],
         [
-            'value'       => "( \u{2F6}ᵕ ᵕ\u{2F6} ;)",
+            'value'       => '( ˶ᵕ ᵕ˶ ;)',
             'group'       => 'ja_ryosangata',
             'description' => '量産型',
             'ascii'       => false,
@@ -14022,7 +14022,7 @@ return [
             'reading'     => 'あせあせ',
         ],
         [
-            'value'       => "( \u{2F6}• ᴗ •\u{2F6} )/",
+            'value'       => '( ˶• ᴗ •˶ )/',
             'group'       => 'ja_ryosangata',
             'description' => '量産型',
             'ascii'       => false,
@@ -14030,7 +14030,7 @@ return [
             'reading'     => 'ばいばい | おーい',
         ],
         [
-            'value'       => "ﾉ( \u{2F6}ᵔ ᵕ ᵔ\u{2F6} )",
+            'value'       => 'ﾉ( ˶ᵔ ᵕ ᵔ˶ )',
             'group'       => 'ja_ryosangata',
             'description' => '量産型',
             'ascii'       => false,
@@ -14046,7 +14046,7 @@ return [
             'reading'     => 'ばいばい | おーい',
         ],
         [
-            'value'       => "⸜( \u{B4} ᵕ ` )⸝",
+            'value'       => '⸜( ´ ᵕ ` )⸝',
             'group'       => 'ja_ryosangata',
             'description' => '量産型',
             'ascii'       => false,
@@ -14054,7 +14054,7 @@ return [
             'reading'     => 'わーい | やったー',
         ],
         [
-            'value'       => "ヽ( \u{2F6}• ᴗ •\u{2F6} )ﾉ",
+            'value'       => 'ヽ( ˶• ᴗ •˶ )ﾉ',
             'group'       => 'ja_ryosangata',
             'description' => '量産型',
             'ascii'       => false,
@@ -14062,7 +14062,7 @@ return [
             'reading'     => 'わーい | やったー',
         ],
         [
-            'value'       => "( \u{2C3} ᵕ \u{2C2} )ﾉ\u{2661}",
+            'value'       => '( ˃ ᵕ ˂ )ﾉ♡',
             'group'       => 'ja_ryosangata',
             'description' => '量産型',
             'ascii'       => false,
@@ -14070,7 +14070,7 @@ return [
             'reading'     => 'ばいばい | だいすき',
         ],
         [
-            'value'       => "＼( \u{2F6}ᵔ ᵕ ᵔ\u{2F6} )／",
+            'value'       => '＼( ˶ᵔ ᵕ ᵔ˶ )／',
             'group'       => 'ja_ryosangata',
             'description' => '量産型',
             'ascii'       => false,
@@ -14086,7 +14086,7 @@ return [
             'reading'     => 'ぎゅー | ハグ',
         ],
         [
-            'value'       => "( \u{2F6}• ᴗ •\u{2F6} )\u{2B52}",
+            'value'       => '( ˶• ᴗ •˶ )⭒',
             'group'       => 'ja_ryosangata',
             'description' => '量産型',
             'ascii'       => false,
@@ -14094,7 +14094,7 @@ return [
             'reading'     => 'きらきら | にこにこ',
         ],
         [
-            'value'       => "\u{22B9} ( \u{B4} ᵕ ` ) \u{22B9}",
+            'value'       => '⊹ ( ´ ᵕ ` ) ⊹',
             'group'       => 'ja_ryosangata',
             'description' => '量産型',
             'ascii'       => false,
@@ -14102,7 +14102,7 @@ return [
             'reading'     => 'きらきら',
         ],
         [
-            'value'       => "\u{2726} ( \u{2F6}ˊ ᵕ ˋ\u{2F6} ) \u{2726}",
+            'value'       => '✦ ( ˶ˊ ᵕ ˋ˶ ) ✦',
             'group'       => 'ja_ryosangata',
             'description' => '量産型',
             'ascii'       => false,
@@ -14110,7 +14110,7 @@ return [
             'reading'     => 'きらきら | きゅるん',
         ],
         [
-            'value'       => "( ᵔ ᵕ ᵔ )\u{2661}⸝⸝",
+            'value'       => '( ᵔ ᵕ ᵔ )♡⸝⸝',
             'group'       => 'ja_ryosangata',
             'description' => '量産型',
             'ascii'       => false,
@@ -14118,7 +14118,7 @@ return [
             'reading'     => 'にこにこ | だいすき',
         ],
         [
-            'value'       => "\u{27E1} ( \u{2F6}• ᴗ •\u{2F6} ) \u{27E1}",
+            'value'       => '⟡ ( ˶• ᴗ •˶ ) ⟡',
             'group'       => 'ja_ryosangata',
             'description' => '量産型',
             'ascii'       => false,
@@ -14126,7 +14126,7 @@ return [
             'reading'     => 'きらきら',
         ],
         [
-            'value'       => "( >ᴗ< )\u{2606}",
+            'value'       => '( >ᴗ< )☆',
             'group'       => 'ja_ryosangata',
             'description' => '量産型',
             'ascii'       => false,
@@ -14134,7 +14134,7 @@ return [
             'reading'     => 'きらきら | きゅるん',
         ],
         [
-            'value'       => "｡\u{2DA}( \u{2F6}• ᴗ •\u{2F6} )\u{2DA}｡",
+            'value'       => '｡˚( ˶• ᴗ •˶ )˚｡',
             'group'       => 'ja_ryosangata',
             'description' => '量産型',
             'ascii'       => false,
@@ -14142,7 +14142,7 @@ return [
             'reading'     => 'きらきら',
         ],
         [
-            'value'       => "\u{2740} ( \u{B4} ᵕ ` ) \u{2740}",
+            'value'       => '❀ ( ´ ᵕ ` ) ❀',
             'group'       => 'ja_ryosangata',
             'description' => '量産型',
             'ascii'       => false,
@@ -14150,7 +14150,7 @@ return [
             'reading'     => 'にこにこ | おはな',
         ],
         [
-            'value'       => "( \u{2F6}• ᴗ •\u{2F6} )\u{1F380}",
+            'value'       => '( ˶• ᴗ •˶ )🎀',
             'group'       => 'ja_ryosangata',
             'description' => '量産型',
             'ascii'       => false,
@@ -14158,7 +14158,7 @@ return [
             'reading'     => 'にこにこ | りぼん',
         ],
         [
-            'value'       => "(ᵔᴗᵔ)\u{1F495}",
+            'value'       => '(ᵔᴗᵔ)💕',
             'group'       => 'ja_ryosangata',
             'description' => '量産型',
             'ascii'       => false,
@@ -14166,7 +14166,7 @@ return [
             'reading'     => 'だいすき | きゅん',
         ],
         [
-            'value'       => "\u{2661}( \u{B4} ᵕ ` )\u{1F90D}",
+            'value'       => '♡( ´ ᵕ ` )🤍',
             'group'       => 'ja_ryosangata',
             'description' => '量産型',
             'ascii'       => false,
@@ -14174,7 +14174,7 @@ return [
             'reading'     => 'だいすき',
         ],
         [
-            'value'       => "( >ᴗ< )\u{1F380}",
+            'value'       => '( >ᴗ< )🎀',
             'group'       => 'ja_ryosangata',
             'description' => '量産型',
             'ascii'       => false,
@@ -14182,7 +14182,7 @@ return [
             'reading'     => 'きゅるん | りぼん',
         ],
         [
-            'value'       => "( \u{2F6}ˊ ᵕ ˋ\u{2F6} )\u{1F497}",
+            'value'       => '( ˶ˊ ᵕ ˋ˶ )💗',
             'group'       => 'ja_ryosangata',
             'description' => '量産型',
             'ascii'       => false,
@@ -14190,7 +14190,7 @@ return [
             'reading'     => 'にこにこ | だいすき',
         ],
         [
-            'value'       => "( ⸝⸝•ᴗ•⸝⸝ )\u{1F337}",
+            'value'       => '( ⸝⸝•ᴗ•⸝⸝ )🌷',
             'group'       => 'ja_ryosangata',
             'description' => '量産型',
             'ascii'       => false,
@@ -14198,7 +14198,7 @@ return [
             'reading'     => 'てれてれ | おはな',
         ],
         [
-            'value'       => "(=•ᴥ•=)\u{1F43E}",
+            'value'       => '(=•ᴥ•=)🐾',
             'group'       => 'ja_ryosangata',
             'description' => '量産型',
             'ascii'       => false,
@@ -14206,7 +14206,7 @@ return [
             'reading'     => 'にゃー | ねこ',
         ],
         [
-            'value'       => "( \u{B4} ᵕ ` )\u{1F353}",
+            'value'       => '( ´ ᵕ ` )🍓',
             'group'       => 'ja_ryosangata',
             'description' => '量産型',
             'ascii'       => false,
@@ -14214,7 +14214,7 @@ return [
             'reading'     => 'にこにこ | いちご',
         ],
         [
-            'value'       => "( \u{2C3} ᵕ \u{2C2} )\u{1F4AB}",
+            'value'       => '( ˃ ᵕ ˂ )💫',
             'group'       => 'ja_ryosangata',
             'description' => '量産型',
             'ascii'       => false,
@@ -14222,7 +14222,7 @@ return [
             'reading'     => 'きゅるん | きらきら',
         ],
         [
-            'value'       => "⸜( \u{2F6}ᵔ ᵕ ᵔ\u{2F6} )⸝\u{1F380}",
+            'value'       => '⸜( ˶ᵔ ᵕ ᵔ˶ )⸝🎀',
             'group'       => 'ja_ryosangata',
             'description' => '量産型',
             'ascii'       => false,
@@ -14230,7 +14230,7 @@ return [
             'reading'     => 'わーい | りぼん',
         ],
         [
-            'value'       => "( ｡• ᵕ •｡)\u{1F4A7}",
+            'value'       => '( ｡• ᵕ •｡)💧',
             'group'       => 'ja_ryosangata',
             'description' => '量産型',
             'ascii'       => false,
@@ -14238,7 +14238,7 @@ return [
             'reading'     => 'うるうる | ぴえん',
         ],
         [
-            'value'       => "(づ ᵕ ᵕ )づ\u{1F497}",
+            'value'       => '(づ ᵕ ᵕ )づ💗',
             'group'       => 'ja_ryosangata',
             'description' => '量産型',
             'ascii'       => false,
@@ -14246,7 +14246,7 @@ return [
             'reading'     => 'ぎゅー | だいすき',
         ],
         [
-            'value'       => "( ᵔᴗᵔ )\u{2B50}",
+            'value'       => '( ᵔᴗᵔ )⭐',
             'group'       => 'ja_ryosangata',
             'description' => '量産型',
             'ascii'       => false,
@@ -14254,7 +14254,7 @@ return [
             'reading'     => 'きらきら | にこにこ',
         ],
         [
-            'value'       => "( ⸝⸝>ᴗ<⸝⸝ )\u{1F380}",
+            'value'       => '( ⸝⸝>ᴗ<⸝⸝ )🎀',
             'group'       => 'ja_ryosangata',
             'description' => '量産型',
             'ascii'       => false,
@@ -14262,7 +14262,7 @@ return [
             'reading'     => 'てれてれ | りぼん',
         ],
         [
-            'value'       => "( \u{2F6}ᵕ ᵕ\u{2F6} )\u{1F352}",
+            'value'       => '( ˶ᵕ ᵕ˶ )🍒',
             'group'       => 'ja_ryosangata',
             'description' => '量産型',
             'ascii'       => false,
@@ -14270,7 +14270,7 @@ return [
             'reading'     => 'にこにこ | さくらんぼ',
         ],
         [
-            'value'       => "( •ᴗ• )੭\u{1F90D}",
+            'value'       => '( •ᴗ• )੭🤍',
             'group'       => 'ja_ryosangata',
             'description' => '量産型',
             'ascii'       => false,
@@ -14286,7 +14286,7 @@ return [
             'reading'     => 'うるうる | ぴえん',
         ],
         [
-            'value'       => "( ; ᵕ ; )\u{2661}",
+            'value'       => '( ; ᵕ ; )♡',
             'group'       => 'ja_ryosangata',
             'description' => '量産型',
             'ascii'       => false,
@@ -14326,7 +14326,7 @@ return [
             'reading'     => 'うるうる | ぴえん',
         ],
         [
-            'value'       => "( \u{B4} ; ω ; ` )",
+            'value'       => '( ´ ; ω ; ` )',
             'group'       => 'ja_ryosangata',
             'description' => '量産型',
             'ascii'       => false,
@@ -14334,7 +14334,7 @@ return [
             'reading'     => 'うるうる | ぐすん',
         ],
         [
-            'value'       => "( ; \u{25E1} ; )",
+            'value'       => '( ; ◡ ; )',
             'group'       => 'ja_ryosangata',
             'description' => '量産型',
             'ascii'       => false,
@@ -14358,7 +14358,7 @@ return [
             'reading'     => 'うるうる | ぴえん',
         ],
         [
-            'value'       => "(\u{2661}\u{B4}\u{25BD}`\u{2661})",
+            'value'       => '(♡´▽`♡)',
             'group'       => 'ja_suki',
             'description' => '好き',
             'ascii'       => false,
@@ -14366,7 +14366,7 @@ return [
             'reading'     => 'だいすき | らぶ',
         ],
         [
-            'value'       => "(人\u{B4}\u{2200}`*)\u{2661}",
+            'value'       => '(人´∀`*)♡',
             'group'       => 'ja_suki',
             'description' => '好き',
             'ascii'       => false,
@@ -14374,7 +14374,7 @@ return [
             'reading'     => 'だいすき',
         ],
         [
-            'value'       => "\u{2661}大好き\u{2661}(\u{25CD}•ᴗ•\u{25CD})",
+            'value'       => '♡大好き♡(◍•ᴗ•◍)',
             'group'       => 'ja_suki',
             'description' => '好き',
             'ascii'       => false,
@@ -14382,7 +14382,7 @@ return [
             'reading'     => 'だいすき | らぶ',
         ],
         [
-            'value'       => "(\u{25CD}•ᗜ•\u{25CD})\u{2661}好き",
+            'value'       => '(◍•ᗜ•◍)♡好き',
             'group'       => 'ja_suki',
             'description' => '好き',
             'ascii'       => false,
@@ -14390,7 +14390,7 @@ return [
             'reading'     => 'だいすき | すき',
         ],
         [
-            'value'       => "(*\u{2D8}︶\u{2D8}*)\u{2661}だいすき",
+            'value'       => '(*˘︶˘*)♡だいすき',
             'group'       => 'ja_suki',
             'description' => '好き',
             'ascii'       => false,
@@ -14398,7 +14398,7 @@ return [
             'reading'     => 'だいすき',
         ],
         [
-            'value'       => "\u{2661}(\u{2C3} ᵕ \u{2C2} )\u{2661}",
+            'value'       => '♡(˃ ᵕ ˂ )♡',
             'group'       => 'ja_suki',
             'description' => '好き',
             'ascii'       => false,
@@ -14406,7 +14406,7 @@ return [
             'reading'     => 'だいすき | きゅん',
         ],
         [
-            'value'       => "(\u{2661}>ω<\u{2661})",
+            'value'       => '(♡>ω<♡)',
             'group'       => 'ja_suki',
             'description' => '好き',
             'ascii'       => false,
@@ -14414,7 +14414,7 @@ return [
             'reading'     => 'だいすき | らぶ',
         ],
         [
-            'value'       => "ぜんぶ好き\u{2661}(*\u{B4}ω`*)",
+            'value'       => 'ぜんぶ好き♡(*´ω`*)',
             'group'       => 'ja_suki',
             'description' => '好き',
             'ascii'       => false,
@@ -14422,7 +14422,7 @@ return [
             'reading'     => 'だいすき | すき',
         ],
         [
-            'value'       => "(\u{2661}\u{2D8}\u{25BF}\u{2D8}\u{2661})",
+            'value'       => '(♡˘▿˘♡)',
             'group'       => 'ja_suki',
             'description' => '好き',
             'ascii'       => false,
@@ -14430,7 +14430,7 @@ return [
             'reading'     => 'だいすき',
         ],
         [
-            'value'       => "\u{2661}〜(\u{B4}\u{25BD}`〜) 大好き",
+            'value'       => '♡〜(´▽`〜) 大好き',
             'group'       => 'ja_suki',
             'description' => '好き',
             'ascii'       => false,
@@ -14438,7 +14438,7 @@ return [
             'reading'     => 'だいすき | らぶ',
         ],
         [
-            'value'       => "(*\u{2661}\u{2200}\u{2661})",
+            'value'       => '(*♡∀♡)',
             'group'       => 'ja_suki',
             'description' => '好き',
             'ascii'       => false,
@@ -14446,7 +14446,7 @@ return [
             'reading'     => 'だいすき | らぶ',
         ],
         [
-            'value'       => "ෆ(\u{2D8} ᵕ \u{2D8})ෆ好き",
+            'value'       => 'ෆ(˘ ᵕ ˘)ෆ好き',
             'group'       => 'ja_suki',
             'description' => '好き',
             'ascii'       => false,
@@ -14454,7 +14454,7 @@ return [
             'reading'     => 'だいすき | すき',
         ],
         [
-            'value'       => "(\u{B4}｡• ᵕ •｡`)\u{2661}ずっと好き",
+            'value'       => '(´｡• ᵕ •｡`)♡ずっと好き',
             'group'       => 'ja_suki',
             'description' => '好き',
             'ascii'       => false,
@@ -14462,7 +14462,7 @@ return [
             'reading'     => 'だいすき | ずっとすき',
         ],
         [
-            'value'       => "あのね…好きです(/ω＼)\u{2661}",
+            'value'       => 'あのね…好きです(/ω＼)♡',
             'group'       => 'ja_suki',
             'description' => '好き',
             'ascii'       => false,
@@ -14470,7 +14470,7 @@ return [
             'reading'     => 'こくはく | すきです',
         ],
         [
-            'value'       => "(*ﾉωﾉ)\u{2661}好きです",
+            'value'       => '(*ﾉωﾉ)♡好きです',
             'group'       => 'ja_suki',
             'description' => '好き',
             'ascii'       => false,
@@ -14478,7 +14478,7 @@ return [
             'reading'     => 'こくはく | すきです',
         ],
         [
-            'value'       => "(〃\u{25BD}〃)…す、好き",
+            'value'       => '(〃▽〃)…す、好き',
             'group'       => 'ja_suki',
             'description' => '好き',
             'ascii'       => false,
@@ -14486,7 +14486,7 @@ return [
             'reading'     => 'こくはく | すき',
         ],
         [
-            'value'       => "好きです\u{2661}(\u{2044} \u{2044}•\u{2044}ω\u{2044}•\u{2044} \u{2044})",
+            'value'       => '好きです♡(⁄ ⁄•⁄ω⁄•⁄ ⁄)',
             'group'       => 'ja_suki',
             'description' => '好き',
             'ascii'       => false,
@@ -14494,7 +14494,7 @@ return [
             'reading'     => 'こくはく | すきです',
         ],
         [
-            'value'       => "ずっと好きでした(\u{B4}•ω•`)\u{2661}",
+            'value'       => 'ずっと好きでした(´•ω•`)♡',
             'group'       => 'ja_suki',
             'description' => '好き',
             'ascii'       => false,
@@ -14502,7 +14502,7 @@ return [
             'reading'     => 'こくはく | すきでした',
         ],
         [
-            'value'       => "(*/\u{25BD}＼*)好きっ",
+            'value'       => '(*/▽＼*)好きっ',
             'group'       => 'ja_suki',
             'description' => '好き',
             'ascii'       => false,
@@ -14510,7 +14510,7 @@ return [
             'reading'     => 'こくはく | すき',
         ],
         [
-            'value'       => "つき合ってください\u{2661}(*ﾉ\u{25BD}ﾉ)",
+            'value'       => 'つき合ってください♡(*ﾉ▽ﾉ)',
             'group'       => 'ja_suki',
             'description' => '好き',
             'ascii'       => false,
@@ -14526,7 +14526,7 @@ return [
             'reading'     => 'こくはく | すき',
         ],
         [
-            'value'       => "好き…かも(*\u{B4}\u{2200}`*)\u{2661}",
+            'value'       => '好き…かも(*´∀`*)♡',
             'group'       => 'ja_suki',
             'description' => '好き',
             'ascii'       => false,
@@ -14534,7 +14534,7 @@ return [
             'reading'     => 'こくはく | すきかも',
         ],
         [
-            'value'       => "(〃’\u{25BD}’〃)好きになっちゃった",
+            'value'       => '(〃’▽’〃)好きになっちゃった',
             'group'       => 'ja_suki',
             'description' => '好き',
             'ascii'       => false,
@@ -14542,7 +14542,7 @@ return [
             'reading'     => 'こくはく | すき',
         ],
         [
-            'value'       => "(ﾉ\u{B4}ヮ`)ﾉ*: \u{2661}",
+            'value'       => '(ﾉ´ヮ`)ﾉ*: ♡',
             'group'       => 'ja_suki',
             'description' => '好き',
             'ascii'       => false,
@@ -14550,7 +14550,7 @@ return [
             'reading'     => 'はーとなげ | らぶ',
         ],
         [
-            'value'       => "(\u{2661}\u{B4}\u{2200}`)ﾉ\u{2661}",
+            'value'       => '(♡´∀`)ﾉ♡',
             'group'       => 'ja_suki',
             'description' => '好き',
             'ascii'       => false,
@@ -14558,7 +14558,7 @@ return [
             'reading'     => 'はーとなげ | らぶ',
         ],
         [
-            'value'       => "(*\u{B4}\u{25BD}`)ﾉ\u{2661}〜",
+            'value'       => '(*´▽`)ﾉ♡〜',
             'group'       => 'ja_suki',
             'description' => '好き',
             'ascii'       => false,
@@ -14566,7 +14566,7 @@ return [
             'reading'     => 'はーとなげ | らぶ',
         ],
         [
-            'value'       => "\u{2661}〜ヽ(>ω<*)",
+            'value'       => '♡〜ヽ(>ω<*)',
             'group'       => 'ja_suki',
             'description' => '好き',
             'ascii'       => false,
@@ -14574,7 +14574,7 @@ return [
             'reading'     => 'はーとなげ | らぶ',
         ],
         [
-            'value'       => "( \u{2D8} ³\u{2D8})ﾉ\u{2661}",
+            'value'       => '( ˘ ³˘)ﾉ♡',
             'group'       => 'ja_suki',
             'description' => '好き',
             'ascii'       => false,
@@ -14582,7 +14582,7 @@ return [
             'reading'     => 'なげちゅー | ちゅー',
         ],
         [
-            'value'       => "(*ﾟ\u{2200}ﾟ)ﾉ\u{2312}\u{2661}",
+            'value'       => '(*ﾟ∀ﾟ)ﾉ⌒♡',
             'group'       => 'ja_suki',
             'description' => '好き',
             'ascii'       => false,
@@ -14590,7 +14590,7 @@ return [
             'reading'     => 'なげちゅー | ちゅー',
         ],
         [
-            'value'       => "ε\u{2261}\u{2261}ﾍ( \u{B4}\u{2200}`)ﾉ\u{2661}",
+            'value'       => 'ε≡≡ﾍ( ´∀`)ﾉ♡',
             'group'       => 'ja_suki',
             'description' => '好き',
             'ascii'       => false,
@@ -14598,7 +14598,7 @@ return [
             'reading'     => 'はーとなげ | らぶ',
         ],
         [
-            'value'       => "(\u{B4}ε\u{FF40} )ﾉ\u{2312}\u{2661}",
+            'value'       => '(´ε｀ )ﾉ⌒♡',
             'group'       => 'ja_suki',
             'description' => '好き',
             'ascii'       => false,
@@ -14606,7 +14606,7 @@ return [
             'reading'     => 'なげちゅー | ちゅー',
         ],
         [
-            'value'       => "ヽ(*\u{B4}\u{2200}`)ﾉ\u{2661}\u{2661}\u{2661}",
+            'value'       => 'ヽ(*´∀`)ﾉ♡♡♡',
             'group'       => 'ja_suki',
             'description' => '好き',
             'ascii'       => false,
@@ -14614,7 +14614,7 @@ return [
             'reading'     => 'はーとなげ | らぶ',
         ],
         [
-            'value'       => "(っ\u{2D8}з\u{2D8})ﾉ\u{2312}\u{2661}",
+            'value'       => '(っ˘з˘)ﾉ⌒♡',
             'group'       => 'ja_suki',
             'description' => '好き',
             'ascii'       => false,
@@ -14622,7 +14622,7 @@ return [
             'reading'     => 'なげちゅー | ちゅー',
         ],
         [
-            'value'       => "\u{2661}⸜(*ˊᵕˋ*)⸝\u{2661}",
+            'value'       => '♡⸜(*ˊᵕˋ*)⸝♡',
             'group'       => 'ja_suki',
             'description' => '好き',
             'ascii'       => false,
@@ -14630,7 +14630,7 @@ return [
             'reading'     => 'はーと | らぶ',
         ],
         [
-            'value'       => "ヽ(\u{B4}\u{2200}`)ﾉ.｡.:*\u{2661}",
+            'value'       => 'ヽ(´∀`)ﾉ.｡.:*♡',
             'group'       => 'ja_suki',
             'description' => '好き',
             'ascii'       => false,
@@ -14638,7 +14638,7 @@ return [
             'reading'     => 'はーとなげ | らぶ',
         ],
         [
-            'value'       => "(*\u{B4}ω`*)\u{2661}デレデレ",
+            'value'       => '(*´ω`*)♡デレデレ',
             'group'       => 'ja_suki',
             'description' => '好き',
             'ascii'       => false,
@@ -14646,7 +14646,7 @@ return [
             'reading'     => 'でれでれ | めろめろ',
         ],
         [
-            'value'       => "(\u{2661}ω\u{2661} )〜\u{2661}",
+            'value'       => '(♡ω♡ )〜♡',
             'group'       => 'ja_suki',
             'description' => '好き',
             'ascii'       => false,
@@ -14654,7 +14654,7 @@ return [
             'reading'     => 'でれでれ | めろめろ',
         ],
         [
-            'value'       => "(\u{B4}\u{2200}\u{FF40}*)ウフフ\u{2661}",
+            'value'       => '(´∀｀*)ウフフ♡',
             'group'       => 'ja_suki',
             'description' => '好き',
             'ascii'       => false,
@@ -14662,7 +14662,7 @@ return [
             'reading'     => 'でれでれ | うふふ',
         ],
         [
-            'value'       => "(*ﾉ\u{2200}`*)\u{2661}〜",
+            'value'       => '(*ﾉ∀`*)♡〜',
             'group'       => 'ja_suki',
             'description' => '好き',
             'ascii'       => false,
@@ -14670,7 +14670,7 @@ return [
             'reading'     => 'でれでれ | えへへ',
         ],
         [
-            'value'       => "(\u{25CD}\u{2661}ᴗ\u{2661}\u{25CD})\u{2661}",
+            'value'       => '(◍♡ᴗ♡◍)♡',
             'group'       => 'ja_suki',
             'description' => '好き',
             'ascii'       => false,
@@ -14678,7 +14678,7 @@ return [
             'reading'     => 'めろめろ | うっとり',
         ],
         [
-            'value'       => "( \u{24DB} ω \u{24DB} *)\u{2661}もうメロメロ",
+            'value'       => '( ⓛ ω ⓛ *)♡もうメロメロ',
             'group'       => 'ja_suki',
             'description' => '好き',
             'ascii'       => false,
@@ -14686,7 +14686,7 @@ return [
             'reading'     => 'めろめろ',
         ],
         [
-            'value'       => "(*ˆ ³ˆ*)\u{2661}",
+            'value'       => '(*ˆ ³ˆ*)♡',
             'group'       => 'ja_suki',
             'description' => '好き',
             'ascii'       => false,
@@ -14694,7 +14694,7 @@ return [
             'reading'     => 'でれでれ | ちゅー',
         ],
         [
-            'value'       => "(*\u{2D8}\u{2200}\u{2D8}*)。o\u{25CB}\u{2661}",
+            'value'       => '(*˘∀˘*)。o○♡',
             'group'       => 'ja_suki',
             'description' => '好き',
             'ascii'       => false,
@@ -14702,7 +14702,7 @@ return [
             'reading'     => 'でれでれ | うっとり',
         ],
         [
-            'value'       => "(๑\u{2661}\u{2200}\u{2661}๑)",
+            'value'       => '(๑♡∀♡๑)',
             'group'       => 'ja_suki',
             'description' => '好き',
             'ascii'       => false,
@@ -14710,7 +14710,7 @@ return [
             'reading'     => 'めろめろ | うっとり',
         ],
         [
-            'value'       => "\u{2661}(*\u{B4}\u{2200}`*)人(*\u{B4}\u{2200}`*)\u{2661}",
+            'value'       => '♡(*´∀`*)人(*´∀`*)♡',
             'group'       => 'ja_suki',
             'description' => '好き',
             'ascii'       => false,
@@ -14718,7 +14718,7 @@ return [
             'reading'     => 'らぶらぶ | らぶ',
         ],
         [
-            'value'       => "(*\u{2D8} ³\u{2D8})\u{2665}愛してる",
+            'value'       => '(*˘ ³˘)♥愛してる',
             'group'       => 'ja_suki',
             'description' => '好き',
             'ascii'       => false,
@@ -14726,7 +14726,7 @@ return [
             'reading'     => 'あいしてる | らぶ',
         ],
         [
-            'value'       => "(\u{B4}｡• ω •｡`)\u{2661}I LOVE YOU",
+            'value'       => '(´｡• ω •｡`)♡I LOVE YOU',
             'group'       => 'ja_suki',
             'description' => '好き',
             'ascii'       => false,
@@ -14734,7 +14734,7 @@ return [
             'reading'     => 'らぶ | あいしてる',
         ],
         [
-            'value'       => "ラブラブ\u{2661}(\u{25CD}•ᴗ•\u{25CD})\u{2661}",
+            'value'       => 'ラブラブ♡(◍•ᴗ•◍)♡',
             'group'       => 'ja_suki',
             'description' => '好き',
             'ascii'       => false,
@@ -14742,7 +14742,7 @@ return [
             'reading'     => 'らぶらぶ | らぶ',
         ],
         [
-            'value'       => "(づ｡\u{25D5}‿‿\u{25D5}｡)づ\u{2661}",
+            'value'       => '(づ｡◕‿‿◕｡)づ♡',
             'group'       => 'ja_suki',
             'description' => '好き',
             'ascii'       => false,
@@ -14750,7 +14750,7 @@ return [
             'reading'     => 'らぶらぶ | ぎゅー',
         ],
         [
-            'value'       => "(*\u{B4}\u{2570}\u{256F}`*)\u{2661}〜ラブ",
+            'value'       => '(*´╰╯`*)♡〜ラブ',
             'group'       => 'ja_suki',
             'description' => '好き',
             'ascii'       => false,
@@ -14758,7 +14758,7 @@ return [
             'reading'     => 'らぶらぶ | らぶ',
         ],
         [
-            'value'       => "\u{2661}LOVE\u{2661}(*ˊᵕˋ*)",
+            'value'       => '♡LOVE♡(*ˊᵕˋ*)',
             'group'       => 'ja_suki',
             'description' => '好き',
             'ascii'       => false,
@@ -14766,7 +14766,7 @@ return [
             'reading'     => 'らぶ',
         ],
         [
-            'value'       => "(ෆ\u{2D9}ᵕ\u{2D9}ෆ)愛してる",
+            'value'       => '(ෆ˙ᵕ˙ෆ)愛してる',
             'group'       => 'ja_suki',
             'description' => '好き',
             'ascii'       => false,
@@ -14774,7 +14774,7 @@ return [
             'reading'     => 'あいしてる | らぶ',
         ],
         [
-            'value'       => "ふたりで\u{2661}(っ\u{B4}ω`c)\u{2661}",
+            'value'       => 'ふたりで♡(っ´ω`c)♡',
             'group'       => 'ja_suki',
             'description' => '好き',
             'ascii'       => false,
@@ -14782,7 +14782,7 @@ return [
             'reading'     => 'らぶらぶ | ふたり',
         ],
         [
-            'value'       => "(\u{B4}\u{25BD}`*)ﾉ\u{2661}ﾉ(*\u{B4}\u{25BD}`)",
+            'value'       => '(´▽`*)ﾉ♡ﾉ(*´▽`)',
             'group'       => 'ja_suki',
             'description' => '好き',
             'ascii'       => false,
@@ -14790,7 +14790,7 @@ return [
             'reading'     => 'らぶらぶ | りょうおもい',
         ],
         [
-            'value'       => "ずっと一緒\u{2661}(*\u{B4}ω`*)",
+            'value'       => 'ずっと一緒♡(*´ω`*)',
             'group'       => 'ja_suki',
             'description' => '好き',
             'ascii'       => false,
@@ -14798,7 +14798,7 @@ return [
             'reading'     => 'らぶらぶ | いっしょ',
         ],
         [
-            'value'       => "(\u{B4}っ•ω•c`)\u{2661}LOVE",
+            'value'       => '(´っ•ω•c`)♡LOVE',
             'group'       => 'ja_suki',
             'description' => '好き',
             'ascii'       => false,
@@ -14806,7 +14806,7 @@ return [
             'reading'     => 'らぶ | ぎゅー',
         ],
         [
-            'value'       => "(*ﾉ\u{2200}`*) \u{2661}きゅん",
+            'value'       => '(*ﾉ∀`*) ♡きゅん',
             'group'       => 'ja_suki',
             'description' => '好き',
             'ascii'       => false,
@@ -14814,7 +14814,7 @@ return [
             'reading'     => 'きゅん | ときめき',
         ],
         [
-            'value'       => "(\u{2661}\u{2D9}︶\u{2D9}\u{2661})きゅんっ",
+            'value'       => '(♡˙︶˙♡)きゅんっ',
             'group'       => 'ja_suki',
             'description' => '好き',
             'ascii'       => false,
@@ -14822,7 +14822,7 @@ return [
             'reading'     => 'きゅん',
         ],
         [
-            'value'       => "(｡\u{2661}‿\u{2661}｡)好きすぎる",
+            'value'       => '(｡♡‿♡｡)好きすぎる',
             'group'       => 'ja_suki',
             'description' => '好き',
             'ascii'       => false,
@@ -14830,7 +14830,7 @@ return [
             'reading'     => 'きゅん | すきすぎ',
         ],
         [
-            'value'       => "(\u{2661}\u{B4}艸`)きゅんとした",
+            'value'       => '(♡´艸`)きゅんとした',
             'group'       => 'ja_suki',
             'description' => '好き',
             'ascii'       => false,
@@ -14838,7 +14838,7 @@ return [
             'reading'     => 'きゅん | ときめき',
         ],
         [
-            'value'       => "(>///<)\u{2661}きゅんが止まらない",
+            'value'       => '(>///<)♡きゅんが止まらない',
             'group'       => 'ja_suki',
             'description' => '好き',
             'ascii'       => false,
@@ -14846,7 +14846,7 @@ return [
             'reading'     => 'きゅん | ときめき',
         ],
         [
-            'value'       => "\u{2661}(๑ˆ ﻌ ˆ๑)\u{2661}",
+            'value'       => '♡(๑ˆ ﻌ ˆ๑)♡',
             'group'       => 'ja_suki',
             'description' => '好き',
             'ascii'       => false,
@@ -14854,7 +14854,7 @@ return [
             'reading'     => 'きゅん | ときめき',
         ],
         [
-            'value'       => "(*\u{2C3} ᵕ \u{2C2} *)\u{2661}ときめき",
+            'value'       => '(*˃ ᵕ ˂ *)♡ときめき',
             'group'       => 'ja_suki',
             'description' => '好き',
             'ascii'       => false,
@@ -14862,7 +14862,7 @@ return [
             'reading'     => 'ときめき | きゅん',
         ],
         [
-            'value'       => "( ๑>ᴗ<๑)\u{2661}",
+            'value'       => '( ๑>ᴗ<๑)♡',
             'group'       => 'ja_suki',
             'description' => '好き',
             'ascii'       => false,
@@ -14870,7 +14870,7 @@ return [
             'reading'     => 'きゅん | ときめき',
         ],
         [
-            'value'       => "胸きゅん\u{2661}(*\u{B4}\u{A4B3}`*)",
+            'value'       => '胸きゅん♡(*´꒳`*)',
             'group'       => 'ja_suki',
             'description' => '好き',
             'ascii'       => false,
@@ -14878,7 +14878,7 @@ return [
             'reading'     => 'むねきゅん | きゅん',
         ],
         [
-            'value'       => "(*\u{B0}\u{2200}\u{B0})=3\u{2661}好き",
+            'value'       => '(*°∀°)=3♡好き',
             'group'       => 'ja_suki',
             'description' => '好き',
             'ascii'       => false,
@@ -14886,7 +14886,7 @@ return [
             'reading'     => 'きゅん | すき',
         ],
         [
-            'value'       => "(\u{2661}ᗜ\u{2661})きゅんです",
+            'value'       => '(♡ᗜ♡)きゅんです',
             'group'       => 'ja_suki',
             'description' => '好き',
             'ascii'       => false,
@@ -14894,7 +14894,7 @@ return [
             'reading'     => 'きゅん | きゅんです',
         ],
         [
-            'value'       => "( \u{273F}>ᴗ<)。+\u{2661}",
+            'value'       => '( ✿>ᴗ<)。+♡',
             'group'       => 'ja_suki',
             'description' => '好き',
             'ascii'       => false,
@@ -14902,7 +14902,7 @@ return [
             'reading'     => 'きゅん | ときめき',
         ],
         [
-            'value'       => "好き好き\u{2661}(>ω<)\u{2661}",
+            'value'       => '好き好き♡(>ω<)♡',
             'group'       => 'ja_suki',
             'description' => '好き',
             'ascii'       => false,
@@ -14910,7 +14910,7 @@ return [
             'reading'     => 'すきすき | だいすき',
         ],
         [
-            'value'       => "(っ\u{2D8}з(\u{2D8}\u{2323}\u{2D8} )\u{2661}",
+            'value'       => '(っ˘з(˘⌣˘ )♡',
             'group'       => 'ja_suki',
             'description' => '好き',
             'ascii'       => false,
@@ -14918,7 +14918,7 @@ return [
             'reading'     => 'ちゅー | だいすき',
         ],
         [
-            'value'       => "ぎゅっとしたい\u{2661}(っ\u{B4}ω`)っ",
+            'value'       => 'ぎゅっとしたい♡(っ´ω`)っ',
             'group'       => 'ja_suki',
             'description' => '好き',
             'ascii'       => false,
@@ -14926,7 +14926,7 @@ return [
             'reading'     => 'ぎゅー | だいすき',
         ],
         [
-            'value'       => "(*\u{B4}﹃\u{FF40}*)\u{2661}好き\u{2661}",
+            'value'       => '(*´﹃｀*)♡好き♡',
             'group'       => 'ja_suki',
             'description' => '好き',
             'ascii'       => false,
@@ -14934,7 +14934,7 @@ return [
             'reading'     => 'めろめろ | すき',
         ],
         [
-            'value'       => "(\u{2661}\u{FF40}\u{2200}\u{B4}\u{2661})好きだぞっ",
+            'value'       => '(♡｀∀´♡)好きだぞっ',
             'group'       => 'ja_suki',
             'description' => '好き',
             'ascii'       => false,
@@ -14942,7 +14942,7 @@ return [
             'reading'     => 'すき | だいすき',
         ],
         [
-            'value'       => "\u{2661}〜('\u{25BD}^人)好きだよ",
+            'value'       => '♡〜(\'▽^人)好きだよ',
             'group'       => 'ja_suki',
             'description' => '好き',
             'ascii'       => false,
@@ -14958,7 +14958,7 @@ return [
             'reading'     => 'がっくり',
         ],
         [
-            'value'       => "\u{25CB}rz",
+            'value'       => '○rz',
             'group'       => 'ja_taoreru',
             'description' => '倒れる',
             'ascii'       => false,
@@ -14974,7 +14974,7 @@ return [
             'reading'     => 'がっくり',
         ],
         [
-            'value'       => "\u{FF5C}\u{FFE3}\u{FF5C}＿",
+            'value'       => '｜￣｜＿',
             'group'       => 'ja_taoreru',
             'description' => '倒れる',
             'ascii'       => false,
@@ -15006,7 +15006,7 @@ return [
             'reading'     => 'がっくり',
         ],
         [
-            'value'       => "＿(:3」\u{2220})＿",
+            'value'       => '＿(:3」∠)＿',
             'group'       => 'ja_taoreru',
             'description' => '倒れる',
             'ascii'       => false,
@@ -15014,7 +15014,7 @@ return [
             'reading'     => 'ぐったり',
         ],
         [
-            'value'       => "_:(\u{B4}ω\u{FF40}」 \u{2220}):_",
+            'value'       => '_:(´ω｀」 ∠):_',
             'group'       => 'ja_taoreru',
             'description' => '倒れる',
             'ascii'       => false,
@@ -15022,7 +15022,7 @@ return [
             'reading'     => 'ぐったり | ばたんきゅー',
         ],
         [
-            'value'       => "＿(\u{2510}「ε:)＿",
+            'value'       => '＿(┐「ε:)＿',
             'group'       => 'ja_taoreru',
             'description' => '倒れる',
             'ascii'       => false,
@@ -15054,7 +15054,7 @@ return [
             'reading'     => 'ぐったり',
         ],
         [
-            'value'       => "(o\u{B4}_\u{FF40}o)",
+            'value'       => '(o´_｀o)',
             'group'       => 'ja_taoreru',
             'description' => '倒れる',
             'ascii'       => false,
@@ -15062,7 +15062,7 @@ return [
             'reading'     => 'ぐったり | へとへと',
         ],
         [
-            'value'       => "ｸﾞｯﾀﾘ(\u{B4}Д\u{FF40})",
+            'value'       => 'ｸﾞｯﾀﾘ(´Д｀)',
             'group'       => 'ja_taoreru',
             'description' => '倒れる',
             'ascii'       => false,
@@ -15086,7 +15086,7 @@ return [
             'reading'     => 'ばたっ | きぜつ',
         ],
         [
-            'value'       => "(\u{D7}_\u{D7})",
+            'value'       => '(×_×)',
             'group'       => 'ja_taoreru',
             'description' => '倒れる',
             'ascii'       => false,
@@ -15094,7 +15094,7 @@ return [
             'reading'     => 'きぜつ | ぱたり',
         ],
         [
-            'value'       => "(\u{D7}﹏\u{D7})",
+            'value'       => '(×﹏×)',
             'group'       => 'ja_taoreru',
             'description' => '倒れる',
             'ascii'       => false,
@@ -15102,7 +15102,7 @@ return [
             'reading'     => 'きぜつ',
         ],
         [
-            'value'       => "(\u{D7}．\u{D7})",
+            'value'       => '(×．×)',
             'group'       => 'ja_taoreru',
             'description' => '倒れる',
             'ascii'       => false,
@@ -15110,7 +15110,7 @@ return [
             'reading'     => 'きぜつ',
         ],
         [
-            'value'       => "( \u{F7} ﹏ \u{F7} )",
+            'value'       => '( ÷ ﹏ ÷ )',
             'group'       => 'ja_taoreru',
             'description' => '倒れる',
             'ascii'       => false,
@@ -15118,7 +15118,7 @@ return [
             'reading'     => 'きぜつ',
         ],
         [
-            'value'       => "( \u{2297}﹏\u{2297} )",
+            'value'       => '( ⊗﹏⊗ )',
             'group'       => 'ja_taoreru',
             'description' => '倒れる',
             'ascii'       => false,
@@ -15126,7 +15126,7 @@ return [
             'reading'     => 'きぜつ',
         ],
         [
-            'value'       => "(\u{D7}O\u{D7})",
+            'value'       => '(×O×)',
             'group'       => 'ja_taoreru',
             'description' => '倒れる',
             'ascii'       => false,
@@ -15134,7 +15134,7 @@ return [
             'reading'     => 'きぜつ',
         ],
         [
-            'value'       => "ﾊﾞﾀﾝ_(\u{2510}「ε:)_",
+            'value'       => 'ﾊﾞﾀﾝ_(┐「ε:)_',
             'group'       => 'ja_taoreru',
             'description' => '倒れる',
             'ascii'       => false,
@@ -15158,7 +15158,7 @@ return [
             'reading'     => 'ちーん | ほうしん',
         ],
         [
-            'value'       => "(\u{B4}；ω；`)ﾁｰﾝ",
+            'value'       => '(´；ω；`)ﾁｰﾝ',
             'group'       => 'ja_taoreru',
             'description' => '倒れる',
             'ascii'       => false,
@@ -15174,7 +15174,7 @@ return [
             'reading'     => 'ぜつぼう | がっくり',
         ],
         [
-            'value'       => "( \u{25DE}‸\u{25DF} )",
+            'value'       => '( ◞‸◟ )',
             'group'       => 'ja_taoreru',
             'description' => '倒れる',
             'ascii'       => false,
@@ -15182,7 +15182,7 @@ return [
             'reading'     => 'しょんぼり | おちこみ',
         ],
         [
-            'value'       => "(\u{B4}\u{2200}\u{FF40})ﾁｰﾝ",
+            'value'       => '(´∀｀)ﾁｰﾝ',
             'group'       => 'ja_taoreru',
             'description' => '倒れる',
             'ascii'       => false,
@@ -15190,7 +15190,7 @@ return [
             'reading'     => 'ちーん',
         ],
         [
-            'value'       => "( ﾟ\u{25A1}ﾟ)ｶﾞｸｯ",
+            'value'       => '( ﾟ□ﾟ)ｶﾞｸｯ',
             'group'       => 'ja_taoreru',
             'description' => '倒れる',
             'ascii'       => false,
@@ -15198,7 +15198,7 @@ return [
             'reading'     => 'がくっ | がっくり',
         ],
         [
-            'value'       => "_:(\u{B4}д`」 \u{2220}):_",
+            'value'       => '_:(´д`」 ∠):_',
             'group'       => 'ja_taoreru',
             'description' => '倒れる',
             'ascii'       => false,
@@ -15206,7 +15206,7 @@ return [
             'reading'     => 'ぜつぼう | ぐったり',
         ],
         [
-            'value'       => "( \u{2D8}\u{D7}\u{2D8} )",
+            'value'       => '( ˘×˘ )',
             'group'       => 'ja_taoreru',
             'description' => '倒れる',
             'ascii'       => false,
@@ -15238,7 +15238,7 @@ return [
             'reading'     => 'ばたっ | ぱたり',
         ],
         [
-            'value'       => "( \u{2D8} ﹏ \u{2D8} )",
+            'value'       => '( ˘ ﹏ ˘ )',
             'group'       => 'ja_taoreru',
             'description' => '倒れる',
             'ascii'       => false,
@@ -15246,7 +15246,7 @@ return [
             'reading'     => 'ぐったり | ぱたり',
         ],
         [
-            'value'       => "( ⸝⸝ \u{D7} ﹏ \u{D7} ⸝⸝ )",
+            'value'       => '( ⸝⸝ × ﹏ × ⸝⸝ )',
             'group'       => 'ja_taoreru',
             'description' => '倒れる',
             'ascii'       => false,
@@ -15254,7 +15254,7 @@ return [
             'reading'     => 'きぜつ | ぱたり',
         ],
         [
-            'value'       => "\u{25CB}|\u{FFE3}|＿",
+            'value'       => '○|￣|＿',
             'group'       => 'ja_taoreru',
             'description' => '倒れる',
             'ascii'       => false,
@@ -15270,7 +15270,7 @@ return [
             'reading'     => 'がっくり | ぐったり',
         ],
         [
-            'value'       => "\u{FF5C}\u{FFE3}\u{FF5C}\u{25CB}",
+            'value'       => '｜￣｜○',
             'group'       => 'ja_taoreru',
             'description' => '倒れる',
             'ascii'       => false,
@@ -15278,7 +15278,7 @@ return [
             'reading'     => 'がっくり',
         ],
         [
-            'value'       => "＿|\u{FFE3}|\u{25CB}ﾞ",
+            'value'       => '＿|￣|○ﾞ',
             'group'       => 'ja_taoreru',
             'description' => '倒れる',
             'ascii'       => false,
@@ -15286,7 +15286,7 @@ return [
             'reading'     => 'がっくり | がーん',
         ],
         [
-            'value'       => "＿(\u{B4}ω\u{FF40}」 \u{2220})＿",
+            'value'       => '＿(´ω｀」 ∠)＿',
             'group'       => 'ja_taoreru',
             'description' => '倒れる',
             'ascii'       => false,
@@ -15310,7 +15310,7 @@ return [
             'reading'     => 'ぐったり | へとへと',
         ],
         [
-            'value'       => "(\u{B4}ﾟωﾟ`)ﾉ",
+            'value'       => '(´ﾟωﾟ`)ﾉ',
             'group'       => 'ja_taoreru',
             'description' => '倒れる',
             'ascii'       => false,
@@ -15318,7 +15318,7 @@ return [
             'reading'     => 'ぐったり | ほうしん',
         ],
         [
-            'value'       => "＿(\u{2510}「ε:)＿ﾞ",
+            'value'       => '＿(┐「ε:)＿ﾞ',
             'group'       => 'ja_taoreru',
             'description' => '倒れる',
             'ascii'       => false,
@@ -15326,7 +15326,7 @@ return [
             'reading'     => 'ぐったり',
         ],
         [
-            'value'       => "(\u{D7}Д\u{D7})",
+            'value'       => '(×Д×)',
             'group'       => 'ja_taoreru',
             'description' => '倒れる',
             'ascii'       => false,
@@ -15334,7 +15334,7 @@ return [
             'reading'     => 'きぜつ | ばたっ',
         ],
         [
-            'value'       => "(\u{D7}\u{FF5E}\u{D7})",
+            'value'       => '(×～×)',
             'group'       => 'ja_taoreru',
             'description' => '倒れる',
             'ascii'       => false,
@@ -15342,7 +15342,7 @@ return [
             'reading'     => 'きぜつ',
         ],
         [
-            'value'       => "(＠\u{25B3}＠)",
+            'value'       => '(＠△＠)',
             'group'       => 'ja_taoreru',
             'description' => '倒れる',
             'ascii'       => false,
@@ -15358,7 +15358,7 @@ return [
             'reading'     => 'ばたり | ばたっ',
         ],
         [
-            'value'       => "(\u{2267}﹏\u{2266})",
+            'value'       => '(≧﹏≦)',
             'group'       => 'ja_taoreru',
             'description' => '倒れる',
             'ascii'       => false,
@@ -15374,7 +15374,7 @@ return [
             'reading'     => 'おわた | ぜつぼう',
         ],
         [
-            'value'       => "(\u{B4}\u{25E6}ω\u{25E6}\u{FF40})",
+            'value'       => '(´◦ω◦｀)',
             'group'       => 'ja_taoreru',
             'description' => '倒れる',
             'ascii'       => false,
@@ -15382,7 +15382,7 @@ return [
             'reading'     => 'ほうしん | がっくり',
         ],
         [
-            'value'       => "(；\u{FFE3}Д\u{FFE3})",
+            'value'       => '(；￣Д￣)',
             'group'       => 'ja_taoreru',
             'description' => '倒れる',
             'ascii'       => false,
@@ -15390,7 +15390,7 @@ return [
             'reading'     => 'がっくり | がーん',
         ],
         [
-            'value'       => "( ｡\u{2C3} ﹏ \u{2C2}｡)",
+            'value'       => '( ｡˃ ﹏ ˂｡)',
             'group'       => 'ja_taoreru',
             'description' => '倒れる',
             'ascii'       => false,
@@ -15406,7 +15406,7 @@ return [
             'reading'     => 'ぱたり | ぐったり',
         ],
         [
-            'value'       => "( \u{2D8}･ω･\u{2D8} )",
+            'value'       => '( ˘･ω･˘ )',
             'group'       => 'ja_taoreru',
             'description' => '倒れる',
             'ascii'       => false,
@@ -15414,7 +15414,7 @@ return [
             'reading'     => 'ぐったり | しょんぼり',
         ],
         [
-            'value'       => "orz\u{1F4A6}",
+            'value'       => 'orz💦',
             'group'       => 'ja_taoreru',
             'description' => '倒れる',
             'ascii'       => false,
@@ -15422,7 +15422,7 @@ return [
             'reading'     => 'がっくり | あせあせ',
         ],
         [
-            'value'       => "(\u{D7}﹏\u{D7})\u{1F4AB}",
+            'value'       => '(×﹏×)💫',
             'group'       => 'ja_taoreru',
             'description' => '倒れる',
             'ascii'       => false,
@@ -15430,7 +15430,7 @@ return [
             'reading'     => 'きぜつ | めまい',
         ],
         [
-            'value'       => "_(:3」\u{2220})_\u{1F4A4}",
+            'value'       => '_(:3」∠)_💤',
             'group'       => 'ja_taoreru',
             'description' => '倒れる',
             'ascii'       => false,
@@ -15438,7 +15438,7 @@ return [
             'reading'     => 'ぐったり | ばたんきゅー',
         ],
         [
-            'value'       => "(｡>﹏<｡)\u{1F4A7}",
+            'value'       => '(｡>﹏<｡)💧',
             'group'       => 'ja_taoreru',
             'description' => '倒れる',
             'ascii'       => false,
@@ -15446,7 +15446,7 @@ return [
             'reading'     => 'ぱたり | うるうる',
         ],
         [
-            'value'       => "(・ωｰ)\u{FF5E}\u{2606}",
+            'value'       => '(・ωｰ)～☆',
             'group'       => 'ja_tehepero',
             'description' => 'てへぺろ',
             'ascii'       => false,
@@ -15462,7 +15462,7 @@ return [
             'reading'     => 'てへぺろ | うぃんく',
         ],
         [
-            'value'       => "( \u{B4}\u{2200}\u{FF40})ゞ",
+            'value'       => '( ´∀｀)ゞ',
             'group'       => 'ja_tehepero',
             'description' => 'てへぺろ',
             'ascii'       => false,
@@ -15478,7 +15478,7 @@ return [
             'reading'     => 'てへぺろ | うぃんく',
         ],
         [
-            'value'       => "( ﾟ\u{2200}ﾟ)ﾉ",
+            'value'       => '( ﾟ∀ﾟ)ﾉ',
             'group'       => 'ja_tehepero',
             'description' => 'てへぺろ',
             'ascii'       => false,
@@ -15486,7 +15486,7 @@ return [
             'reading'     => 'てへぺろ | てへ',
         ],
         [
-            'value'       => "(\u{B4}ω`*)ゝ",
+            'value'       => '(´ω`*)ゝ',
             'group'       => 'ja_tehepero',
             'description' => 'てへぺろ',
             'ascii'       => false,
@@ -15494,7 +15494,7 @@ return [
             'reading'     => 'てへぺろ | ごまかし',
         ],
         [
-            'value'       => "(\u{FF3E}ω\u{FF1C})",
+            'value'       => '(＾ω＜)',
             'group'       => 'ja_tehepero',
             'description' => 'てへぺろ',
             'ascii'       => false,
@@ -15502,7 +15502,7 @@ return [
             'reading'     => 'てへぺろ | うぃんく',
         ],
         [
-            'value'       => "(･ωｰ)〜\u{2606}",
+            'value'       => '(･ωｰ)〜☆',
             'group'       => 'ja_tehepero',
             'description' => 'てへぺろ',
             'ascii'       => false,
@@ -15510,7 +15510,7 @@ return [
             'reading'     => 'てへぺろ | うぃんく',
         ],
         [
-            'value'       => "(\u{B0}ωｰ)\u{2606}",
+            'value'       => '(°ωｰ)☆',
             'group'       => 'ja_tehepero',
             'description' => 'てへぺろ',
             'ascii'       => false,
@@ -15518,7 +15518,7 @@ return [
             'reading'     => 'てへぺろ | うぃんく',
         ],
         [
-            'value'       => "( \u{B4}･ωｰ`)",
+            'value'       => '( ´･ωｰ`)',
             'group'       => 'ja_tehepero',
             'description' => 'てへぺろ',
             'ascii'       => false,
@@ -15526,7 +15526,7 @@ return [
             'reading'     => 'てへぺろ | うぃんく',
         ],
         [
-            'value'       => "(ﾟ\u{2200}ﾟ)ｰ\u{2606}",
+            'value'       => '(ﾟ∀ﾟ)ｰ☆',
             'group'       => 'ja_tehepero',
             'description' => 'てへぺろ',
             'ascii'       => false,
@@ -15534,7 +15534,7 @@ return [
             'reading'     => 'てへぺろ | てへ',
         ],
         [
-            'value'       => "(\u{FFE3}ωｰ)\u{2606}",
+            'value'       => '(￣ωｰ)☆',
             'group'       => 'ja_tehepero',
             'description' => 'てへぺろ',
             'ascii'       => false,
@@ -15542,7 +15542,7 @@ return [
             'reading'     => 'てへぺろ | うぃんく',
         ],
         [
-            'value'       => "(\u{B4}\u{2200}\u{FF40})ｰ\u{2606}",
+            'value'       => '(´∀｀)ｰ☆',
             'group'       => 'ja_tehepero',
             'description' => 'てへぺろ',
             'ascii'       => false,
@@ -15558,7 +15558,7 @@ return [
             'reading'     => 'てへぺろ | うぃんく',
         ],
         [
-            'value'       => "( \u{B4} ³ `)",
+            'value'       => '( ´ ³ `)',
             'group'       => 'ja_tehepero',
             'description' => 'てへぺろ',
             'ascii'       => false,
@@ -15566,7 +15566,7 @@ return [
             'reading'     => 'ぺろ | てへぺろ',
         ],
         [
-            'value'       => "(\u{2D9}³\u{2D9})",
+            'value'       => '(˙³˙)',
             'group'       => 'ja_tehepero',
             'description' => 'てへぺろ',
             'ascii'       => false,
@@ -15574,7 +15574,7 @@ return [
             'reading'     => 'ぺろ',
         ],
         [
-            'value'       => "(*\u{B4}³\u{FF40}*)",
+            'value'       => '(*´³｀*)',
             'group'       => 'ja_tehepero',
             'description' => 'てへぺろ',
             'ascii'       => false,
@@ -15582,7 +15582,7 @@ return [
             'reading'     => 'ぺろ | てへぺろ',
         ],
         [
-            'value'       => "( \u{B4}ε` )",
+            'value'       => '( ´ε` )',
             'group'       => 'ja_tehepero',
             'description' => 'てへぺろ',
             'ascii'       => false,
@@ -15590,7 +15590,7 @@ return [
             'reading'     => 'ぺろ',
         ],
         [
-            'value'       => "(*\u{B4}ε\u{FF40}*)",
+            'value'       => '(*´ε｀*)',
             'group'       => 'ja_tehepero',
             'description' => 'てへぺろ',
             'ascii'       => false,
@@ -15598,7 +15598,7 @@ return [
             'reading'     => 'ぺろ | てへぺろ',
         ],
         [
-            'value'       => "( \u{2D9}ε\u{2D9} )",
+            'value'       => '( ˙ε˙ )',
             'group'       => 'ja_tehepero',
             'description' => 'てへぺろ',
             'ascii'       => false,
@@ -15622,7 +15622,7 @@ return [
             'reading'     => 'ぺろ',
         ],
         [
-            'value'       => "(\u{B4}ω`)³",
+            'value'       => '(´ω`)³',
             'group'       => 'ja_tehepero',
             'description' => 'てへぺろ',
             'ascii'       => false,
@@ -15646,7 +15646,7 @@ return [
             'reading'     => 'ぺろ',
         ],
         [
-            'value'       => "( \u{2D8} ³\u{2D8})",
+            'value'       => '( ˘ ³˘)',
             'group'       => 'ja_tehepero',
             'description' => 'てへぺろ',
             'ascii'       => false,
@@ -15654,7 +15654,7 @@ return [
             'reading'     => 'ぺろ | ちゅー',
         ],
         [
-            'value'       => "(\u{B0}³\u{B0})",
+            'value'       => '(°³°)',
             'group'       => 'ja_tehepero',
             'description' => 'てへぺろ',
             'ascii'       => false,
@@ -15670,7 +15670,7 @@ return [
             'reading'     => 'ぺろ',
         ],
         [
-            'value'       => "てへ(\u{B4}\u{2200}\u{FF40};)",
+            'value'       => 'てへ(´∀｀;)',
             'group'       => 'ja_tehepero',
             'description' => 'てへぺろ',
             'ascii'       => false,
@@ -15678,7 +15678,7 @@ return [
             'reading'     => 'てへ | ごまかし',
         ],
         [
-            'value'       => "( \u{B4}\u{2200}\u{FF40};)ゞ",
+            'value'       => '( ´∀｀;)ゞ',
             'group'       => 'ja_tehepero',
             'description' => 'てへぺろ',
             'ascii'       => false,
@@ -15686,7 +15686,7 @@ return [
             'reading'     => 'ごまかし | てへ',
         ],
         [
-            'value'       => "(；\u{B4}\u{2200}\u{FF40})ゞ",
+            'value'       => '(；´∀｀)ゞ',
             'group'       => 'ja_tehepero',
             'description' => 'てへぺろ',
             'ascii'       => false,
@@ -15702,7 +15702,7 @@ return [
             'reading'     => 'てへ | てへぺろ',
         ],
         [
-            'value'       => "( \u{B4}ω\u{FF40};)ゞ",
+            'value'       => '( ´ω｀;)ゞ',
             'group'       => 'ja_tehepero',
             'description' => 'てへぺろ',
             'ascii'       => false,
@@ -15710,7 +15710,7 @@ return [
             'reading'     => 'ごまかし',
         ],
         [
-            'value'       => "ﾃﾍｯ(\u{B4}ω\u{FF40})",
+            'value'       => 'ﾃﾍｯ(´ω｀)',
             'group'       => 'ja_tehepero',
             'description' => 'てへぺろ',
             'ascii'       => false,
@@ -15718,7 +15718,7 @@ return [
             'reading'     => 'てへ | ごまかし',
         ],
         [
-            'value'       => "( \u{FF3E}ω\u{FF3E};)ゞ",
+            'value'       => '( ＾ω＾;)ゞ',
             'group'       => 'ja_tehepero',
             'description' => 'てへぺろ',
             'ascii'       => false,
@@ -15734,7 +15734,7 @@ return [
             'reading'     => 'てへ | うぃんく',
         ],
         [
-            'value'       => "あはは(\u{B4}\u{2200}\u{FF40};)",
+            'value'       => 'あはは(´∀｀;)',
             'group'       => 'ja_tehepero',
             'description' => 'てへぺろ',
             'ascii'       => false,
@@ -15742,7 +15742,7 @@ return [
             'reading'     => 'ごまかし | あはは',
         ],
         [
-            'value'       => "( \u{B4}\u{2200}`;)ゝ",
+            'value'       => '( ´∀`;)ゝ',
             'group'       => 'ja_tehepero',
             'description' => 'てへぺろ',
             'ascii'       => false,
@@ -15758,7 +15758,7 @@ return [
             'reading'     => 'てへぺろ',
         ],
         [
-            'value'       => "( ﾟ\u{2200}ﾟ;)ゞ",
+            'value'       => '( ﾟ∀ﾟ;)ゞ',
             'group'       => 'ja_tehepero',
             'description' => 'てへぺろ',
             'ascii'       => false,
@@ -15774,7 +15774,7 @@ return [
             'reading'     => 'てへ | はずかしい',
         ],
         [
-            'value'       => "( \u{B4}ﾟ\u{2200}ﾟ`)ゝ",
+            'value'       => '( ´ﾟ∀ﾟ`)ゝ',
             'group'       => 'ja_tehepero',
             'description' => 'てへぺろ',
             'ascii'       => false,
@@ -15782,7 +15782,7 @@ return [
             'reading'     => 'ごまかし | てへ',
         ],
         [
-            'value'       => "(・ωｰ)ｰ\u{2606}",
+            'value'       => '(・ωｰ)ｰ☆',
             'group'       => 'ja_tehepero',
             'description' => 'てへぺろ',
             'ascii'       => false,
@@ -15790,7 +15790,7 @@ return [
             'reading'     => 'どや | てへぺろ',
         ],
         [
-            'value'       => "( \u{AF}ω<)",
+            'value'       => '( ¯ω<)',
             'group'       => 'ja_tehepero',
             'description' => 'てへぺろ',
             'ascii'       => false,
@@ -15806,7 +15806,7 @@ return [
             'reading'     => 'どや | うぃんく',
         ],
         [
-            'value'       => "( \u{2D9}ωｰ)\u{2606}",
+            'value'       => '( ˙ωｰ)☆',
             'group'       => 'ja_tehepero',
             'description' => 'てへぺろ',
             'ascii'       => false,
@@ -15814,7 +15814,7 @@ return [
             'reading'     => 'てへぺろ | うぃんく',
         ],
         [
-            'value'       => "( \u{B4}ー\u{FF40})ゞ",
+            'value'       => '( ´ー｀)ゞ',
             'group'       => 'ja_tehepero',
             'description' => 'てへぺろ',
             'ascii'       => false,
@@ -15822,7 +15822,7 @@ return [
             'reading'     => 'どや | やれやれ',
         ],
         [
-            'value'       => "( ﾟｰﾟ)ｰ\u{2606}",
+            'value'       => '( ﾟｰﾟ)ｰ☆',
             'group'       => 'ja_tehepero',
             'description' => 'てへぺろ',
             'ascii'       => false,
@@ -15830,7 +15830,7 @@ return [
             'reading'     => 'どや | てへ',
         ],
         [
-            'value'       => "(\u{25BC}ωｰ)\u{2606}",
+            'value'       => '(▼ωｰ)☆',
             'group'       => 'ja_tehepero',
             'description' => 'てへぺろ',
             'ascii'       => false,
@@ -15846,7 +15846,7 @@ return [
             'reading'     => 'どや | うぃんく',
         ],
         [
-            'value'       => "( \u{FF3E}ｰ\u{2606})",
+            'value'       => '( ＾ｰ☆)',
             'group'       => 'ja_tehepero',
             'description' => 'てへぺろ',
             'ascii'       => false,
@@ -15862,7 +15862,7 @@ return [
             'reading'     => 'どや | きりっ',
         ],
         [
-            'value'       => "( \u{B4}ω\u{FF40})ﾉ\u{2606}",
+            'value'       => '( ´ω｀)ﾉ☆',
             'group'       => 'ja_tehepero',
             'description' => 'てへぺろ',
             'ascii'       => false,
@@ -15870,7 +15870,7 @@ return [
             'reading'     => 'てへぺろ | きらきら',
         ],
         [
-            'value'       => "\u{2606}(ゝω・)v",
+            'value'       => '☆(ゝω・)v',
             'group'       => 'ja_tehepero',
             'description' => 'てへぺろ',
             'ascii'       => false,
@@ -15878,7 +15878,7 @@ return [
             'reading'     => 'てへぺろ | うぃんく',
         ],
         [
-            'value'       => "(・ωｰ)ｰ\u{2606}ﾐ",
+            'value'       => '(・ωｰ)ｰ☆ﾐ',
             'group'       => 'ja_tehepero',
             'description' => 'てへぺろ',
             'ascii'       => false,
@@ -15886,7 +15886,7 @@ return [
             'reading'     => 'てへぺろ | きらきら',
         ],
         [
-            'value'       => "( \u{B4}\u{2200}\u{FF40})b\u{2606}",
+            'value'       => '( ´∀｀)b☆',
             'group'       => 'ja_tehepero',
             'description' => 'てへぺろ',
             'ascii'       => false,
@@ -15894,7 +15894,7 @@ return [
             'reading'     => 'てへぺろ | どや',
         ],
         [
-            'value'       => "(ゝ\u{2200}･)v\u{2606}",
+            'value'       => '(ゝ∀･)v☆',
             'group'       => 'ja_tehepero',
             'description' => 'てへぺろ',
             'ascii'       => false,
@@ -15902,7 +15902,7 @@ return [
             'reading'     => 'てへぺろ | うぃんく',
         ],
         [
-            'value'       => "\u{2726}(・ωｰ)\u{2726}",
+            'value'       => '✦(・ωｰ)✦',
             'group'       => 'ja_tehepero',
             'description' => 'てへぺろ',
             'ascii'       => false,
@@ -15910,7 +15910,7 @@ return [
             'reading'     => 'てへぺろ | きらきら',
         ],
         [
-            'value'       => "( *ゝ\u{2200}･)ﾉ\u{2606}",
+            'value'       => '( *ゝ∀･)ﾉ☆',
             'group'       => 'ja_tehepero',
             'description' => 'てへぺろ',
             'ascii'       => false,
@@ -15918,7 +15918,7 @@ return [
             'reading'     => 'てへぺろ | うぃんく',
         ],
         [
-            'value'       => "\u{2606}ﾐ(ゝ\u{2200}･)",
+            'value'       => '☆ﾐ(ゝ∀･)',
             'group'       => 'ja_tehepero',
             'description' => 'てへぺろ',
             'ascii'       => false,
@@ -15926,7 +15926,7 @@ return [
             'reading'     => 'てへぺろ | きらきら',
         ],
         [
-            'value'       => "(ゝ\u{2200}･)v",
+            'value'       => '(ゝ∀･)v',
             'group'       => 'ja_tehepero',
             'description' => 'てへぺろ',
             'ascii'       => false,
@@ -15942,7 +15942,7 @@ return [
             'reading'     => 'てへぺろ | ぐっ',
         ],
         [
-            'value'       => "( \u{B4}\u{2200}\u{FF40})b",
+            'value'       => '( ´∀｀)b',
             'group'       => 'ja_tehepero',
             'description' => 'てへぺろ',
             'ascii'       => false,
@@ -15958,7 +15958,7 @@ return [
             'reading'     => 'てへぺろ | やっほー',
         ],
         [
-            'value'       => "(*ゝ\u{2200}･)b",
+            'value'       => '(*ゝ∀･)b',
             'group'       => 'ja_tehepero',
             'description' => 'てへぺろ',
             'ascii'       => false,
@@ -15966,7 +15966,7 @@ return [
             'reading'     => 'てへぺろ | ぐっ',
         ],
         [
-            'value'       => "( ﾟ\u{2200}ﾟ)v",
+            'value'       => '( ﾟ∀ﾟ)v',
             'group'       => 'ja_tehepero',
             'description' => 'てへぺろ',
             'ascii'       => false,
@@ -15974,7 +15974,7 @@ return [
             'reading'     => 'てへぺろ | ぶい',
         ],
         [
-            'value'       => "(\u{FF3E}ω\u{FF1C})ﾉ",
+            'value'       => '(＾ω＜)ﾉ',
             'group'       => 'ja_tehepero',
             'description' => 'てへぺろ',
             'ascii'       => false,
@@ -15982,7 +15982,7 @@ return [
             'reading'     => 'てへぺろ | やっほー',
         ],
         [
-            'value'       => "( \u{B4}\u{25BD}\u{FF40})ゞ",
+            'value'       => '( ´▽｀)ゞ',
             'group'       => 'ja_tehepero',
             'description' => 'てへぺろ',
             'ascii'       => false,
@@ -15990,7 +15990,7 @@ return [
             'reading'     => 'てへ | ごまかし',
         ],
         [
-            'value'       => "(・ωｰ)〜\u{266A}",
+            'value'       => '(・ωｰ)〜♪',
             'group'       => 'ja_tehepero',
             'description' => 'てへぺろ',
             'ascii'       => false,
@@ -15998,7 +15998,7 @@ return [
             'reading'     => 'てへぺろ | ごきげん',
         ],
         [
-            'value'       => "(ゝ\u{2200}･)ｰ\u{2606}",
+            'value'       => '(ゝ∀･)ｰ☆',
             'group'       => 'ja_tehepero',
             'description' => 'てへぺろ',
             'ascii'       => false,
@@ -16006,7 +16006,7 @@ return [
             'reading'     => 'てへぺろ | うぃんく',
         ],
         [
-            'value'       => "( ゝ\u{2200}･)\u{1F495}",
+            'value'       => '( ゝ∀･)💕',
             'group'       => 'ja_tehepero',
             'description' => 'てへぺろ',
             'ascii'       => false,
@@ -16014,7 +16014,7 @@ return [
             'reading'     => 'てへぺろ | うぃんく',
         ],
         [
-            'value'       => "(・ω<)\u{2728}",
+            'value'       => '(・ω<)✨',
             'group'       => 'ja_tehepero',
             'description' => 'てへぺろ',
             'ascii'       => false,
@@ -16022,7 +16022,7 @@ return [
             'reading'     => 'てへぺろ | うぃんく',
         ],
         [
-            'value'       => "てへ(\u{B4}\u{2200}\u{FF40})\u{1F4A6}",
+            'value'       => 'てへ(´∀｀)💦',
             'group'       => 'ja_tehepero',
             'description' => 'てへぺろ',
             'ascii'       => false,
@@ -16030,7 +16030,7 @@ return [
             'reading'     => 'てへ | ごまかし',
         ],
         [
-            'value'       => "(ゝω･)ﾉ\u{1F49B}",
+            'value'       => '(ゝω･)ﾉ💛',
             'group'       => 'ja_tehepero',
             'description' => 'てへぺろ',
             'ascii'       => false,
@@ -16038,7 +16038,7 @@ return [
             'reading'     => 'てへぺろ | やっほー',
         ],
         [
-            'value'       => "( \u{B4} ³ `)\u{1F497}",
+            'value'       => '( ´ ³ `)💗',
             'group'       => 'ja_tehepero',
             'description' => 'てへぺろ',
             'ascii'       => false,
@@ -16046,7 +16046,7 @@ return [
             'reading'     => 'ぺろ | てへぺろ',
         ],
         [
-            'value'       => "(・ωｰ)b\u{2728}",
+            'value'       => '(・ωｰ)b✨',
             'group'       => 'ja_tehepero',
             'description' => 'てへぺろ',
             'ascii'       => false,
@@ -16078,7 +16078,7 @@ return [
             'reading'     => 'もじもじ | てれてれ',
         ],
         [
-            'value'       => "(๑\u{B4}ω`๑)",
+            'value'       => '(๑´ω`๑)',
             'group'       => 'ja_tereru',
             'description' => '照れる',
             'ascii'       => false,
@@ -16086,7 +16086,7 @@ return [
             'reading'     => 'もじもじ | てれてれ',
         ],
         [
-            'value'       => "( \u{B4}• ω •` )ゞ",
+            'value'       => '( ´• ω •` )ゞ',
             'group'       => 'ja_tereru',
             'description' => '照れる',
             'ascii'       => false,
@@ -16102,7 +16102,7 @@ return [
             'reading'     => 'もじもじ | てれてれ',
         ],
         [
-            'value'       => "( \u{2044}•\u{2044}ω\u{2044}•\u{2044} )",
+            'value'       => '( ⁄•⁄ω⁄•⁄ )',
             'group'       => 'ja_tereru',
             'description' => '照れる',
             'ascii'       => false,
@@ -16118,7 +16118,7 @@ return [
             'reading'     => 'もじもじ',
         ],
         [
-            'value'       => "( \u{2579} -\u{2579})",
+            'value'       => '( ╹ -╹)',
             'group'       => 'ja_tereru',
             'description' => '照れる',
             'ascii'       => false,
@@ -16126,7 +16126,7 @@ return [
             'reading'     => 'もじもじ | てれてれ',
         ],
         [
-            'value'       => "( \u{B4} \u{25BD} ` )ゞ",
+            'value'       => '( ´ ▽ ` )ゞ',
             'group'       => 'ja_tereru',
             'description' => '照れる',
             'ascii'       => false,
@@ -16134,7 +16134,7 @@ return [
             'reading'     => 'もじもじ | てれてれ',
         ],
         [
-            'value'       => "(；\u{B4}\u{2200}\u{FF40})",
+            'value'       => '(；´∀｀)',
             'group'       => 'ja_tereru',
             'description' => '照れる',
             'ascii'       => false,
@@ -16142,7 +16142,7 @@ return [
             'reading'     => 'もじもじ | てれてれ',
         ],
         [
-            'value'       => "(*//\u{2207}//*)",
+            'value'       => '(*//∇//*)',
             'group'       => 'ja_tereru',
             'description' => '照れる',
             'ascii'       => false,
@@ -16150,7 +16150,7 @@ return [
             'reading'     => 'ぽっ | あかめん',
         ],
         [
-            'value'       => "(〃\u{25BD}〃*)",
+            'value'       => '(〃▽〃*)',
             'group'       => 'ja_tereru',
             'description' => '照れる',
             'ascii'       => false,
@@ -16174,7 +16174,7 @@ return [
             'reading'     => 'ぽっ | てれてれ',
         ],
         [
-            'value'       => "(〃\u{2200}〃)",
+            'value'       => '(〃∀〃)',
             'group'       => 'ja_tereru',
             'description' => '照れる',
             'ascii'       => false,
@@ -16182,7 +16182,7 @@ return [
             'reading'     => 'ぽっ | てれてれ',
         ],
         [
-            'value'       => "(/\u{25BD}＼)",
+            'value'       => '(/▽＼)',
             'group'       => 'ja_tereru',
             'description' => '照れる',
             'ascii'       => false,
@@ -16198,7 +16198,7 @@ return [
             'reading'     => 'ぽっ | てれてれ',
         ],
         [
-            'value'       => "(*ﾉ\u{2200}ﾉ)",
+            'value'       => '(*ﾉ∀ﾉ)',
             'group'       => 'ja_tereru',
             'description' => '照れる',
             'ascii'       => false,
@@ -16214,7 +16214,7 @@ return [
             'reading'     => 'ぽっ | てれてれ',
         ],
         [
-            'value'       => "(/// \u{25BD} ///)",
+            'value'       => '(/// ▽ ///)',
             'group'       => 'ja_tereru',
             'description' => '照れる',
             'ascii'       => false,
@@ -16222,7 +16222,7 @@ return [
             'reading'     => 'ぽっ | てれてれ',
         ],
         [
-            'value'       => "( 〃\u{25BD}〃)ﾉ",
+            'value'       => '( 〃▽〃)ﾉ',
             'group'       => 'ja_tereru',
             'description' => '照れる',
             'ascii'       => false,
@@ -16230,7 +16230,7 @@ return [
             'reading'     => 'ぽっ | てれてれ',
         ],
         [
-            'value'       => "(*ﾉ\u{B4}\u{2200}`*)",
+            'value'       => '(*ﾉ´∀`*)',
             'group'       => 'ja_tereru',
             'description' => '照れる',
             'ascii'       => false,
@@ -16238,7 +16238,7 @@ return [
             'reading'     => 'ぽっ | てれてれ',
         ],
         [
-            'value'       => "(〃\u{B4}\u{2200}`)",
+            'value'       => '(〃´∀`)',
             'group'       => 'ja_tereru',
             'description' => '照れる',
             'ascii'       => false,
@@ -16246,7 +16246,7 @@ return [
             'reading'     => 'ぽっ | てれてれ',
         ],
         [
-            'value'       => "(*ﾉ\u{2661} ω\u{2661})",
+            'value'       => '(*ﾉ♡ ω♡)',
             'group'       => 'ja_tereru',
             'description' => '照れる',
             'ascii'       => false,
@@ -16254,7 +16254,7 @@ return [
             'reading'     => 'きゅん | どきどき',
         ],
         [
-            'value'       => "(/ ›ω‹ )/\u{2661}",
+            'value'       => '(/ ›ω‹ )/♡',
             'group'       => 'ja_tereru',
             'description' => '照れる',
             'ascii'       => false,
@@ -16262,7 +16262,7 @@ return [
             'reading'     => 'きゅん | てれてれ',
         ],
         [
-            'value'       => "(*\u{B4}ω`*)\u{2661}",
+            'value'       => '(*´ω`*)♡',
             'group'       => 'ja_tereru',
             'description' => '照れる',
             'ascii'       => false,
@@ -16270,7 +16270,7 @@ return [
             'reading'     => 'きゅん | てれてれ',
         ],
         [
-            'value'       => "(//ω//)\u{2661}",
+            'value'       => '(//ω//)♡',
             'group'       => 'ja_tereru',
             'description' => '照れる',
             'ascii'       => false,
@@ -16278,7 +16278,7 @@ return [
             'reading'     => 'きゅん | ぽっ',
         ],
         [
-            'value'       => "(ﾉ\u{2661}\u{2200}\u{2661})ﾉ",
+            'value'       => '(ﾉ♡∀♡)ﾉ',
             'group'       => 'ja_tereru',
             'description' => '照れる',
             'ascii'       => false,
@@ -16286,7 +16286,7 @@ return [
             'reading'     => 'きゅん | どきどき',
         ],
         [
-            'value'       => "(〃\u{2661}o\u{2661}〃)",
+            'value'       => '(〃♡o♡〃)',
             'group'       => 'ja_tereru',
             'description' => '照れる',
             'ascii'       => false,
@@ -16294,7 +16294,7 @@ return [
             'reading'     => 'きゅん | うっとり',
         ],
         [
-            'value'       => "(*ﾉᵕ ᴗ ᵕﾉ*)\u{2661}",
+            'value'       => '(*ﾉᵕ ᴗ ᵕﾉ*)♡',
             'group'       => 'ja_tereru',
             'description' => '照れる',
             'ascii'       => false,
@@ -16302,7 +16302,7 @@ return [
             'reading'     => 'きゅん | てれてれ',
         ],
         [
-            'value'       => "(*\u{2D8} ³\u{2D8})\u{2661}*.",
+            'value'       => '(*˘ ³˘)♡*.',
             'group'       => 'ja_tereru',
             'description' => '照れる',
             'ascii'       => false,
@@ -16310,7 +16310,7 @@ return [
             'reading'     => 'きゅん | てれてれ',
         ],
         [
-            'value'       => "( \u{2F6}\u{2D8} ³\u{2D8})\u{2661}",
+            'value'       => '( ˶˘ ³˘)♡',
             'group'       => 'ja_tereru',
             'description' => '照れる',
             'ascii'       => false,
@@ -16318,7 +16318,7 @@ return [
             'reading'     => 'きゅん | てれてれ',
         ],
         [
-            'value'       => "(\u{2661}ω\u{2661}*)",
+            'value'       => '(♡ω♡*)',
             'group'       => 'ja_tereru',
             'description' => '照れる',
             'ascii'       => false,
@@ -16326,7 +16326,7 @@ return [
             'reading'     => 'きゅん | うっとり',
         ],
         [
-            'value'       => "\u{2661}(*\u{B4}\u{2200}`*)人",
+            'value'       => '♡(*´∀`*)人',
             'group'       => 'ja_tereru',
             'description' => '照れる',
             'ascii'       => false,
@@ -16334,7 +16334,7 @@ return [
             'reading'     => 'きゅん | うっとり',
         ],
         [
-            'value'       => "(\u{B4} \u{2200} ` *)ゞ",
+            'value'       => '(´ ∀ ` *)ゞ',
             'group'       => 'ja_tereru',
             'description' => '照れる',
             'ascii'       => false,
@@ -16342,7 +16342,7 @@ return [
             'reading'     => 'でれでれ | えへへ',
         ],
         [
-            'value'       => "(*\u{B4}\u{2200}`*)ゞ",
+            'value'       => '(*´∀`*)ゞ',
             'group'       => 'ja_tereru',
             'description' => '照れる',
             'ascii'       => false,
@@ -16350,7 +16350,7 @@ return [
             'reading'     => 'でれでれ | えへへ',
         ],
         [
-            'value'       => "(\u{B4}\u{2207}`*)ゞ",
+            'value'       => '(´∇`*)ゞ',
             'group'       => 'ja_tereru',
             'description' => '照れる',
             'ascii'       => false,
@@ -16358,7 +16358,7 @@ return [
             'reading'     => 'でれでれ | えへへ',
         ],
         [
-            'value'       => "(/*\u{B4}\u{2200}`)o",
+            'value'       => '(/*´∀`)o',
             'group'       => 'ja_tereru',
             'description' => '照れる',
             'ascii'       => false,
@@ -16366,7 +16366,7 @@ return [
             'reading'     => 'でれでれ | えへへ',
         ],
         [
-            'value'       => "( \u{B4} \u{2200} ` *)ゝ",
+            'value'       => '( ´ ∀ ` *)ゝ',
             'group'       => 'ja_tereru',
             'description' => '照れる',
             'ascii'       => false,
@@ -16374,7 +16374,7 @@ return [
             'reading'     => 'でれでれ | えへへ',
         ],
         [
-            'value'       => "(*ﾉ\u{2200}`*)ゞ",
+            'value'       => '(*ﾉ∀`*)ゞ',
             'group'       => 'ja_tereru',
             'description' => '照れる',
             'ascii'       => false,
@@ -16382,7 +16382,7 @@ return [
             'reading'     => 'でれでれ | えへへ',
         ],
         [
-            'value'       => "(\u{B4}ω\u{FF40}*)ゞ",
+            'value'       => '(´ω｀*)ゞ',
             'group'       => 'ja_tereru',
             'description' => '照れる',
             'ascii'       => false,
@@ -16398,7 +16398,7 @@ return [
             'reading'     => 'でれでれ | えへへ',
         ],
         [
-            'value'       => "(*\u{B0}\u{2200}\u{B0})ゞ",
+            'value'       => '(*°∀°)ゞ',
             'group'       => 'ja_tereru',
             'description' => '照れる',
             'ascii'       => false,
@@ -16406,7 +16406,7 @@ return [
             'reading'     => 'でれでれ | えへへ',
         ],
         [
-            'value'       => "(๑\u{2C3}ᴗ\u{2C2})ゞ",
+            'value'       => '(๑˃ᴗ˂)ゞ',
             'group'       => 'ja_tereru',
             'description' => '照れる',
             'ascii'       => false,
@@ -16414,7 +16414,7 @@ return [
             'reading'     => 'はにかみ | えへへ',
         ],
         [
-            'value'       => "( ๑ \u{FF1E}ᴗ\u{FF1C} ๑)",
+            'value'       => '( ๑ ＞ᴗ＜ ๑)',
             'group'       => 'ja_tereru',
             'description' => '照れる',
             'ascii'       => false,
@@ -16422,7 +16422,7 @@ return [
             'reading'     => 'はにかみ | てれてれ',
         ],
         [
-            'value'       => "(*\u{B4}ω`*)ゞ",
+            'value'       => '(*´ω`*)ゞ',
             'group'       => 'ja_tereru',
             'description' => '照れる',
             'ascii'       => false,
@@ -16430,7 +16430,7 @@ return [
             'reading'     => 'はにかみ | えへへ',
         ],
         [
-            'value'       => "( \u{2044}\u{2D8}\u{2044} \u{2044} \u{2044}\u{2D8}\u{2044} )",
+            'value'       => '( ⁄˘⁄ ⁄ ⁄˘⁄ )',
             'group'       => 'ja_tereru',
             'description' => '照れる',
             'ascii'       => false,
@@ -16438,7 +16438,7 @@ return [
             'reading'     => 'もじもじ | てれてれ',
         ],
         [
-            'value'       => "(ㅅ\u{B4} \u{2D8} `๑)",
+            'value'       => '(ㅅ´ ˘ `๑)',
             'group'       => 'ja_tereru',
             'description' => '照れる',
             'ascii'       => false,
@@ -16454,7 +16454,7 @@ return [
             'reading'     => 'てれてれ | もじもじ',
         ],
         [
-            'value'       => "(*ﾉ\u{2207}ﾉ)",
+            'value'       => '(*ﾉ∇ﾉ)',
             'group'       => 'ja_tereru',
             'description' => '照れる',
             'ascii'       => false,
@@ -16462,7 +16462,7 @@ return [
             'reading'     => 'てれてれ | ぽっ',
         ],
         [
-            'value'       => "( ๑\u{2C3}̵ᴗ\u{2C2}̵๑)",
+            'value'       => '( ๑˃̵ᴗ˂̵๑)',
             'group'       => 'ja_tereru',
             'description' => '照れる',
             'ascii'       => false,
@@ -16470,7 +16470,7 @@ return [
             'reading'     => 'はにかみ | えへへ',
         ],
         [
-            'value'       => "(o\u{B4}ノ\u{2200}`)",
+            'value'       => '(o´ノ∀`)',
             'group'       => 'ja_tereru',
             'description' => '照れる',
             'ascii'       => false,
@@ -16478,7 +16478,7 @@ return [
             'reading'     => 'てれてれ | えへへ',
         ],
         [
-            'value'       => "(\u{2F6}\u{2C3} ᵕ \u{2C2}\u{2F6})",
+            'value'       => '(˶˃ ᵕ ˂˶)',
             'group'       => 'ja_tereru',
             'description' => '照れる',
             'ascii'       => false,
@@ -16486,7 +16486,7 @@ return [
             'reading'     => 'もじもじ | てれてれ',
         ],
         [
-            'value'       => "(\u{25CD}•ᗜ•\u{25CD})",
+            'value'       => '(◍•ᗜ•◍)',
             'group'       => 'ja_ureshii',
             'description' => '嬉しい',
             'ascii'       => false,
@@ -16494,7 +16494,7 @@ return [
             'reading'     => 'にこにこ | うれしい',
         ],
         [
-            'value'       => "(*\u{B4}\u{25BF}`*)",
+            'value'       => '(*´▿`*)',
             'group'       => 'ja_ureshii',
             'description' => '嬉しい',
             'ascii'       => false,
@@ -16502,7 +16502,7 @@ return [
             'reading'     => 'にこにこ | うれしい',
         ],
         [
-            'value'       => "(\u{25D5}\u{25BF}\u{25D5})",
+            'value'       => '(◕▿◕)',
             'group'       => 'ja_ureshii',
             'description' => '嬉しい',
             'ascii'       => false,
@@ -16518,7 +16518,7 @@ return [
             'reading'     => 'にこにこ | うれしい',
         ],
         [
-            'value'       => "(\u{2F6}' ᵕ ' \u{2F6})",
+            'value'       => '(˶\' ᵕ \' ˶)',
             'group'       => 'ja_ureshii',
             'description' => '嬉しい',
             'ascii'       => false,
@@ -16526,7 +16526,7 @@ return [
             'reading'     => 'にこにこ',
         ],
         [
-            'value'       => "(\u{2267}\u{2200}\u{2266}*)",
+            'value'       => '(≧∀≦*)',
             'group'       => 'ja_ureshii',
             'description' => '嬉しい',
             'ascii'       => false,
@@ -16534,7 +16534,7 @@ return [
             'reading'     => 'うれしい | やったー',
         ],
         [
-            'value'       => "(((o(*ﾟ\u{2200}ﾟ*)o)))",
+            'value'       => '(((o(*ﾟ∀ﾟ*)o)))',
             'group'       => 'ja_ureshii',
             'description' => '嬉しい',
             'ascii'       => false,
@@ -16542,7 +16542,7 @@ return [
             'reading'     => 'わくわく | どきどき',
         ],
         [
-            'value'       => "(๑\u{2C3}ᴗ\u{2C2})",
+            'value'       => '(๑˃ᴗ˂)',
             'group'       => 'ja_ureshii',
             'description' => '嬉しい',
             'ascii'       => false,
@@ -16550,7 +16550,7 @@ return [
             'reading'     => 'わくわく | うれしい',
         ],
         [
-            'value'       => "o(*\u{B0}\u{25BD}\u{B0}*)o",
+            'value'       => 'o(*°▽°*)o',
             'group'       => 'ja_ureshii',
             'description' => '嬉しい',
             'ascii'       => false,
@@ -16558,7 +16558,7 @@ return [
             'reading'     => 'わーい | うれしい',
         ],
         [
-            'value'       => "＼(^\u{25BD}^)／",
+            'value'       => '＼(^▽^)／',
             'group'       => 'ja_ureshii',
             'description' => '嬉しい',
             'ascii'       => false,
@@ -16566,7 +16566,7 @@ return [
             'reading'     => 'ばんざい | わーい',
         ],
         [
-            'value'       => "＼(\u{2267}\u{2200}\u{2266})／",
+            'value'       => '＼(≧∀≦)／',
             'group'       => 'ja_ureshii',
             'description' => '嬉しい',
             'ascii'       => false,
@@ -16574,7 +16574,7 @@ return [
             'reading'     => 'ばんざい | やったー',
         ],
         [
-            'value'       => "ヽ(\u{FFE3}\u{2200}\u{FFE3})ﾉ",
+            'value'       => 'ヽ(￣∀￣)ﾉ',
             'group'       => 'ja_ureshii',
             'description' => '嬉しい',
             'ascii'       => false,
@@ -16590,7 +16590,7 @@ return [
             'reading'     => 'ばんざい | わーい',
         ],
         [
-            'value'       => "＼(*\u{2267}\u{2207}\u{2266}*)／",
+            'value'       => '＼(*≧∇≦*)／',
             'group'       => 'ja_ureshii',
             'description' => '嬉しい',
             'ascii'       => false,
@@ -16598,7 +16598,7 @@ return [
             'reading'     => 'ばんざい | わーい',
         ],
         [
-            'value'       => "ヽ(\u{309C}\u{25BD}\u{309C} )-C",
+            'value'       => 'ヽ(゜▽゜ )-C',
             'group'       => 'ja_ureshii',
             'description' => '嬉しい',
             'ascii'       => false,
@@ -16606,7 +16606,7 @@ return [
             'reading'     => 'ばんざい | わーい',
         ],
         [
-            'value'       => "ヾ(\u{FF3E}\u{2207}\u{FF3E})",
+            'value'       => 'ヾ(＾∇＾)',
             'group'       => 'ja_ureshii',
             'description' => '嬉しい',
             'ascii'       => false,
@@ -16622,7 +16622,7 @@ return [
             'reading'     => 'ばんざい | わーい',
         ],
         [
-            'value'       => "ヽ(o\u{FF3E}\u{25BD}\u{FF3E}o)ノ",
+            'value'       => 'ヽ(o＾▽＾o)ノ',
             'group'       => 'ja_ureshii',
             'description' => '嬉しい',
             'ascii'       => false,
@@ -16630,7 +16630,7 @@ return [
             'reading'     => 'ばんざい | わーい',
         ],
         [
-            'value'       => "ヽ(*\u{B4}\u{2200}`)ﾉ",
+            'value'       => 'ヽ(*´∀`)ﾉ',
             'group'       => 'ja_ureshii',
             'description' => '嬉しい',
             'ascii'       => false,
@@ -16638,7 +16638,7 @@ return [
             'reading'     => 'ばんざい | わーい',
         ],
         [
-            'value'       => "ヽ(\u{B4}\u{2200}`)ﾉ",
+            'value'       => 'ヽ(´∀`)ﾉ',
             'group'       => 'ja_ureshii',
             'description' => '嬉しい',
             'ascii'       => false,
@@ -16646,7 +16646,7 @@ return [
             'reading'     => 'ばんざい | わーい',
         ],
         [
-            'value'       => "＼(٥⁰\u{25BF}⁰ )／",
+            'value'       => '＼(٥⁰▿⁰ )／',
             'group'       => 'ja_ureshii',
             'description' => '嬉しい',
             'ascii'       => false,
@@ -16654,7 +16654,7 @@ return [
             'reading'     => 'ばんざい | やったー',
         ],
         [
-            'value'       => "\u{266A}(\u{B4}\u{25BD}`)ﾉ",
+            'value'       => '♪(´▽`)ﾉ',
             'group'       => 'ja_ureshii',
             'description' => '嬉しい',
             'ascii'       => false,
@@ -16662,7 +16662,7 @@ return [
             'reading'     => 'るんるん | ごきげん',
         ],
         [
-            'value'       => "(\u{B4} \u{25BD} ` )ﾉ\u{266A}",
+            'value'       => '(´ ▽ ` )ﾉ♪',
             'group'       => 'ja_ureshii',
             'description' => '嬉しい',
             'ascii'       => false,
@@ -16670,7 +16670,7 @@ return [
             'reading'     => 'るんるん | ごきげん',
         ],
         [
-            'value'       => "ヽ(\u{B4}\u{2200}`)ﾉ\u{266A}",
+            'value'       => 'ヽ(´∀`)ﾉ♪',
             'group'       => 'ja_ureshii',
             'description' => '嬉しい',
             'ascii'       => false,
@@ -16678,7 +16678,7 @@ return [
             'reading'     => 'るんるん | わーい',
         ],
         [
-            'value'       => "\u{266A}~(\u{B4}ω\u{FF40} )",
+            'value'       => '♪~(´ω｀ )',
             'group'       => 'ja_ureshii',
             'description' => '嬉しい',
             'ascii'       => false,
@@ -16686,7 +16686,7 @@ return [
             'reading'     => 'るんるん | ごきげん',
         ],
         [
-            'value'       => "(o\u{B4}\u{2200}`o)\u{266A}",
+            'value'       => '(o´∀`o)♪',
             'group'       => 'ja_ureshii',
             'description' => '嬉しい',
             'ascii'       => false,
@@ -16694,7 +16694,7 @@ return [
             'reading'     => 'るんるん | ごきげん',
         ],
         [
-            'value'       => "ﾙﾝﾙﾝ\u{266A}(o^\u{2207}^o)",
+            'value'       => 'ﾙﾝﾙﾝ♪(o^∇^o)',
             'group'       => 'ja_ureshii',
             'description' => '嬉しい',
             'ascii'       => false,
@@ -16702,7 +16702,7 @@ return [
             'reading'     => 'るんるん | ごきげん',
         ],
         [
-            'value'       => "(*\u{B4}ω\u{FF40}*)ﾉﾞ\u{266A}",
+            'value'       => '(*´ω｀*)ﾉﾞ♪',
             'group'       => 'ja_ureshii',
             'description' => '嬉しい',
             'ascii'       => false,
@@ -16710,7 +16710,7 @@ return [
             'reading'     => 'るんるん | ごきげん',
         ],
         [
-            'value'       => "\u{266A}(^\u{2207}^*)",
+            'value'       => '♪(^∇^*)',
             'group'       => 'ja_ureshii',
             'description' => '嬉しい',
             'ascii'       => false,
@@ -16718,7 +16718,7 @@ return [
             'reading'     => 'るんるん | ごきげん',
         ],
         [
-            'value'       => "(\u{FFE3}\u{25BD}\u{FFE3})~\u{266A}",
+            'value'       => '(￣▽￣)~♪',
             'group'       => 'ja_ureshii',
             'description' => '嬉しい',
             'ascii'       => false,
@@ -16726,7 +16726,7 @@ return [
             'reading'     => 'るんるん | ごきげん',
         ],
         [
-            'value'       => "(T\u{25BD}T)。\u{309C}",
+            'value'       => '(T▽T)。゜',
             'group'       => 'ja_ureshii',
             'description' => '嬉しい',
             'ascii'       => false,
@@ -16742,7 +16742,7 @@ return [
             'reading'     => 'うれしなき | じーん',
         ],
         [
-            'value'       => "ヽ(；\u{25BD}；)ﾉ",
+            'value'       => 'ヽ(；▽；)ﾉ',
             'group'       => 'ja_ureshii',
             'description' => '嬉しい',
             'ascii'       => false,
@@ -16750,7 +16750,7 @@ return [
             'reading'     => 'うれしなき | かんげき',
         ],
         [
-            'value'       => "(*ﾟ\u{25BD}ﾟ*) 。\u{309C}",
+            'value'       => '(*ﾟ▽ﾟ*) 。゜',
             'group'       => 'ja_ureshii',
             'description' => '嬉しい',
             'ascii'       => false,
@@ -16758,7 +16758,7 @@ return [
             'reading'     => 'うれしなき | じーん',
         ],
         [
-            'value'       => "(つ\u{25BD}\u{2282}。)",
+            'value'       => '(つ▽⊂。)',
             'group'       => 'ja_ureshii',
             'description' => '嬉しい',
             'ascii'       => false,
@@ -16766,7 +16766,7 @@ return [
             'reading'     => 'うれしなき | じーん',
         ],
         [
-            'value'       => "(*\u{B4}\u{25BD}`)ﾉﾟ",
+            'value'       => '(*´▽`)ﾉﾟ',
             'group'       => 'ja_ureshii',
             'description' => '嬉しい',
             'ascii'       => false,
@@ -16774,7 +16774,7 @@ return [
             'reading'     => 'うれしなき | かんげき',
         ],
         [
-            'value'       => "(ﾉ\u{B4}\u{2200}`)ﾉ",
+            'value'       => '(ﾉ´∀`)ﾉ',
             'group'       => 'ja_ureshii',
             'description' => '嬉しい',
             'ascii'       => false,
@@ -16782,7 +16782,7 @@ return [
             'reading'     => 'わーい | うれしい',
         ],
         [
-            'value'       => "(*\u{B4}\u{2200}`)ノ\u{309C}",
+            'value'       => '(*´∀`)ノ゜',
             'group'       => 'ja_ureshii',
             'description' => '嬉しい',
             'ascii'       => false,
