@@ -92,6 +92,8 @@ php artisan vendor:publish --tag=laranail::emojis-config --force
 - `Emoji::toImage()` and the Blade component label in the locale of the call (the application locale in
   Laravel), not the configured default. The component takes `locale` and `set` in every mode, and an
   unknown `mode` or `fit` throws an `InvalidArgumentException` naming the accepted values.
+- `Symbols::search($query, limit: 0)` returns every match instead of none, as `search()` and
+  `searchKaomoji()` do.
 - `html()` leaves `title`, `xmp`, `iframe`, `noembed`, `noframes`, `noscript` and `plaintext` alone, as it
   already did `script`, `style` and `textarea`.
 - The sanitiser also removes U+206A–206F, U+1BCA0–1BCA3, and Mongolian free variation selectors that do

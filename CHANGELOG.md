@@ -54,6 +54,7 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/),
 - The sanitiser also removes U+206A–206F (deprecated format controls), U+1BCA0–1BCA3 (shorthand format
   controls), and the Mongolian free variation selectors unless they follow a Mongolian letter.
 - `searchKaomoji($term, 0)` returns every match, as `search()` does with a limit of 0; it returned one.
+- `Symbols::search($query, limit: 0)` returns every match too; it returned none, so all three searches now agree.
 - Integer config values accept a string of digits, so `env()` works for `input.max_bytes`,
   `policy.max_emojis` and the `images.custom` limits; they used to fall back to the default silently.
 - `strict()` throws for a custom emoji that has no form in the target and no fallback, rather than writing its
