@@ -65,4 +65,15 @@ return [
     // allow_custom, max_emojis, replacement.
     'policy' => [],
 
+    // A read-only JSON API over the catalogue, for a picker or another service. Off by default, and off means
+    // the routes are never registered. Every endpoint is a GET. Put auth in `middleware` if the data is not
+    // public to you, and make cache_headers private then. The default prefix sits outside api/*, so
+    // Laravel's CORS defaults do not apply: add the prefix to config/cors.php paths to allow other origins.
+    'api' => [
+        'enabled'       => env('LARANAIL_EMOJIS_API', false),
+        'prefix'        => 'laranail/emojis/api',
+        'version'       => 'v1',
+        'middleware'    => ['api', 'throttle:120,1'],
+        'cache_headers' => 'public;max_age=3600;etag', // Laravel's cache.headers: ETag and 304; '' for none
+    ],
 ];

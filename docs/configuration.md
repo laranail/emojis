@@ -36,7 +36,11 @@ Grouped by concern; each group's keys are listed once.
 | `extend.images` | `[]` | Your image for an existing emoji: `'thumbsup' => 'https://…'` — see [images](tools/images.md#your-own-images). |
 | `extend.shortcodes` | `[]` | Extra shortcodes for existing emoji: `'shipit' => '1F680'`. |
 | `extend.emoticons` | `[]` | Extra or remapped emoticons, which always match: `':X' => '1F910'`. |
-| `policy` | `[]` | Default emoji policy for `sanitize()` and `EmojiPolicyRule`: `allow_groups`, `deny_groups`, `deny_subgroups`, `allow_only`, `deny`, `max_version`, `allow_unknown`, `allow_custom`, `max_emojis`, `replacement` — see [security](tools/security.md#emoji-policy-opt-in). |
+| `policy` | `[]` | Default emoji policy for `sanitize()` and `EmojiPolicyRule`: `allow_groups`, `deny_groups`, `deny_subgroups`, `allow_only`, `deny`, `max_version`, `allow_unknown`, `allow_custom`, `max_emojis`, `replacement` — see [security](tools/security.md#emoji-policy-opt-in). The HTTP API and the picker payload apply it too. |
+| `api.enabled` | `false` | Registers the read-only [HTTP API](tools/api.md); off means no routes at all. |
+| `api.prefix`, `api.version` | `'laranail/emojis/api'`, `'v1'` | Where it is served. |
+| `api.middleware` | `['api', 'throttle:120,1']` | Its middleware; put authentication here. |
+| `api.cache_headers` | `'public;max_age=3600;etag'` | Laravel's `cache.headers` value; `''` for none. |
 
 Outside Laravel, `Emojis::create()` takes the same array:
 
@@ -106,6 +110,7 @@ php artisan vendor:publish --tag=laranail::emojis-config --force
 | Variable | Effect |
 |---|---|
 | `LARANAIL_EMOJIS` | `1` or `0` forces terminal emoji support on or off, overriding detection. |
+| `LARANAIL_EMOJIS_API` | `true` enables the [HTTP API](tools/api.md) (`api.enabled`). |
 
 ## Validation at boot
 

@@ -122,6 +122,10 @@ php artisan laranail::emojis.images install twemoji
 php artisan laranail::emojis.images verify twemoji
 ```
 
+## HTTP API
+
+A read-only JSON API over the catalogue, off by default — see [HTTP API](api.md).
+
 ## Health
 
 The provider registers a doctor check (`php artisan laranail::package-tools.doctor`) and an `about`

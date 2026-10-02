@@ -7,6 +7,7 @@ namespace Simtabi\Laranail\Emojis\Providers;
 use Closure;
 use Override;
 use InvalidArgumentException;
+use Illuminate\Support\Facades\Route;
 use Simtabi\Laranail\Emojis\Core\Emojis;
 use Simtabi\Laranail\Emojis\Core\Options;
 use Simtabi\Laranail\Package\Tools\Package;
@@ -39,6 +40,7 @@ use Simtabi\Laranail\Emojis\Core\Exceptions\ImageSetNotFound;
 use Illuminate\Contracts\Config\Repository as ConfigRepository;
 use Simtabi\Laranail\Emojis\Core\Extension\CustomEmojiRegistry;
 use Simtabi\Laranail\Emojis\Core\Extension\ConfiguredExtensions;
+use Simtabi\Laranail\Emojis\Laravel\Http\Middleware\VaryByLocale;
 use Simtabi\Laranail\Package\Tools\Providers\PackageServiceProvider;
 use Simtabi\Laranail\Package\Tools\Support\Resilience\FailurePolicy;
 
@@ -147,6 +149,8 @@ final class EmojisServiceProvider extends PackageServiceProvider
             }
         }, 'laranail/emojis:local-images', BootCriticality::Degradable);
 
+        $this->registerApiRoutes();
+
         $this->app->booted(fn (): Emojis => $this->app->make(Emojis::class)->freeze());
     }
 
@@ -186,6 +190,31 @@ final class EmojisServiceProvider extends PackageServiceProvider
     private static function imageRoot(): string
     {
         return public_path('vendor/laranail/emojis/images');
+    }
+
+    /**
+     * The read-only API, only when `api.enabled` is true. Off means never registered rather than registered and
+     * blocked: a disabled route still in `route:list` is one loosened middleware group away from being live.
+     * Registered at boot, from controllers only, so `route:cache` keeps it.
+     */
+    private function registerApiRoutes(): void
+    {
+        $config = $this->app->make(ConfigRepository::class);
+
+        if (! filter_var($config->get('laranail.emojis.api.enabled', false), FILTER_VALIDATE_BOOLEAN)) {
+            return;
+        }
+
+        $string = static fn (string $key, string $default): string => is_string($value = $config->get('laranail.emojis.api.' . $key)) ? $value : $default;
+        $middleware = array_values(array_filter((array) $config->get('laranail.emojis.api.middleware', ['api']), is_string(...)));
+        $cacheHeaders = $string('cache_headers', 'public;max_age=3600;etag');
+
+        Route::group([
+            'prefix'     => trim($string('prefix', 'laranail/emojis/api'), '/') . '/' . trim($string('version', 'v1'), '/'),
+            'middleware' => [...$middleware, VaryByLocale::class, ...($cacheHeaders === '' ? [] : ['cache.headers:' . $cacheHeaders])],
+        ], function (): void {
+            $this->loadRoutesFrom(dirname(__DIR__, 2) . '/routes/api.php');
+        });
     }
 
     private function registerConfiguredExtensions(Emojis $emojis): void
