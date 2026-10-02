@@ -8,6 +8,7 @@ use InvalidArgumentException;
 use Simtabi\Laranail\Emojis\Core\Emoji;
 use Simtabi\Laranail\Emojis\Core\Enums\Group;
 use Simtabi\Laranail\Emojis\Core\Enums\Subgroup;
+use Simtabi\Laranail\Emojis\Core\Support\ConfigInt;
 use Simtabi\Laranail\Emojis\Core\Enums\EmojiVersion;
 
 /**
@@ -90,7 +91,7 @@ final readonly class EmojiPolicy
             maxVersion: is_string($config['max_version'] ?? null) ? EmojiVersion::from($config['max_version']) : null,
             allowUnknown: ($config['allow_unknown'] ?? true) !== false,
             allowCustom: ($config['allow_custom'] ?? true) !== false,
-            maxEmojis: is_int($config['max_emojis'] ?? null) ? $config['max_emojis'] : null,
+            maxEmojis: ConfigInt::read($config['max_emojis'] ?? null, null),
             replacement: is_string($config['replacement'] ?? null) ? $config['replacement'] : null,
         );
     }

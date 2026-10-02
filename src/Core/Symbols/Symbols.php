@@ -59,8 +59,9 @@ final class Symbols
     {
         $key = trim($key);
 
-        if (preg_match('/^(?:U\+)?([0-9A-Fa-f]{4,6})$/', $key, $m) === 1) {
-            return $this->byHex(strtoupper(ltrim($m[1], '0') === '' ? '0' : $m[1]));
+        // A code point in any spelling ("2192", "U+02192", "u+2192"), keyed the way the dataset is: %04X.
+        if (preg_match('/^(?:[Uu]\+)?([0-9A-Fa-f]{4,6})$/', $key, $m) === 1) {
+            return $this->byHex(sprintf('%04X', hexdec($m[1])));
         }
 
         return mb_strlen($key, 'UTF-8') === 1 ? $this->byHex($this->hexOf($key)) : null;

@@ -38,6 +38,7 @@ use Simtabi\Laranail\Package\Tools\Services\Boot\BootReport;
 use Simtabi\Laranail\Emojis\Core\Exceptions\ImageSetNotFound;
 use Illuminate\Contracts\Config\Repository as ConfigRepository;
 use Simtabi\Laranail\Emojis\Core\Extension\CustomEmojiRegistry;
+use Simtabi\Laranail\Emojis\Core\Extension\ConfiguredExtensions;
 use Simtabi\Laranail\Package\Tools\Providers\PackageServiceProvider;
 use Simtabi\Laranail\Package\Tools\Support\Resilience\FailurePolicy;
 
@@ -189,37 +190,7 @@ final class EmojisServiceProvider extends PackageServiceProvider
 
     private function registerConfiguredExtensions(Emojis $emojis): void
     {
-        $config = $this->app->make(ConfigRepository::class);
-
-        foreach ((array) $config->get('laranail.emojis.extend.custom', []) as $name => $custom) {
-            $custom = (array) $custom;
-
-            if (array_key_exists('url', $custom)) {
-                throw new InvalidArgumentException("laranail.emojis.extend.custom.{$name}.url was renamed to image in 0.2.0; it now also accepts a data URI.");
-            }
-
-            $emojis->addCustom(
-                (string) $name,
-                (string) ($custom['image'] ?? ''),
-                isset($custom['fallback']) ? (string) $custom['fallback'] : null,
-                array_values(array_map(strval(...), (array) ($custom['aliases'] ?? []))),
-                isset($custom['label']) ? (string) $custom['label'] : null,
-            );
-        }
-
-        foreach ((array) $config->get('laranail.emojis.extend.images', []) as $emoji => $image) {
-            $emojis->useImage((string) $emoji, (string) $image);
-        }
-
-        foreach ((array) $config->get('laranail.emojis.extend.shortcodes', []) as $code => $emoji) {
-            $emojis->addShortcode((string) $code, (string) $emoji);
-        }
-
-        foreach ((array) $config->get('laranail.emojis.extend.emoticons', []) as $emoticon => $emoji) {
-            $emojis->addEmoticon((string) $emoticon, (string) $emoji);
-        }
-
-        $emojis->removeEmoticon(...array_map(strval(...), array_values((array) $config->get('laranail.emojis.input.disabled_emoticons', []))));
+        ConfiguredExtensions::apply($emojis, (array) $this->app->make(ConfigRepository::class)->get('laranail.emojis', []));
     }
 
     /** @return array<string, string> */

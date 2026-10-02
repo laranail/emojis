@@ -11,6 +11,7 @@ use Simtabi\Laranail\Emojis\Core\Enums\Subgroup;
 use Simtabi\Laranail\Emojis\Core\Enums\EmojiVersion;
 use Simtabi\Laranail\Emojis\Core\Enums\SequenceType;
 use Simtabi\Laranail\Emojis\Core\Exceptions\EmojiNotFound;
+use Simtabi\Laranail\Emojis\Core\Exceptions\ImageSetNotFound;
 
 it('finds one emoji by every kind of key', function (string $key): void {
     expect(emojis()->get($key)->hexcode)->toBe('1F44B');
@@ -100,4 +101,31 @@ it('draws a random emoji from any group, components included', function (): void
 
     expect(emojis()->random())->toBeInstanceOf(Emoji::class)
         ->and(count(Group::cases()))->toBeGreaterThanOrEqual(10);
+});
+
+it('answers has() for everything find() accepts', function (): void {
+    expect(emojis()->has(EmojiId::Rocket))->toBeTrue()
+        ->and(emojis()->has(emojis()->get('rocket')))->toBeTrue()
+        ->and(emojis()->has('rocket'))->toBeTrue()
+        ->and(emojis()->has('no-such-emoji'))->toBeFalse();
+});
+
+it('throws for an unknown name in a lookup, and returns nothing from a filter, as documented', function (): void {
+    $lookups = [
+        'get'        => static fn (): mixed => emojis()->get('nope'),
+        'flag'       => static fn (): mixed => emojis()->flag('ZZ'),
+        'collection' => static fn (): mixed => emojis()->collection('nope'),
+    ];
+
+    foreach ($lookups as $lookup) {
+        expect($lookup)->toThrow(EmojiNotFound::class);
+    }
+
+    expect(static fn (): mixed => emojis()->images()->get('nope'))->toThrow(ImageSetNotFound::class)
+        ->and(emojis()->find('nope'))->toBeNull()
+        ->and(emojis()->query()->inCollection('nope')->count())->toBe(0)
+        ->and(emojis()->kaomoji('nope'))->toBe([])
+        ->and(emojis()->symbols()->group('nope'))->toBe([])
+        ->and(emojis()->symbols()->characters('nope'))->toBe([])
+        ->and(emojis()->symbols()->search('a', 'nope'))->toBe([]);
 });

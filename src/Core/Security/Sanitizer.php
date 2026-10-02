@@ -182,7 +182,9 @@ final readonly class Sanitizer
                 ($cp < 0x20 && ! in_array($cp, [0x09, 0x0A, 0x0D], true)) || ($cp >= 0x7F && $cp <= 0x9F) => Threat::Control,
                 $this->removeBidi && $this->isBidi($cp)                                                   => Threat::Bidi,
                 $this->isInvisible($cp)                                                                   => Threat::Invisible,
-                $cp >= 0xE0000 && $cp <= 0xE007F                                                          => Threat::Tag,
+                // Mongolian free variation selectors pick a glyph form after a Mongolian letter and hide anywhere else.
+                $this->isMongolianSelector($cp) && ! $this->isMongolian($previous) => Threat::Invisible,
+                $cp >= 0xE0000 && $cp <= 0xE007F                                   => Threat::Tag,
                 // At most one selector, and only after a character Unicode defines that selector for: VS15/16
                 // after an emoji-capable character, VS1–14 after a standardized-variant base, VS17–256 after a
                 // CJK ideograph. Anything else is payload — one hidden byte per visible character adds up.
@@ -241,8 +243,27 @@ final readonly class Sanitizer
     private function isInvisible(int $cp): bool
     {
         return in_array($cp, [0x00AD, 0x034F, 0x115F, 0x1160, 0x17B4, 0x17B5, 0x180E, 0x200B, 0x2028, 0x2029, 0x2060, 0x2061, 0x2062, 0x2063, 0x2064, 0x2800, 0x3164, 0xFEFF, 0xFFA0], true)
+            || ($cp >= 0x206A && $cp <= 0x206F)   // deprecated format characters
             || ($cp >= 0xFFF9 && $cp <= 0xFFFB)
+            || ($cp >= 0x1BCA0 && $cp <= 0x1BCA3) // shorthand format controls
             || ($cp >= 0x1D173 && $cp <= 0x1D17A);
+    }
+
+    private function isMongolianSelector(int $cp): bool
+    {
+        return ($cp >= 0x180B && $cp <= 0x180D) || $cp === 0x180F;
+    }
+
+    private function isMongolian(string $char): bool
+    {
+        if ($char === '') {
+            return false;
+        }
+
+        $cp = mb_ord($char, 'UTF-8');
+
+        // The Mongolian block (letters from U+1820) and the Mongolian Supplement.
+        return ($cp >= 0x1820 && $cp <= 0x18AF) || ($cp >= 0x11660 && $cp <= 0x1167F);
     }
 
     /** @param array<string, int> $counts */

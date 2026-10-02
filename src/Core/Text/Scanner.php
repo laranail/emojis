@@ -42,6 +42,8 @@ final class Scanner
         private readonly DatasetStore $data,
         private readonly Catalogue $catalogue,
         private readonly CustomEmojiRegistry $custom,
+        private readonly string $open = ':',
+        private readonly string $close = ':',
     ) {}
 
     /**
@@ -190,17 +192,23 @@ final class Scanner
     }
 
     /**
-     * ":code:" in any preset, with Slack's two-token skin tone (":wave::skin-tone-3:").
+     * ":code:" in any preset, with Slack's two-token skin tone (":wave::skin-tone-3:"), between the
+     * configured `shortcodes.delimiters` — the same ones the renderer writes, so output reads back.
+     * An empty delimiter would make every bare word a candidate, so colons are read instead.
      *
-     * A code must not be glued to a word, a path or a preceding colon, so "12:30:45", "std::vector",
+     * A code must not be glued to a word, a path or a preceding delimiter, so "12:30:45", "std::vector",
      * "laranail::emojis.search" and "/users/:id:" are left alone; back-to-back codes (":a::b:") still
-     * match because a preceding colon is accepted when it closes the previous code.
+     * match because a preceding delimiter is accepted when it closes the previous code.
      *
      * @return list<Token>
      */
     private function shortcodes(string $text): array
     {
-        if (preg_match_all('/:([A-Za-z0-9_+\-]+):(?::skin-tone-([2-6]):)?/', $text, $matches, PREG_OFFSET_CAPTURE | PREG_SET_ORDER) === false) {
+        [$open, $close] = $this->open === '' || $this->close === '' ? [':', ':'] : [$this->open, $this->close];
+        $o = preg_quote($open, '/');
+        $c = preg_quote($close, '/');
+
+        if (preg_match_all('/' . $o . '([A-Za-z0-9_+\-]+)' . $c . '(?:' . $o . 'skin-tone-([2-6])' . $c . ')?/', $text, $matches, PREG_OFFSET_CAPTURE | PREG_SET_ORDER) === false) {
             return [];
         }
 
@@ -214,13 +222,13 @@ final class Scanner
             $after = $text[$end] ?? '';
 
             if (($before !== '' && preg_match('/[A-Za-z0-9_\/]/', $before) === 1)
-                || ($before === ':' && $offset !== $lastEnd)
+                || ($before === $open[-1] && $offset !== $lastEnd)
                 || ($after !== '' && preg_match('/[A-Za-z0-9_]/', $after) === 1)) {
                 continue;
             }
 
             $code = strtolower($match[1][0]);
-            $plainEnd = $offset + strlen($match[1][0]) + 2;
+            $plainEnd = $offset + strlen($open) + strlen($match[1][0]) + strlen($close);
             $custom = $this->custom->find($code);
 
             if ($custom instanceof CustomEmoji) {

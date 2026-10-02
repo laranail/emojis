@@ -10,8 +10,9 @@ use Simtabi\Laranail\Console\Tools\Commands\Concerns\SupportsNamespacedNames;
 
 /**
  * `laranail::emojis.sanitize "text"` or `… sanitize - < file` — prints the cleaned text on STDOUT and the
- * report (counts by kind, never content) on STDERR, so it composes in a pipe. Exits 1 when anything was
- * removed with --check, for use as a CI or pre-commit gate over text files.
+ * report (counts by kind, never content) on STDERR, so it composes in a pipe. With --check it changes and
+ * prints nothing, and exits 1 when sanitising would remove anything — a hidden character or something the
+ * configured emoji policy disallows — for use as a CI or pre-commit gate over text files.
  */
 final class SanitizeCommand extends Command
 {
@@ -19,7 +20,7 @@ final class SanitizeCommand extends Command
 
     protected $signature = 'laranail::emojis.sanitize
                             {text : The text, or - to read STDIN}
-                            {--check : Print nothing; exit 1 when the text is not already clean}';
+                            {--check : Print nothing; exit 1 when sanitising would remove anything}';
 
     protected $description = 'Remove smuggled, invisible and disallowed characters and emoji from text';
 

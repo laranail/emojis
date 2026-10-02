@@ -227,11 +227,19 @@ final class Catalogue
             return $primary;
         }
 
-        // The primary was switched off or remapped to another emoji, and writing it would read back as
-        // something else: use another emoticon that still means this emoji, or none (Emoticon mode degrades).
+        // The dataset gives this emoji none: write one the caller added for it, the first still in force.
         if ($primary === null) {
+            foreach ($this->custom->emoticons() as $emoticon => $hex) {
+                if ($hex === $emoji->hexcode && ($this->activeEmoticons(risky: true)[$emoticon] ?? null) === $hex) {
+                    return $emoticon;
+                }
+            }
+
             return null;
         }
+
+        // The primary was switched off or remapped to another emoji, and writing it would read back as
+        // something else: use another emoticon that still means this emoji, or none (Emoticon mode degrades).
 
         $fallback = array_search($emoji->hexcode, $this->activeEmoticons(), true);
 

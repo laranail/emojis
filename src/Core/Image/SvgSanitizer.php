@@ -108,6 +108,11 @@ final class SvgSanitizer
         $subset = $match[2][0] ?? '';
         $svg = substr_replace($svg, '', $match[0][1], strlen($match[0][0]));
 
+        // Only the first declaration was inspected; anything declarative left behind would reach libxml unread.
+        if (stripos($svg, '<!DOCTYPE') !== false || stripos($svg, '<!ENTITY') !== false) {
+            throw InvalidImage::unsafeSvg('more than one DOCTYPE, or an ENTITY outside it');
+        }
+
         if (trim($subset) === '') {
             return $svg;
         }

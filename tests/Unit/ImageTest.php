@@ -120,6 +120,14 @@ it('refuses entity declarations from callers, and expands only literal ones for 
         ->and(SvgSanitizer::sanitize($illustrator, trusted: true))->toContain('<path d="M0 0"/>');
 });
 
+it('refuses a second DOCTYPE or a stray ENTITY left after the first DOCTYPE is dropped', function (string $svg): void {
+    expect(static fn (): string => SvgSanitizer::sanitize($svg))->toThrow(InvalidImage::class, 'more than one DOCTYPE')
+        ->and(static fn (): string => SvgSanitizer::sanitize($svg, trusted: true))->toThrow(InvalidImage::class, 'more than one DOCTYPE');
+})->with([
+    'two doctypes' => ['<!DOCTYPE svg><!DOCTYPE svg [<!ENTITY x SYSTEM "file:///etc/passwd">]><svg xmlns="http://www.w3.org/2000/svg"><title>&x;</title></svg>'],
+    'stray entity' => ['<!DOCTYPE svg><svg xmlns="http://www.w3.org/2000/svg"><!ENTITY x "y"><path d="M0 0"/></svg>'],
+]);
+
 it('caps the element count and the nesting depth', function (): void {
     $many = '<svg xmlns="http://www.w3.org/2000/svg">' . str_repeat('<path d="M0 0"/>', 50) . '</svg>';
     $deep = '<svg xmlns="http://www.w3.org/2000/svg">' . str_repeat('<g>', 100) . str_repeat('</g>', 100) . '</svg>';
@@ -189,4 +197,28 @@ it('validates an image against the configured policy through Emojis::image()', f
     expect($emojis->image('data:image/png;base64,' . base64_encode(pngOf(32, 32)))->width)->toBe(32)
         ->and(static fn (): EmojiImage => $emojis->image('data:image/png;base64,' . base64_encode(pngOf(33, 32))))->toThrow(InvalidImage::class)
         ->and(static fn (): EmojiImage => $emojis->image('https://elsewhere.example/a.png'))->toThrow(InvalidImage::class);
+});
+
+it('refuses image URLs when images.custom.urls is off, and still accepts inline images', function (): void {
+    $policy = ImagePolicy::fromArray(['urls' => false]);
+    $png = 'data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAQAAAC1HAwCAAAAC0lEQVR42mNkYAAAAAYAAjCB0C8AAAAASUVORK5CYII=';
+
+    expect(static fn (): EmojiImage => EmojiImage::from('https://example.com/a.png', $policy))->toThrow(InvalidImage::class, 'images.custom.urls')
+        ->and(static fn (): EmojiImage => EmojiImage::from('/emoji/a.png', $policy))->toThrow(InvalidImage::class, 'images.custom.urls')
+        ->and(EmojiImage::from($png, $policy)->src)->toStartWith('data:image/png')
+        ->and(ImagePolicy::fromArray([])->allowUrls)->toBeTrue();
+});
+
+it('reads numeric strings in the image limits, as env() returns them', function (): void {
+    $policy = ImagePolicy::fromArray(['max_bytes' => '1000', 'max_dimension' => '64', 'max_svg_elements' => '500']);
+
+    expect([$policy->maxBytes, $policy->maxDimension, $policy->maxSvgElements])->toBe([1000, 64, 500]);
+});
+
+it('reads numeric strings in the input and policy limits too', function (): void {
+    $emojis = Emojis::create(['input' => ['max_bytes' => '2048'], 'policy' => ['max_emojis' => '3']]);
+
+    expect($emojis->options()->maxInputBytes)->toBe(2048)
+        ->and($emojis->options()->policy->maxEmojis)->toBe(3)
+        ->and(Emojis::create(['input' => ['max_bytes' => 'lots']])->options()->maxInputBytes)->toBe(1_048_576);
 });

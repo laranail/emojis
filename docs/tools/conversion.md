@@ -19,7 +19,8 @@ or digit (`XD`, `D:`, `8)`, `B-)`), and a few that read as prose (`(y)`, `(n)`, 
 match only with `withEmoticons(risky: true)`. The
 [emoticon list](emoticons.md) has every one, and `Emojis::emoticons()` returns them in code.
 
-Shortcodes must not be glued to a word, a path or a stray colon: `12:30:45`, `std::vector`,
+Shortcodes are read between the configured `shortcodes.delimiters` (`:` and `:` by default), the same
+ones they are written with; an empty delimiter is read as `:`. They must not be glued to a word, a path or a stray colon: `12:30:45`, `std::vector`,
 `laranail::emojis.search` and `/users/:id:` stay as they are, while `:smile::smile:` is two emoji.
 Slack's two-token tones (`:wave::skin-tone-4:`) are understood.
 
@@ -28,9 +29,11 @@ Slack's two-token tones (`:wave::skin-tone-4:`) are understood.
 | Method | Effect |
 |---|---|
 | `to(Mode, ?EscapeFormat)` | the conversion; `Image` output and HTML input produce HTML |
-| `toHtml(Mode = Image)` | HTML-safe `Stringable` (`HtmlString` in Laravel): plain text escaped |
+| `toHtml(Mode = Image, ?EscapeFormat)` | HTML-safe `Stringable` (`HtmlString` in Laravel): plain text escaped |
 | `toEmoji()`, `toText()`, `toUnicode()`, `toAscii()`, `toShortcodes()`, `toEmoticons()`, `toImages()`, `toHtmlEntities()`, `toEscaped()`, `toCodepoints()`, `toNames()` | shortcuts |
 | `preset(ShortcodePreset)`, `locale()`, `imageSet()` | per-call choices |
+| `fit(Fit)` | how images fill their box: `None` (the set's own padding), `Balanced` (default), `Tight` — see [images](images.md) |
+| `carrier(Carrier)` | read and write a Japanese carrier's private-use emoji; reading needs it named, since docomo, au and SoftBank overlap — see [Japanese](japanese.md) |
 | `skinTone(?SkinTone)` | apply a tone to every single-person emoji that has none |
 | `supportedUpTo(EmojiVersion)` | render as an older platform would |
 | `degrade(Mode $target, Mode ...$chain)`, `strict()` | fallback control — see [modes](../modes.md#degradation) |
@@ -55,8 +58,12 @@ sequence such as `🐱‍👤`, or a stray modifier or variation selector.
 ## HTML input
 
 `Emojis::html($html)` converts text runs only. Markup, attributes, comments, and everything inside `code`,
-`pre`, `kbd`, `samp`, `script`, `style`, `textarea` and `template` are returned byte-identical. Text is
-decoded before scanning (so `&lt;3` is an emoticon) and re-escaped where it changed.
+`pre`, `kbd`, `samp`, `template` and the raw-text elements (`script`, `style`, `textarea`, `title`, `xmp`,
+`iframe`, `noembed`, `noframes`, `noscript`, `plaintext`) are returned byte-identical. Text is decoded
+before scanning (so `&lt;3` is an emoticon) and re-escaped where it changed.
+
+It is not a sanitiser: pass HTML you trust or have already sanitised — see
+[security](security.md#html-output).
 
 ## Limits
 

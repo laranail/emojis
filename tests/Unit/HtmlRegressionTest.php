@@ -28,6 +28,13 @@ it('does not parse tags inside raw-text elements', function (string $html, strin
     'script holding :wave:'   => ['<script>if (a < b) { s = ":wave:"; }</script>', '<script>if (a < b) { s = ":wave:"; }</script>'],
     'textarea holding tags'   => ['<textarea><b>:wave:</b></textarea>:wave:', '<textarea><b>:wave:</b></textarea>👋'],
     'upper-case closing tag'  => ['<SCRIPT>"<code>"</SCRIPT>:wave:', '<SCRIPT>"<code>"</SCRIPT>👋'],
+    'title'                   => ['<title><b>:wave:</b></title>:wave:', '<title><b>:wave:</b></title>👋'],
+    'noscript'                => ['<noscript><b>:wave:</b></noscript>:wave:', '<noscript><b>:wave:</b></noscript>👋'],
+    'xmp'                     => ['<xmp><b>:wave:</b></xmp>:wave:', '<xmp><b>:wave:</b></xmp>👋'],
+    'iframe'                  => ['<iframe><b>:wave:</b></iframe>:wave:', '<iframe><b>:wave:</b></iframe>👋'],
+    'noembed'                 => ['<noembed><b>:wave:</b></noembed>:wave:', '<noembed><b>:wave:</b></noembed>👋'],
+    'noframes'                => ['<noframes><b>:wave:</b></noframes>:wave:', '<noframes><b>:wave:</b></noframes>👋'],
+    'plaintext never closes'  => ['<plaintext>:wave:</plaintext>:wave:', '<plaintext>:wave:</plaintext>:wave:'],
 ]);
 
 it('writes HTML entities into HTML once, not escaped again', function (): void {

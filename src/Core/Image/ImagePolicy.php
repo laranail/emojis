@@ -5,14 +5,16 @@ declare(strict_types=1);
 namespace Simtabi\Laranail\Emojis\Core\Image;
 
 use InvalidArgumentException;
+use Simtabi\Laranail\Emojis\Core\Support\ConfigInt;
 
 /**
  * Limits applied to every image a caller supplies — a data URI, base64, a file or a URL. The defaults suit
  * an emoji: small, square-ish, never large enough to be a decompression bomb.
  *
  * URLs are referenced, never fetched: the package emits them in an <img src> and makes no request itself,
- * so there is no server-side request forgery to guard against. `hosts` optionally narrows which hosts a
- * URL may name.
+ * so there is no server-side request forgery to guard against. The reader's browser does fetch them, though,
+ * so a URL a user supplies can be a tracking pixel: `hosts` narrows which hosts a URL may name, and
+ * `urls: false` refuses URLs altogether, leaving only inline images (data URIs, base64, files).
  */
 final readonly class ImagePolicy
 {
@@ -23,6 +25,7 @@ final readonly class ImagePolicy
         public bool $allowSvg = true,
         public int $maxSvgElements = 20_000,
         public array $hosts = [],
+        public bool $allowUrls = true,
     ) {
         if ($maxBytes < 1 || $maxDimension < 1 || $maxSvgElements < 1) {
             throw new InvalidArgumentException('Image policy limits must be positive.');
@@ -32,7 +35,7 @@ final readonly class ImagePolicy
     /** @param array<string, mixed> $config the `images.custom` group */
     public static function fromArray(array $config): self
     {
-        $int = static fn (string $key, int $default): int => is_int($config[$key] ?? null) ? $config[$key] : $default;
+        $int = static fn (string $key, int $default): int => ConfigInt::read($config[$key] ?? null, $default);
         $hosts = [];
 
         foreach (is_array($config['hosts'] ?? null) ? $config['hosts'] : [] as $host) {
@@ -47,6 +50,7 @@ final readonly class ImagePolicy
             allowSvg: ! array_key_exists('svg', $config) || $config['svg'] === true,
             maxSvgElements: $int('max_svg_elements', 20_000),
             hosts: $hosts,
+            allowUrls: ! array_key_exists('urls', $config) || $config['urls'] === true,
         );
     }
 }

@@ -9,6 +9,7 @@ Install `laranail/emojis` from the laranail VCS repositories and, in Laravel, le
 | PHP | `^8.4.1 \|\| ^8.5` | |
 | `ext-mbstring` | any | required |
 | `ext-intl` | any | optional; used only for graphemes in the text *between* emoji |
+| `ext-dom` | any | optional; needed only to accept SVG emoji images (custom or uploaded), which are sanitised with `DOMDocument` |
 | Laravel | `^13.0` | only for the Laravel layer; the core runs without booting it |
 
 The package gives the same results on every PHP build. It does not rely on PCRE's Unicode emoji

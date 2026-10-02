@@ -94,3 +94,7 @@ it('fails the doctor when the configured image set does not resolve', function (
 it('passes the doctor with the default image set', function (): void {
     expect(new DatasetCheck(Emojis::create())->run()->status)->not->toBe(DoctorStatus::Fail);
 });
+
+it('passes the doctor whatever shortcode delimiters are configured', function (): void {
+    expect(new DatasetCheck(Emojis::create(['shortcodes' => ['delimiters' => ['{', '}']]]))->run()->status)->toBe(DoctorStatus::Pass);
+});

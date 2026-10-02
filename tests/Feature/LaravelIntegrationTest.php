@@ -52,12 +52,29 @@ it('renders the Blade component accessibly', function (): void {
         ->and(Blade::render('<x-laranail-emojis::emoji name="rocket" mode="image" set="openmoji" />'))->toContain('openmoji@17.0.0/color/svg/1F680.svg');
 });
 
+it('honours locale in every Blade component mode, not just images', function (): void {
+    expect(Blade::render('<x-laranail-emojis::emoji name="rocket" mode="name" locale="fr" />'))->toBe('<span class="laranail-emoji laranail-emoji-native" role="img" aria-label="fusée">[fusée]</span>');
+});
+
+it('names the accepted values when a Blade component mode or fit is unknown', function (string $tag, string $message): void {
+    expect(static fn (): string => Blade::render($tag))->toThrow(Exception::class, $message);
+})->with([
+    'mode' => ['<x-laranail-emojis::emoji name="rocket" mode="emojii" />', 'Unknown mode "emojii"; expected one of: '],
+    'fit'  => ['<x-laranail-emojis::emoji name="rocket" mode="image" fit="snug" />', 'Unknown fit "snug"; expected one of: '],
+]);
+
 it('follows the application locale on every call', function (): void {
     app()->setLocale('fr');
     expect(app(Emojis::class)->get('rocket')->name())->toBe('fusée');
 
     app()->setLocale('de');
     expect(app(Emojis::class)->get('rocket')->name())->toBe('Rakete');
+});
+
+it('labels an image in the application locale of the call, not the one at boot', function (): void {
+    app()->setLocale('fr');
+
+    expect((string) app(Emojis::class)->get('rocket')->toImage())->toContain('alt="🚀"')->toContain('fusée');
 });
 
 it('warns once about an unshipped application locale, however many emoji a search ranks', function (): void {

@@ -22,6 +22,18 @@ Add the laranail VCS repositories to your root `composer.json` (see
 composer require laranail/emojis:^0.3
 ```
 
+## Quick start
+
+```php
+use Simtabi\Laranail\Emojis\Facades\Emojis;
+
+Emojis::text('Ship it :rocket: :)')->withEmoticons()->toEmoji(); // "Ship it 🚀 🙂"
+Emojis::text('Ship it 🚀')->toAscii();                          // "Ship it :rocket:"
+```
+
+The [getting started](docs/getting-started.md) guide walks through the rest; everything else is under
+[Documentation](#documentation).
+
 ## <a name="documentation"></a>Documentation
 
 Hosted at <https://opensource.simtabi.com/documentation/laranail/emojis/>.

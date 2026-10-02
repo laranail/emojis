@@ -61,9 +61,9 @@
         "roave/security-advisories": "dev-latest"
     },
     "suggest": {
-        "ext-dom": "Lets fromHtml() walk real DOM text nodes with PHP 8.4's \\Dom\\HTMLDocument; without it a tag-skipping scanner is used.",
+        "ext-dom": "Needed only to accept uploaded or custom SVG emoji images: SvgSanitizer parses them with DOMDocument and refuses SVG without it. Raster images and the bundled sets do not need it.",
         "ext-intl": "Improves grapheme handling of the text between emoji. Emoji clusters themselves never depend on ICU.",
-        "laranail/validation": "Adds ->emoji() constraints to laranail/validation's fluent builder through a guarded bridge."
+        "laranail/validation": "Its fluent builder accepts this package's rules through ->rule(); see docs/tools/laravel.md. There is no dedicated bridge."
     },
     "autoload": {
         "psr-4": {
