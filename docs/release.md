@@ -4,24 +4,29 @@ How `laranail/emojis` is versioned and released, and how the dataset moves to a 
 
 ## Versioning
 
-Pre-1.0, the package follows the laranail family model: one moving `v0.1.0` tag, with a
-`dev-main → 0.1.x-dev` branch alias. Require it as `^0.1`.
-
-Composer caches a dist archive per package reference, and a moved tag keeps its name, so after a tag move
-`composer update` can report success and install the archive it cached the first time. Clear the cache
-when you need the new code:
+The package cuts a new tag for every release (`v0.1.1`, `v0.1.2`, `v0.2.0`, …) and never moves one. Before
+1.0 a caret constraint stops at the minor version: `^0.2` means `>=0.2.0 <0.3.0`. So each new minor version
+is a line consumers must opt into, and the install command names the current one:
 
 ```bash
-composer clear-cache && composer update laranail/emojis
+composer require laranail/emojis:^0.3
 ```
+
+Three places name the current line, and they must agree: the newest version in `CHANGELOG.md`, the
+`dev-main` branch alias in `composer.json` (`0.3.x-dev`), and the install commands in `README.md` and
+`docs/installation.md`. `tests/Unit/DocumentationTest.php` fails when they drift. They did once: after
+`v0.2.0` the alias still said `0.1.x-dev` and the docs still said `^0.1`, so anyone following them installed
+`v0.1.2`, and the weekly release-currency check compared `v0.1.2` against `main`.
 
 ## Releasing
 
-1. Land the change on `main` through a pull request; CI must be green.
-2. Move `## [Unreleased]` in `CHANGELOG.md` into the version section.
-3. Move the tag to the merged commit. The tag-driven `release.yml` builds the release notes from the
-   version's CHANGELOG section (and fails if there is none), attaches a CycloneDX SBOM, and updates the
-   existing GitHub release in place when the tag moves.
+1. Land the changes on `main` through pull requests; CI must be green.
+2. Open a `release/vX.Y.Z` pull request with one `Release X.Y.Z` commit: rename `## [Unreleased]` in
+   `CHANGELOG.md` to `## [X.Y.Z] - <date>`. For a new minor version, also move the branch alias and the
+   install commands to the new line.
+3. After it merges, tag the merge commit, `git tag vX.Y.Z && git push origin vX.Y.Z`. The tag-driven
+   `release.yml` refuses a tag while `[Unreleased]` still has entries, builds the release notes from the
+   version's section (and fails if there is none), and attaches a CycloneDX SBOM.
 
 ## Moving to a new Unicode or CLDR version
 
