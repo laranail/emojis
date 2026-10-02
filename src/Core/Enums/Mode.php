@@ -8,8 +8,9 @@ namespace Simtabi\Laranail\Emojis\Core\Enums;
  * Every form an emoji can be read from or written to.
  *
  * Sources (what a converter can parse): Unicode, Shortcode, Emoticon, HtmlEntity, Escaped, Codepoint,
- * Carrier and Image (only the markup this package emits). Emoji, Text, Ascii and Name are targets only:
- * Emoji and Text are reached by parsing Unicode, and Ascii and Name are lossy by design.
+ * Carrier and Image (only the markup this package emits). Emoji, Text, Ascii, Name, Tag and Auto are targets
+ * only: Emoji and Text are reached by parsing Unicode, Ascii, Name and Tag are lossy by design, and Auto is a
+ * choice of target.
  */
 enum Mode: string
 {
@@ -51,6 +52,12 @@ enum Mode: string
 
     /** Emoji where the output can show it (terminal probe), Ascii otherwise. */
     case Auto = 'auto';
+
+    /**
+     * A status tag through a template, "[OK]" for ✅ by default; see Emojis::tags(). Only emoji that stand for
+     * a status have one, and the rest degrade (to Name by default).
+     */
+    case Tag = 'tag';
 
     public function isSource(): bool
     {

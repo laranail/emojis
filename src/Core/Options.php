@@ -60,6 +60,7 @@ final readonly class Options
         public Fit $imageFit = Fit::Balanced,
         public ImagePolicy $imagePolicy = new ImagePolicy,
         public ImageSource $imageSource = ImageSource::Cdn,
+        public string $tagTemplate = '[{tag}]',
     ) {
         if ($maxInputBytes < 1) {
             throw new InvalidArgumentException('maxInputBytes must be positive.');
@@ -67,6 +68,10 @@ final readonly class Options
 
         if (! str_contains($nameTemplate, '{name}')) {
             throw new InvalidArgumentException('nameTemplate must contain {name}.');
+        }
+
+        if (! str_contains($tagTemplate, '{tag}')) {
+            throw new InvalidArgumentException('tagTemplate must contain {tag}.');
         }
     }
 
@@ -142,6 +147,7 @@ final readonly class Options
             imageFit: Fit::from($string($images, 'fit', Fit::Balanced->value)),
             imagePolicy: ImagePolicy::fromArray(self::stringKeyed($images['custom'] ?? null)),
             imageSource: ImageSource::from($string($images, 'source', ImageSource::Cdn->value)),
+            tagTemplate: $string($output, 'tag_template', '[{tag}]'),
         );
     }
 
@@ -159,6 +165,7 @@ final readonly class Options
             Mode::Image    => [Mode::Unicode],
             Mode::Carrier  => [Mode::Unicode],
             Mode::Emoji    => [Mode::Shortcode],
+            Mode::Tag      => [Mode::Name],
             default        => [],
         };
     }

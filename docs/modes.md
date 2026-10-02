@@ -1,6 +1,6 @@
 # Modes and conversion
 
-Thirteen `Mode` cases describe every form an emoji takes, and a converter reads some of them and writes any of them.
+Fourteen `Mode` cases describe every form an emoji takes, and a converter reads some of them and writes any of them.
 
 ## The modes
 
@@ -19,15 +19,16 @@ Thirteen `Mode` cases describe every form an emoji takes, and a converter reads 
 | `Carrier` | a docomo, au, SoftBank or Google private-use code — see [Japanese emoji](tools/japanese.md) | ✓ | ✓ |
 | `Name` | `[waving hand: medium skin tone]`, localized | — | ✓ |
 | `Auto` | `Emoji` on a capable terminal, `output.auto_fallback` otherwise | — | ✓ |
+| `Tag` | `[OK]` for ✅ — a status tag, where the emoji stands for one; see [status tags](tools/tags.md) | — | ✓ |
 
-Five modes are targets only, and passing one to `from()` throws `UnsupportedConversion`: `Emoji` and
-`Text` are read through `Unicode`, `Ascii` is read back through `Shortcode`, a `Name` inside prose cannot be
-found reliably, and `Auto` is a choice of target. The eight sources are `Unicode`, `Shortcode`,
+Six modes are targets only, and passing one to `from()` throws `UnsupportedConversion`: `Emoji` and
+`Text` are read through `Unicode`, `Ascii` is read back through `Shortcode`, a `Name` or a `Tag` inside prose
+cannot be found reliably (`[OK]` is also ordinary text), and `Auto` is a choice of target. The eight sources are `Unicode`, `Shortcode`,
 `Emoticon`, `HtmlEntity`, `Escaped`, `Codepoint`, `Image` and `Carrier`.
 
 ## The matrix
 
-Every readable form converts to every writable form. `tests/Unit/ConversionTest.php` runs all 90 cells on
+Every readable form converts to every writable form. `tests/Unit/ConversionTest.php` runs all 100 cells on
 one emoji, and `tests/Datasets` round-trips every emoji in the dataset through every shortcode preset,
 entities, escapes, code points and ASCII.
 
@@ -44,6 +45,7 @@ fallback chain:
 | `Image` | `Unicode` |
 | `Carrier` | `Unicode` |
 | `Emoji` (above a version cap) | decompose, then `Shortcode` |
+| `Tag` | `Name` |
 
 Every chain ends in a form that always exists. Override per call or in config:
 

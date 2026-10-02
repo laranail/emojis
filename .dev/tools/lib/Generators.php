@@ -20,6 +20,7 @@ final class Generators
             'enums'         => 'generate-enums.php',
             'emoticons doc' => 'emoticons-doc.php',
             'emoji list'    => 'emoji-list-doc.php',
+            'tags doc'      => 'tags-doc.php',
         ];
     }
 }

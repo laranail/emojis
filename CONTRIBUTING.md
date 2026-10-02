@@ -28,7 +28,7 @@ Requires PHP `^8.4.1 || ^8.5` with `ext-mbstring`. `ext-intl` is optional.
 
 ## Generated files
 
-Four generators, chained, listed once in `.dev/tools/lib/Generators.php`:
+Five generators, chained, listed once in `.dev/tools/lib/Generators.php`:
 
 1. `.dev/tools/build-dataset.php` builds every shard in `database/generated/` (and `docs/licences.md`) from the
    upstream sources pinned in `database/sources/upstream.lock.json` (URL + sha256), the hand-curated JSON in
@@ -37,6 +37,7 @@ Four generators, chained, listed once in `.dev/tools/lib/Generators.php`:
    committed catalogue.
 3. `.dev/tools/emoticons-doc.php` writes the table in `docs/tools/emoticons.md`.
 4. `.dev/tools/emoji-list-doc.php` writes `docs/tools/emoji-list.md` and one page per group.
+5. `.dev/tools/tags-doc.php` writes the tables in `docs/tools/tags.md`.
 
 **Never hand-edit a generated file.** Change an overlay or a generator and re-run:
 

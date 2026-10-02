@@ -36,6 +36,7 @@ dataset('targets', [
     'escaped'                        => [Mode::Escaped, 'hi \u{1F44B}\u{1F3FD}'],
     'codepoint'                      => [Mode::Codepoint, 'hi U+1F44B U+1F3FD'],
     'name'                           => [Mode::Name, 'hi [waving hand: medium skin tone]'],
+    'tag degrades to name'           => [Mode::Tag, 'hi [waving hand: medium skin tone]'],
 ]);
 
 it('converts every source form to every target', function (Mode $source, string $input, Mode $target, string $expected): void {

@@ -31,6 +31,7 @@ $symbols = Emojis::symbols();
 $symbols->groups();                  // ['popular', 'arrows', 'currency', …]
 $symbols->group('currency');         // list<Symbol>, in code point order
 $symbols->characters('arrows');      // ['←', '↑', '→', '↓', …]: the characters alone, for a picker or "copy all"
+$symbols->all();                     // list<Symbol>, every one, in code point order
 $symbols->get('→');                  // by character, 'U+2192' or '2192'
 $symbols->search('double arrow');    // every word must match; exact name, then name prefix, first
 $symbols->search('sign', 'currency', limit: 10);

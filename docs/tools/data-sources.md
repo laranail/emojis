@@ -21,8 +21,9 @@ Upstream sources, pinned by URL and sha256 in `database/sources/upstream.lock.js
 
 Plus curated inputs in `database/sources/curated/`: `emoticons.json` (the everyday emoticons, which win over
 every source, the "risky" list, and pinned primaries, so adding a smiley never changes what
-`toEmoticons()` writes for an emoji that already had one), `aliases.json` (common shortcodes no preset carries), `collections.json`
-and `symbols.json` (how the symbol groups are drawn from Unicode).
+`toEmoticons()` writes for an emoji that already had one), `aliases.json` (common shortcodes no preset carries), `collections.json`,
+`symbols.json` (how the symbol groups are drawn from Unicode) and `tags.json` (the [status tags](tags.md) and the emoji each is
+written for).
 
 ## Sources we check against but do not copy
 
@@ -71,7 +72,7 @@ database/
 │   └── VERSION
 └── sources/                   generator inputs — not shipped
     ├── upstream.lock.json     every upstream file: URL, version, licence, sha256
-    ├── curated/               aliases.json, collections.json, emoticons.json, symbols.json
+    ├── curated/               aliases.json, collections.json, emoticons.json, symbols.json, tags.json
     └── measured/              bounds/ (per-image margins) and hashes/ (per-image SHA-256), from .dev/tools/measure
 ```
 
