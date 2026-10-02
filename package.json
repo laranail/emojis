@@ -1,11 +1,62 @@
 {
-  "name": "@laranail/emojis-assets",
-  "private": true,
-  "description": "Front-end build for laranail/emojis: compiles resources/assets into public/assets.",
+  "name": "@laranail/emojis-picker",
+  "version": "0.0.0-development",
+  "description": "The laranail/emojis emoji picker: a dependency-free, CSP-safe ES module, and a React component over the same state.",
   "license": "MIT",
   "type": "module",
+  "homepage": "https://opensource.simtabi.com/documentation/laranail/emojis/",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/laranail/emojis.git"
+  },
+  "bugs": {
+    "url": "https://github.com/laranail/emojis/issues"
+  },
+  "keywords": [
+    "emoji",
+    "emoji-picker",
+    "react",
+    "picker",
+    "laravel"
+  ],
   "engines": {
     "node": ">=20.19"
+  },
+  "exports": {
+    ".": {
+      "types": "./public/assets/js/picker.d.ts",
+      "default": "./public/assets/js/picker.js"
+    },
+    "./react": {
+      "types": "./dist/types/react/index.d.ts",
+      "default": "./dist/react/index.js"
+    },
+    "./styles.css": "./public/assets/css/picker.css",
+    "./emojis.css": "./public/assets/css/emojis.css",
+    "./package.json": "./package.json"
+  },
+  "files": [
+    "public/assets/js",
+    "public/assets/css",
+    "dist/react",
+    "dist/types",
+    "LICENSE"
+  ],
+  "sideEffects": [
+    "./public/assets/js/picker.js",
+    "*.css"
+  ],
+  "peerDependencies": {
+    "react": "^19"
+  },
+  "peerDependenciesMeta": {
+    "react": {
+      "optional": true
+    }
+  },
+  "publishConfig": {
+    "access": "public",
+    "provenance": true
   },
   "scripts": {
     "build": "vite build",
@@ -13,10 +64,17 @@
     "types": "node .dev/tools/types.mjs",
     "assets-check": "node .dev/tools/assets-check.mjs",
     "test": "vitest run",
-    "typecheck": "tsc -p tsconfig.json && tsc -p tests/js/tsconfig.json && node .dev/tools/types.mjs --check"
+    "typecheck": "tsc -p tsconfig.json && tsc -p tests/js/tsconfig.json && node .dev/tools/types.mjs --check",
+    "build:react": "vite build -c vite.react.config.mjs"
   },
   "devDependencies": {
+    "@testing-library/dom": "^10",
+    "@testing-library/react": "^16",
+    "@types/react": "^19",
+    "@types/react-dom": "^19",
     "happy-dom": "^20",
+    "react": "^19",
+    "react-dom": "^19",
     "sass": "^1.105",
     "typescript": "^7",
     "vite": "^8.3",

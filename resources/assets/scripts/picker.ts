@@ -143,6 +143,13 @@ export interface ParsedOptions {
 
 type Insertable = HTMLInputElement | HTMLTextAreaElement;
 
+/**
+ * Build-time switch for the import-time auto-init at the bottom of this module. Undefined (the default build
+ * and tests) means on; the React bundle (vite.react.config.mjs) defines it false, which compiles the auto-init,
+ * and the DOM Picker that only it uses, out of that bundle.
+ */
+declare const __LARANAIL_EMOJI_AUTO_INIT__: boolean | undefined;
+
 const PREFIX = 'laranail-emoji';
 const ATTR = `data-${PREFIX}`;
 const EVENT = `${PREFIX}:select`;
@@ -988,7 +995,9 @@ export function autoInit(root: Document | Element = document): () => void {
 
 // Importing the module mounts every picker on the page. Set globalThis.__laranailEmojiNoAutoInit = true
 // before importing to mount by hand instead.
-if (typeof document !== 'undefined' && !(globalThis as { __laranailEmojiNoAutoInit?: boolean }).__laranailEmojiNoAutoInit) {
+const autoInitEnabled = typeof __LARANAIL_EMOJI_AUTO_INIT__ === 'undefined' || __LARANAIL_EMOJI_AUTO_INIT__;
+
+if (autoInitEnabled && typeof document !== 'undefined' && !(globalThis as { __laranailEmojiNoAutoInit?: boolean }).__laranailEmojiNoAutoInit) {
   if (document.readyState === 'loading') {
     document.addEventListener('DOMContentLoaded', () => autoInit(), { once: true });
   } else {

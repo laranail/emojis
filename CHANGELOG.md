@@ -7,18 +7,25 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/),
 
 ## [Unreleased]
 
+### Added
+
+- **A React adapter for the emoji picker**: `<EmojiPicker source={…} target={ref} onSelect={…} />` and a
+  `useEmojiPicker()` hook, over the same pure state functions as the vanilla picker, rendering the same
+  markup, classes and ARIA. React 19 is a peer dependency. See
+  [docs/tools/picker.md](docs/tools/picker.md#react).
+- **An npm package, `@laranail/emojis-picker`**, versioned with the Composer package: `.` (the vanilla module),
+  `./react`, `./styles.css`. The release workflow publishes it with provenance in its own job, which stays off
+  until npm publishing is switched on for the repository, so it can never hold up a Composer release.
+- The picker's state is exported as pure functions — `buildSections()`, `searchSections()`, `capPayload()`,
+  `insertText()`, `indexPayload()`, plus `DEFAULT_STRINGS` and `TONE_SWATCHES` — which the vanilla `Picker`
+  now uses, so another renderer can share them.
+
 ### Changed
 
 - **The picker module is TypeScript.** `resources/assets/scripts/picker.ts` replaces `picker.js`; the built
   `public/assets/js/picker.js` and its exports are unchanged. `public/assets/js/picker.d.ts` is now generated
   from the source (`npm run types`) instead of written by hand, and `npm run typecheck` fails when the two
   differ.
-
-### Added
-
-- The picker's state is exported as pure functions — `buildSections()`, `searchSections()`, `capPayload()`,
-  `insertText()`, `indexPayload()`, plus `DEFAULT_STRINGS` and `TONE_SWATCHES` — which the vanilla `Picker`
-  now uses, so another renderer can share them.
 
 ## [0.4.0] - 2026-10-02
 

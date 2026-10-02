@@ -4,6 +4,6 @@ import { defineConfig } from 'vitest/config';
 export default defineConfig({
   test: {
     environment: 'happy-dom',
-    include: ['tests/js/**/*.test.mjs'],
+    include: ['tests/js/**/*.test.mjs', 'tests/js/**/*.test.tsx'],
   },
 });

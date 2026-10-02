@@ -65,7 +65,7 @@ Hosted at <https://opensource.simtabi.com/documentation/laranail/emojis/>.
 - [Japanese emoji](docs/tools/japanese.md) — carrier emoji, the Japanese collection, names
 - [Extending](docs/tools/extending.md) — custom emoji, shortcodes, emoticons, image sets, macros
 - [Laravel integration](docs/tools/laravel.md) — facade, helper, Blade, casts, rules, commands
-- [Emoji picker](docs/tools/picker.md) — search, tabs, recents, skin tones and keyboard support, as Blade, Livewire or a plain ES module
+- [Emoji picker](docs/tools/picker.md) — search, tabs, recents, skin tones and keyboard support, as Blade, Livewire, React or a plain ES module
 - [HTTP API](docs/tools/api.md) — nine read-only JSON endpoints, off by default: emoji, picker payload, symbols, kaomoji, tags
 - [Data sources](docs/tools/data-sources.md) — where every field comes from, what we check against, the weekly refresh
 - [Licences](docs/licences.md) — the third-party data notices
