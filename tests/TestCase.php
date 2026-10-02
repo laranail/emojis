@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace Simtabi\Laranail\Emojis\Tests;
 
+use Livewire\LivewireServiceProvider;
 use Simtabi\Laranail\Emojis\Providers\EmojisServiceProvider;
 use Simtabi\Laranail\Package\Tools\Testing\IsolatedTestCase;
 
@@ -30,6 +31,7 @@ abstract class TestCase extends IsolatedTestCase
     /** @return list<class-string> */
     protected function getPackageProviders($app): array
     {
-        return [EmojisServiceProvider::class];
+        // Livewire is a suggestion: its provider first when installed (require-dev), so the component registers.
+        return class_exists(LivewireServiceProvider::class) ? [LivewireServiceProvider::class, EmojisServiceProvider::class] : [EmojisServiceProvider::class];
     }
 }

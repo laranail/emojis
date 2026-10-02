@@ -2,7 +2,8 @@
 
 One stylesheet sizes emoji to the surrounding text. Its source is SCSS in `resources/assets/styles/`, Vite
 builds it into `public/assets/css/emojis.css`, and Laravel publishes that file to
-`public/vendor/laranail/emojis/`.
+`public/vendor/laranail/emojis/`. The [emoji picker](picker.md) has its own, `picker.css`, built the same
+way and added with `<x-laranail-emojis::styles picker />`.
 
 ## What it does
 
@@ -29,8 +30,8 @@ Pick one per layout.
 | Link | `<x-laranail-emojis::styles link />` | A cacheable file. Publish it first (below). |
 | Your build | `@use 'vendor/laranail/emojis/resources/assets/styles/emojis';` | You compile your own SCSS and want to override the tokens. |
 
-Outside Laravel, `Emojis::stylesheet()` returns the built CSS as a string, and `Emojis::assetPath('css/emojis.css')`
-gives its path on disk.
+Outside Laravel, `Emojis::stylesheet()` returns the built CSS as a string (`stylesheet('picker')` the
+picker's), and `Emojis::assetPath('css/emojis.css')` gives its path on disk.
 
 ## Publishing
 

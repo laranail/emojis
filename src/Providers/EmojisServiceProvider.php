@@ -6,7 +6,9 @@ namespace Simtabi\Laranail\Emojis\Providers;
 
 use Closure;
 use Override;
+use Livewire\Livewire;
 use InvalidArgumentException;
+use Livewire\LivewireManager;
 use Illuminate\Support\Facades\Route;
 use Simtabi\Laranail\Emojis\Core\Emojis;
 use Simtabi\Laranail\Emojis\Core\Options;
@@ -25,11 +27,13 @@ use Simtabi\Laranail\Emojis\Laravel\BladeDirective;
 use Simtabi\Laranail\Emojis\Console\SanitizeCommand;
 use Simtabi\Laranail\Emojis\Core\Enums\ImageSetName;
 use Simtabi\Laranail\Emojis\Core\Image\HttpsFetcher;
+use Simtabi\Laranail\Emojis\Laravel\View\PickerData;
 use Simtabi\Laranail\Emojis\Core\Contracts\HtmlFactory;
 use Simtabi\Laranail\Emojis\Core\Contracts\EmojisFluent;
 use Simtabi\Laranail\Emojis\Laravel\Doctor\DatasetCheck;
 use Simtabi\Laranail\Emojis\Core\Contracts\TerminalProbe;
 use Simtabi\Laranail\Emojis\Laravel\ConsoleTerminalProbe;
+use Simtabi\Laranail\Emojis\Laravel\Livewire\EmojiPicker;
 use Simtabi\Laranail\Package\Tools\Enums\BootCriticality;
 use Simtabi\Laranail\Emojis\Laravel\IlluminateHtmlFactory;
 use Simtabi\Laranail\Emojis\Core\Contracts\FailureReporter;
@@ -121,6 +125,7 @@ final class EmojisServiceProvider extends PackageServiceProvider
         });
 
         $this->app->alias(Emojis::class, EmojisFluent::class);
+        $this->app->scoped(PickerData::class);
     }
 
     #[Override]
@@ -150,6 +155,7 @@ final class EmojisServiceProvider extends PackageServiceProvider
         }, 'laranail/emojis:local-images', BootCriticality::Degradable);
 
         $this->registerApiRoutes();
+        $this->registerLivewireComponent();
 
         $this->app->booted(fn (): Emojis => $this->app->make(Emojis::class)->freeze());
     }
@@ -190,6 +196,15 @@ final class EmojisServiceProvider extends PackageServiceProvider
     private static function imageRoot(): string
     {
         return public_path('vendor/laranail/emojis/images');
+    }
+
+    /** `<livewire:laranail-emojis.picker />`, only when Livewire is installed; it is a suggestion, not a dependency. */
+    private function registerLivewireComponent(): void
+    {
+        // Installed but not booted (its provider not registered) leaves the facade with nothing behind it.
+        if (class_exists(Livewire::class) && $this->app->bound(LivewireManager::class)) {
+            Livewire::component('laranail-emojis.picker', EmojiPicker::class);
+        }
     }
 
     /**

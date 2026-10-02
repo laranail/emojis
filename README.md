@@ -65,6 +65,7 @@ Hosted at <https://opensource.simtabi.com/documentation/laranail/emojis/>.
 - [Japanese emoji](docs/tools/japanese.md) — carrier emoji, the Japanese collection, names
 - [Extending](docs/tools/extending.md) — custom emoji, shortcodes, emoticons, image sets, macros
 - [Laravel integration](docs/tools/laravel.md) — facade, helper, Blade, casts, rules, commands
+- [Emoji picker](docs/tools/picker.md) — search, tabs, recents, skin tones and keyboard support, as Blade, Livewire or a plain ES module
 - [HTTP API](docs/tools/api.md) — nine read-only JSON endpoints, off by default: emoji, picker payload, symbols, kaomoji, tags
 - [Data sources](docs/tools/data-sources.md) — where every field comes from, what we check against, the weekly refresh
 - [Licences](docs/licences.md) — the third-party data notices
@@ -75,6 +76,7 @@ Hosted at <https://opensource.simtabi.com/documentation/laranail/emojis/>.
 - [Render emoji as images in Blade](docs/recipes/render-emoji-as-images.md)
 - [Emoji in console output](docs/recipes/emoji-in-console-output.md)
 - [Store emoji in a utf8mb3 column](docs/recipes/store-emoji-in-utf8mb3.md)
+- [Add an emoji picker to a form](docs/recipes/add-an-emoji-picker.md)
 - [Feed a JavaScript emoji picker](docs/recipes/feed-a-javascript-picker.md)
 - [Target older platforms](docs/recipes/target-older-platforms.md)
 - [Fit emoji into UI without padding](docs/recipes/fit-emoji-into-ui.md)

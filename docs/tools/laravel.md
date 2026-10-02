@@ -34,13 +34,16 @@ The helper is namespaced, so it cannot collide with another package's global `em
 <x-laranail-emojis::emoji name="wave" />
 <x-laranail-emojis::emoji name="wave" skin-tone="medium-dark" />
 <x-laranail-emojis::emoji name="rocket" mode="image" set="openmoji" fit="tight" locale="fr" />
-<x-laranail-emojis::styles />                {{-- once, in <head>; `link` for the published file --}}
+<x-laranail-emojis::styles />                {{-- once, in <head>; `link` for the published file, `picker` for the picker's --}}
+<x-laranail-emojis::picker target="#body" /> {{-- an emoji picker; see picker.md --}}
+<x-laranail-emojis::scripts />               {{-- once, before </body>: the picker module --}}
+<livewire:laranail-emojis.picker wire:model="body" /> {{-- with livewire/livewire installed --}}
 
 @laranailEmojis($comment->body)             {{-- images; text escaped --}}
 @laranailEmojis($comment->body, 'emoji')    {{-- native emoji; text escaped --}}
 ```
 
-The component wraps native output in `<span class="laranail-emoji laranail-emoji-native" role="img" aria-label="…">`. `toHtml()` returns an
+The [emoji picker](picker.md) documents the picker, scripts and Livewire components. The emoji component wraps native output in `<span class="laranail-emoji laranail-emoji-native" role="img" aria-label="…">`. `toHtml()` returns an
 `HtmlString`, so `{{ Emojis::text($x)->toHtml() }}` is not escaped twice. The directive compiles to a call
 to `Laravel\BladeDirective`, so a cached view holds only a class name.
 

@@ -1,0 +1,247 @@
+/*!
+ * laranail/emojis — the emoji picker (public/assets/js/picker.js).
+ *
+ * Every class is .laranail-emoji-picker*, and every colour and size is a custom property, so
+ * `style="--laranail-emoji-picker-bg: #111"` themes it without a rebuild. Light and dark follow
+ * prefers-color-scheme; forced-colors and reduced motion are respected. Layout uses logical properties, so a
+ * right-to-left page mirrors it. Below 480px wide it becomes a bottom sheet with 44px targets.
+ */
+
+@use 'tokens' as t;
+@use 'mixins' as m;
+
+$picker: '#{m.$block}-picker';
+
+.#{$picker} {
+  --#{$picker}-bg: #fff;
+  --#{$picker}-fg: #1f2328;
+  --#{$picker}-muted: #59636e;
+  --#{$picker}-border: #d1d9e0;
+  --#{$picker}-hover: #eef1f4;
+  --#{$picker}-focus: #0969da;
+  --#{$picker}-radius: 12px;
+  --#{$picker}-cell: 2.25rem;
+  --#{$picker}-width: calc(var(--#{$picker}-columns, 8) * var(--#{$picker}-cell) + 1.5rem);
+  --#{$picker}-height: 22rem;
+
+  position: relative;
+  display: inline-block;
+  color: var(--#{$picker}-fg);
+  font: inherit;
+}
+
+@media (prefers-color-scheme: dark) {
+  .#{$picker} {
+    --#{$picker}-bg: #1f2328;
+    --#{$picker}-fg: #f0f3f6;
+    --#{$picker}-muted: #9198a1;
+    --#{$picker}-border: #3d444d;
+    --#{$picker}-hover: #2a313c;
+    --#{$picker}-focus: #4493f8;
+  }
+}
+
+.#{$picker}-trigger,
+.#{$picker}-tab,
+.#{$picker}-tone,
+.#{$picker}-cell {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  border: 0;
+  background: transparent;
+  color: inherit;
+  font-family: t.$font-stack;
+  line-height: 1;
+  cursor: pointer;
+  border-radius: 8px;
+}
+
+.#{$picker}-trigger {
+  inline-size: 2.25rem;
+  block-size: 2.25rem;
+  font-size: 1.25rem;
+}
+
+.#{$picker}-panel {
+  position: absolute;
+  inset-block-start: calc(100% + 4px);
+  inset-inline-start: 0;
+  z-index: 50;
+  display: flex;
+  flex-direction: column;
+  gap: 0.5rem;
+  inline-size: var(--#{$picker}-width);
+  max-inline-size: calc(100vw - 2rem);
+  block-size: var(--#{$picker}-height);
+  padding: 0.75rem;
+  border: 1px solid var(--#{$picker}-border);
+  border-radius: var(--#{$picker}-radius);
+  background: var(--#{$picker}-bg);
+  box-shadow: 0 8px 24px rgb(0 0 0 / 0.16);
+  box-sizing: border-box;
+  // Cells size from the panel's own width (cqi), so the grid fits whatever holds the picker.
+  container-type: inline-size;
+
+  &[hidden] {
+    display: none;
+  }
+}
+
+// The inline picker sits in the flow instead of floating, never wider than its container.
+.#{$picker}:not(:has(.#{$picker}-trigger)) {
+  display: block;
+  max-inline-size: 100%;
+
+  .#{$picker}-panel {
+    position: static;
+    max-inline-size: 100%;
+    box-shadow: none;
+  }
+}
+
+.#{$picker}-search {
+  inline-size: 100%;
+  padding: 0.4rem 0.6rem;
+  border: 1px solid var(--#{$picker}-border);
+  border-radius: 8px;
+  background: transparent;
+  color: inherit;
+  font: inherit;
+  box-sizing: border-box;
+}
+
+.#{$picker}-tabs,
+.#{$picker}-tones {
+  display: flex;
+  gap: 0.125rem;
+}
+
+.#{$picker}-tab,
+.#{$picker}-tone {
+  inline-size: 1.75rem;
+  block-size: 1.75rem;
+  font-size: 1rem;
+  opacity: 0.7;
+}
+
+.#{$picker}-tone[aria-checked='true'] {
+  background: var(--#{$picker}-hover);
+  opacity: 1;
+}
+
+.#{$picker}-body {
+  flex: 1;
+  overflow-y: auto;
+  overscroll-behavior: contain;
+}
+
+// Off-screen sections skip layout and paint until scrolled to: ~1,900 cells stay cheap.
+.#{$picker}-section {
+  content-visibility: auto;
+  contain-intrinsic-size: auto 10rem;
+}
+
+.#{$picker}-heading {
+  position: sticky;
+  inset-block-start: 0;
+  padding: 0.25rem 0;
+  background: var(--#{$picker}-bg);
+  color: var(--#{$picker}-muted);
+  font-size: 0.75rem;
+  font-weight: 600;
+}
+
+.#{$picker}-grid {
+  display: grid;
+  margin-block-end: 0.25rem;
+}
+
+.#{$picker}-row {
+  display: grid;
+  grid-template-columns: repeat(var(--#{$picker}-columns, 8), auto);
+  justify-content: start;
+}
+
+// Square, at most --cell, shrinking with the panel; the column count never changes, since arrow keys move by it.
+.#{$picker}-cell {
+  inline-size: min(var(--#{$picker}-cell), calc(100cqi / var(--#{$picker}-columns, 8)));
+  aspect-ratio: 1;
+  font-size: min(1.4rem, calc(100cqi / var(--#{$picker}-columns, 8) * 0.6));
+
+  .#{m.$block}-image {
+    inline-size: 1.5rem;
+    block-size: 1.5rem;
+    margin: 0;
+  }
+}
+
+.#{$picker}-trigger,
+.#{$picker}-tab,
+.#{$picker}-tone,
+.#{$picker}-cell {
+  &:hover {
+    background: var(--#{$picker}-hover);
+  }
+
+  &:focus-visible {
+    outline: 2px solid var(--#{$picker}-focus);
+    outline-offset: -2px;
+  }
+}
+
+.#{$picker}-status {
+  min-block-size: 1rem;
+  color: var(--#{$picker}-muted);
+  font-size: 0.75rem;
+
+  &:empty {
+    display: none;
+  }
+}
+
+// Phones: a bottom sheet with 44px targets.
+@media (max-width: 480px) {
+  .#{$picker}-panel {
+    position: fixed;
+    inset: auto 0 0;
+    inline-size: 100%;
+    max-inline-size: none;
+    block-size: min(60vh, 26rem);
+    border-radius: var(--#{$picker}-radius) var(--#{$picker}-radius) 0 0;
+  }
+
+  // 44px targets where the width allows.
+  .#{$picker} {
+    --#{$picker}-cell: 2.75rem;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .#{$picker}-body {
+    scroll-behavior: auto;
+  }
+}
+
+@media (forced-colors: active) {
+  .#{$picker}-panel {
+    border-color: CanvasText;
+  }
+
+  .#{$picker}-tone[aria-checked='true'] {
+    outline: 2px solid Highlight;
+  }
+}
+
+// The Livewire component: its textarea above the picker.
+.#{$picker}-field {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  gap: 0.5rem;
+
+  textarea {
+    inline-size: 100%;
+    box-sizing: border-box;
+  }
+}

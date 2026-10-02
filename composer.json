@@ -49,6 +49,7 @@
         "deptrac/deptrac": "^4.7",
         "larastan/larastan": "^3.0",
         "laravel/pint": "^1.30",
+        "livewire/livewire": "^4.4",
         "orchestra/testbench": "^11.0",
         "pestphp/pest": "^4.0",
         "pestphp/pest-plugin-arch": "^4.0",
@@ -63,6 +64,7 @@
     "suggest": {
         "ext-dom": "Needed only to accept uploaded or custom SVG emoji images: SvgSanitizer parses them with DOMDocument and refuses SVG without it. Raster images and the bundled sets do not need it.",
         "ext-intl": "Improves grapheme handling of the text between emoji. Emoji clusters themselves never depend on ICU.",
+        "livewire/livewire": "Adds <livewire:laranail-emojis.picker wire:model=\"…\" />, a textarea with the emoji picker bound to a Livewire property. The Blade picker works with Livewire without it.",
         "laranail/validation": "Its fluent builder accepts this package's rules through ->rule(); see docs/tools/laravel.md. There is no dedicated bridge."
     },
     "autoload": {
