@@ -75,6 +75,7 @@ final class Symbols
 
     /**
      * Symbols whose name contains every word of the query: an exact name first, then name-prefix matches.
+     * A limit of 0 means no limit, as in Emojis::search().
      *
      * @return list<Symbol>
      */
@@ -82,7 +83,7 @@ final class Symbols
     {
         $words = array_values(array_filter(explode(' ', strtolower(trim((string) preg_replace('/\s+/', ' ', $query)))), static fn (string $word): bool => $word !== ''));
 
-        if ($words === [] || $limit < 1) {
+        if ($words === []) {
             return [];
         }
 
@@ -113,7 +114,7 @@ final class Symbols
             };
         }
 
-        return array_values(array_filter(array_map($this->byHex(...), array_slice([...$exact, ...$first, ...$rest], 0, $limit)), static fn (?Symbol $s): bool => $s instanceof Symbol));
+        return array_values(array_filter(array_map($this->byHex(...), array_slice([...$exact, ...$first, ...$rest], 0, $limit > 0 ? $limit : null)), static fn (?Symbol $s): bool => $s instanceof Symbol));
     }
 
     public function count(): int

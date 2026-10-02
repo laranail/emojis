@@ -100,3 +100,12 @@ it('stores each symbol as a readable record, in the field order the loader reads
 it('finds a symbol by a code point written with leading zeros', function (string $key): void {
     expect(emojis()->symbols()->get($key)?->char)->toBe('→');
 })->with(['2192', 'U+2192', 'U+02192', '002192', 'u+2192']);
+
+it('treats a search limit of 0 as no limit, as Emojis::search() and searchKaomoji() do', function (): void {
+    $all = emojis()->symbols()->search('arrow', limit: 0);
+
+    expect(count($all))->toBeGreaterThan(50)
+        ->and(count($all))->toBe(count(emojis()->symbols()->search('arrow', limit: PHP_INT_MAX)))
+        ->and(count(emojis()->symbols()->search('arrow')))->toBe(50)
+        ->and(count(emojis()->symbols()->search('arrow', limit: 3)))->toBe(3);
+});
