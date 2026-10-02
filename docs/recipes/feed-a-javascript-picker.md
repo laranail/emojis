@@ -1,6 +1,8 @@
 # Feed a JavaScript emoji picker
 
-Serve the catalogue to a browser picker as one versioned JSON file.
+Serve the catalogue to a browser picker as one versioned JSON file. To use the package's own picker
+instead, see [add an emoji picker](add-an-emoji-picker.md); its payload is `GET /picker` in the
+[HTTP API](../tools/api.md).
 
 ```bash
 php artisan laranail::emojis.export public/emojis.fr.json --locale=fr

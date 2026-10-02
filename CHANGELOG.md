@@ -9,6 +9,18 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/),
 
 ### Added
 
+- **An emoji picker**, modelled on the macOS one: search over names, keywords and shortcodes with accents
+  folded, category tabs, frequently used, a remembered skin tone (on every person of 🤝 and 💏), sorting, a
+  Custom tab, full keyboard use and ARIA grid semantics, light and dark, right-to-left, and a 44 px bottom
+  sheet on phones. Emoji newer than the browser can draw are hidden instead of shown as empty boxes. It is
+  `<x-laranail-emojis::picker target="#message" />` with `<x-laranail-emojis::styles picker />` and
+  `<x-laranail-emojis::scripts />`; `<livewire:laranail-emojis.picker wire:model="body" />` when Livewire
+  is installed; and a dependency-free, CSP-safe ES module (`public/assets/js/picker.js`, with TypeScript
+  declarations) with a chainable `Picker`, `ApiSource` and `StaticSource`, auto-initialised from
+  `data-laranail-emoji-*` attributes. The emoji come from the HTTP API when it is enabled, otherwise from a
+  JSON block embedded once per locale. See [docs/tools/picker.md](docs/tools/picker.md).
+- `Emojis::stylesheet()` takes a name: `stylesheet('picker')` is the picker's.
+
 - **A read-only HTTP API**, off by default (`LARANAIL_EMOJIS_API=true`): nine `GET` endpoints under
   `/laranail/emojis/api/v1` for the catalogue (filtered, paged, localized), one emoji by any key, a picker
   payload, symbols, kaomoji, emoticons and status tags. Off means no routes are registered at all. Inputs are

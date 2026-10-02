@@ -10,10 +10,15 @@
   "scripts": {
     "build": "vite build",
     "watch": "vite build --watch",
-    "assets-check": "node .dev/tools/assets-check.mjs"
+    "assets-check": "node .dev/tools/assets-check.mjs",
+    "test": "vitest run",
+    "typecheck": "tsc -p tests/js/tsconfig.json"
   },
   "devDependencies": {
+    "happy-dom": "^20",
     "sass": "^1.105",
-    "vite": "^8.3"
+    "typescript": "^7",
+    "vite": "^8.3",
+    "vitest": "^5"
   }
 }

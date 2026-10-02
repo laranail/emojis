@@ -325,17 +325,18 @@ final class Emojis implements EmojisFluent
     /**
      * The stylesheet for emoji in web UI: sizing for fitted images and a tight box for native emoji. This is
      * the built public/assets/css/emojis.css (source: resources/assets/styles/emojis.scss). Inline it with a
-     * nonce under a strict CSP, or publish it and link it.
+     * nonce under a strict CSP, or publish it and link it. `stylesheet('picker')` is the emoji picker's.
      *
-     * @throws DatasetException when the built file is missing
+     * @throws DatasetException when the built file is missing, or the name has no stylesheet
      */
-    public function stylesheet(): string
+    public function stylesheet(string $name = 'emojis'): string
     {
-        $path = self::assetPath('css/emojis.css');
+        $file = 'css/' . (preg_match('/^[a-z][a-z0-9-]*$/', $name) === 1 ? $name : '_invalid') . '.css';
+        $path = self::assetPath($file);
         $css = is_file($path) ? file_get_contents($path) : false;
 
         if ($css === false || $css === '') {
-            throw DatasetException::assetMissing('css/emojis.css', $path);
+            throw DatasetException::assetMissing($file, $path);
         }
 
         return $css;

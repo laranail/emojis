@@ -10,6 +10,8 @@ on:
       - 'vite.config.mjs'
       - '.dev/tools/assets-check.mjs'
       - '.github/workflows/assets.yml'
+      - 'tests/js/**'
+      - 'vitest.config.mjs'
   workflow_dispatch:
 
 concurrency:
@@ -20,7 +22,8 @@ permissions:
   contents: read
 
 # public/assets is committed so Composer installs need no Node. This fails a PR whose committed build does
-# not match a fresh `vite build` of resources/assets.
+# not match a fresh `vite build` of resources/assets, whose picker tests fail, or whose type declarations do
+# not compile. No lock file is committed (a library), so the dev tools resolve fresh within their ranges.
 jobs:
   assets-check:
     name: Built assets match their source
@@ -33,3 +36,5 @@ jobs:
           node-version: 24
       - run: npm install --no-audit --no-fund --no-package-lock
       - run: npm run assets-check
+      - run: npm test
+      - run: npm run typecheck

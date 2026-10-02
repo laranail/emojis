@@ -53,7 +53,7 @@ use Simtabi\Laranail\Emojis\Core\Contracts\FailureReporter;
  * @method static TextConverter html(string $html)
  * @method static string convert(string $text, Mode $to, Mode ...$from)
  * @method static Sanitizer sanitize(string $text)
- * @method static string stylesheet()
+ * @method static string stylesheet(string $name = 'emojis')
  * @method static string strip(string $text)
  * @method static bool contains(string $text)
  * @method static int count(string $text)
