@@ -96,3 +96,7 @@ it('stores each symbol as a readable record, in the field order the loader reads
 
     expect(str_starts_with($shard['groups']['arrows'], '← ↑ → ↓'))->toBeTrue();
 });
+
+it('finds a symbol by a code point written with leading zeros', function (string $key): void {
+    expect(emojis()->symbols()->get($key)?->char)->toBe('→');
+})->with(['2192', 'U+2192', 'U+02192', '002192', 'u+2192']);

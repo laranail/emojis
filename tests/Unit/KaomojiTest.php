@@ -28,3 +28,9 @@ it('groups Japanese kaomoji under ja_ groups with Japanese labels', function ():
         ->and($groups['ja_cute'])->toBe('可愛い')
         ->and(emojis()->kaomoji('ja_cute'))->not->toBeEmpty();
 });
+
+it('treats a search limit of 0 as no limit, as Emojis::search() does', function (): void {
+    expect(count(emojis()->searchKaomoji('happy', 0)))->toBeGreaterThan(1)
+        ->and(count(emojis()->searchKaomoji('happy', 0)))->toBe(count(emojis()->searchKaomoji('happy', PHP_INT_MAX)))
+        ->and(count(emojis()->search('face', limit: 0)))->toBeGreaterThan(24);
+});

@@ -260,11 +260,16 @@ final readonly class Renderer
         $fallback = $custom->fallback ?? $code;
 
         return match ($target) {
+            // The alt text uses the configured delimiters; the data key is always ":name:", a stored format
+            // that reads back whatever the delimiters are later changed to.
             Mode::Image                  => new Piece($this->imgTag($code, $custom->label(), $custom->image->src, ':' . $custom->name . ':'), true),
             Mode::Shortcode, Mode::Ascii => new Piece($code, false),
             Mode::Name                   => new Piece(strtr($options->nameTemplate, ['{name}' => $custom->label()]), false),
             Mode::Auto                   => $this->custom($custom, $this->emojis->resolveAuto(), $settings),
-            default                      => new Piece($fallback, false),
+            // No form in the target: the caller's fallback, or the code itself, which strict() refuses.
+            default => $custom->fallback === null && $settings->strict
+                ? throw UnsupportedConversion::for(':' . $custom->name . ':', $target)
+                : new Piece($fallback, false),
         };
     }
 

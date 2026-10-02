@@ -28,10 +28,12 @@ return [
 
         // Limits for images you supply: custom emoji, extend.images, Emojis::image(), EmojiImageRule.
         'custom' => [
-            'max_bytes'     => 262144, // decoded size
-            'max_dimension' => 1024,   // px, read from the header — never decoded
-            'svg'           => true,   // sanitised, then only ever rendered inside <img>
-            'hosts'         => [],     // allowed https hosts for image URLs; empty allows any
+            'max_bytes'        => 262144, // decoded size
+            'max_dimension'    => 1024,   // px, read from the header — never decoded
+            'svg'              => true,   // sanitised, then only ever rendered inside <img>
+            'max_svg_elements' => 20000,  // elements an SVG may hold before it is refused
+            'urls'             => true,   // false accepts only inline images; a URL a user supplies can track readers
+            'hosts'            => [],     // allowed https hosts for image URLs; empty allows any
         ],
     ],
 

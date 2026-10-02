@@ -36,6 +36,7 @@ use Simtabi\Laranail\Emojis\Core\Exceptions\DatasetException;
 use Simtabi\Laranail\Emojis\Core\Support\Psr3FailureReporter;
 use Simtabi\Laranail\Emojis\Core\Exceptions\InvalidCustomEmoji;
 use Simtabi\Laranail\Emojis\Core\Extension\CustomEmojiRegistry;
+use Simtabi\Laranail\Emojis\Core\Extension\ConfiguredExtensions;
 
 /**
  * The entry point: the whole catalogue, every conversion, and the extension seams.
@@ -72,7 +73,8 @@ final class Emojis implements EmojisFluent
     public function __construct(private readonly DatasetStore $data, private readonly Options $options = new Options, private readonly FailureReporter $reporter = new Psr3FailureReporter, private readonly TerminalProbe $terminal = new EnvTerminalProbe, private readonly HtmlFactory $html = new DefaultHtmlFactory, private readonly CustomEmojiRegistry $custom = new CustomEmojiRegistry, private readonly ?Closure $currentLocale = null, private ?ImageSets $images = null) {}
 
     /**
-     * Build an instance for plain PHP.
+     * Build an instance for plain PHP. A config array's `extend.*` and `input.disabled_emoticons` are applied
+     * too, as the Laravel provider applies them.
      *
      * @param array<string, mixed>|Options $config the shape of config/emojis.php, or an Options
      */
@@ -82,12 +84,14 @@ final class Emojis implements EmojisFluent
         ?TerminalProbe $terminal = null,
         ?DatasetStore $data = null,
     ): self {
-        return new self(
+        $emojis = new self(
             data: $data ?? DatasetStore::packaged(),
             options: $config instanceof Options ? $config : Options::fromArray($config),
             reporter: $reporter ?? new Psr3FailureReporter,
             terminal: $terminal ?? new EnvTerminalProbe,
         );
+
+        return is_array($config) ? ConfiguredExtensions::apply($emojis, $config) : $emojis;
     }
 
     /** Absolute path of a built asset under the package's public/assets. */
@@ -110,7 +114,7 @@ final class Emojis implements EmojisFluent
         return $this->catalogue()->find($key);
     }
 
-    public function has(string $key): bool
+    public function has(Emoji|EmojiId|string $key): bool
     {
         return $this->find($key) instanceof Emoji;
     }
@@ -221,8 +225,9 @@ final class Emojis implements EmojisFluent
      */
     public function collection(string $name): EmojiCollection
     {
-        $hexcodes = $this->data->collections()[$name] ?? throw EmojiNotFound::for('collection', $name);
         $catalogue = $this->catalogue();
+        // The catalogue owns the lookup (query()->inCollection() reads it too); only the unknown-name rule is here.
+        $hexcodes = in_array($name, $this->collections(), true) ? $catalogue->collection($name) : throw EmojiNotFound::for('collection', $name);
 
         return new EmojiCollection(array_values(array_filter(array_map($catalogue->byHexcode(...), $hexcodes))));
     }
@@ -253,7 +258,7 @@ final class Emojis implements EmojisFluent
 
     /**
      * Kaomoji whose description, tags or kana readings contain the term: `searchKaomoji('ねこ')`,
-     * `searchKaomoji('shrug')`.
+     * `searchKaomoji('shrug')`. A limit of 0 means no limit, as in search().
      *
      * @return list<Kaomoji>
      */
@@ -268,7 +273,7 @@ final class Emojis implements EmojisFluent
             if (str_contains($haystack, $term)) {
                 $out[] = $this->kaomojiFrom($item);
 
-                if (count($out) >= $limit) {
+                if ($limit > 0 && count($out) >= $limit) {
                     break;
                 }
             }
@@ -539,7 +544,7 @@ final class Emojis implements EmojisFluent
     /** @internal */
     public function scanner(): Scanner
     {
-        return $this->scanner ??= new Scanner($this->data, $this->catalogue(), $this->custom);
+        return $this->scanner ??= new Scanner($this->data, $this->catalogue(), $this->custom, $this->options->shortcodeOpen, $this->options->shortcodeClose);
     }
 
     /** @internal */

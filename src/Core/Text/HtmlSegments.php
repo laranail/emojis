@@ -9,24 +9,29 @@ namespace Simtabi\Laranail\Emojis\Core\Text;
  * markup that was not converted — no reordered attributes, no added <html>/<body>, no normalised entities
  * outside the text runs that actually changed.
  *
- * Text inside <code>, <pre>, <kbd>, <samp>, <script>, <style>, <textarea> and <template> is never converted,
- * and neither are attribute values, comments or CDATA: an emoticon in a code sample is code.
+ * Text inside <code>, <pre>, <kbd>, <samp>, <template> and the raw-text elements below is never converted,
+ * and neither are attribute values, comments or CDATA: an emoticon in a code sample is code, and an <img>
+ * written into a <title> would show as markup in the tab.
  *
  * Tags are read the way a browser tokenizes them, as far as that matters here: a quoted attribute value may
  * hold ">", a "/" before ">" does not make a non-void element self-closing (so <code/> opens a code
- * element), and the contents of the raw-text elements <script>, <style> and <textarea> are not markup at
- * all — everything up to the matching closing tag is one opaque segment. A "<" that does not start a tag is
- * text.
+ * element), and the contents of the raw-text and RCDATA elements (<script>, <style>, <textarea>, <title>,
+ * <xmp>, <iframe>, <noembed>, <noframes>, and <noscript> as a scripting browser reads it) are not markup at
+ * all — everything up to the matching closing tag is one opaque segment. <plaintext> has no closing tag: it
+ * runs to the end of the document. A "<" that does not start a tag is text.
+ *
+ * This decides what to convert; it is not a sanitizer. html() expects HTML you already trust or have
+ * sanitised, and leaves every byte of markup it does not convert as it found it.
  *
  * One forward pass: every position is read a bounded number of times, whatever the input.
  */
 final class HtmlSegments
 {
     /** Elements whose text is left alone. */
-    private const array RAW = ['code', 'pre', 'kbd', 'samp', 'script', 'style', 'textarea', 'template'];
+    private const array RAW = ['code', 'pre', 'kbd', 'samp', 'template', ...self::RAW_TEXT];
 
     /** Elements whose contents are not parsed as markup: skipped whole, to their closing tag. */
-    private const array RAW_TEXT = ['script', 'style', 'textarea'];
+    private const array RAW_TEXT = ['script', 'style', 'textarea', 'title', 'xmp', 'iframe', 'noembed', 'noframes', 'noscript', 'plaintext'];
 
     /**
      * A start tag, an end tag, or a <!…>/<?…> declaration. Quoted values are consumed whole so a ">" inside
@@ -125,7 +130,7 @@ final class HtmlSegments
     /** The end of a raw-text element's closing tag, or of the document when it is never closed. */
     private static function rawTextEnd(string $html, string $name, int $from, int $length): int
     {
-        if (preg_match('/<\/' . $name . '(?=[\s\/>])[^>]*+>/i', $html, $m, PREG_OFFSET_CAPTURE, $from) === 1) {
+        if ($name !== 'plaintext' && preg_match('/<\/' . $name . '(?=[\s\/>])[^>]*+>/i', $html, $m, PREG_OFFSET_CAPTURE, $from) === 1) {
             return $m[0][1] + strlen($m[0][0]);
         }
 

@@ -34,7 +34,7 @@ Emojis::sanitize($input)->isSafe();   // true when the security rules would remo
 | `InvalidUtf8` | invalid bytes are replaced before anything else runs |
 | `Control` | C0/C1 controls except tab, line feed and carriage return |
 | `Bidi` | embeddings, overrides, isolates and marks (U+202A–202E, U+2066–2069, U+200E, U+200F, U+061C); `keepBidiControls()` opts out |
-| `Invisible` | U+200B, U+2060–2064, U+FEFF, U+180E, U+00AD, U+034F, U+2028, U+2029, U+2800, U+FFF9–FFFB, U+1D173–1D17A, U+17B4–17B5 and the Hangul fillers |
+| `Invisible` | U+200B, U+2060–2064, U+206A–206F, U+FEFF, U+180E, U+00AD, U+034F, U+2028, U+2029, U+2800, U+FFF9–FFFB, U+1BCA0–1BCA3, U+1D173–1D17A, U+17B4–17B5, the Hangul fillers, and the Mongolian free variation selectors U+180B–180D and U+180F unless they follow a Mongolian letter |
 | `Tag` | tag characters outside the three RGI subdivision flags |
 | `VariationSelector` | any selector not defined for the character before it — VS15/16 only after emoji-capable characters, VS1–14 only after `StandardizedVariants.txt` bases, VS17–256 only after a CJK ideograph — and any second selector |
 | `Joiner` | ZWJ/ZWNJ that are not inside an emoji, between two emoji (at most four in a row), or between letters |
@@ -79,10 +79,13 @@ use Simtabi\Laranail\Emojis\Laravel\Rules\{NoHiddenCharacters, EmojiPolicyRule};
 
 ```bash
 php artisan laranail::emojis.sanitize - < message.txt > clean.txt    # report on STDERR
-php artisan laranail::emojis.sanitize - --check < docs/page.md       # exit 1 if anything is hidden
+php artisan laranail::emojis.sanitize - --check < docs/page.md       # exit 1 if anything would be removed
 ```
 
 ## HTML output
+
+`html()` converts the text of HTML you already trust or have sanitised; it is not a sanitiser. It leaves
+every byte of markup it does not convert as it found it, so run user HTML through your HTML sanitiser first.
 
 Separately from sanitising: every HTML the package renders escapes surrounding text, and fitted images carry
 no inline styles, so a strict Content-Security-Policy needs only `img-src` for the image host (plus `data:`
@@ -94,6 +97,11 @@ Custom emoji, replacement images and anything passed to `Emojis::image()` or `Em
 size, encoding, real type and dimensions, and SVG is sanitised and only ever rendered inside `<img>`. URLs
 must be `https://` or root-relative and are never fetched by the package, so there is no server-side request
 forgery to defend against. See [images](images.md#your-own-images).
+
+The reader's browser does fetch them, though. When users supply the image — a custom emoji form, an avatar
+reaction — a URL they choose is a tracking pixel: every reader's IP and user agent reach that host. Narrow it
+with `images.custom.hosts`, or set `images.custom.urls` to `false` so only inline images are accepted and
+stored.
 
 Images installed with `laranail::emojis.images install` are verified file by file against the SHA-256 this
 package ships, so a changed or compromised CDN file is refused. See

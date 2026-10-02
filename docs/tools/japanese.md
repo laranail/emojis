@@ -37,14 +37,14 @@ Unicode; the private-use form is what survives in databases and mail archives wr
 
 ```php
 Emojis::get('🈁')->name('ja');            // "ココのマーク"
-Emojis::search('寿司', 'ja');              // 🍣
+Emojis::search('寿司', 'ja')->first();     // 🍣
 ```
 
 ## The Japanese collection
 
 ```php
 Emojis::collection('japanese');                              // 55 emoji
-Emojis::query()->inCollection('japanese')->search('castle');  // 🏯
+Emojis::query()->inCollection('japanese')->search('castle')->first();  // 🏯
 ```
 
 The 17 Japanese-text buttons (🈁 🈂️ 🈷️ 🈶 🈯 🉐 🈹 🈚 🈲 🉑 🈸 🈴 🈳 ㊗️ ㊙️ 🈺 🈵), then Japanese-origin symbols

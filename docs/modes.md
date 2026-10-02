@@ -20,8 +20,10 @@ Thirteen `Mode` cases describe every form an emoji takes, and a converter reads 
 | `Name` | `[waving hand: medium skin tone]`, localized | — | ✓ |
 | `Auto` | `Emoji` on a capable terminal, `output.auto_fallback` otherwise | — | ✓ |
 
-`Name` and `Ascii` are targets only: a name inside prose cannot be found reliably, and ASCII output is read
-back as a shortcode. Passing a target-only mode to `from()` throws `UnsupportedConversion`.
+Five modes are targets only, and passing one to `from()` throws `UnsupportedConversion`: `Emoji` and
+`Text` are read through `Unicode`, `Ascii` is read back through `Shortcode`, a `Name` inside prose cannot be
+found reliably, and `Auto` is a choice of target. The eight sources are `Unicode`, `Shortcode`,
+`Emoticon`, `HtmlEntity`, `Escaped`, `Codepoint`, `Image` and `Carrier`.
 
 ## The matrix
 

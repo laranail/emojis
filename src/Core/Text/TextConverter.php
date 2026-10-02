@@ -15,6 +15,7 @@ use Simtabi\Laranail\Emojis\Core\Emojis;
 use Simtabi\Laranail\Emojis\Core\Enums\Fit;
 use Simtabi\Laranail\Emojis\Core\Enums\Mode;
 use Simtabi\Laranail\Emojis\Core\Render\Piece;
+use Simtabi\Laranail\Emojis\Core\Support\Html;
 use Simtabi\Laranail\Emojis\Core\Enums\Carrier;
 use Simtabi\Laranail\Emojis\Core\Enums\SkinTone;
 use Simtabi\Laranail\Emojis\Core\Enums\EmojiVersion;
@@ -374,6 +375,8 @@ final readonly class TextConverter implements Stringable
             return $this->text;
         }
 
+        // An ellipsis wider than the whole budget is dropped rather than overflowing it.
+        $ellipsis = mb_strwidth($ellipsis, 'UTF-8') > max(0, $width) ? '' : $ellipsis;
         $budget = max(0, $width - mb_strwidth($ellipsis, 'UTF-8'));
         $out = '';
 
@@ -401,7 +404,7 @@ final readonly class TextConverter implements Stringable
      */
     private function isCharacterReferences(Mode $target, string $text): bool
     {
-        return $target === Mode::HtmlEntity && preg_match('/\A(?:&#(?:x[0-9A-Fa-f]{1,6}|[0-9]{1,7});)+\z/', $text) === 1;
+        return $target === Mode::HtmlEntity && Html::isCharacterReferences($text);
     }
 
     /**

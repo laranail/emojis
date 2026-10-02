@@ -159,8 +159,9 @@ filters in the SVG namespace, with presentation attributes. Scripts, event handl
 the output. References must stay inside the document (`href="#id"`, `url(#id)`); a DOCTYPE with entity
 declarations is refused (XXE, entity expansion); element count and nesting depth are capped.
 
-It is the second defence: SVG is only ever rendered inside `<img src="data:…">`, where browsers run no
-script and load nothing external. The allow-list was derived from all 14,631 files of the four pinned sets.
+It is the second defence: SVG is only ever referenced as an image, never inlined as markup — an SVG you
+supply in an `<img>`, an installed set's files in an `<img src>` or the `<image href>` of fitted output —
+and browsers run no script and load nothing external in an image. The allow-list was derived from all 14,631 files of the four pinned sets.
 Rasterised before and after sanitising, 14,629 are pixel-identical; the other two (Noto's rainbow flag and
 package) crash the rasteriser, resvg, in their original form too, so they could not be compared.
 

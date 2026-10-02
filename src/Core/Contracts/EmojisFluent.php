@@ -15,6 +15,9 @@ use Simtabi\Laranail\Emojis\Core\Catalogue\EmojiCollection;
 /**
  * The typed face of the package for helpers and IDEs: the `emoji()` helper and the facade resolve to an
  * implementation of this, so completion and static analysis work without macros or magic methods.
+ *
+ * A subset of Emojis on purpose: widening it breaks every class that implements it, so new methods land on
+ * Emojis (and the facade's docblock) first.
  */
 interface EmojisFluent
 {

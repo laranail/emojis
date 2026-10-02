@@ -154,3 +154,16 @@ it('builds a policy from config strings', function (): void {
         ->and($policy->maxVersion)->toBe(EmojiVersion::V15_0)
         ->and($policy->allowUnknown)->toBeFalse();
 });
+
+it('removes the deprecated format controls, shorthand format controls and stray Mongolian selectors', function (): void {
+    $input = "a\u{206A}b\u{206F}c\u{1BCA0}d\u{1BCA3}e\u{180B}f\u{180F}g";
+
+    expect(emojis()->sanitize($input)->clean())->toBe('abcdefg')
+        ->and(emojis()->sanitize($input)->report()->count(Threat::Invisible))->toBe(6);
+});
+
+it('keeps a Mongolian free variation selector after a Mongolian letter, where it selects a glyph form', function (): void {
+    $mongolian = "\u{182D}\u{180B}\u{1820}\u{180F}";
+
+    expect(emojis()->sanitize($mongolian)->clean())->toBe($mongolian);
+});

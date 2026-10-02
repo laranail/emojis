@@ -240,7 +240,7 @@ final readonly class Emoji implements JsonSerializable, Stringable
 
     public function toImage(?string $set = null): Stringable
     {
-        return $this->emojis->renderer()->image($this, $set ?? $this->emojis->options()->imageSet, $this->emojis->options()->locale);
+        return $this->emojis->renderer()->image($this, $set ?? $this->emojis->options()->imageSet);
     }
 
     /** @return array<string, mixed> */

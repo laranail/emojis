@@ -9,6 +9,7 @@ use Simtabi\Laranail\Emojis\Core\Enums\Fit;
 use Simtabi\Laranail\Emojis\Core\Enums\Mode;
 use Simtabi\Laranail\Emojis\Core\Enums\ImageSource;
 use Simtabi\Laranail\Emojis\Core\Image\ImagePolicy;
+use Simtabi\Laranail\Emojis\Core\Support\ConfigInt;
 use Simtabi\Laranail\Emojis\Core\Security\EmojiPolicy;
 use Simtabi\Laranail\Emojis\Core\Enums\ShortcodePreset;
 
@@ -136,7 +137,7 @@ final readonly class Options
             shortcodeClose: is_string($delimiters[1] ?? null) ? $delimiters[1] : ':',
             degradation: $degradation,
             autoFallback: Mode::from($string($output, 'auto_fallback', Mode::Ascii->value)),
-            maxInputBytes: is_int($input['max_bytes'] ?? null) ? $input['max_bytes'] : 1_048_576,
+            maxInputBytes: ConfigInt::read($input['max_bytes'] ?? null, 1_048_576),
             policy: EmojiPolicy::fromArray($group('policy')),
             imageFit: Fit::from($string($images, 'fit', Fit::Balanced->value)),
             imagePolicy: ImagePolicy::fromArray(self::stringKeyed($images['custom'] ?? null)),

@@ -23,6 +23,8 @@ Grouped by concern; each group's keys are listed once.
 | `images.custom.max_bytes` | `262144` | Largest image you supply, decoded. |
 | `images.custom.max_dimension` | `1024` | Widest or tallest raster, in pixels, read from the header. |
 | `images.custom.svg` | `true` | Accept SVG (sanitised). `false` refuses it. |
+| `images.custom.max_svg_elements` | `20000` | Elements an SVG may hold before it is refused. |
+| `images.custom.urls` | `true` | Accept image URLs. `false` accepts only inline images (data URI, base64, file) — see [security](tools/security.md#images-you-supply). |
 | `images.custom.hosts` | `[]` | Hosts an image URL may name; empty allows any `https://` host. |
 | `output.name_template` | `'[{name}]'` | `Mode::Name` output; must contain `{name}`. |
 | `output.auto_fallback` | `'ascii'` | What `Mode::Auto` becomes when the terminal cannot draw emoji. |
@@ -41,7 +43,11 @@ Outside Laravel, `Emojis::create()` takes the same array:
 Emojis::create(['locale' => ['default' => 'fr'], 'images' => ['set' => 'noto', 'fit' => 'tight']]);
 ```
 
-## Upgrading from 0.1.0
+## Upgrading
+
+Each step lists what can change your output or break your code. The [changelog](../CHANGELOG.md) has the rest.
+
+### From 0.1.0
 
 0.1.0 used flat keys (`image_set`, `shortcode_preset`, `max_input_bytes`, a string `locale`, extra shortcodes
 under a top-level `shortcodes`). A config still in that layout stops boot with an `InvalidArgumentException`
@@ -51,7 +57,7 @@ that names each old key and where it moved, rather than being read as defaults. 
 php artisan vendor:publish --tag=laranail::emojis-config --force
 ```
 
-## Upgrading from 0.1 to 0.2
+### From 0.1 to 0.2
 
 - `extend.custom.<name>.url` is now `image`, and also takes a data URI. The old key stops boot with a message
   saying so.
@@ -66,6 +72,29 @@ php artisan vendor:publish --tag=laranail::emojis-config --force
   and adds `emoji` as an extra hook. Update your own CSS that targeted `.emoji`.
 - `AsEmojiText` writes an escaped format (a typed `:` or `\` is escaped). Rows written by 0.1 read back as
   before, except that a shortcode touching a letter is now converted too.
+
+### From 0.2 to 0.3
+
+- `(y)`, `(n)`, `:?` and `<><` match only with `withEmoticons(risky: true)`, because they read as prose.
+  `addEmoticon('(y)', 'thumbs up')` turns one back on alone.
+- An emoticon added with `addEmoticon()` always matches, even where the dataset marks the same text opt-in.
+- `database/generated/symbols.php` holds characters rather than code points. Read symbols through
+  `Emojis::symbols()`; the shards are not a stable interface.
+
+### From 0.3 to 0.4
+
+- `addShortcode()` remaps an existing code for writing as well as reading, so `toShortcodes()` no longer
+  writes a code that would read back as another emoji.
+- `Emojis::create()` applies a config array's `extend.*` and `input.disabled_emoticons`, as the Laravel
+  provider always did. An array that carried them and relied on their being ignored now registers them.
+- The scanner reads the configured `shortcodes.delimiters`, not only `:`.
+- `Emoji::toImage()` and the Blade component label in the locale of the call (the application locale in
+  Laravel), not the configured default. The component takes `locale` and `set` in every mode, and an
+  unknown `mode` or `fit` throws an `InvalidArgumentException` naming the accepted values.
+- `html()` leaves `title`, `xmp`, `iframe`, `noembed`, `noframes`, `noscript` and `plaintext` alone, as it
+  already did `script`, `style` and `textarea`.
+- The sanitiser also removes U+206A–206F, U+1BCA0–1BCA3, and Mongolian free variation selectors that do
+  not follow a Mongolian letter.
 
 ## Environment
 

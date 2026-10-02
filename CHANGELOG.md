@@ -7,6 +7,17 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/),
 
 ## [Unreleased]
 
+### Added
+
+- `images.custom.urls` (default `true`): set it to `false` to accept only inline images (data URI, base64,
+  file) wherever users supply them, since a URL a user chooses is a tracking pixel for every reader.
+  `images.custom.max_svg_elements` is now in the published config too; it was read but never listed.
+- `Emojis::has()` accepts an `Emoji` or an `EmojiId`, as `find()` does.
+- The facade documents all 47 public `Emojis` methods (it listed 26), and a test fails when one is missing or
+  its parameters drift. `docs/tools/conversion.md` and `querying.md` now list every public converter and query
+  method (`fit()`, `carrier()`, `inCollection()` and `search()` were missing), guarded the same way.
+- `README.md` has a Quick start.
+
 ### Changed
 
 - **A shortcode remapped with `addShortcode()` now holds for writing as well as reading.** After
@@ -14,6 +25,24 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/),
   text no longer round-tripped. An emoji is now written with a code that reads back as itself: another of its
   shortcodes, its ASCII code or slug, and if a remap took every one, the character itself (`Ascii` mode
   writes `U+1F680`, staying seven-bit). Adding a code that is not already in use changes nothing.
+- **`Emojis::create()` applies a config array's `extend.*` and `input.disabled_emoticons`**, as the Laravel
+  provider always has; it used to ignore them without a word. Both now share
+  `Core\Extension\ConfiguredExtensions`.
+- **The scanner reads the configured `shortcodes.delimiters`.** Output was written with them but only `:code:`
+  was read back, so `{rocket}` written under `['{', '}']` stayed text. An empty delimiter is read as `:` rather
+  than turning every bare word into a candidate. The doctor's round-trip check uses them too, so it no longer
+  fails on a valid configuration.
+- `html()` leaves the contents of `title`, `xmp`, `iframe`, `noembed`, `noframes`, `noscript` and `plaintext`
+  alone, as it did `script`, `style` and `textarea`: an `<img>` written into a `<title>` shows as markup in the
+  tab. The docs now say plainly that `html()` is not a sanitiser.
+- The sanitiser also removes U+206A–206F (deprecated format controls), U+1BCA0–1BCA3 (shorthand format
+  controls), and the Mongolian free variation selectors unless they follow a Mongolian letter.
+- `searchKaomoji($term, 0)` returns every match, as `search()` does with a limit of 0; it returned one.
+- Integer config values accept a string of digits, so `env()` works for `input.max_bytes`,
+  `policy.max_emojis` and the `images.custom` limits; they used to fall back to the default silently.
+- `strict()` throws for a custom emoji that has no form in the target and no fallback, rather than writing its
+  shortcode.
+- An emoji the dataset gives no emoticon is written with one added through `addEmoticon()`.
 
 ### Fixed
 
@@ -33,6 +62,18 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/),
   the refresh calls it, `sync-check` checks the same list, and a test fails when a generator is missing from it.
 - Release notes linked docs relatively (`docs/tools/...`), which works in the repository but not on the GitHub
   release page; the release workflow now points them at the tagged files.
+- `Emoji::toImage()` labelled the image in the locale configured at boot, not the application's current one.
+- The Blade `emoji` component applied `locale` and `set` only in image mode, and an unknown `mode` or `fit`
+  surfaced as a bare `ValueError`; it now names the accepted values.
+- `SvgSanitizer` inspected only the first DOCTYPE; a second one, or an `ENTITY` outside it, is now refused.
+- `Symbols::get('U+02192')` found nothing: a code point with leading zeros was not normalised.
+- `truncate()` returned the ellipsis even when it alone was wider than the width asked for.
+- `composer.json` said `ext-dom` serves `fromHtml()`, which does not exist (it is for SVG images), and promised
+  a `laranail/validation` bridge that was never written. `ext-dom` is in the requirements table now.
+- `sanitize --check` said it exits 1 when anything "was removed"; with `--check` nothing is removed.
+- Docs: the full list of target-only modes, `->first()` on the Japanese search examples, how SVG is referenced,
+  the upgrade notes merged into one section with steps for 0.2 → 0.3 and 0.3 → 0.4, and two 0.2.0 entries
+  that named `tools/` after it had moved to `.dev/tools/`.
 
 ## [0.3.0] - 2026-10-02
 
@@ -148,9 +189,9 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/),
   numbers, punctuation, letters, symbols, Egyptian hieroglyphs and a popular list — from Unicode's character
   database, with names, blocks and WHATWG HTML entities, searchable. Invisible, control, private-use and
   combining characters are never included.
-- **Weekly refresh.** `tools/refresh.php` moves every source to its newest release, re-locks, re-measures and
+- **Weekly refresh.** `.dev/tools/refresh.php` moves every source to its newest release, re-locks, re-measures and
   re-hashes, regenerates, and cross-checks; `.github/workflows/refresh.yml` runs it every Monday and opens a
-  pull request. `tools/cross-check.php` proves the catalogue covers every emoji in the Unicode charts and
+  pull request. `.dev/tools/cross-check.php` proves the catalogue covers every emoji in the Unicode charts and
   everything getemoji.com and copychar.cc offer for copying (their images are not licensed for
   redistribution, and are not used).
 

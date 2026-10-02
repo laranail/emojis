@@ -34,7 +34,10 @@ final readonly class DatasetCheck implements DoctorCheck
         try {
             $emojis = $this->emojis ?? app(Emojis::class);
             $count = $emojis->all()->count();
-            $roundTrip = $emojis->text('👋🏽 :rocket:')->toAscii();
+            // Written with the configured delimiters, which is what the scanner reads.
+            $code = static fn (string $name): string => $emojis->options()->shortcodeOpen . $name . $emojis->options()->shortcodeClose;
+            $expected = $code('wave_tone3') . ' ' . $code('rocket');
+            $roundTrip = $emojis->text('👋🏽 ' . $code('rocket'))->toAscii();
             $degraded = $emojis->reporter()->degradations();
         } catch (Throwable $e) {
             return DoctorResult::fail('The emoji dataset could not be loaded: ' . $e->getMessage());
@@ -46,7 +49,7 @@ final readonly class DatasetCheck implements DoctorCheck
             return DoctorResult::fail('The configured image set does not resolve: ' . $e->getMessage(), ['set' => $emojis->options()->imageSet]);
         }
 
-        if ($roundTrip !== ':wave_tone3: :rocket:') {
+        if ($roundTrip !== $expected) {
             return DoctorResult::fail('A known conversion produced unexpected output.', ['got' => $roundTrip]);
         }
 

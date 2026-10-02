@@ -6,7 +6,9 @@ use Simtabi\Laranail\Emojis\Core\Emojis;
 use Simtabi\Laranail\Emojis\Core\Enums\Mode;
 use Simtabi\Laranail\Emojis\Core\Enums\Carrier;
 use Simtabi\Laranail\Emojis\Core\Enums\SkinTone;
+use Simtabi\Laranail\Emojis\Core\Catalogue\Query;
 use Simtabi\Laranail\Emojis\Core\Enums\EmojiVersion;
+use Simtabi\Laranail\Emojis\Core\Text\TextConverter;
 
 /*
  * The docs are part of the product. The template and footer rules come from the family authoring standard;
@@ -42,6 +44,34 @@ it('opens every page with its title and ends it with exactly one footer at the r
     }
 });
 
+it('keeps the README spine: Install, then Quick start, then Documentation', function (): void {
+    $readme = (string) file_get_contents(dirname(__DIR__, 2) . '/README.md');
+    $at = static fn (string $heading): int|false => strpos($readme, "\n" . $heading . "\n");
+
+    expect($at('## Install'))->toBeInt()
+        ->and($at('## Quick start'))->toBeGreaterThan($at('## Install'))
+        ->and($at('## <a name="documentation"></a>Documentation'))->toBeGreaterThan($at('## Quick start'));
+});
+
+it('lists every public converter and query method on its reference page', function (string $class, string $page): void {
+    $doc = (string) file_get_contents(dirname(__DIR__, 2) . '/' . $page);
+    $inspected = 0;
+
+    foreach (new ReflectionClass($class)->getMethods(ReflectionMethod::IS_PUBLIC) as $method) {
+        if ($method->isConstructor() || str_starts_with($method->name, '__') || str_contains((string) $method->getDocComment(), '@internal')) {
+            continue;
+        }
+
+        $inspected++;
+        expect(preg_match('/[`, ]' . $method->name . '\\(/', $doc))->toBe(1, "{$page} does not list {$method->name}()");
+    }
+
+    expect($inspected)->toBeGreaterThan(10);
+})->with([
+    'converter' => [TextConverter::class, 'docs/tools/conversion.md'],
+    'query'     => [Query::class, 'docs/tools/querying.md'],
+]);
+
 it('keeps the README index anchor the footers point at', function (): void {
     expect((string) file_get_contents(dirname(__DIR__, 2) . '/README.md'))->toContain('## <a name="documentation"></a>Documentation');
 });
@@ -65,6 +95,8 @@ it('links only to files that exist', function (): void {
 it('shows outputs the code really produces', function (string $actual, string $documented): void {
     expect($actual)->toBe($documented);
 })->with([
+    'readme: quick start emoji'                 => fn (): array => [emojis()->text('Ship it :rocket: :)')->withEmoticons()->toEmoji(), 'Ship it 🚀 🙂'],
+    'readme: quick start ascii'                 => fn (): array => [emojis()->text('Ship it 🚀')->toAscii(), 'Ship it :rocket:'],
     'getting started: emoticons and shortcodes' => fn (): array => [emojis()->text('Ship it :rocket: :)')->withEmoticons()->toEmoji(), 'Ship it 🚀 🙂'],
     'getting started: ascii'                    => fn (): array => [emojis()->text('Ship it 🚀')->toAscii(), 'Ship it :rocket:'],
     'getting started: name'                     => fn (): array => [emojis()->text('Ship it 🚀')->to(Mode::Name), 'Ship it [rocket]'],

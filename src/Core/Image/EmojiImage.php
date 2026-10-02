@@ -135,6 +135,10 @@ final readonly class EmojiImage implements Stringable
 
     public static function fromUrl(string $url, ImagePolicy $policy = new ImagePolicy): self
     {
+        if (! $policy->allowUrls) {
+            throw InvalidImage::badUrl('URLs are switched off (images.custom.urls); use a data URI, base64 or a file');
+        }
+
         if ($url === '' || strlen($url) > 2048) {
             throw InvalidImage::badUrl('empty or longer than 2048 characters');
         }
