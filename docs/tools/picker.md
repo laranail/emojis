@@ -1,7 +1,8 @@
 # Emoji picker
 
 A dependency-free emoji picker — search, category tabs, recents, skin tones, keyboard and screen-reader
-support, a bottom sheet on phones — as a Blade component, a Livewire component and a plain ES module.
+support, a bottom sheet on phones — as a Blade component, a Livewire component, a plain ES module and a React
+component.
 
 ## Blade
 
@@ -99,6 +100,46 @@ check fails when they differ.
 The state behind the picker is exported as pure functions — `buildSections()`, `searchSections()`,
 `capPayload()`, `insertText()`, `recordRecent()`, `withTone()` and the rest — so another renderer can reuse
 it.
+
+## React
+
+```tsx
+import { useRef } from 'react';
+import { EmojiPicker, ApiSource } from '@laranail/emojis-picker/react';
+import '@laranail/emojis-picker/styles.css';
+
+const source = new ApiSource('/laranail/emojis/api/v1'); // once, outside render
+
+export function Composer() {
+  const message = useRef<HTMLTextAreaElement>(null);
+
+  return (
+    <>
+      <textarea ref={message} />
+      <EmojiPicker source={source} target={message} locale="fr" onSelect={({ emoji }) => console.log(emoji)} />
+    </>
+  );
+}
+```
+
+`<EmojiPicker>` takes the same options as the vanilla picker as props — `source`, `target` (a ref),
+`locale`, `tone`, `maxRecent`, `recentOrder`, `sort`, `categories`, `columns`, `maxVersion`, `inline`,
+`closeOnSelect`, `userKey`, `store`, `strings` — and `onSelect`. It renders the same markup, classes and
+ARIA, so `picker.css` styles it and the keyboard behaviour is the same. To draw your own UI, use the hook
+behind it:
+
+```tsx
+const picker = useEmojiPicker({ source, locale: 'fr', onSelect });
+// picker.sections, picker.query / setQuery, picker.tone / setTone, picker.select(item), picker.status
+```
+
+Both are thin over the same pure functions the vanilla picker uses, so the two cannot behave differently.
+React 19 is a peer dependency; nothing else is.
+
+The package is `@laranail/emojis-picker` on npm, with the version of the Composer package: `.` is the vanilla
+module, `./react` the React adapter, `./styles.css` the picker stylesheet. The release workflow publishes it
+with provenance once npm publishing is switched on for the repository; until then, build it from a checkout
+with `npm run build:react && npm run types && npm pack`.
 
 ## Accessibility
 

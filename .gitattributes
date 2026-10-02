@@ -24,6 +24,7 @@
 /testbench.yaml     export-ignore
 /package.json       export-ignore
 /vite.config.mjs    export-ignore
+/vite.react.config.mjs export-ignore
 /vitest.config.mjs  export-ignore
 /tsconfig.json      export-ignore
 /tsconfig.types.json export-ignore

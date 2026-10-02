@@ -15,6 +15,7 @@ on:
       - 'tsconfig.json'
       - 'tsconfig.types.json'
       - '.dev/tools/types.mjs'
+      - 'vite.react.config.mjs'
   workflow_dispatch:
 
 concurrency:
@@ -39,5 +40,6 @@ jobs:
           node-version: 24
       - run: npm install --no-audit --no-fund --no-package-lock
       - run: npm run assets-check
+      - run: npm run build:react
       - run: npm test
       - run: npm run typecheck
