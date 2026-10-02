@@ -129,10 +129,13 @@ use Simtabi\Laranail\Emojis\Core\Image\EmojiImage;
 Emojis::useImage('thumbsup', 'https://brand.example/thumbs.png');           // replaces 👍 in Image mode
 Emojis::addCustom('laravel', 'data:image/svg+xml;base64,PHN2ZyB4bWxu…');    // :laravel:
 Emojis::addCustom('logo', EmojiImage::fromFile(resource_path('logo.png')));
-Emojis::addCustom('party', EmojiImage::fromBase64($base64, 'image/webp'));
+Emojis::addCustom('partyparrot', EmojiImage::fromBase64($base64, 'image/webp'));
 
 $image = Emojis::image($request->input('emoji'));   // validate without registering; throws InvalidImage
 ```
+
+A custom name or alias must not be an existing shortcode: `party` is 🎉 and `ship` is 🚢, so `addCustom()`
+throws `InvalidCustomEmoji` for them rather than shadowing a Unicode emoji.
 
 Every image goes through the same checks, configured under `images.custom`:
 

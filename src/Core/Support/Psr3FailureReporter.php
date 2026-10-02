@@ -29,6 +29,21 @@ final class Psr3FailureReporter implements FailureReporter
 
     public function __construct(private readonly LoggerInterface $logger = new NullLogger) {}
 
+    /**
+     * What makes two warnings the same one: the subject and its context. Keying on the subject alone
+     * silenced every unshipped locale after the first, since they all share 'locale-not-shipped'.
+     *
+     * @internal shared with the Laravel reporter, so both de-duplicate alike
+     *
+     * @param array<string, mixed> $context
+     */
+    public static function warningKey(string $subject, array $context): string
+    {
+        ksort($context);
+
+        return $subject . "\0" . json_encode($context, JSON_UNESCAPED_UNICODE | JSON_PARTIAL_OUTPUT_ON_ERROR);
+    }
+
     public function degraded(string $operation, Throwable $cause, array $context = []): void
     {
         $first = ! isset($this->degraded[$operation]);
@@ -41,11 +56,13 @@ final class Psr3FailureReporter implements FailureReporter
 
     public function warn(string $subject, array $context = []): void
     {
-        if (isset($this->warned[$subject])) {
+        $key = self::warningKey($subject, $context);
+
+        if (isset($this->warned[$key])) {
             return;
         }
 
-        $this->warned[$subject] = true;
+        $this->warned[$key] = true;
         $this->log('warning', "laranail/emojis tolerated anomaly [{$subject}]", ['subject' => $subject, 'decision' => 'tolerated', ...$context]);
     }
 

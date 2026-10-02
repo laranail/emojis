@@ -139,7 +139,7 @@ final readonly class Renderer
             Mode::Emoticon   => $text($emoji->emoticon()),
             Mode::HtmlEntity => $text(implode('', array_map(static fn (int $cp): string => sprintf('&#x%X;', $cp), $emoji->codepoints))),
             Mode::Escaped    => $text(implode('', array_map($settings->escapeFormat->encode(...), $emoji->codepoints))),
-            Mode::Codepoint  => $text(implode(' ', array_map(static fn (int $cp): string => sprintf('U+%04X', $cp), $emoji->codepoints))),
+            Mode::Codepoint  => $text($this->codepoints($emoji)),
             Mode::Name       => $text(strtr($this->emojis->options()->nameTemplate, ['{name}' => $emoji->name($settings->locale)])),
             Mode::Image      => $this->imagePiece($emoji, $settings),
             Mode::Carrier    => $text($emoji->carrierCode($settings->carrier)),
@@ -283,25 +283,63 @@ final readonly class Renderer
         return null;
     }
 
+    /**
+     * The first of the emoji's codes that still reads back as this emoji: the preset's, then every preset's,
+     * then its ASCII code or slug. A code remapped with addShortcode() now reads as another emoji, so it is
+     * never written for this one. If no code is left, the character itself: it reads back correctly, where a
+     * code that names another emoji would not.
+     */
     private function shortcode(Emoji $emoji, ShortcodePreset $preset): string
     {
-        $index = $this->emojis->catalogue()->shortcodeIndex();
-        $options = $this->emojis->options();
+        $catalogue = $this->emojis->catalogue();
 
-        foreach ($emoji->shortcodes($preset) as $code) {
-            if (($index[$code] ?? null) === $emoji->hexcode) {
-                return $options->shortcodeOpen . $code . $options->shortcodeClose;
+        foreach ([...$emoji->shortcodes($preset), ...$catalogue->allShortcodesOf($emoji)] as $code) {
+            if ($catalogue->shortcodeTarget($code) === $emoji->hexcode) {
+                return $this->delimited($code);
             }
         }
 
-        return $this->ascii($emoji);
+        $code = $this->asciiCode($emoji);
+
+        return $code === null ? $emoji->char : $this->delimited($code);
     }
 
+    /**
+     * Seven-bit, always: the ASCII code (or slug) while it still reads back as this emoji, else the code
+     * points (`U+1F680`), which name it unambiguously when no code is left.
+     */
     private function ascii(Emoji $emoji): string
+    {
+        $code = $this->asciiCode($emoji);
+
+        return $code === null ? $this->codepoints($emoji) : $this->delimited($code);
+    }
+
+    /** The ASCII code, or the slug, whichever no remap has taken from this emoji; null when both are taken. */
+    private function asciiCode(Emoji $emoji): ?string
+    {
+        $catalogue = $this->emojis->catalogue();
+
+        foreach ([$emoji->asciiCode, $emoji->slug] as $candidate) {
+            if (in_array($catalogue->shortcodeTarget($candidate), [null, $emoji->hexcode], true)) {
+                return $candidate;
+            }
+        }
+
+        return null;
+    }
+
+    /** `U+1F680`, space-separated for a sequence. */
+    private function codepoints(Emoji $emoji): string
+    {
+        return implode(' ', array_map(static fn (int $cp): string => sprintf('U+%04X', $cp), $emoji->codepoints));
+    }
+
+    private function delimited(string $code): string
     {
         $options = $this->emojis->options();
 
-        return $options->shortcodeOpen . $emoji->asciiCode . $options->shortcodeClose;
+        return $options->shortcodeOpen . $code . $options->shortcodeClose;
     }
 
     /**

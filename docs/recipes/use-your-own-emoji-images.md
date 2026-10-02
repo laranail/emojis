@@ -7,8 +7,8 @@ use Simtabi\Laranail\Emojis\Core\Image\EmojiImage;
 
 // a service provider's boot()
 Emojis::useImage('thumbsup', 'https://cdn.example.com/emoji/thumbs.png');
-Emojis::addCustom('shipit', EmojiImage::fromFile(resource_path('emoji/shipit.svg')), aliases: ['ship']);
-Emojis::addCustom('party', 'data:image/webp;base64,UklGRi…');
+Emojis::addCustom('shipit', EmojiImage::fromFile(resource_path('emoji/shipit.svg')), aliases: ['ship_it']);
+Emojis::addCustom('partyparrot', 'data:image/webp;base64,UklGRi…');
 
 Emojis::text('Great work 👍 :shipit:')->toImages();
 ```

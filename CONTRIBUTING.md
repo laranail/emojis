@@ -28,21 +28,22 @@ Requires PHP `^8.4.1 || ^8.5` with `ext-mbstring`. `ext-intl` is optional.
 
 ## Generated files
 
-Two generators, chained:
+Four generators, chained, listed once in `.dev/tools/lib/Generators.php`:
 
 1. `.dev/tools/build-dataset.php` builds every shard in `database/generated/` (and `docs/licences.md`) from the
    upstream sources pinned in `database/sources/upstream.lock.json` (URL + sha256), the hand-curated JSON in
    `database/sources/curated/` and the image margins in `database/sources/measured/`.
 2. `.dev/tools/generate-enums.php` builds `src/Core/Enums/{Group,Subgroup,EmojiVersion,EmojiId}.php` from the
    committed catalogue.
+3. `.dev/tools/emoticons-doc.php` writes the table in `docs/tools/emoticons.md`.
+4. `.dev/tools/emoji-list-doc.php` writes `docs/tools/emoji-list.md` and one page per group.
 
 **Never hand-edit a generated file.** Change an overlay or a generator and re-run:
 
 ```bash
-php .dev/tools/build-dataset.php --fetch    # download any missing source, verify, and write
-php .dev/tools/build-dataset.php --check    # CI gate
-php .dev/tools/generate-enums.php           # write the enums
-composer sync-check                    # both checks
+php .dev/tools/build-dataset.php --fetch    # download any missing source, verify, and write the dataset
+php .dev/tools/regenerate.php               # run every generator, in order
+composer sync-check                         # every generator with --check: the CI gate
 ```
 
 Sources are cached in `build/cache/sources` (gitignored). Without them, `--check` skips outside CI; in CI
@@ -52,7 +53,7 @@ it fetches and never skips.
 
 1. Change the URL and `version` in `database/sources/upstream.lock.json`.
 2. `php .dev/tools/build-dataset.php --fetch`, then `php .dev/tools/build-dataset.php --lock` to record the new sha256.
-3. `php .dev/tools/build-dataset.php && php .dev/tools/generate-enums.php`.
+3. `php .dev/tools/regenerate.php`.
 4. Read `build/dataset-report.txt` for new shortcode collisions and drops, and review the diff of
    `database/generated/` like code.
 

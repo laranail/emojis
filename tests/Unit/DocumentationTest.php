@@ -112,3 +112,28 @@ it('names the current release line wherever a version line is written', function
             ->and(array_unique($constraints[1]))->toBe([$line], $page);
     }
 });
+
+it('documents only custom emoji names that addCustom() accepts', function (): void {
+    $names = [];
+
+    foreach (docPages() as $path => $contents) {
+        preg_match_all("/addCustom\\('([^']+)'([^\\n]*)/", $contents, $calls, PREG_SET_ORDER);
+
+        foreach ($calls as $call) {
+            $names[$call[1]] = $path;
+            preg_match('/aliases: \\[([^\\]]*)\\]/', $call[2], $list);
+            preg_match_all("/'([^']+)'/", $list[1] ?? '', $aliases);
+
+            foreach ($aliases[1] as $alias) {
+                $names[$alias] = $path;
+            }
+        }
+    }
+
+    // A name that is already a shortcode throws InvalidCustomEmoji, so the example would fail as written.
+    expect(count($names))->toBeGreaterThanOrEqual(6);
+
+    foreach ($names as $name => $path) {
+        expect(emojis()->catalogue()->byShortcode($name))->toBeNull("{$path}: '{$name}' is already a shortcode");
+    }
+});

@@ -4,8 +4,10 @@ declare(strict_types=1);
 
 use Illuminate\Support\HtmlString;
 use Illuminate\Support\Facades\Blade;
+use Illuminate\Support\Facades\Event;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Support\ServiceProvider;
+use Illuminate\Log\Events\MessageLogged;
 use Simtabi\Laranail\Emojis\Core\Emojis;
 use Illuminate\Support\Facades\Validator;
 
@@ -56,6 +58,21 @@ it('follows the application locale on every call', function (): void {
 
     app()->setLocale('de');
     expect(app(Emojis::class)->get('rocket')->name())->toBe('Rakete');
+});
+
+it('warns once about an unshipped application locale, however many emoji a search ranks', function (): void {
+    $warnings = 0;
+    Event::listen(MessageLogged::class, function (MessageLogged $event) use (&$warnings): void {
+        if (str_contains($event->message, 'locale-not-shipped')) {
+            $warnings++;
+        }
+    });
+
+    app()->setLocale('tlh');
+    app(Emojis::class)->search('face');
+    app(Emojis::class)->search('heart');
+
+    expect($warnings)->toBe(1);
 });
 
 it('validates with the emoji rules', function (mixed $value, object $rule, bool $passes): void {

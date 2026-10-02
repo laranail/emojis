@@ -70,6 +70,27 @@ it('reports an unshipped locale as a tolerated anomaly, once', function (): void
         ->and($emojis->reporter()->degradations())->toBe([]);
 });
 
+it('reports each unshipped locale once, not just the first', function (): void {
+    $logger = new class extends AbstractLogger
+    {
+        /** @var list<string> */
+        public array $locales = [];
+
+        public function log($level, string|Stringable $message, array $context = []): void
+        {
+            $this->locales[] = (string) ($context['locale'] ?? '');
+        }
+    };
+
+    $emojis = Emojis::create(reporter: new Psr3FailureReporter($logger));
+
+    foreach (['tlh', 'tlh', 'qya', 'tlh', 'qya'] as $locale) {
+        $emojis->get('rocket')->name($locale);
+    }
+
+    expect($logger->locales)->toBe(['tlh', 'qya']);
+});
+
 it('degrades, records and continues when a shipped locale shard is broken', function (): void {
     $dir = sys_get_temp_dir() . '/laranail-emojis-' . bin2hex(random_bytes(4));
     mkdir($dir . '/locales', 0o775, true);

@@ -67,6 +67,9 @@ jobs:
             echo "CHANGELOG.md has no section for $version; a release without real notes is incomplete." >&2
             exit 1
           fi
+          # The CHANGELOG links docs relatively (docs/tools/...), which resolve in the repository but not on the
+          # release page. Point them at the tagged files; absolute URLs, anchors and mailto: are left alone.
+          notes=$(printf '%s\n' "$notes" | perl -pe 's{\]\((?!https?://|mailto:|#)(?:\./)?([^)\s]+)\)}{](https://github.com/laranail/emojis/blob/$ENV{GITHUB_REF_NAME}/$1)}g')
           {
             echo "body<<__CHANGELOG_EOF__"
             printf '%s\n' "$notes"
@@ -75,7 +78,7 @@ jobs:
             echo "__CHANGELOG_EOF__"
           } >> "$GITHUB_OUTPUT"
 
-      # Updates in place when the moving tag re-fires the workflow against an existing release.
+      # Updates the release in place if the workflow is re-run for the same tag.
       - name: Publish
         uses: softprops/action-gh-release@efb35369e0ad2afab669f228072c1b0d510eae64 # v3.0.3
         with:

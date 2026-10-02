@@ -78,10 +78,20 @@ final class Catalogue
     /** ":thumbsup:", "thumbsup", "+1" in any preset, a curated alias, a registered extra, or a slug. */
     public function byShortcode(string $code): ?Emoji
     {
-        $code = strtolower(trim($code, ': '));
-        $hex = $this->custom->shortcodes()[$code] ?? $this->shortcodeIndex()[$code] ?? null;
+        $hex = $this->shortcodeTarget($code);
 
         return $hex === null ? null : $this->byHexcode($hex);
+    }
+
+    /**
+     * The hexcode a shortcode means now: one added with addShortcode() wins over the dataset's. Reading and
+     * writing both ask this, so a remapped code is written only for the emoji it now reads back as.
+     */
+    public function shortcodeTarget(string $code): ?string
+    {
+        $code = strtolower(trim($code, ': '));
+
+        return $this->custom->shortcodes()[$code] ?? $this->shortcodeIndex()[$code] ?? null;
     }
 
     public function bySlug(string $slug): ?Emoji

@@ -195,9 +195,20 @@ final class Emojis implements EmojisFluent
         return $this->query()->search($term, $locale)->limit($limit)->get();
     }
 
+    /**
+     * A random emoji, from one group if given. Components (skin-tone and hair swatches) are left out of the
+     * catalogue by default, so asking for that group includes them rather than drawing from an empty pool.
+     *
+     * @throws EmojiNotFound when the group has no emoji to draw from
+     */
     public function random(?Group $group = null): Emoji
     {
-        $pool = $this->query()->group(...($group instanceof Group ? [$group] : []))->get()->all();
+        $query = $this->query()->group(...($group instanceof Group ? [$group] : []));
+        $pool = ($group === Group::Component ? $query->withComponents() : $query)->get()->all();
+
+        if ($pool === []) {
+            throw EmojiNotFound::for('group', $group->value ?? 'any');
+        }
 
         return $pool[random_int(0, count($pool) - 1)];
     }
