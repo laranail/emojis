@@ -41,6 +41,12 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/),
 
 ### Fixed
 
+- `.dev/tools/cross-check.php` checked a hard-coded list of copychar.cc's pages, and skipped a page it
+  could not load while still reporting "0 not covered". It now reads the site's sitemap, so a page the site
+  adds is checked and reported, and `--strict` fails when a page does not load. The site has twelve pages
+  (2026-10-02): the ten character pages, the home page (which repeats "popular") and "about". All 4,758
+  characters are covered: an emoji, one of our symbols, or one of 80 excluded by rule.
+
 - `Emoji::emoticons()` missed an emoticon added after that emoji's emoticons were first read, because the
   lookup was memoised and never refreshed.
 - `toEmoticons()` wrote an emoji's primary emoticon even after the caller remapped it to another emoji, so

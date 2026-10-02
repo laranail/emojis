@@ -30,7 +30,7 @@ and `symbols.json` (how the symbol groups are drawn from Unicode).
 |---|---|---|
 | unicode.org `full-emoji-list`, `full-emoji-modifiers` | the codes, to prove every charted emoji is in the catalogue | the chart images are vendors' artwork, "for illustration only"; reproducing or redistributing them without the owner's permission is prohibited by the Consortium's [Images and Rights](https://www.unicode.org/emoji/images.html) page |
 | getemoji.com | the characters it offers for copying, to prove each is recognised | it adds nothing Unicode does not publish |
-| copychar.cc | the code points on its ten pages, to prove each is an emoji, one of our symbols, or excluded on purpose | its selection is its own; ours is drawn from Unicode by rule |
+| copychar.cc | the code points on every page its sitemap lists (ten character pages, 4,758 characters, measured 2026-10-02), to prove each is an emoji, one of our symbols, or excluded on purpose; a page the sitemap adds is checked and reported | its selection is its own; ours is drawn from Unicode by rule |
 | emojipedia.org | nothing | its images "belong to their respective font creators" and its prose is its own |
 
 Apple, Google-in-chart, Microsoft-in-chart, Samsung and Facebook artwork is not available under any licence

@@ -12,7 +12,7 @@ declare(strict_types=1);
  *   resolve, fully qualified. This is authoritative, so a miss fails.
  * - getemoji.com: everything it offers for copying must be recognised: an emoji in any qualification, a
  *   text-presentation form of one, or a symbol from our catalogue.
- * - copychar.cc: every character on its ten pages must be an emoji, a symbol in our catalogue, or one we
+ * - copychar.cc: every character on every page its sitemap lists must be an emoji, a symbol in our catalogue, or one we
  *   exclude on purpose (controls, format and invisible characters, private use, combining marks).
  *
  * Only codes and characters are read; no image, description or other content is copied from these sites
@@ -107,12 +107,37 @@ foreach (file(ROOT . '/build/cache/sources/ucd/UnicodeData.txt', FILE_IGNORE_NEW
 $seen = [];
 $gaps = [];
 $excluded = 0;
+$unreachable = [];
 
-foreach (COPYCHAR as $page) {
+// The pages come from the site's sitemap, so a page copychar.cc adds is checked rather than missed.
+// COPYCHAR is what the site was measured to have (2026-10-02: those ten, plus the home page, which
+// repeats "popular", and "about", which lists no characters); a difference is reported either way.
+$sitemap = $get('https://copychar.cc/sitemap.xml');
+$pages = COPYCHAR;
+
+if ($sitemap === null) {
+    $lines[] = '- copychar.cc/sitemap.xml: not reachable, checked the known pages only';
+    $unreachable[] = 'sitemap.xml';
+} else {
+    preg_match_all('#<loc>https://copychar\.cc/([a-z0-9-]*)/?</loc>#', $sitemap, $locs);
+    $listed = array_values(array_diff(array_unique($locs[1]), ['', 'about']));
+    $added = array_diff($listed, COPYCHAR);
+    $removed = array_diff(COPYCHAR, $listed);
+
+    if ($added !== [] || $removed !== []) {
+        $lines[] = '- copychar.cc pages changed — new: ' . (implode(', ', $added) ?: 'none') . '; gone: ' . (implode(', ', $removed) ?: 'none') . ' (update COPYCHAR)';
+        $failed = $failed || ($strict && $added !== []);
+    }
+
+    $pages = array_values(array_unique([...$listed, ...COPYCHAR]));
+}
+
+foreach ($pages as $page) {
     $html = $get("https://copychar.cc/{$page}/");
 
     if ($html === null) {
         $lines[] = "- copychar.cc/{$page}: not reachable, skipped";
+        $unreachable[] = $page;
 
         continue;
     }
@@ -139,8 +164,11 @@ foreach (COPYCHAR as $page) {
     sleep(1);
 }
 
-$lines[] = sprintf('- copychar.cc: %d characters, %d excluded on purpose, %d not covered%s', count($seen), $excluded, count($gaps), $gaps === [] ? '' : ' — ' . implode(' ', array_slice($gaps, 0, 30)));
-$failed = $failed || ($strict && $gaps !== []);
+$lines[] = sprintf('- copychar.cc: %d pages, %d characters, %d excluded on purpose, %d not covered%s', count($pages) - count($unreachable), count($seen), $excluded, count($gaps), $gaps === [] ? '' : ' — ' . implode(' ', array_slice($gaps, 0, 30)));
+
+// A page that did not load was not checked, so "0 not covered" would be claimed over characters nobody
+// looked at. In strict mode that is a failure, not a skip.
+$failed = $failed || ($strict && ($gaps !== [] || $unreachable !== [] || $seen === []));
 
 fwrite(STDOUT, implode("\n", $lines) . "\n");
 
