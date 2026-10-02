@@ -1,0 +1,11 @@
+{
+  // Emits declarations only, into dist/types, mirroring resources/assets. See .dev/tools/types.mjs.
+  "extends": "./tsconfig.json",
+  "compilerOptions": {
+    "noEmit": false,
+    "declaration": true,
+    "emitDeclarationOnly": true,
+    "rootDir": "resources/assets",
+    "outDir": "dist/types"
+  }
+}

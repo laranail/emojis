@@ -5,6 +5,21 @@ All notable changes to `laranail/emojis` are documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/), and this project adheres to
 [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [Unreleased]
+
+### Changed
+
+- **The picker module is TypeScript.** `resources/assets/scripts/picker.ts` replaces `picker.js`; the built
+  `public/assets/js/picker.js` and its exports are unchanged. `public/assets/js/picker.d.ts` is now generated
+  from the source (`npm run types`) instead of written by hand, and `npm run typecheck` fails when the two
+  differ.
+
+### Added
+
+- The picker's state is exported as pure functions — `buildSections()`, `searchSections()`, `capPayload()`,
+  `insertText()`, `indexPayload()`, plus `DEFAULT_STRINGS` and `TONE_SWATCHES` — which the vanilla `Picker`
+  now uses, so another renderer can share them.
+
 ## [0.4.0] - 2026-10-02
 
 ### Added

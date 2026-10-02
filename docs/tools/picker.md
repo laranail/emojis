@@ -92,7 +92,13 @@ picker.destroy();
 
 Every option also reads from `data-laranail-emoji-*` attributes on a `[data-laranail-emoji-picker]`
 element. Importing the module mounts those automatically; set `globalThis.__laranailEmojiNoAutoInit = true`
-first to mount by hand. TypeScript declarations ship beside it as `js/picker.d.ts`.
+first to mount by hand. The module is written in TypeScript (`resources/assets/scripts/picker.ts`), and its
+declarations ship beside the build as `js/picker.d.ts`, generated from the source by `npm run types` — a
+check fails when they differ.
+
+The state behind the picker is exported as pure functions — `buildSections()`, `searchSections()`,
+`capPayload()`, `insertText()`, `recordRecent()`, `withTone()` and the rest — so another renderer can reuse
+it.
 
 ## Accessibility
 

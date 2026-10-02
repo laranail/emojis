@@ -12,6 +12,9 @@ on:
       - '.github/workflows/assets.yml'
       - 'tests/js/**'
       - 'vitest.config.mjs'
+      - 'tsconfig.json'
+      - 'tsconfig.types.json'
+      - '.dev/tools/types.mjs'
   workflow_dispatch:
 
 concurrency:

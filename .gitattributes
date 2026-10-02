@@ -25,3 +25,5 @@
 /package.json       export-ignore
 /vite.config.mjs    export-ignore
 /vitest.config.mjs  export-ignore
+/tsconfig.json      export-ignore
+/tsconfig.types.json export-ignore
