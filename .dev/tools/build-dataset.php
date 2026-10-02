@@ -811,10 +811,12 @@ foreach ($symbolRules['groups'] as $group => $rules) {
         $hex = sprintf('%04X', $cp);
         $block = (string) $blockOf($cp);
         $blocksUsed[$block] ??= count($blocksUsed);
-        $symbolRecords[$hex] ??= [strtolower($ucd[$cp][0]), $ucd[$cp][1], $blocksUsed[$block], $entityOf[$cp] ?? null];
+        $symbolRecords[$hex] ??= [mb_chr($cp, 'UTF-8'), strtolower($ucd[$cp][0]), $ucd[$cp][1], $blocksUsed[$block], $entityOf[$cp] ?? null];
     }
 
-    $symbolGroups[$group] = implode(' ', array_map(static fn (int $cp): string => sprintf('%04X', $cp), array_keys($members)));
+    // Groups list their members as the characters themselves, space-separated. No member can be a space:
+    // separators are among the excluded categories, which the loop above already enforced.
+    $symbolGroups[$group] = implode(' ', array_map(static fn (int $cp): string => mb_chr($cp, 'UTF-8'), array_keys($members)));
 }
 
 $popular = [];
@@ -825,8 +827,8 @@ foreach (preg_split('/\s+/u', trim($symbolRules['popular'])) ?: [] as $char) {
     $hex = sprintf('%04X', $cp);
     $block = (string) $blockOf($cp);
     $blocksUsed[$block] ??= count($blocksUsed);
-    $symbolRecords[$hex] ??= [strtolower($ucd[$cp][0]), $ucd[$cp][1], $blocksUsed[$block], $entityOf[$cp] ?? null];
-    $popular[] = $hex;
+    $symbolRecords[$hex] ??= [$char, strtolower($ucd[$cp][0]), $ucd[$cp][1], $blocksUsed[$block], $entityOf[$cp] ?? null];
+    $popular[] = $char;
 }
 
 count(array_unique($popular)) === count($popular) || $fail('symbols.json: popular lists a character twice');
@@ -1136,7 +1138,7 @@ $files = [
     'shortcodes.php'  => PhpEmitter::file(['presets' => $shortcodes, 'index' => $index], $header('Shortcodes per preset (hexcode → codes, primary first) and the merged reverse index (code → hexcode).')),
     'emoticons.php'   => PhpEmitter::file(['map' => $emoticons, 'risky' => array_keys($risky), 'primary' => $primaryEmoticon], $header('ASCII emoticons → hexcode, the opt-in "risky" subset, and each emoji\'s primary emoticon.')),
     'kaomoji.php'     => PhpEmitter::file(['groups' => $kaomojiGroups, 'items' => $kaomoji], $header("Kaomoji and text faces, grouped: googlefonts/emoji-metadata emoticon_ordering.json, then kaomojikan/kaomoji-data\n(groups prefixed ja_, with Japanese tags and kana readings).")),
-    'symbols.php'     => PhpEmitter::file(['fields' => ['name', 'category', 'block', 'entity'], 'blocks' => array_keys($blocksUsed), 'groups' => $symbolGroups, 'symbols' => $symbolRecords], $header("Special characters that are not emoji: Unicode name, general category, block (index into 'blocks') and\nshortest WHATWG named entity, keyed by code point; 'groups' lists members in code point order ('popular' is curated).")),
+    'symbols.php'     => PhpEmitter::file(['fields' => ['char', 'name', 'category', 'block', 'entity'], 'blocks' => array_keys($blocksUsed), 'groups' => $symbolGroups, 'symbols' => $symbolRecords], $header("Special characters that are not emoji: the character, Unicode name, general category, block (index into\n'blocks') and shortest WHATWG named entity, keyed by code point. 'groups' lists each group's characters,\nspace-separated, in code point order ('popular' is curated).")),
     'collections.php' => PhpEmitter::file($collections, $header('Curated named collections: name => space-joined hexcodes, in display order.')),
     'carriers.php'    => PhpEmitter::file($carriers, $header("Japanese carrier emoji: per carrier, 'codes' (hexcode -> private-use code point) and 'reads'\n(code point -> hexcode; shared codes read as the first emoji in CLDR order).")),
     'images.php'      => PhpEmitter::file(['bits' => ['twemoji' => IMG_TWEMOJI, 'noto' => IMG_NOTO, 'openmoji' => IMG_OPENMOJI, 'fluent' => IMG_FLUENT], 'versions' => ['twemoji' => $lock['twemoji-listing']['version'], 'noto' => $lock['noto-listing']['version'], 'openmoji' => $lock['openmoji-data']['version'], 'fluent' => $lock['fluent-listing']['version']], 'fluent' => $fluent, 'crops' => $crops], $header('Image-set coverage bits, pinned CDN versions, Fluent folder names, and measured crops ("inset x y size", permille).')),

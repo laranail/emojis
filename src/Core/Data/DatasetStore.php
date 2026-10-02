@@ -248,14 +248,14 @@ final class DatasetStore
     }
 
     /**
-     * The symbol catalogue: `fields`, `blocks` (names), `groups` (name => space-joined hex) and `symbols`
-     * (hex => [name, category, block index, entity|null]).
+     * The symbol catalogue: `fields`, `blocks` (names), `groups` (name => the members' characters,
+     * space-separated) and `symbols` (hex => [char, name, category, block index, entity|null]).
      *
-     * @return array{fields: list<string>, blocks: list<string>, groups: array<string, string>, symbols: array<array-key, array{0: string, 1: string, 2: int, 3: ?string}>}
+     * @return array{fields: list<string>, blocks: list<string>, groups: array<string, string>, symbols: array<array-key, array{0: string, 1: string, 2: string, 3: int, 4: ?string}>}
      */
     public function symbols(): array
     {
-        /** @var array{fields: list<string>, blocks: list<string>, groups: array<string, string>, symbols: array<array-key, array{0: string, 1: string, 2: int, 3: ?string}>} $shard */
+        /** @var array{fields: list<string>, blocks: list<string>, groups: array<string, string>, symbols: array<array-key, array{0: string, 1: string, 2: string, 3: int, 4: ?string}>} $shard */
         $shard = $this->shard('symbols', ['fields', 'blocks', 'groups', 'symbols']);
 
         return $shard;

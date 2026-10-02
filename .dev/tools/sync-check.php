@@ -6,7 +6,8 @@ declare(strict_types=1);
  * CI gate: fails when any generated file disagrees with what the generators produce today.
  *
  * Runs .dev/tools/build-dataset.php --check (the dataset shards), .dev/tools/generate-enums.php --check (the enums
- * generated from those shards) and .dev/tools/emoticons-doc.php --check (the emoticon table in the docs). Outside CI, a missing source cache is reported as a skip, so a contributor
+ * generated from those shards) and the docs generated from the dataset: .dev/tools/emoticons-doc.php --check (the emoticon table) and
+ * .dev/tools/emoji-list-doc.php --check (the emoji list, one page per group). Outside CI, a missing source cache is reported as a skip, so a contributor
  * without the upstream files can still lint. In CI the dataset check runs with --fetch, so the gate can
  * never be skipped where it matters: a skip in CI means the gate is silently not running, and is a failure.
  */
@@ -19,6 +20,7 @@ $commands = [
     'dataset'       => $php . ' ' . escapeshellarg($root . '/.dev/tools/build-dataset.php') . ' --check' . ($inCi ? ' --fetch' : ''),
     'enums'         => $php . ' ' . escapeshellarg($root . '/.dev/tools/generate-enums.php') . ' --check',
     'emoticons doc' => $php . ' ' . escapeshellarg($root . '/.dev/tools/emoticons-doc.php') . ' --check',
+    'emoji list'    => $php . ' ' . escapeshellarg($root . '/.dev/tools/emoji-list-doc.php') . ' --check',
 ];
 
 foreach ($commands as $name => $command) {
