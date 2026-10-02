@@ -137,7 +137,7 @@ it('names the current release line wherever a version line is written', function
     expect($newest)->not->toBeEmpty()
         ->and($composer['extra']['branch-alias']['dev-main'] ?? null)->toBe("{$line}.x-dev");
 
-    foreach (['README.md', 'docs/installation.md'] as $page) {
+    foreach (['README.md', 'docs/installation.md', 'docs/release.md'] as $page) {
         preg_match_all('/laranail\/emojis:\^([\d.]+)/', (string) file_get_contents("{$root}/{$page}"), $constraints);
 
         expect($constraints[1])->not->toBeEmpty($page)
