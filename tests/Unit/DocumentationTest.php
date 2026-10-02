@@ -93,3 +93,22 @@ it('shows outputs the code really produces', function (string $actual, string $d
     'emoticons: remove one'     => fn (): array => [Emojis::create()->removeEmoticon(':)')->text('🙂')->toEmoticons(), ':-)'],
     'recipe: older platforms'   => fn (): array => [emojis()->text('❤️‍🔥 🫩 🚀')->supportedUpTo(EmojiVersion::V13_0)->toEmoji(), '❤️🔥 :face_with_eye_bags: 🚀'],
 ]);
+
+it('names the current release line wherever a version line is written', function (): void {
+    $root = dirname(__DIR__, 2);
+    preg_match('/^## \[(\d+)\.(\d+)\.\d+\]/m', (string) file_get_contents($root . '/CHANGELOG.md'), $newest);
+
+    // Before 1.0 a caret constraint stops at the minor version, so the line is "0.3"; from 1.0 it is "1".
+    $line = $newest[1] === '0' ? "0.{$newest[2]}" : $newest[1];
+    $composer = json_decode((string) file_get_contents($root . '/composer.json'), true);
+
+    expect($newest)->not->toBeEmpty()
+        ->and($composer['extra']['branch-alias']['dev-main'] ?? null)->toBe("{$line}.x-dev");
+
+    foreach (['README.md', 'docs/installation.md'] as $page) {
+        preg_match_all('/laranail\/emojis:\^([\d.]+)/', (string) file_get_contents("{$root}/{$page}"), $constraints);
+
+        expect($constraints[1])->not->toBeEmpty($page)
+            ->and(array_unique($constraints[1]))->toBe([$line], $page);
+    }
+});

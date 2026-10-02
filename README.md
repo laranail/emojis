@@ -19,7 +19,7 @@ Add the laranail VCS repositories to your root `composer.json` (see
 [installation](docs/installation.md)), then:
 
 ```bash
-composer require laranail/emojis:^0.1
+composer require laranail/emojis:^0.2
 ```
 
 ## <a name="documentation"></a>Documentation

@@ -53,6 +53,13 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/),
 
 ### Fixed
 
+- **The install command installed 0.1.** `README.md` and `docs/installation.md` said
+  `composer require laranail/emojis:^0.1` after `v0.2.0` shipped, and before 1.0 `^0.1` stops at
+  `<0.2.0`, so it resolved `v0.1.2`. The `dev-main` branch alias also still said `0.1.x-dev`, which made
+  the weekly release-currency check compare `v0.1.2` with `main` and fail. Both now name the current line,
+  `docs/release.md` describes the release process as it is actually done (a new tag per release, never a
+  moved one), and a test fails when the CHANGELOG, the alias and the install commands disagree.
+
 - `.dev/tools/cross-check.php` checked a hard-coded list of copychar.cc's pages, and skipped a page it
   could not load while still reporting "0 not covered". It now reads the site's sitemap, so a page the site
   adds is checked and reported, and `--strict` fails when a page does not load. The site has twelve pages
