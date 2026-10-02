@@ -5,8 +5,8 @@ import { payload } from './fixture.mjs';
 
 globalThis.__laranailEmojiNoAutoInit = true;
 
-const module = await import('../../resources/assets/scripts/picker.js');
-const { Picker, StaticSource, ApiSource, memoryStore, localStorageStore, fold, charOf, withTone, search, sortItems, recordRecent, orderRecent, parseOptions, autoInit, byVersion, detectMaxVersion } = module;
+const module = await import('../../resources/assets/scripts/picker.ts');
+const { Picker, StaticSource, ApiSource, memoryStore, localStorageStore, fold, charOf, withTone, search, sortItems, recordRecent, orderRecent, parseOptions, autoInit, byVersion, detectMaxVersion, buildSections, searchSections, capPayload, insertText, indexPayload } = module;
 
 const root = resolve(import.meta.dirname, '../..');
 const flush = () => new Promise((r) => setTimeout(r, 0));
@@ -84,6 +84,46 @@ describe('pure helpers', () => {
     expect(parseOptions(element)).toMatchObject({
       target: '#message', tone: 4, maxRecent: 36, sort: 'default', categories: ['recent', 'flags'], closeOnSelect: false, inline: false, strings: {},
     });
+  });
+});
+
+describe('shared state helpers', () => {
+  it('builds Frequently used, the groups and Custom, limited to the categories asked for', () => {
+    const recent = [{ base: '1F680', hexcode: '1F680', count: 1, at: 2 }, { base: 'GONE', hexcode: 'GONE', count: 9, at: 1 }];
+    const all = buildSections(payload(), { recent, strings: { recent: 'Récents' } });
+
+    expect(all.map((s) => s.slug)).toEqual(['recent', 'smileys_and_emotion', 'people_and_body', 'travel_and_places', 'custom']);
+    expect(all[0]).toMatchObject({ label: 'Récents', items: [{ hexcode: '1F680' }] });
+    expect(buildSections(payload(), { categories: ['custom'] }).map((s) => s.slug)).toEqual(['custom']);
+    expect(searchSections(all, 'rocket').map((i) => i.hexcode)).toEqual(['1F680']);
+    expect(indexPayload(payload()).get('1F91D').name).toBe('handshake');
+  });
+
+  it('caps a payload by version, by detection, or not at all', () => {
+    const count = (p) => p.groups.flatMap((g) => g.emoji).length;
+
+    expect(count(capPayload(payload(), '13.0'))).toBe(5);
+    expect(count(capPayload(payload(), null))).toBe(6);
+    expect(count(capPayload(payload(), ''))).toBe(6);
+    expect(count(capPayload(payload(), 'auto', () => '0.6'))).toBe(3);
+  });
+
+  it('inserts at a known caret, appends otherwise, and announces input', () => {
+    document.body.replaceChildren();
+    const field = document.createElement('input');
+    document.body.append(field);
+    const onInput = vi.fn();
+    field.addEventListener('input', onInput);
+    field.value = 'ab';
+    field.selectionStart = field.selectionEnd = 0;
+
+    insertText(field, '🚀', false);
+    expect(field.value).toBe('ab🚀');
+
+    field.setSelectionRange(1, 1);
+    insertText(field, '👋', true);
+    expect(field.value).toBe('a👋b🚀');
+    expect(onInput).toHaveBeenCalledTimes(2);
   });
 });
 
@@ -352,7 +392,7 @@ describe('Picker', () => {
 describe('the build', () => {
   it('keeps every export of the module, and declares each one', async () => {
     const built = readFileSync(resolve(root, 'public/assets/js/picker.js'), 'utf8');
-    const declared = [...readFileSync(resolve(root, 'resources/assets/types/picker.d.ts'), 'utf8').matchAll(/^export declare (?:class|function) (\w+)/gm)].map((m) => m[1]).sort();
+    const declared = [...readFileSync(resolve(root, 'resources/assets/types/picker.d.ts'), 'utf8').matchAll(/^export declare (?:class|function|const) (\w+)/gm)].map((m) => m[1]).sort();
     const exported = Object.keys(module).sort();
 
     expect(exported).toEqual(declared);

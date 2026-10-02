@@ -67,7 +67,7 @@ it('builds into public/assets, one directory per kind, with stable names', funct
 
 it('styles every class the picker module writes, and only prefixed ones', function (): void {
     $css = builtClasses('picker');
-    preg_match_all('/`\$\{PREFIX\}(-picker[\w-]*)`/', (string) file_get_contents(dirname(__DIR__, 2) . '/resources/assets/scripts/picker.js'), $m);
+    preg_match_all('/`\$\{PREFIX\}(-picker[\w-]*)`/', (string) file_get_contents(dirname(__DIR__, 2) . '/resources/assets/scripts/picker.ts'), $m);
     $written = array_values(array_unique(array_map(static fn (string $suffix): string => 'laranail-emoji' . $suffix, $m[1])));
 
     expect(count($written))->toBeGreaterThan(10);

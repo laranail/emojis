@@ -73,6 +73,8 @@ image set moves.
 `resources/assets/styles/*.scss` is the source; `public/assets/` is the committed Vite build, so Composer
 installs need no Node. After changing the source run `npm install && npm run build` and commit both.
 `npm run assets-check` (the `Assets` workflow) fails when they disagree. No `package-lock.json` is committed.
+The picker is TypeScript: after changing `resources/assets/scripts/picker.ts`, run `npm run types` too, and
+`npm test` and `npm run typecheck` (strict, and the generated declarations must match the source).
 
 ## The scanner
 

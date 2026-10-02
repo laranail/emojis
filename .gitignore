@@ -9,3 +9,4 @@ composer.lock
 /node_modules
 /.dev/tools/measure/node_modules
 package-lock.json
+/dist

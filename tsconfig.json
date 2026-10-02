@@ -1,0 +1,17 @@
+{
+  // Type-checks the picker source (strict). `npm run typecheck` runs it; declarations come from
+  // tsconfig.types.json through .dev/tools/types.mjs.
+  "compilerOptions": {
+    "strict": true,
+    "noEmit": true,
+    "target": "ES2022",
+    "module": "ESNext",
+    "moduleResolution": "Bundler",
+    "lib": ["ES2022", "DOM", "DOM.Iterable"],
+    "jsx": "react-jsx",
+    "noUncheckedIndexedAccess": true,
+    "isolatedModules": true,
+    "skipLibCheck": true
+  },
+  "include": ["resources/assets/scripts/**/*.ts", "resources/assets/react/**/*.ts", "resources/assets/react/**/*.tsx"]
+}
