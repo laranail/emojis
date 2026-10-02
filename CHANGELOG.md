@@ -9,17 +9,33 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/),
 
 ### Added
 
+- **Status tags: `[OK]`, `[WARN]`, `[FAIL]` and 75 more**, for logs, consoles and plain text, in six groups
+  (outcome, severity, task state, test result, change, other), collected from what Symfony, Laravel, Pest and
+  the PSR-3 levels already print. Each has a role, a one-character text symbol that is never an emoji, the
+  emoji it stands for, and aliases. `Emojis::tags()` (`groups()`, `all()`, `group()`, `get()`, `for()`,
+  `search()`), `Emoji::tag()`, and the `Tag` and `TagRole` types. See
+  [docs/tools/tags.md](docs/tools/tags.md), generated from `database/sources/curated/tags.json` and checked
+  by `composer sync-check`.
+- **`Mode::Tag`** writes emoji as tags: `text('✅ Deployed')->to(Mode::Tag)` is `[OK] Deployed`. Emoji that stand
+  for no status degrade to their name. `output.tag_template` (default `[{tag}]`) sets the brackets, and
+  `output.auto_fallback` accepts `tag`. The convert command takes `--to=tag`.
+- `laranail::emojis.export --with=tags,emoticons,kaomoji,symbols` (or `all`) adds those catalogues to the
+  export. Without `--with` the document is unchanged.
+- `Symbols::all()` lists every symbol.
+
 - `images.custom.urls` (default `true`): set it to `false` to accept only inline images (data URI, base64,
   file) wherever users supply them, since a URL a user chooses is a tracking pixel for every reader.
   `images.custom.max_svg_elements` is now in the published config too; it was read but never listed.
 - `Emojis::has()` accepts an `Emoji` or an `EmojiId`, as `find()` does.
-- The facade documents all 47 public `Emojis` methods (it listed 26), and a test fails when one is missing or
+- The facade documents every public `Emojis` method (it listed 26 of 47), and a test fails when one is missing or
   its parameters drift. `docs/tools/conversion.md` and `querying.md` now list every public converter and query
   method (`fit()`, `carrier()`, `inCollection()` and `search()` were missing), guarded the same way.
 - `README.md` has a Quick start.
 
 ### Changed
 
+- **`Mode` has a fourteenth case, `Tag`.** A `match` over `Mode` with no `default` arm needs a `Tag` arm, or it
+  throws `UnhandledMatchError` when it meets one.
 - **A shortcode remapped with `addShortcode()` now holds for writing as well as reading.** After
   `addShortcode('rocket', 'grinning face')`, `:rocket:` read as 😀 but 🚀 was still written `:rocket:`, so the
   text no longer round-tripped. An emoji is now written with a code that reads back as itself: another of its

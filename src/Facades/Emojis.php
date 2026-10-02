@@ -8,6 +8,7 @@ use Illuminate\Support\Facades\Facade;
 use Simtabi\Laranail\Emojis\Core\Emoji;
 use Simtabi\Laranail\Emojis\Core\Kaomoji;
 use Simtabi\Laranail\Emojis\Core\Options;
+use Simtabi\Laranail\Emojis\Core\Tags\Tags;
 use Simtabi\Laranail\Emojis\Core\Enums\Mode;
 use Simtabi\Laranail\Emojis\Core\Enums\Group;
 use Simtabi\Laranail\Emojis\Core\Enums\EmojiId;
@@ -72,6 +73,7 @@ use Simtabi\Laranail\Emojis\Core\Contracts\FailureReporter;
  * @method static string datasetVersion()
  * @method static list<string> availableLocales()
  * @method static Symbols symbols()
+ * @method static Tags tags()
  * @method static ImageSets images()
  * @method static Locales locales()
  * @method static FailureReporter reporter()

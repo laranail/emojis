@@ -56,6 +56,7 @@ Hosted at <https://opensource.simtabi.com/documentation/laranail/emojis/>.
 - [Emoji list](docs/tools/emoji-list.md) — every emoji by group, with its name, shortcode and version
 - [Images](docs/tools/images.md) — image sets, fit (padding removal), a verified local copy, your own images, SVG sanitising
 - [Symbols](docs/tools/symbols.md) — 7,354 special characters: arrows, currency, maths, letters, hieroglyphs
+- [Status tags](docs/tools/tags.md) — `[OK]`, `[WARN]`, `[FAIL]` and 75 more, the emoji each stands for, and `Mode::Tag`
 - [Styles](docs/tools/styles.md) — the stylesheet: inline, link or `@use` the SCSS; tokens; the Vite build
 - [Terminal output](docs/tools/terminal.md) — `Mode::Auto`, width and truncation
 - [Localisation](docs/tools/localisation.md) — shipped locales and fallback

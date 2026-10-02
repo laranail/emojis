@@ -261,6 +261,20 @@ final class DatasetStore
         return $shard;
     }
 
+    /**
+     * The status tags: `fields`, `groups` (slug => label), `tags` (label => [group, role, symbol, emoji chars
+     * space-separated, aliases |-separated]) and `map` (emoji char => label).
+     *
+     * @return array{fields: list<string>, groups: array<string, string>, tags: array<string, array{0: string, 1: string, 2: string, 3: string, 4: string}>, map: array<string, string>}
+     */
+    public function tags(): array
+    {
+        /** @var array{fields: list<string>, groups: array<string, string>, tags: array<string, array{0: string, 1: string, 2: string, 3: string, 4: string}>, map: array<string, string>} $shard */
+        $shard = $this->shard('tags', ['fields', 'groups', 'tags', 'map']);
+
+        return $shard;
+    }
+
     /** @return array<array-key, string> hexcode => Fluent Emoji folder name */
     public function fluentFolders(): array
     {

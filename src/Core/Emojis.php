@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace Simtabi\Laranail\Emojis\Core;
 
 use Closure;
+use Simtabi\Laranail\Emojis\Core\Tags\Tags;
 use Simtabi\Laranail\Emojis\Core\Enums\Mode;
 use Simtabi\Laranail\Emojis\Core\Data\Record;
 use Simtabi\Laranail\Emojis\Core\Enums\Group;
@@ -65,6 +66,8 @@ final class Emojis implements EmojisFluent
     private ?Locales $locales = null;
 
     private ?Symbols $symbols = null;
+
+    private ?Tags $tags = null;
 
     /** @var array<string, string>|null region => hexcode */
     private ?array $flags = null;
@@ -502,6 +505,12 @@ final class Emojis implements EmojisFluent
     public function symbols(): Symbols
     {
         return $this->symbols ??= new Symbols($this->data);
+    }
+
+    /** Status tags for logs and consoles — `[OK]`, `[WARN]`, `[FAIL]` — and the emoji each stands for. */
+    public function tags(): Tags
+    {
+        return $this->tags ??= new Tags($this->data, $this->catalogue());
     }
 
     public function images(): ImageSets

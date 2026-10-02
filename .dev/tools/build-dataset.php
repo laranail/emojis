@@ -1086,6 +1086,46 @@ $scanner = [
 ];
 
 // ---------------------------------------------------------------------------------------------------
+// 8b. Status tags (database/sources/curated/tags.json): [OK], [WARN], [FAIL] … for logs and consoles.
+//     After the scanner tables, because a tag's text symbol is checked against every emoji sequence.
+// ---------------------------------------------------------------------------------------------------
+
+$tagSource = $overlay('tags');
+$tagGroups = $tagSource['groups'];
+$tagRecords = [];
+$tagNames = [];
+$tagMap = [];
+
+foreach ($tagSource['tags'] as $tag) {
+    ['label' => $label, 'group' => $group, 'role' => $role, 'symbol' => $symbol, 'emoji' => $members, 'aliases' => $tagAliases] = $tag;
+
+    preg_match('/^[A-Z0-9][A-Z0-9\/ -]*$/', $label) === 1 || $fail("tags.json: label \"{$label}\" is not upper-case letters, digits, space, / or -");
+    isset($tagGroups[$group]) || $fail("tags.json: {$label} names unknown group {$group}");
+    in_array($role, ['success', 'danger', 'warning', 'info', 'muted'], true) || $fail("tags.json: {$label} has unknown role {$role}");
+    mb_strlen($symbol, 'UTF-8') === 1 && ! isset($sequences[$symbol]) && ! isset($sequences[$symbol . "\u{FE0F}"]) || $fail("tags.json: {$label}'s symbol \"{$symbol}\" must be one character that is not an emoji");
+    $members !== [] || $fail("tags.json: {$label} lists no emoji");
+
+    foreach ([$label, ...$tagAliases] as $name) {
+        ! isset($tagNames[$name]) || $fail("tags.json: \"{$name}\" is used by both {$tagNames[$name]} and {$label}");
+        $tagNames[$name] = $label;
+    }
+
+    foreach ($members as $hex) {
+        isset($records[$hex]) && $records[$hex]['status'] !== 'component' || $fail("tags.json: {$label} lists unknown {$hex}");
+    }
+
+    $tagMap[$records[$members[0]]['emoji']] = $label;
+    $tagRecords[$label] = [$group, $role, $symbol, implode(' ', array_map(static fn (string $hex): string => $records[$hex]['emoji'], $members)), implode('|', $tagAliases)];
+}
+
+foreach ($tagSource['map'] as $hex => $label) {
+    $char = isset($records[$hex]) ? $records[$hex]['emoji'] : $fail("tags.json map: unknown {$hex}");
+    isset($tagRecords[$label]) || $fail("tags.json map: {$hex} points at unknown tag {$label}");
+    ! isset($tagMap[$char]) || $fail("tags.json map: {$hex} already reads as {$tagMap[$char]}");
+    $tagMap[$char] = $label;
+}
+
+// ---------------------------------------------------------------------------------------------------
 // 9. Emit
 // ---------------------------------------------------------------------------------------------------
 
@@ -1139,6 +1179,7 @@ $files = [
     'emoticons.php'   => PhpEmitter::file(['map' => $emoticons, 'risky' => array_keys($risky), 'primary' => $primaryEmoticon], $header('ASCII emoticons → hexcode, the opt-in "risky" subset, and each emoji\'s primary emoticon.')),
     'kaomoji.php'     => PhpEmitter::file(['groups' => $kaomojiGroups, 'items' => $kaomoji], $header("Kaomoji and text faces, grouped: googlefonts/emoji-metadata emoticon_ordering.json, then kaomojikan/kaomoji-data\n(groups prefixed ja_, with Japanese tags and kana readings).")),
     'symbols.php'     => PhpEmitter::file(['fields' => ['char', 'name', 'category', 'block', 'entity'], 'blocks' => array_keys($blocksUsed), 'groups' => $symbolGroups, 'symbols' => $symbolRecords], $header("Special characters that are not emoji: the character, Unicode name, general category, block (index into\n'blocks') and shortest WHATWG named entity, keyed by code point. 'groups' lists each group's characters,\nspace-separated, in code point order ('popular' is curated).")),
+    'tags.php'        => PhpEmitter::file(['fields' => ['group', 'role', 'symbol', 'emoji', 'aliases'], 'groups' => $tagGroups, 'tags' => $tagRecords, 'map' => $tagMap], $header("Status tags, keyed by label, in display order: group, role, a one-character text symbol, emoji\n(space-separated, primary first) and aliases (|-separated). 'map' is the emoji each tag is written for:\nevery tag's primary, plus curated extras.")),
     'collections.php' => PhpEmitter::file($collections, $header('Curated named collections: name => space-joined hexcodes, in display order.')),
     'carriers.php'    => PhpEmitter::file($carriers, $header("Japanese carrier emoji: per carrier, 'codes' (hexcode -> private-use code point) and 'reads'\n(code point -> hexcode; shared codes read as the first emoji in CLDR order).")),
     'images.php'      => PhpEmitter::file(['bits' => ['twemoji' => IMG_TWEMOJI, 'noto' => IMG_NOTO, 'openmoji' => IMG_OPENMOJI, 'fluent' => IMG_FLUENT], 'versions' => ['twemoji' => $lock['twemoji-listing']['version'], 'noto' => $lock['noto-listing']['version'], 'openmoji' => $lock['openmoji-data']['version'], 'fluent' => $lock['fluent-listing']['version']], 'fluent' => $fluent, 'crops' => $crops], $header('Image-set coverage bits, pinned CDN versions, Fluent folder names, and measured crops ("inset x y size", permille).')),
@@ -1211,6 +1252,7 @@ file_put_contents(ROOT . '/build/dataset-report.txt', implode("\n", [
     'emoticons: ' . count($emoticons) . ' (' . count($risky) . ' risky), primaries: ' . count($primaryEmoticon),
     'emoticons by source: ' . implode(', ', array_map(static fn (string $source, int $n): string => "{$source} {$n}", array_keys($bySource = array_count_values($emoticonSource)), $bySource)),
     'kaomoji: ' . count($kaomoji),
+    'tags: ' . count($tagRecords) . ' in ' . count($tagGroups) . ' groups, ' . count($tagMap) . ' emoji mapped',
     'fluent mapped: ' . count($fluent),
     '',
     'collisions:',

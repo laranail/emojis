@@ -115,6 +115,8 @@ php artisan laranail::emojis.show wave
 php artisan laranail::emojis.convert "Ship it :) :rocket:" --to=ascii --from=unicode,shortcode,emoticon
 echo "hi 🚀" | php artisan laranail::emojis.convert - --to=shortcode
 php artisan laranail::emojis.export public/emojis.json --locale=fr --variants
+php artisan laranail::emojis.export public/emojis.json --with=tags,emoticons    # or kaomoji, symbols, all
+php artisan laranail::emojis.convert "✅ Deployed" --to=tag                     # [OK] Deployed
 php artisan laranail::emojis.sanitize - --check < user-content.txt
 php artisan laranail::emojis.images install twemoji
 php artisan laranail::emojis.images verify twemoji

@@ -54,6 +54,12 @@ final class Symbols
         return $members === '' ? [] : explode(' ', $members);
     }
 
+    /** @return list<Symbol> every symbol, in code point order */
+    public function all(): array
+    {
+        return array_values(array_filter(array_map(fn (int|string $hex): ?Symbol => $this->byHex((string) $hex), array_keys($this->data->symbols()['symbols'])), static fn (?Symbol $s): bool => $s instanceof Symbol));
+    }
+
     /** By the character itself, `U+2192`, or the hex code point. */
     public function get(string $key): ?Symbol
     {

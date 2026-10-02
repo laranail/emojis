@@ -39,6 +39,7 @@ return [
 
     'output' => [
         'name_template' => '[{name}]', // Mode::Name; must contain {name}
+        'tag_template'  => '[{tag}]',  // Mode::Tag; must contain {tag}
         'auto_fallback' => 'ascii',    // Mode::Auto where the terminal cannot draw emoji
         'degradation'   => [],         // per-target fallback chains: ['text' => ['shortcode', 'ascii']]
     ],

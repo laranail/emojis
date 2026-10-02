@@ -27,6 +27,7 @@ Grouped by concern; each group's keys are listed once.
 | `images.custom.urls` | `true` | Accept image URLs. `false` accepts only inline images (data URI, base64, file) — see [security](tools/security.md#images-you-supply). |
 | `images.custom.hosts` | `[]` | Hosts an image URL may name; empty allows any `https://` host. |
 | `output.name_template` | `'[{name}]'` | `Mode::Name` output; must contain `{name}`. |
+| `output.tag_template` | `'[{tag}]'` | `Mode::Tag` output; must contain `{tag}`. See [status tags](tools/tags.md). |
 | `output.auto_fallback` | `'ascii'` | What `Mode::Auto` becomes when the terminal cannot draw emoji. |
 | `output.degradation` | `[]` | Per-target fallback chains, e.g. `'text' => ['shortcode', 'ascii']`. |
 | `input.max_bytes` | `1048576` | Larger input throws `InvalidInput` instead of pinning a worker. |
@@ -95,6 +96,8 @@ php artisan vendor:publish --tag=laranail::emojis-config --force
   already did `script`, `style` and `textarea`.
 - The sanitiser also removes U+206A–206F, U+1BCA0–1BCA3, and Mongolian free variation selectors that do
   not follow a Mongolian letter.
+- `Mode` has a fourteenth case, `Tag`. A `match` over `Mode` in your code with no `default` arm needs a `Tag`
+  arm, or it throws `UnhandledMatchError` when it meets one.
 
 ## Environment
 

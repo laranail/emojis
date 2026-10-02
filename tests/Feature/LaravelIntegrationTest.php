@@ -162,6 +162,34 @@ it('exports a versioned JSON catalogue', function (): void {
     }
 });
 
+it('adds the optional catalogues to the export only when asked, and refuses an unknown one', function (): void {
+    $path = sys_get_temp_dir() . '/laranail-emojis-export-' . bin2hex(random_bytes(4)) . '.json';
+    $read = static fn (): array => json_decode((string) file_get_contents($path), true, flags: JSON_THROW_ON_ERROR);
+
+    try {
+        $this->artisan('laranail::emojis.export', ['path' => $path])->assertSuccessful();
+        expect(array_keys($read()))->toBe(['schemaVersion', 'dataset', 'locale', 'emojis']);
+
+        $this->artisan('laranail::emojis.export', ['path' => $path, '--with' => 'all'])->assertSuccessful();
+        $document = $read();
+
+        expect(array_keys($document))->toBe(['schemaVersion', 'dataset', 'locale', 'emojis', 'tags', 'emoticons', 'kaomoji', 'symbols'])
+            ->and($document['tags']['tags'][0]['text'])->toBe('[OK]')
+            ->and($document['emoticons'][':)'])->toBe('1F642')
+            ->and(count($document['kaomoji']['kaomoji']))->toBeGreaterThan(2000)
+            ->and(count($document['symbols']['symbols']))->toBeGreaterThan(7000)
+            ->and($document['symbols']['groups']['currency'])->toContain('€');
+
+        $this->artisan('laranail::emojis.export', ['path' => $path, '--with' => 'tags,smileys'])->assertFailed();
+    } finally {
+        @unlink($path);
+    }
+});
+
+it('converts emoji to status tags from the command line', function (): void {
+    $this->artisan('laranail::emojis.convert', ['text' => '✅ Deployed', '--to' => 'tag'])->expectsOutput('[OK] Deployed')->assertSuccessful();
+});
+
 it('resolves its collaborators from the container, so an application can replace them', function (): void {
     app()->forgetInstance(Emojis::class);
     app()->singleton(TerminalProbe::class, static fn (): EnvTerminalProbe => new EnvTerminalProbe(override: false));

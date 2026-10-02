@@ -6,6 +6,7 @@ namespace Simtabi\Laranail\Emojis\Core;
 
 use Stringable;
 use JsonSerializable;
+use Simtabi\Laranail\Emojis\Core\Tags\Tag;
 use Simtabi\Laranail\Emojis\Core\Enums\Mode;
 use Simtabi\Laranail\Emojis\Core\Enums\Group;
 use Simtabi\Laranail\Emojis\Core\Enums\Carrier;
@@ -136,6 +137,12 @@ final readonly class Emoji implements JsonSerializable, Stringable
     public function emoticon(): ?string
     {
         return $this->emojis->catalogue()->emoticonOf($this);
+    }
+
+    /** The status tag this emoji is written as in Mode::Tag — ✅ is `[OK]` — or null when it stands for none. */
+    public function tag(): ?Tag
+    {
+        return $this->emojis->tags()->for($this);
     }
 
     /** @return list<string> every ASCII emoticon that parses to this emoji */

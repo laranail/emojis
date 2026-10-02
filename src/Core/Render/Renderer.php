@@ -141,6 +141,7 @@ final readonly class Renderer
             Mode::Escaped    => $text(implode('', array_map($settings->escapeFormat->encode(...), $emoji->codepoints))),
             Mode::Codepoint  => $text($this->codepoints($emoji)),
             Mode::Name       => $text(strtr($this->emojis->options()->nameTemplate, ['{name}' => $emoji->name($settings->locale)])),
+            Mode::Tag        => $text($this->emojis->tags()->for($emoji)?->text($this->emojis->options()->tagTemplate)),
             Mode::Image      => $this->imagePiece($emoji, $settings),
             Mode::Carrier    => $text($emoji->carrierCode($settings->carrier)),
             Mode::Auto       => $this->attempt($emoji, $this->emojis->resolveAuto(), $settings, $original),

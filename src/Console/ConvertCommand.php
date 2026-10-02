@@ -23,7 +23,7 @@ final class ConvertCommand extends Command
 
     protected $signature = 'laranail::emojis.convert
                             {text : The text to convert, or - to read STDIN}
-                            {--to=auto : emoji, text, unicode, ascii, emoticon, shortcode, image, html_entity, escaped, codepoint, name, auto}
+                            {--to=auto : emoji, text, unicode, ascii, emoticon, shortcode, image, html_entity, escaped, codepoint, name, tag, auto}
                             {--from=unicode,shortcode : Comma-separated source forms to parse}
                             {--format=php : Escape format for --to=escaped: php, javascript, python, css}
                             {--locale= : Locale for --to=name}';
