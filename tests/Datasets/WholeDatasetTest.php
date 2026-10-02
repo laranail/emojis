@@ -119,7 +119,7 @@ it('gives text presentation exactly where Unicode defines it', function (): void
             expect($text)->toEndWith("\u{FE0E}", $emoji->hexcode);
             $withText++;
         } else {
-            expect($text)->not->toContain("\u{FE0E}", $emoji->hexcode);
+            expect(str_contains($text, "\u{FE0E}"))->toBeFalse($emoji->hexcode);
         }
     }
 

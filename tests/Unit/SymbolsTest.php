@@ -26,7 +26,7 @@ it('never contains an invisible, control, private-use or combining character', f
     foreach ($symbols->groups() as $group) {
         foreach ($symbols->group($group) as $symbol) {
             $inspected++;
-            expect(INVISIBLE_CATEGORIES)->not->toContain($symbol->category, $symbol->unicode());
+            expect(in_array($symbol->category, INVISIBLE_CATEGORIES, true))->toBeFalse($symbol->unicode());
         }
     }
 

@@ -8,6 +8,7 @@ use Throwable;
 use Simtabi\Laranail\Package\Tools\Enums\BootCriticality;
 use Simtabi\Laranail\Emojis\Core\Contracts\FailureReporter;
 use Simtabi\Laranail\Package\Tools\Services\Boot\BootReport;
+use Simtabi\Laranail\Emojis\Core\Support\Psr3FailureReporter;
 use Simtabi\Laranail\Package\Tools\Support\Resilience\FailurePolicy;
 
 /**
@@ -25,6 +26,9 @@ final class LaravelFailureReporter implements FailureReporter
     /** @var array<string, string> */
     private array $degraded = [];
 
+    /** @var array<string, true> */
+    private array $warned = [];
+
     public function __construct(private readonly ?BootReport $report = null) {}
 
     public function degraded(string $operation, Throwable $cause, array $context = []): void
@@ -39,6 +43,15 @@ final class LaravelFailureReporter implements FailureReporter
 
     public function warn(string $subject, array $context = []): void
     {
+        // Once per subject and context per worker: an unshipped app locale is resolved for every emoji a
+        // search ranks, and forwarding each call wrote thousands of identical warnings per request.
+        $key = Psr3FailureReporter::warningKey($subject, $context);
+
+        if (isset($this->warned[$key])) {
+            return;
+        }
+
+        $this->warned[$key] = true;
         FailurePolicy::warn(self::PREFIX . $subject, $context);
     }
 

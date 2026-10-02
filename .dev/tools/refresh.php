@@ -237,7 +237,8 @@ if ($sets !== []) {
     $run("{$php} " . escapeshellarg(ROOT . '/.dev/tools/build-dataset.php'));
 }
 
-$run("{$php} " . escapeshellarg(ROOT . '/.dev/tools/generate-enums.php'));
+// Everything built from the dataset, the docs included, so the sync-check gate below sees it current.
+$run("{$php} " . escapeshellarg(ROOT . '/.dev/tools/regenerate.php'));
 
 exec("{$php} " . escapeshellarg(ROOT . '/.dev/tools/cross-check.php') . ' 2>&1', $crossCheck, $crossStatus);
 $report[] = "\n## Cross-check\n\n" . implode("\n", $crossCheck);

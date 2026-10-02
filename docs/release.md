@@ -36,7 +36,9 @@ To do it by hand, `php .dev/tools/refresh.php` runs them all, or:
 
 1. Update the URLs and versions in `database/sources/upstream.lock.json`.
 2. `php .dev/tools/build-dataset.php --fetch`, then `php .dev/tools/build-dataset.php --lock`.
-3. `php .dev/tools/build-dataset.php && php .dev/tools/generate-enums.php`.
+3. `php .dev/tools/regenerate.php`: every generator in order, the dataset, the enums, and the docs built from
+   the dataset (`docs/tools/emoticons.md`, `docs/tools/emoji-list*.md`). `composer sync-check` runs the same
+   list with `--check`, so a generated page left stale fails CI like a stale shard.
 4. Review `build/dataset-report.txt` (shortcode collisions, dropped codes) and the diff of `database/generated/`.
 5. Run `composer lint && composer test`. The whole-dataset suite fails if any emoji stops round-tripping.
 

@@ -5,6 +5,35 @@ All notable changes to `laranail/emojis` are documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/), and this project adheres to
 [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [Unreleased]
+
+### Changed
+
+- **A shortcode remapped with `addShortcode()` now holds for writing as well as reading.** After
+  `addShortcode('rocket', 'grinning face')`, `:rocket:` read as 😀 but 🚀 was still written `:rocket:`, so the
+  text no longer round-tripped. An emoji is now written with a code that reads back as itself: another of its
+  shortcodes, its ASCII code or slug, and if a remap took every one, the character itself (`Ascii` mode
+  writes `U+1F680`, staying seven-bit). Adding a code that is not already in use changes nothing.
+
+### Fixed
+
+- **An unshipped application locale flooded the log.** Laravel's failure reporter forwarded every warning, and
+  a search resolves the locale for each emoji it ranks: two searches under an unshipped locale wrote 7,692
+  identical warnings. Warnings are now reported once per subject and context, in both the Laravel and the
+  PSR-3 reporter, which used to key on the subject alone and so stayed silent about every unshipped locale
+  after the first.
+- `Emojis::random(Group::Component)` threw a `ValueError`: components are left out of the catalogue by
+  default, so the pool was empty. It now draws from the components, and an empty pool throws
+  `EmojiNotFound`.
+- The image examples registered `:party:` and `:ship:`, which are 🎉 and 🚢, so `addCustom()` threw as written.
+  They use free names now, and a docs test fails on any example name that is already a shortcode.
+- **The weekly data refresh would have stalled on its first real change.** It regenerated the dataset and the
+  enums but not the docs built from them, then ran `composer sync-check`, which checks those docs too. Every
+  generator is now listed once in `.dev/tools/lib/Generators.php`; `.dev/tools/regenerate.php` runs them all,
+  the refresh calls it, `sync-check` checks the same list, and a test fails when a generator is missing from it.
+- Release notes linked docs relatively (`docs/tools/...`), which works in the repository but not on the GitHub
+  release page; the release workflow now points them at the tagged files.
+
 ## [0.3.0] - 2026-10-02
 
 ### Added

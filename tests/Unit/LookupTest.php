@@ -2,6 +2,7 @@
 
 declare(strict_types=1);
 
+use Simtabi\Laranail\Emojis\Core\Emoji;
 use Simtabi\Laranail\Emojis\Core\Kaomoji;
 use Simtabi\Laranail\Emojis\Core\Enums\Group;
 use Simtabi\Laranail\Emojis\Core\Enums\EmojiId;
@@ -90,4 +91,13 @@ it('lists kaomoji by group', function (): void {
     expect($shrugs)->not->toBeEmpty()
         ->and(count(emojis()->kaomojiGroups()))->toBeGreaterThan(30)
         ->and(array_filter(emojis()->kaomoji(asciiOnly: true), static fn (Kaomoji $k): bool => preg_match('/[^\x20-\x7E]/', $k->value) === 1))->toBeEmpty();
+});
+
+it('draws a random emoji from any group, components included', function (): void {
+    foreach (Group::cases() as $group) {
+        expect(emojis()->random($group)->group)->toBe($group, $group->value);
+    }
+
+    expect(emojis()->random())->toBeInstanceOf(Emoji::class)
+        ->and(count(Group::cases()))->toBeGreaterThanOrEqual(10);
 });
