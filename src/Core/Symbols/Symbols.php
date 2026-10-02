@@ -13,6 +13,17 @@ use Simtabi\Laranail\Emojis\Core\Data\DatasetStore;
  */
 final class Symbols
 {
+    /** Positions in a symbol record, in the order of the shard's `fields` (pinned by SymbolsTest). */
+    private const int CHAR = 0;
+
+    private const int NAME = 1;
+
+    private const int CATEGORY = 2;
+
+    private const int BLOCK = 3;
+
+    private const int ENTITY = 4;
+
     /** @var array<string, Symbol> */
     private array $built = [];
 
@@ -27,9 +38,20 @@ final class Symbols
     /** @return list<Symbol> the group's members in code point order (popular in curated order); [] for an unknown group */
     public function group(string $name): array
     {
+        return array_values(array_filter(array_map(fn (string $char): ?Symbol => $this->byHex($this->hexOf($char)), $this->characters($name)), static fn (?Symbol $s): bool => $s instanceof Symbol));
+    }
+
+    /**
+     * The group's characters themselves, in the same order as group(): what a picker or a "copy all" button
+     * needs, without building a Symbol for each. [] for an unknown group.
+     *
+     * @return list<string>
+     */
+    public function characters(string $name): array
+    {
         $members = $this->data->symbols()['groups'][$name] ?? '';
 
-        return $members === '' ? [] : array_values(array_filter(array_map($this->byHex(...), explode(' ', $members)), static fn (?Symbol $s): bool => $s instanceof Symbol));
+        return $members === '' ? [] : explode(' ', $members);
     }
 
     /** By the character itself, `U+2192`, or the hex code point. */
@@ -41,7 +63,7 @@ final class Symbols
             return $this->byHex(strtoupper(ltrim($m[1], '0') === '' ? '0' : $m[1]));
         }
 
-        return mb_strlen($key, 'UTF-8') === 1 ? $this->byHex(sprintf('%04X', mb_ord($key, 'UTF-8'))) : null;
+        return mb_strlen($key, 'UTF-8') === 1 ? $this->byHex($this->hexOf($key)) : null;
     }
 
     /**
@@ -57,29 +79,30 @@ final class Symbols
             return [];
         }
 
-        $pool = $group === null ? array_keys($this->data->symbols()['symbols']) : explode(' ', $this->data->symbols()['groups'][$group] ?? '');
+        $records = $this->data->symbols()['symbols'];
+        $pool = $group === null ? array_keys($records) : array_map($this->hexOf(...), $this->characters($group));
         $phrase = implode(' ', $words);
         $exact = [];
         $first = [];
         $rest = [];
 
         foreach ($pool as $hex) {
-            $record = $this->data->symbols()['symbols'][$hex] ?? null;
+            $name = $records[$hex][self::NAME] ?? null;
 
-            if ($record === null) {
+            if ($name === null) {
                 continue;
             }
 
             foreach ($words as $word) {
-                if (! str_contains($record[0], $word)) {
+                if (! str_contains($name, $word)) {
                     continue 2;
                 }
             }
 
             match (true) {
-                $record[0] === $phrase                 => $exact[] = (string) $hex,
-                str_starts_with($record[0], $words[0]) => $first[] = (string) $hex,
-                default                                => $rest[] = (string) $hex,
+                $name === $phrase                 => $exact[] = (string) $hex,
+                str_starts_with($name, $words[0]) => $first[] = (string) $hex,
+                default                           => $rest[] = (string) $hex,
             };
         }
 
@@ -89,6 +112,12 @@ final class Symbols
     public function count(): int
     {
         return count($this->data->symbols()['symbols']);
+    }
+
+    /** The record key for a character: its code point in upper-case hex, at least four digits. */
+    private function hexOf(string $char): string
+    {
+        return sprintf('%04X', mb_ord($char, 'UTF-8'));
     }
 
     private function byHex(string $hex): ?Symbol
@@ -104,6 +133,6 @@ final class Symbols
             return null;
         }
 
-        return $this->built[$hex] = new Symbol((int) hexdec($hex), $record[0], $record[1], $shard['blocks'][$record[2]] ?? '', $record[3]);
+        return $this->built[$hex] = new Symbol(mb_ord($record[self::CHAR], 'UTF-8'), $record[self::NAME], $record[self::CATEGORY], $shard['blocks'][$record[self::BLOCK]] ?? '', $record[self::ENTITY]);
     }
 }

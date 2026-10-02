@@ -90,8 +90,10 @@ character you can see is written as itself, so the files can be read and searche
 Only invisible code points are escaped, as `\u{…}`: zero-width joiners, variation selectors, tags, the
 enclosing keycap, controls, format characters, and every space but U+0020. Those are the ones that make a
 diff look empty or that an editor can quietly rewrite. `tests/Unit/GeneratedDataTest.php` fails if one
-appears raw in any generated file. `symbols.php` is the exception: it stores code points (`00A9`) by
-design, and the API returns characters (`Emojis::symbols()->group('popular')` starts with `©`).
+appears raw in any generated file. `symbols.php` reads the same way: each record starts with its
+character, and each group lists its characters (`'arrows' => '← ↑ → ↓ …'`).
+
+For browsing rather than reading source, [the emoji list](emoji-list.md) shows every emoji by group.
 
 ## What the generator adds
 

@@ -46,6 +46,13 @@ it('shows emoji as characters and escapes only what cannot be seen', function ()
         ->and($emojis)->not->toContain('"\u{1F602}"');
 });
 
+it('shows symbols as characters', function (): void {
+    $symbols = (string) file_get_contents(dirname(__DIR__, 2) . '/database/generated/symbols.php');
+
+    expect($symbols)->toContain("=> ['→', 'rightwards arrow', 'Sm', 0, '&rarr;']")
+        ->and($symbols)->toContain("'arrows'      => '← ↑ → ↓");
+});
+
 it('shows the newest emoji as characters too', function (): void {
     // Unicode 18.0 additions are unknown to the PCRE that ships with most PHP builds; the emitter must not
     // depend on PCRE knowing them, or two machines would write different bytes.

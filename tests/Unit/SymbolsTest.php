@@ -65,3 +65,34 @@ it('covers the currency signs written as ideographs and syllables', function ():
 
     expect($currency)->toContain('€', '£', '¥', '₹', '₿', '元', '円', '원');
 });
+
+it('lists a group\'s characters directly, in the same order as its symbols', function (): void {
+    $symbols = emojis()->symbols();
+    $inspected = 0;
+
+    foreach ($symbols->groups() as $group) {
+        $characters = $symbols->characters($group);
+
+        expect($characters)->toBe(array_map(static fn (Symbol $s): string => $s->char, $symbols->group($group)), $group);
+        $inspected += count($characters);
+    }
+
+    expect($inspected)->toBeGreaterThan(7000)
+        ->and(array_slice($symbols->characters('arrows'), 0, 4))->toBe(['←', '↑', '→', '↓'])
+        ->and($symbols->characters('popular')[0])->toBe('©')
+        ->and($symbols->characters('nope'))->toBe([]);
+});
+
+it('stores each symbol as a readable record, in the field order the loader reads', function (): void {
+    $shard = require dirname(__DIR__, 2) . '/database/generated/symbols.php';
+
+    // Symbols reads records by position; this pins the positions to the names the generator writes.
+    expect($shard['fields'])->toBe(['char', 'name', 'category', 'block', 'entity'])
+        ->and(count($shard['symbols']))->toBeGreaterThan(7000);
+
+    foreach ($shard['symbols'] as $hex => $record) {
+        expect($record[0])->toBe(mb_chr((int) hexdec((string) $hex), 'UTF-8'), (string) $hex);
+    }
+
+    expect(str_starts_with($shard['groups']['arrows'], '← ↑ → ↓'))->toBeTrue();
+});

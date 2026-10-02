@@ -30,6 +30,7 @@ $symbols = Emojis::symbols();
 
 $symbols->groups();                  // ['popular', 'arrows', 'currency', …]
 $symbols->group('currency');         // list<Symbol>, in code point order
+$symbols->characters('arrows');      // ['←', '↑', '→', '↓', …]: the characters alone, for a picker or "copy all"
 $symbols->get('→');                  // by character, 'U+2192' or '2192'
 $symbols->search('double arrow');    // every word must match; exact name, then name prefix, first
 $symbols->search('sign', 'currency', limit: 10);
@@ -43,10 +44,14 @@ $symbols->search('sign', 'currency', limit: 10);
 | `name`, `label()` | `rightwards arrow`, `Rightwards arrow` |
 | `unicode()` | `U+2192` |
 | `htmlEntity()` | `&rarr;` — the shortest WHATWG named entity, else `&#x2192;` |
-| `css()`, `javascript()`, `php()` | `\2192`, `→`, `\u{2192}` |
+| `css()`, `javascript()`, `php()` | `\2192`, `\u2192`, `\u{2192}` |
 | `category`, `block` | `Sm`, `Arrows` |
 
 A `Symbol` is `JsonSerializable`, so `response()->json(Emojis::symbols()->group('arrows'))` feeds a picker.
+
+`database/generated/symbols.php` is readable as it stands: each record starts with its character
+(`2192 => ['→', 'rightwards arrow', 'Sm', 0, '&rarr;']`), and each group lists its characters,
+space-separated.
 
 ## Coverage
 
