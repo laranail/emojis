@@ -23,6 +23,16 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/),
 
 ### Changed
 
+- **The generated data shows its emoji.** `database/generated/` wrote every emoji as an escape, so
+  `emojis.php` held `"\u{1F602}"` and never 😂, and kaomoji read `(・\u{2200}・)`. Every visible character
+  is now written as itself (`'😂'`, `"👨\u{200D}👩\u{200D}👧"`, `"❤\u{FE0F}"`); only invisible ones (joiners,
+  variation selectors, tags, the keycap, controls and odd spaces) stay escaped, so a diff never hides a
+  change. The data is identical: all 37 shards decode to the same PHP values as before.
+  `tests/Unit/GeneratedDataTest.php` fails if an invisible character is ever written raw.
+- The emitter decides what to escape from a fixed list rather than from PCRE's knowledge of each
+  character, so a PHP whose PCRE predates Unicode 18 writes the same bytes as one that knows it. 19 Emoji
+  18.0 characters (🫫 cracking face among them) had stayed escaped for that reason.
+
 - **`(y)`, `(n)`, `:?` and `<><` are opt-in only.** They read as prose ("Continue? (y) or (n)" became
   "Continue? 👍 or 👎"), so they now match only with `withEmoticons(risky: true)`. To keep one on its own,
   `addEmoticon('(y)', 'thumbs up')`. `toEmoticons()` still writes them.

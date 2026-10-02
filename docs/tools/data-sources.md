@@ -75,6 +75,24 @@ database/
     └── measured/              bounds/ (per-image margins) and hashes/ (per-image SHA-256), from .dev/tools/measure
 ```
 
+### Reading the generated files
+
+Each emoji record in `emojis.php` is a list in the order its `fields` line gives (`emoji, name, slug,
+ascii, group, …`), keyed by hexcode; groups and subgroups are indexes into the lists at the top. Every
+character you can see is written as itself, so the files can be read and searched directly:
+
+```php
+'1F602'                       => ['😂', 'face with tears of joy', 'face_with_tears_of_joy', 'joy', 0, 0, '0.6', …],
+'1F468-200D-1F469-200D-1F467' => ["👨\u{200D}👩\u{200D}👧", 'family: man, woman, girl', …],
+'2764-FE0F'                   => ["❤\u{FE0F}", 'red heart', …],
+```
+
+Only invisible code points are escaped, as `\u{…}`: zero-width joiners, variation selectors, tags, the
+enclosing keycap, controls, format characters, and every space but U+0020. Those are the ones that make a
+diff look empty or that an editor can quietly rewrite. `tests/Unit/GeneratedDataTest.php` fails if one
+appears raw in any generated file. `symbols.php` is the exception: it stores code points (`00A9`) by
+design, and the API returns characters (`Emojis::symbols()->group('popular')` starts with `©`).
+
 ## What the generator adds
 
 - **ASCII slugs** for every emoji, transliterated from the Unicode name (`flag_cote_divoire`), so ASCII
