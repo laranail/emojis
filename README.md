@@ -22,13 +22,30 @@ Add the laranail VCS repositories to your root `composer.json` (see
 composer require laranail/emojis:^0.5
 ```
 
-## Quick start
+## Quick start guide and usage
+
+### Getting started
+
+The service provider and the `Emojis` facade are auto-discovered, so nothing is required. Publish
+the config only to change a default, then check the install:
+
+```bash
+php artisan vendor:publish --tag=laranail::emojis-config
+php artisan laranail::package-tools.doctor
+```
+
+### Usage
 
 ```php
 use Simtabi\Laranail\Emojis\Facades\Emojis;
 
 Emojis::text('Ship it :rocket: :)')->withEmoticons()->toEmoji(); // "Ship it 🚀 🙂"
 Emojis::text('Ship it 🚀')->toAscii();                          // "Ship it :rocket:"
+```
+
+```php
+Emojis::strip('Great work 🎉👏🏽');        // "Great work "
+Emojis::search('cat');                    // 🐈 😹 😼 🐱 … ranked
 ```
 
 The [getting started](docs/getting-started.md) guide walks through the rest; everything else is under
