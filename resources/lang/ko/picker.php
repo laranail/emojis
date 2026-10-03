@@ -20,6 +20,8 @@ return [
     'emoji'       => '이모지',
     'kaomoji'     => '카오모지',
     'symbols'     => '기호',
+    'style'       => '이모지 스타일',
+    'native'      => '기본',
     'groups'      => [
         'smileys_and_emotion' => '스마일리 및 감정',
         'people_and_body'     => '사람 및 신체',

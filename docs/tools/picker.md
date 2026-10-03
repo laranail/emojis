@@ -39,6 +39,7 @@ its own), or `link` to load the published files instead of inlining them
 | `user-key` | — | namespaces recents and tone in storage, for shared devices |
 | `max-version` | `auto` | hide emoji newer than this Emoji version; `auto` asks the browser, `''` shows all |
 | `trigger` | `🙂` | what the trigger button shows |
+| `render` | `auto` | `auto`, `native` or `image` — see [every emoji, on every device](#every-emoji-on-every-device) |
 | `placement` | `auto` | where the popover opens: `auto` (below, flipping above), `top`, `bottom`, `start`, `end`, each optionally `-start` or `-end` |
 | `:offset` | `8` | gap between the trigger and the popover, in px |
 | `:arrow` | `true` | draw the caret pointing at the trigger |
@@ -175,6 +176,45 @@ until the user asks for it.
 The positioning is exported as plain functions for other uses — `computePosition()` (pure, testable without
 a browser), `autoUpdate()` and the `Popover` controller both adapters use.
 
+## Every emoji, on every device
+
+A device draws only the emoji its fonts know: an older phone shows Emoji 15 as empty boxes, and Windows
+shows flags as two letters. The picker measures what the device draws, then decides with `render`:
+
+| `render` | What the picker does |
+|---|---|
+| `auto` (default) | The device's own emoji, and an image from the image set for each one it cannot draw — newer emoji, newer toned forms, flags on Windows — so the whole catalogue (3,972 records) is reachable. Hidden only when the set has no image either. |
+| `native` | The device's own emoji only; what it cannot draw is hidden. The behaviour before 0.6. |
+| `image` | Every emoji from the image set. |
+
+The set is `picker.image_set`, else `images.set` (Twemoji by default). For Twemoji, Noto, OpenMoji and
+JoyPixels the payload carries a base URL, a filename rule and the few emoji the set lacks — about half a
+kilobyte — and the browser builds each URL with the same rule the server uses (a test keeps the two in
+step). A set without such a rule (Fluent, or your own `ImageSet`) sends a path per emoji instead, about
+240 KB, so give it the API to deliver it. An image is lazy-loaded, has an empty `alt` (the cell carries the
+name), and falls back to the glyph if it fails to load. Picking always inserts the Unicode text, never the
+image.
+
+With `picker.features.set_switcher` on, a select in the footer lets the user choose: **Native** (the device's
+emoji, with the fallback above), Twemoji, Noto or OpenMoji. The choice is remembered per `user-key`. Each set
+has its own licence, which the payload carries; Twemoji needs attribution (CC-BY 4.0) and OpenMoji
+attribution and share-alike (CC BY-SA 4.0) — see [attribution](images.md#attribution).
+
+`php artisan laranail::package-tools.doctor` warns about JoyPixels as the fallback: the dataset has no
+coverage data for it, so some image requests will fail before the glyph shows.
+
+## Skin tones for each person
+
+A right click, Shift+F10 or the context-menu key on an emoji that takes tones — or a long press on a touch
+screen — opens a small menu beside it, with the picker's caret:
+
+- for one person (👋), its six forms, to pick a tone for just this emoji without changing the picker's tone;
+- for two (🤝, 🧑‍🤝‍🧑, couples), a row of tones for each person and the result between them, so 🫱🏻‍🫲🏿 is one
+  pick away. A combination the payload does not offer (the policy or a version cap removed it) is disabled.
+
+The exact form is inserted and remembered in Frequently used. Arrow keys move, Enter picks, Escape closes
+and returns focus to the emoji. Switch it off with `picker.features.per_person_tones`.
+
 ## Layout
 
 From the top: the search field, the Emoji / Kaomoji / Symbols switch (only when the payload carries more than
@@ -275,7 +315,7 @@ export function Composer() {
 `<EmojiPicker>` takes the same options as the vanilla picker as props — `source`, `target` (a ref),
 `locale`, `tone`, `maxRecent`, `recentOrder`, `sort`, `categories`, `columns`, `maxVersion`, `inline`,
 `closeOnSelect`, `userKey`, `store`, `strings`, `searchDelay`, `trigger`, `placement`, `offset`, `arrow`,
-`sheetBreakpoint`, `features` — and `onSelect`. It renders the
+`sheetBreakpoint`, `features`, `render` — and `onSelect`. It renders the
 same markup, classes and ARIA, so `picker.css` styles it and the keyboard behaviour is the same. The target
 may be a controlled `<textarea value={…} onChange={…}>`; the pick lands in its state. To draw your own UI, use
 the hook behind it:

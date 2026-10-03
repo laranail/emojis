@@ -54,6 +54,8 @@ final class PickerPayloads
             $labels,
             kaomoji: $this->config->enabled('kaomoji'),
             symbols: $this->config->enabled('symbols'),
+            imageSet: $this->imageSet(),
+            switchSets: $this->config->enabled('set_switcher') ? PickerConfig::SWITCHABLE : [],
         ));
 
         try {
@@ -96,6 +98,8 @@ final class PickerPayloads
             'emoji'   => $text('emoji'),
             'kaomoji' => $text('kaomoji'),
             'symbols' => $text('symbols'),
+            'style'   => $text('style'),
+            'native'  => $text('native'),
         ], static fn (mixed $v): bool => $v !== null);
     }
 
@@ -107,6 +111,12 @@ final class PickerPayloads
         return is_string($line) ? $line : '';
     }
 
+    /** The set a picker draws images from: none when it draws only native emoji. */
+    private function imageSet(): ?string
+    {
+        return $this->config->render === 'native' && ! $this->config->enabled('set_switcher') ? null : ($this->config->imageSet ?? $this->emojis->options()->imageSet);
+    }
+
     /** The custom emoji are left out when `picker.features.custom` is off, whatever the policy allows. */
     private function withoutCustomUnlessEnabled(PickerPayload $payload): PickerPayload
     {
@@ -114,7 +124,7 @@ final class PickerPayloads
             return $payload;
         }
 
-        return new PickerPayload($payload->dataset, $payload->locale, $payload->groups, [], $payload->shortcodeOpen, $payload->shortcodeClose, $payload->kaomoji, $payload->symbols);
+        return new PickerPayload($payload->dataset, $payload->locale, $payload->groups, [], $payload->shortcodeOpen, $payload->shortcodeClose, $payload->kaomoji, $payload->symbols, $payload->images, $payload->imageSets);
     }
 
     /**
@@ -152,6 +162,9 @@ final class PickerPayloads
             array_map(static fn (CustomEmoji $c): array => [$c->name, $c->label(), $c->image->src, $c->fallback], $this->emojis->customEmojis()),
             $labels,
             $this->config->features,
+            $this->config->render,
+            $this->imageSet(),
+            $this->emojis->options()->imageBaseUrls,
         ]));
     }
 }

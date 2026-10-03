@@ -134,6 +134,8 @@ final class ImageSets
                 static fn (Emoji $e): string => Filenames::twemoji($e) . '.svg',
                 $bits['twemoji'],
                 'CC-BY-4.0 (graphics, attribution required) — jdecked/twemoji',
+                'twemoji',
+                '.svg',
             ),
             ImageSetName::Noto => new CdnImageSet(
                 $name->value,
@@ -141,6 +143,8 @@ final class ImageSets
                 static fn (Emoji $e): string => Filenames::noto($e) . '.svg',
                 $bits['noto'],
                 'Apache-2.0 — googlefonts/noto-emoji',
+                'noto',
+                '.svg',
             ),
             ImageSetName::OpenMoji => new CdnImageSet(
                 $name->value,
@@ -148,6 +152,8 @@ final class ImageSets
                 static fn (Emoji $e): string => Filenames::openmoji($e) . '.svg',
                 $bits['openmoji'],
                 'CC-BY-SA-4.0 (attribution and share-alike required) — hfg-gmuend/openmoji',
+                'openmoji',
+                '.svg',
             ),
             ImageSetName::Fluent => new CdnImageSet(
                 $name->value,
@@ -182,6 +188,8 @@ final class ImageSets
                 static fn (Emoji $e): string => strtolower(implode('-', array_map(static fn (int $cp): string => sprintf('%x', $cp), array_values(array_filter($e->codepoints, static fn (int $cp): bool => $cp !== 0xFE0F))))) . '.png',
                 0,
                 'JoyPixels Free License — personal use only; commercial use needs a paid licence',
+                'joypixels',
+                '.png',
             ),
         };
     }

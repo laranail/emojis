@@ -46,6 +46,9 @@ Grouped by concern; each group's keys are listed once.
 | `picker.sheet_breakpoint` | `640` | At or below this viewport width the popover is a bottom sheet; `0` never. |
 | `picker.columns`, `picker.max_recent`, `picker.sort`, `picker.recent_order` | `8`, `36`, `'default'`, `'recent'` | Grid and recents defaults. |
 | `picker.close_on_select`, `picker.trigger`, `picker.theme` | `true`, `'🙂'`, `'auto'` | Popover behaviour, the trigger's glyph, and `light`/`dark` to fix the theme. |
+| `picker.render` | `'auto'` | `auto` draws the device's emoji and an image for each it cannot; `native` only the device's; `image` only images. |
+| `picker.image_set` | `null` | The set the picker draws images from; `null` uses `images.set`. |
+| `picker.features.per_person_tones`, `picker.features.set_switcher` | `true`, `false` | The tone menu (a tone for each person), and a native/Twemoji/Noto/OpenMoji switch in the footer. |
 | `picker.delivery` | `'auto'` | `inline` embeds the payload, `api` fetches it (falls back to inline while the API is off), `auto` fetches when the API is on. |
 
 Outside Laravel, `Emojis::create()` takes the same array:

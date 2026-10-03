@@ -335,3 +335,36 @@ it('has a doctor check that warns about a large embedded payload and about api d
         ->and($fetched->status)->toBe(DoctorStatus::Pass)
         ->and($fetched->message)->toContain('from the API');
 });
+
+it('carries the image set by default, none for native rendering, and every switchable set for the switcher', function (): void {
+    $default = payloadIn(Blade::render('<x-laranail-emojis::picker />'));
+
+    expect($default['images']['set'])->toBe('twemoji')
+        ->and($default['images']['rule'])->toBe('twemoji')
+        ->and($default)->not->toHaveKey('imageSets');
+
+    TestCase::$bootConfig = ['laranail.emojis.picker.render' => 'native'];
+    $this->refreshApplication();
+    $native = Blade::render('<x-laranail-emojis::picker />');
+
+    expect(payloadIn($native))->not->toHaveKey('images')
+        ->and($native)->toContain('data-laranail-emoji-render="native"');
+
+    TestCase::$bootConfig = ['laranail.emojis.picker' => ['image_set' => 'noto', 'features' => ['set_switcher' => true]]];
+    $this->refreshApplication();
+    $switch = Blade::render('<x-laranail-emojis::picker />');
+
+    expect(payloadIn($switch)['images']['set'])->toBe('noto')
+        ->and(array_column(payloadIn($switch)['imageSets'], 'set'))->toBe(['noto', 'twemoji', 'openmoji'])
+        ->and(html_entity_decode($switch))->toContain('data-laranail-emoji-features="{"setSwitcher":true}"');
+});
+
+it('warns when the picker falls back to an image set with no coverage data', function (): void {
+    TestCase::$bootConfig = ['laranail.emojis.picker.image_set' => 'joypixels', 'laranail.emojis.api.enabled' => true];
+    $this->refreshApplication();
+
+    $result = app(PickerCheck::class)->run();
+
+    expect($result->status)->toBe(DoctorStatus::Warn)
+        ->and($result->message)->toContain('JoyPixels');
+});

@@ -76,6 +76,18 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/),
 
 ### Added
 
+- **Every emoji reachable on every device.** The picker no longer hides what a device cannot draw: with the new
+  `render` option at `auto` (the default) it draws those — newer emoji, newer toned forms, flags on Windows —
+  as images from the configured set, so all 3,972 records are reachable. `native` keeps the old behaviour,
+  `image` draws everything from the set. For Twemoji, Noto, OpenMoji and JoyPixels the payload grows by about
+  half a kilobyte (a base URL, a filename rule and the emoji the set lacks); the browser applies the same rule
+  as the server, and a shared fixture fails if they ever disagree. Failed images fall back to the glyph.
+- **An image set switcher** (`picker.features.set_switcher`): Native, Twemoji, Noto or OpenMoji, remembered
+  per user.
+- **A skin tone for each person.** A right click, Shift+F10 or a long press on an emoji that takes tones opens
+  a menu with its toned forms, or a tone row per person for 🤝 and couples with the result previewed, so mixed
+  tones such as 🫱🏻‍🫲🏿 can be picked. The exact form is inserted and remembered.
+- A doctor warning when the picker falls back to JoyPixels, which has no coverage data.
 - **A `picker` config section.** Every picker option has a default in `laranail.emojis.picker` — placement,
   offset, caret, sheet breakpoint, columns, recents, sort, closing, the trigger, the theme and the payload's
   delivery — and `picker.features` switches parts off (`search`, `recents`, `skin_tones`, `preview`,

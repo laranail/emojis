@@ -55,6 +55,7 @@ final class Picker extends Component
         public ?bool $arrow = null,
         public ?int $sheetBreakpoint = null,
         public ?string $theme = null,
+        public ?string $render = null,
         /** @var array<string, bool> feature name => on, over `picker.features` */
         public array $features = [],
     ) {}
@@ -115,6 +116,7 @@ final class Picker extends Component
                 'arrow'            => ($this->arrow ?? $c->arrow) ? null : 'false',
                 'sheet-breakpoint' => $this->differs(max(0, $this->sheetBreakpoint ?? $c->sheetBreakpoint), 640),
                 'features'         => $this->featureAttribute(),
+                'render'           => $this->differs(in_array($this->render, ['auto', 'native', 'image'], true) ? $this->render : $c->render, 'auto'),
                 'strings'          => json_encode($this->payloads->strings($resolved), JSON_UNESCAPED_UNICODE | JSON_THROW_ON_ERROR),
             ]),
             ...($this->inline ? ['data-laranail-emoji-inline' => ''] : []),
@@ -141,22 +143,28 @@ final class Picker extends Component
     }
 
     /**
-     * The features that are off, as JSON for the module (everything is on unless listed), or null when
-     * none is. Kaomoji and symbols need no flag here: the payload carries them only when they are on.
+     * The features that differ from the module's defaults, as JSON, or null when none does: every one it
+     * has is on unless listed, except the set switcher, which is off unless listed. Kaomoji and symbols need
+     * no flag here: the payload carries them only when they are on.
      */
     private function featureAttribute(): ?string
     {
-        $off = [];
+        $flags = [];
+
+        // The switcher is the one opt-in feature the module also needs to know about.
+        if (is_bool($this->features['set_switcher'] ?? null) ? $this->features['set_switcher'] : $this->config->enabled('set_switcher')) {
+            $flags['setSwitcher'] = true;
+        }
 
         foreach (PickerConfig::FEATURES as $name) {
             $on = is_bool($this->features[$name] ?? null) ? $this->features[$name] : $this->config->enabled($name);
 
-            if (! $on && ! in_array($name, ['kaomoji', 'symbols'], true)) {
-                $off[lcfirst(str_replace('_', '', ucwords($name, '_')))] = false;
+            if (! $on && ! in_array($name, PickerConfig::OPT_IN, true)) {
+                $flags[lcfirst(str_replace('_', '', ucwords($name, '_')))] = false;
             }
         }
 
-        return $off === [] ? null : json_encode($off, JSON_THROW_ON_ERROR);
+        return $flags === [] ? null : json_encode($flags, JSON_THROW_ON_ERROR);
     }
 
     /**

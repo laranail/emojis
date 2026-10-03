@@ -1,0 +1,107 @@
+{
+    "sets": {
+        "twemoji": {
+            "set": "twemoji",
+            "licence": "CC-BY-4.0 (graphics, attribution required) \u2014 jdecked/twemoji",
+            "base": "https://cdn.jsdelivr.net/gh/jdecked/twemoji@17.0.3/assets/svg",
+            "rule": "twemoji",
+            "suffix": ".svg",
+            "missing": [
+                "1F441-FE0F-200D-1F5E8-FE0F"
+            ]
+        },
+        "noto": {
+            "set": "noto",
+            "licence": "Apache-2.0 \u2014 googlefonts/noto-emoji",
+            "base": "https://cdn.jsdelivr.net/gh/googlefonts/noto-emoji@e20cbc2bbec1926686be9f9bee7d1d2cfa1fea0e/2D/svg",
+            "rule": "noto",
+            "suffix": ".svg",
+            "missing": [
+                "1F1FA-1F1F8",
+                "1F3F4-E0067-E0062-E0065-E006E-E0067-E007F"
+            ]
+        },
+        "openmoji": {
+            "set": "openmoji",
+            "licence": "CC-BY-SA-4.0 (attribution and share-alike required) \u2014 hfg-gmuend/openmoji",
+            "base": "https://cdn.jsdelivr.net/npm/openmoji@17.0.0/color/svg",
+            "rule": "openmoji",
+            "suffix": ".svg",
+            "missing": []
+        },
+        "joypixels": {
+            "set": "joypixels",
+            "licence": "JoyPixels Free License \u2014 personal use only; commercial use needs a paid licence",
+            "base": "https://cdn.jsdelivr.net/joypixels/assets/11.0/png/unicode/64",
+            "rule": "joypixels",
+            "suffix": ".png",
+            "missing": []
+        }
+    },
+    "urls": {
+        "twemoji": {
+            "1F600": "https://cdn.jsdelivr.net/gh/jdecked/twemoji@17.0.3/assets/svg/1f600.svg",
+            "00A9-FE0F": "https://cdn.jsdelivr.net/gh/jdecked/twemoji@17.0.3/assets/svg/a9.svg",
+            "2764-FE0F": "https://cdn.jsdelivr.net/gh/jdecked/twemoji@17.0.3/assets/svg/2764.svg",
+            "1F441-FE0F-200D-1F5E8-FE0F": null,
+            "1F44B-1F3FD": "https://cdn.jsdelivr.net/gh/jdecked/twemoji@17.0.3/assets/svg/1f44b-1f3fd.svg",
+            "1F91D-1F3FB": "https://cdn.jsdelivr.net/gh/jdecked/twemoji@17.0.3/assets/svg/1f91d-1f3fb.svg",
+            "1FAF1-1F3FB-200D-1FAF2-1F3FF": "https://cdn.jsdelivr.net/gh/jdecked/twemoji@17.0.3/assets/svg/1faf1-1f3fb-200d-1faf2-1f3ff.svg",
+            "1F468-200D-1F469-200D-1F467": "https://cdn.jsdelivr.net/gh/jdecked/twemoji@17.0.3/assets/svg/1f468-200d-1f469-200d-1f467.svg",
+            "0023-FE0F-20E3": "https://cdn.jsdelivr.net/gh/jdecked/twemoji@17.0.3/assets/svg/23-20e3.svg",
+            "1F1FA-1F1F8": "https://cdn.jsdelivr.net/gh/jdecked/twemoji@17.0.3/assets/svg/1f1fa-1f1f8.svg",
+            "1F3F4-E0067-E0062-E0065-E006E-E0067-E007F": "https://cdn.jsdelivr.net/gh/jdecked/twemoji@17.0.3/assets/svg/1f3f4-e0067-e0062-e0065-e006e-e0067-e007f.svg",
+            "263A-FE0F": "https://cdn.jsdelivr.net/gh/jdecked/twemoji@17.0.3/assets/svg/263a.svg",
+            "1F9D1-1F3FD-200D-1F680": "https://cdn.jsdelivr.net/gh/jdecked/twemoji@17.0.3/assets/svg/1f9d1-1f3fd-200d-1f680.svg",
+            "1F6B6-200D-2642-FE0F": "https://cdn.jsdelivr.net/gh/jdecked/twemoji@17.0.3/assets/svg/1f6b6-200d-2642-fe0f.svg"
+        },
+        "noto": {
+            "1F600": "https://cdn.jsdelivr.net/gh/googlefonts/noto-emoji@e20cbc2bbec1926686be9f9bee7d1d2cfa1fea0e/2D/svg/emoji_u1f600.svg",
+            "00A9-FE0F": "https://cdn.jsdelivr.net/gh/googlefonts/noto-emoji@e20cbc2bbec1926686be9f9bee7d1d2cfa1fea0e/2D/svg/emoji_u00a9.svg",
+            "2764-FE0F": "https://cdn.jsdelivr.net/gh/googlefonts/noto-emoji@e20cbc2bbec1926686be9f9bee7d1d2cfa1fea0e/2D/svg/emoji_u2764.svg",
+            "1F441-FE0F-200D-1F5E8-FE0F": "https://cdn.jsdelivr.net/gh/googlefonts/noto-emoji@e20cbc2bbec1926686be9f9bee7d1d2cfa1fea0e/2D/svg/emoji_u1f441_200d_1f5e8.svg",
+            "1F44B-1F3FD": "https://cdn.jsdelivr.net/gh/googlefonts/noto-emoji@e20cbc2bbec1926686be9f9bee7d1d2cfa1fea0e/2D/svg/emoji_u1f44b_1f3fd.svg",
+            "1F91D-1F3FB": "https://cdn.jsdelivr.net/gh/googlefonts/noto-emoji@e20cbc2bbec1926686be9f9bee7d1d2cfa1fea0e/2D/svg/emoji_u1f91d_1f3fb.svg",
+            "1FAF1-1F3FB-200D-1FAF2-1F3FF": "https://cdn.jsdelivr.net/gh/googlefonts/noto-emoji@e20cbc2bbec1926686be9f9bee7d1d2cfa1fea0e/2D/svg/emoji_u1faf1_1f3fb_200d_1faf2_1f3ff.svg",
+            "1F468-200D-1F469-200D-1F467": "https://cdn.jsdelivr.net/gh/googlefonts/noto-emoji@e20cbc2bbec1926686be9f9bee7d1d2cfa1fea0e/2D/svg/emoji_u1f468_200d_1f469_200d_1f467.svg",
+            "0023-FE0F-20E3": "https://cdn.jsdelivr.net/gh/googlefonts/noto-emoji@e20cbc2bbec1926686be9f9bee7d1d2cfa1fea0e/2D/svg/emoji_u0023_20e3.svg",
+            "1F1FA-1F1F8": null,
+            "1F3F4-E0067-E0062-E0065-E006E-E0067-E007F": null,
+            "263A-FE0F": "https://cdn.jsdelivr.net/gh/googlefonts/noto-emoji@e20cbc2bbec1926686be9f9bee7d1d2cfa1fea0e/2D/svg/emoji_u263a.svg",
+            "1F9D1-1F3FD-200D-1F680": "https://cdn.jsdelivr.net/gh/googlefonts/noto-emoji@e20cbc2bbec1926686be9f9bee7d1d2cfa1fea0e/2D/svg/emoji_u1f9d1_1f3fd_200d_1f680.svg",
+            "1F6B6-200D-2642-FE0F": "https://cdn.jsdelivr.net/gh/googlefonts/noto-emoji@e20cbc2bbec1926686be9f9bee7d1d2cfa1fea0e/2D/svg/emoji_u1f6b6_200d_2642.svg"
+        },
+        "openmoji": {
+            "1F600": "https://cdn.jsdelivr.net/npm/openmoji@17.0.0/color/svg/1F600.svg",
+            "00A9-FE0F": "https://cdn.jsdelivr.net/npm/openmoji@17.0.0/color/svg/00A9.svg",
+            "2764-FE0F": "https://cdn.jsdelivr.net/npm/openmoji@17.0.0/color/svg/2764.svg",
+            "1F441-FE0F-200D-1F5E8-FE0F": "https://cdn.jsdelivr.net/npm/openmoji@17.0.0/color/svg/1F441-FE0F-200D-1F5E8-FE0F.svg",
+            "1F44B-1F3FD": "https://cdn.jsdelivr.net/npm/openmoji@17.0.0/color/svg/1F44B-1F3FD.svg",
+            "1F91D-1F3FB": "https://cdn.jsdelivr.net/npm/openmoji@17.0.0/color/svg/1F91D-1F3FB.svg",
+            "1FAF1-1F3FB-200D-1FAF2-1F3FF": "https://cdn.jsdelivr.net/npm/openmoji@17.0.0/color/svg/1FAF1-1F3FB-200D-1FAF2-1F3FF.svg",
+            "1F468-200D-1F469-200D-1F467": "https://cdn.jsdelivr.net/npm/openmoji@17.0.0/color/svg/1F468-200D-1F469-200D-1F467.svg",
+            "0023-FE0F-20E3": "https://cdn.jsdelivr.net/npm/openmoji@17.0.0/color/svg/0023-FE0F-20E3.svg",
+            "1F1FA-1F1F8": "https://cdn.jsdelivr.net/npm/openmoji@17.0.0/color/svg/1F1FA-1F1F8.svg",
+            "1F3F4-E0067-E0062-E0065-E006E-E0067-E007F": "https://cdn.jsdelivr.net/npm/openmoji@17.0.0/color/svg/1F3F4-E0067-E0062-E0065-E006E-E0067-E007F.svg",
+            "263A-FE0F": "https://cdn.jsdelivr.net/npm/openmoji@17.0.0/color/svg/263A.svg",
+            "1F9D1-1F3FD-200D-1F680": "https://cdn.jsdelivr.net/npm/openmoji@17.0.0/color/svg/1F9D1-1F3FD-200D-1F680.svg",
+            "1F6B6-200D-2642-FE0F": "https://cdn.jsdelivr.net/npm/openmoji@17.0.0/color/svg/1F6B6-200D-2642-FE0F.svg"
+        },
+        "joypixels": {
+            "1F600": "https://cdn.jsdelivr.net/joypixels/assets/11.0/png/unicode/64/1f600.png",
+            "00A9-FE0F": "https://cdn.jsdelivr.net/joypixels/assets/11.0/png/unicode/64/a9.png",
+            "2764-FE0F": "https://cdn.jsdelivr.net/joypixels/assets/11.0/png/unicode/64/2764.png",
+            "1F441-FE0F-200D-1F5E8-FE0F": "https://cdn.jsdelivr.net/joypixels/assets/11.0/png/unicode/64/1f441-200d-1f5e8.png",
+            "1F44B-1F3FD": "https://cdn.jsdelivr.net/joypixels/assets/11.0/png/unicode/64/1f44b-1f3fd.png",
+            "1F91D-1F3FB": "https://cdn.jsdelivr.net/joypixels/assets/11.0/png/unicode/64/1f91d-1f3fb.png",
+            "1FAF1-1F3FB-200D-1FAF2-1F3FF": "https://cdn.jsdelivr.net/joypixels/assets/11.0/png/unicode/64/1faf1-1f3fb-200d-1faf2-1f3ff.png",
+            "1F468-200D-1F469-200D-1F467": "https://cdn.jsdelivr.net/joypixels/assets/11.0/png/unicode/64/1f468-200d-1f469-200d-1f467.png",
+            "0023-FE0F-20E3": "https://cdn.jsdelivr.net/joypixels/assets/11.0/png/unicode/64/23-20e3.png",
+            "1F1FA-1F1F8": "https://cdn.jsdelivr.net/joypixels/assets/11.0/png/unicode/64/1f1fa-1f1f8.png",
+            "1F3F4-E0067-E0062-E0065-E006E-E0067-E007F": "https://cdn.jsdelivr.net/joypixels/assets/11.0/png/unicode/64/1f3f4-e0067-e0062-e0065-e006e-e0067-e007f.png",
+            "263A-FE0F": "https://cdn.jsdelivr.net/joypixels/assets/11.0/png/unicode/64/263a.png",
+            "1F9D1-1F3FD-200D-1F680": "https://cdn.jsdelivr.net/joypixels/assets/11.0/png/unicode/64/1f9d1-1f3fd-200d-1f680.png",
+            "1F6B6-200D-2642-FE0F": "https://cdn.jsdelivr.net/joypixels/assets/11.0/png/unicode/64/1f6b6-200d-2642.png"
+        }
+    }
+}

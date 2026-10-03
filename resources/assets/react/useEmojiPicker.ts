@@ -7,7 +7,9 @@ import {
   charOf,
   clampTone,
   customCode,
+  detectFlagsOnce,
   detectMaxVersionOnce,
+  parseRender,
   kindsOf,
   readFeatures,
   textSections,
@@ -20,6 +22,8 @@ import {
   type PickerCustom,
   type PickerEmoji,
   type PickerFeatures,
+  type PickerImageSet,
+  type RenderMode,
   type PickerKind,
   type PickerText,
   type PickerPayload,
@@ -52,6 +56,8 @@ export interface UseEmojiPickerOptions {
   searchDelay?: number;
   /** Parts to switch off: { recents: false, custom: false, … }. Everything is on by default. */
   features?: Partial<PickerFeatures>;
+  /** 'auto' (default): the device's emoji, images for what it cannot draw; 'native': its own only; 'image': all images. */
+  render?: RenderMode;
   onSelect?: (detail: SelectDetail) => void;
 }
 
@@ -67,6 +73,13 @@ export interface EmojiPickerState {
   setTone: (tone: number) => void;
   /** The features in effect: every one on unless the options switched it off. */
   features: PickerFeatures;
+  /** How cells draw, and the image set they draw from (null for none). */
+  renderMode: RenderMode;
+  imageSet: PickerImageSet | null;
+  /** The sets the switcher offers (empty without it), and the choice: 'native' or a set's name. */
+  imageSets: PickerImageSet[];
+  chosenSet: string;
+  setChosenSet: (set: string) => void;
   /** The kinds the payload offers (emoji, then kaomoji and symbols when it carries them), and the one shown. */
   kinds: PickerKind[];
   kind: PickerKind;
@@ -109,7 +122,9 @@ export function useEmojiPicker(options: UseEmojiPickerOptions): EmojiPickerState
   const { source, locale = null, maxVersion = 'auto', userKey = '', categories, sort = 'default', recentOrder = 'recent', maxRecent = 36, searchDelay = 80 } = options;
   const store = useMemo(() => options.store ?? localStorageStore(userKey ? `laranail-emoji:${userKey}` : 'laranail-emoji'), [options.store, userKey]);
   const strings = useMemo(() => ({ ...DEFAULT_STRINGS, ...options.strings }), [options.strings]);
-  const [data, setData] = useState<PickerPayload | null>(null);
+  const [raw, setRaw] = useState<PickerPayload | null>(null);
+  const [support, setSupport] = useState<{ version: string | null; flags: boolean | null }>({ version: null, flags: null });
+  const [chosen, setChosen] = useState<string>('native');
   const [status, setStatus] = useState<EmojiPickerState['status']>('loading');
   const [error, setError] = useState<unknown>(null);
   const [query, setQuery] = useState('');
@@ -129,6 +144,8 @@ export function useEmojiPicker(options: UseEmojiPickerOptions): EmojiPickerState
 
     setToneState(stored === null || stored === undefined ? clampTone(initialTone.current ?? 0) : clampTone(stored));
     setRecent(readRecent(store.get('recent')));
+    const set = store.get('set');
+    setChosen(typeof set === 'string' ? set : 'native');
   }, [store]);
 
   useEffect(() => {
@@ -136,10 +153,11 @@ export function useEmojiPicker(options: UseEmojiPickerOptions): EmojiPickerState
     const controller = typeof AbortController === 'undefined' ? null : new AbortController();
 
     setStatus('loading');
-    Promise.all([source.load(locale, controller?.signal), maxVersion === 'auto' ? detectMaxVersionOnce() : Promise.resolve(maxVersion)]).then(
-      ([payload, cap]) => {
+    Promise.all([source.load(locale, controller?.signal), maxVersion === 'auto' ? detectMaxVersionOnce() : Promise.resolve(maxVersion), detectFlagsOnce()]).then(
+      ([payload, version, flags]) => {
         if (live) {
-          setData(capPayload(payload, cap));
+          setRaw(payload);
+          setSupport({ version: version ?? null, flags });
           setError(null);
           setStatus('ready');
         }
@@ -174,6 +192,23 @@ export function useEmojiPicker(options: UseEmojiPickerOptions): EmojiPickerState
   // Compared by content, so an inline array prop does not rebuild every section on every render.
   const categoryKey = (categories ?? []).join('\u0000');
   const wanted = useMemo(() => (categoryKey === '' ? [] : categoryKey.split('\u0000')), [categoryKey]);
+  const renderOption = parseRender(options.render);
+  const imageSets = useMemo(() => (features.setSwitcher ? (raw?.imageSets ?? []) : []), [raw, features.setSwitcher]);
+  const picked = imageSets.find((set) => set.set === chosen) ?? null;
+  const imageSet = picked ?? raw?.images ?? null;
+  const renderMode: RenderMode = picked ? 'image' : renderOption;
+  // The payload capped for this device, falling back to images where the mode allows.
+  const data = useMemo(
+    () => (raw ? capPayload(raw, support.version, undefined, renderMode === 'native' ? {} : { set: imageSet, flags: support.flags }) : null),
+    [raw, support, renderMode, imageSet],
+  );
+  const setChosenSet = useCallback(
+    (set: string) => {
+      store.set('set', set);
+      setChosen(set);
+    },
+    [store],
+  );
   const kinds = useMemo(() => kindsOf(data), [data]);
   const shown: PickerKind = kinds.includes(kind) ? kind : 'emoji';
   const base = useMemo((): PickerSection[] => {
@@ -250,6 +285,11 @@ export function useEmojiPicker(options: UseEmojiPickerOptions): EmojiPickerState
     tone: features.skinTones ? tone : 0,
     setTone,
     features,
+    renderMode,
+    imageSet,
+    imageSets,
+    chosenSet: picked ? chosen : 'native',
+    setChosenSet,
     kinds,
     kind: shown,
     setKind,

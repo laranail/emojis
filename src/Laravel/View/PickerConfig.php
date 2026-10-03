@@ -13,7 +13,13 @@ use Illuminate\Contracts\Config\Repository;
  */
 final readonly class PickerConfig
 {
-    public const array FEATURES = ['search', 'recents', 'skin_tones', 'preview', 'category_tabs', 'custom', 'kaomoji', 'symbols'];
+    public const array FEATURES = ['search', 'recents', 'skin_tones', 'per_person_tones', 'preview', 'category_tabs', 'custom', 'kaomoji', 'symbols', 'set_switcher'];
+
+    /** Off unless switched on: each adds to the payload. */
+    public const array OPT_IN = ['kaomoji', 'symbols', 'set_switcher'];
+
+    /** The image sets a user may switch between: the built-in ones whose URLs a browser can work out. */
+    public const array SWITCHABLE = ['twemoji', 'noto', 'openmoji'];
 
     public const array PLACEMENTS = ['auto', 'top', 'bottom', 'start', 'end', 'top-start', 'top-end', 'bottom-start', 'bottom-end', 'start-start', 'start-end', 'end-start', 'end-end'];
 
@@ -32,6 +38,8 @@ final readonly class PickerConfig
         public string $trigger,
         public string $theme,
         public string $delivery,
+        public string $render = 'auto',
+        public ?string $imageSet = null,
     ) {}
 
     public static function fromConfig(Repository $config): self
@@ -51,7 +59,7 @@ final readonly class PickerConfig
 
         return new self(
             features: array_combine(self::FEATURES, array_map(
-                static fn (string $name): bool => is_bool($features[$name] ?? null) ? $features[$name] : ! in_array($name, ['kaomoji', 'symbols'], true),
+                static fn (string $name): bool => is_bool($features[$name] ?? null) ? $features[$name] : ! in_array($name, self::OPT_IN, true),
                 self::FEATURES,
             )),
             placement: $one('placement', self::PLACEMENTS, 'auto'),
@@ -66,6 +74,8 @@ final readonly class PickerConfig
             trigger: is_string($picker['trigger'] ?? null) && $picker['trigger'] !== '' ? $picker['trigger'] : '🙂',
             theme: $one('theme', ['auto', 'light', 'dark'], 'auto'),
             delivery: $one('delivery', ['auto', 'inline', 'api'], 'auto'),
+            render: $one('render', ['auto', 'native', 'image'], 'auto'),
+            imageSet: is_string($picker['image_set'] ?? null) && $picker['image_set'] !== '' ? $picker['image_set'] : null,
         );
     }
 

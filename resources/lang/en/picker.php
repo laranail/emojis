@@ -22,6 +22,8 @@ return [
     'emoji'       => 'Emoji',
     'kaomoji'     => 'Kaomoji',
     'symbols'     => 'Symbols',
+    'style'       => 'Emoji style',
+    'native'      => 'Native',
     'groups'      => [
         'smileys_and_emotion' => 'Smileys & Emotion',
         'people_and_body'     => 'People & Body',

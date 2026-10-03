@@ -20,6 +20,8 @@ return [
     'emoji'       => 'ایموجی',
     'kaomoji'     => 'کائوموجی',
     'symbols'     => 'نمادها',
+    'style'       => 'سبک ایموجی',
+    'native'      => 'بومی',
     'groups'      => [
         'smileys_and_emotion' => 'شکلک‌ها و احساسات',
         'people_and_body'     => 'افراد و بدن',

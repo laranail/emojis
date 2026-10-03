@@ -6,7 +6,7 @@ import { payload } from './fixture.mjs';
 globalThis.__laranailEmojiNoAutoInit = true;
 
 const module = await import('../../resources/assets/scripts/picker.ts');
-const { Picker, StaticSource, ApiSource, memoryStore, localStorageStore, fold, charOf, withTone, search, sortItems, recordRecent, orderRecent, parseOptions, autoInit, byVersion, detectMaxVersion, buildSections, searchSections, capPayload, insertText, indexPayload, customCode, mountElement, readRecent, clampTone, clampColumns, searchCustom, rovingIndex, computePosition, parsePlacement, readFeatures, kindsOf, textSections, searchText, spySections } = module;
+const { Picker, StaticSource, ApiSource, memoryStore, localStorageStore, fold, charOf, withTone, search, sortItems, recordRecent, orderRecent, parseOptions, autoInit, byVersion, detectMaxVersion, buildSections, searchSections, capPayload, insertText, indexPayload, customCode, mountElement, readRecent, clampTone, clampColumns, searchCustom, rovingIndex, computePosition, parsePlacement, readFeatures, kindsOf, textSections, searchText, spySections, imageUrl, drawsImage, toneForms, IMAGE_RULES } = module;
 
 const root = resolve(import.meta.dirname, '../..');
 const flush = () => new Promise((r) => setTimeout(r, 0));
@@ -961,7 +961,7 @@ describe('config, kinds and preview (phase 3)', () => {
   };
 
   it('reads features defensively: only booleans switch one off', () => {
-    expect(readFeatures({ search: false, preview: 'no', bogus: false })).toEqual({ search: false, recents: true, skinTones: true, preview: true, categoryTabs: true, custom: true });
+    expect(readFeatures({ search: false, preview: 'no', bogus: false })).toEqual({ search: false, recents: true, skinTones: true, perPersonTones: true, setSwitcher: false, preview: true, categoryTabs: true, custom: true });
     expect(readFeatures(null).search).toBe(true);
   });
 
@@ -1059,6 +1059,186 @@ describe('config, kinds and preview (phase 3)', () => {
 
     expect(parseOptions(element).features.search).toBe(false);
     expect(parseOptions(element).features.preview).toBe(true);
+  });
+});
+
+describe('image sets, the full catalogue and per-person tones (phase 4)', () => {
+  const fixture = JSON.parse(readFileSync(resolve(root, 'tests/js/fixtures/image-urls.json'), 'utf8'));
+  const twemoji = { set: 'twemoji', licence: 'CC-BY-4.0', base: 'https://cdn.example/twemoji', rule: 'twemoji', suffix: '.svg', missing: ['1FAE0'] };
+  const noto = { set: 'noto', licence: 'Apache-2.0', base: 'https://cdn.example/noto', rule: 'noto', suffix: '.svg', missing: [] };
+
+  it('builds every image URL exactly as the server does', () => {
+    let compared = 0;
+
+    for (const [name, urls] of Object.entries(fixture.urls)) {
+      for (const [hexcode, url] of Object.entries(urls)) {
+        expect(imageUrl(fixture.sets[name], hexcode), `${name} ${hexcode}`).toBe(url);
+        compared++;
+      }
+    }
+
+    // A fixture that stopped carrying samples would pass trivially.
+    expect(compared).toBeGreaterThanOrEqual(50);
+    expect(Object.keys(IMAGE_RULES).sort()).toEqual(['joypixels', 'noto', 'openmoji', 'twemoji']);
+  });
+
+  it('reads per-emoji paths and URLs for sets without a rule', () => {
+    expect(imageUrl({ set: 'fluent', licence: 'MIT', base: 'https://x', paths: { '1F600': 'Grinning%20face/a.svg' } }, '1F600')).toBe('https://x/Grinning%20face/a.svg');
+    expect(imageUrl({ set: 'mine', licence: '', urls: { '1F600': 'https://y/1.png' } }, '1F600')).toBe('https://y/1.png');
+    expect(imageUrl({ set: 'mine', licence: '', urls: {} }, '1F600')).toBeNull();
+    expect(imageUrl(null, '1F600')).toBeNull();
+  });
+
+  it('keeps what the device cannot draw when the set can, marked to be drawn as an image', () => {
+    const data = { ...payload(), images: twemoji };
+    data.groups[1].emoji[1].skin_versions = '14.0'; // 🤝's tones
+    const capped = capPayload(data, '13.0', undefined, { set: twemoji });
+    const all = capped.groups.flatMap((g) => g.emoji);
+    const handshake = all.find((i) => i.hexcode === '1F91D');
+
+    // 🫠 (14.0) is beyond the cap, but Twemoji lacks it here: still dropped.
+    expect(all.some((i) => i.hexcode === '1FAE0')).toBe(false);
+    // 🤝's tones are beyond the cap and Twemoji has them: kept, drawn as images.
+    expect(handshake.imageSkins).toEqual(['3-3']);
+    expect(drawsImage(handshake, '1F91D-1F3FD', 'auto', twemoji)).toBe('https://cdn.example/twemoji/1f91d-1f3fd.svg');
+    expect(drawsImage(handshake, '1F91D', 'auto', twemoji)).toBeNull();
+    expect(drawsImage(handshake, '1F91D', 'image', twemoji)).toBe('https://cdn.example/twemoji/1f91d.svg');
+    expect(drawsImage(handshake, '1F91D-1F3FD', 'native', twemoji)).toBeNull();
+
+    const withMelt = capPayload({ ...payload(), images: noto }, '13.0', undefined, { set: noto }).groups[0].emoji.find((i) => i.hexcode === '1FAE0');
+    expect(withMelt.draw).toBe('image');
+  });
+
+  it('draws flags as images where the OS draws letters', () => {
+    const data = { ...payload(), groups: [...payload().groups, { slug: 'flags', label: 'Flags', emoji: [{ emoji: '🇺🇸', hexcode: '1F1FA-1F1F8', name: 'flag: United States', shortcode: 'us', keywords: [], version: '2.0', skins: {} }] }] };
+    const flag = capPayload(data, null, undefined, { set: twemoji, flags: false }).groups.at(-1).emoji[0];
+
+    expect(flag.draw).toBe('image');
+    expect(capPayload(data, null, undefined, { set: twemoji, flags: true }).groups.at(-1).emoji[0].draw).toBeUndefined();
+  });
+
+  it('draws images in the grid where the device cannot, and falls back to the glyph when one fails', async () => {
+    const data = { ...payload(), images: noto };
+    document.body.replaceChildren();
+    const host = document.createElement('div');
+    document.body.append(host);
+    await Picker.create(host, { inline: true, store: memoryStore(), maxVersion: '13.0', searchDelay: 0 }).source(new StaticSource(data)).mount();
+    const melt = host.querySelector('[aria-label="melting face"]');
+    const grin = host.querySelector('[aria-label="grinning face"]');
+
+    expect(melt.querySelector('img').getAttribute('src')).toBe('https://cdn.example/noto/emoji_u1fae0.svg');
+    expect(melt.querySelector('img').getAttribute('alt')).toBe('');
+    expect(grin.querySelector('img')).toBeNull();
+
+    melt.querySelector('img').dispatchEvent(new Event('error'));
+    expect(melt.querySelector('img')).toBeNull();
+    expect(melt.textContent).toBe('🫠');
+  });
+
+  it('lets the user switch between native emoji and the payload\'s sets, and remembers the choice', async () => {
+    const store = memoryStore();
+    const data = { ...payload(), images: twemoji, imageSets: [twemoji, noto] };
+    document.body.replaceChildren();
+    const host = document.createElement('div');
+    document.body.append(host);
+    await Picker.create(host, { inline: true, store, maxVersion: null, searchDelay: 0, features: { setSwitcher: true } }).source(new StaticSource(data)).mount();
+    const select = host.querySelector('.laranail-emoji-picker-set');
+
+    expect([...select.options].map((o) => o.textContent)).toEqual(['Native', 'Twemoji', 'Noto']);
+    expect(host.querySelector('[aria-label="grinning face"] img')).toBeNull();
+
+    select.value = 'noto';
+    select.dispatchEvent(new Event('change'));
+
+    expect(store.get('set')).toBe('noto');
+    expect(host.querySelector('[aria-label="grinning face"] img').getAttribute('src')).toBe('https://cdn.example/noto/emoji_u1f600.svg');
+  });
+
+  it('knows each emoji\'s toned forms, one person or two', () => {
+    const wave = payload().groups[1].emoji[0];
+    const handshake = { ...payload().groups[1].emoji[1], skins: { 3: '1F91D-1F3FD', '3-5': '1FAF1-1F3FD-200D-1FAF2-1F3FF' } };
+
+    expect(toneForms(wave).people).toBe(1);
+    expect(toneForms(wave).form(0)).toBe('1F44B');
+    expect(toneForms(wave).form(4)).toBe('1F44B-1F3FE');
+    expect(toneForms(handshake).people).toBe(2);
+    expect(toneForms(handshake).form(3, 3)).toBe('1F91D-1F3FD');
+    expect(toneForms(handshake).form(3, 5)).toBe('1FAF1-1F3FD-200D-1FAF2-1F3FF');
+    expect(toneForms(handshake).form(1, 2)).toBeNull();
+    expect(toneForms(payload().groups[0].emoji[0]).people).toBe(0);
+  });
+
+  it('opens a tone menu on right click: one tone for this pick, recorded exactly', async () => {
+    const store = memoryStore();
+    const { host, textarea } = await mount({ store });
+    const wave = host.querySelector('[aria-label="waving hand"]');
+
+    expect(host.querySelector('[aria-label="grinning face"]').dispatchEvent(new MouseEvent('contextmenu', { bubbles: true, cancelable: true }))).toBe(true); // no tones: the browser's menu
+    expect(wave.dispatchEvent(new MouseEvent('contextmenu', { bubbles: true, cancelable: true }))).toBe(false);
+
+    const menu = host.querySelector('.laranail-emoji-picker-tonemenu');
+    expect(menu.getAttribute('role')).toBe('dialog');
+    expect([...menu.querySelectorAll('[data-laranail-emoji-hexcode]')].map((b) => b.textContent)).toEqual(['👋', '👋🏻', '👋🏼', '👋🏽', '👋🏾', '👋🏿']);
+
+    menu.querySelector('[data-laranail-emoji-hexcode="1F44B-1F3FE"]').click();
+
+    expect(textarea.value).toBe('👋🏾');
+    expect(readRecent(store.get('recent'))[0]).toMatchObject({ base: '1F44B', hexcode: '1F44B-1F3FE' });
+    expect(host.querySelector('.laranail-emoji-picker-tonemenu')).toBeNull();
+  });
+
+  it('gives each person in 🤝 a tone, previews the result, and closes on Escape back to the emoji', async () => {
+    const data = payload();
+    data.groups[1].emoji[1].skins = { 1: '1F91D-1F3FB', 3: '1F91D-1F3FD', '3-5': '1FAF1-1F3FD-200D-1FAF2-1F3FF', '1-3': '1FAF1-1F3FB-200D-1FAF2-1F3FD' };
+    document.body.replaceChildren();
+    const host = document.createElement('div');
+    const textarea = document.createElement('textarea');
+    document.body.append(host, textarea);
+    await Picker.create(host, { inline: true, store: memoryStore(), maxVersion: null, searchDelay: 0 }).source(new StaticSource(data)).target(textarea).mount();
+    const handshake = host.querySelector('[aria-label="handshake"]');
+
+    handshake.dispatchEvent(new KeyboardEvent('keydown', { key: 'F10', shiftKey: true, bubbles: true, cancelable: true }));
+    let menu = host.querySelector('.laranail-emoji-picker-tonemenu');
+    const rows = menu.querySelectorAll('[role="radiogroup"]');
+
+    expect(rows).toHaveLength(2);
+    rows[0].querySelector('[data-laranail-emoji-tone="3"]').click();
+    rows[1].querySelector('[data-laranail-emoji-tone="5"]').click();
+
+    const result = menu.querySelector('.laranail-emoji-picker-tonemenu-result');
+    expect(result.dataset.hexcode).toBe('1FAF1-1F3FD-200D-1FAF2-1F3FF');
+    rows[1].querySelector('[data-laranail-emoji-tone="2"]').click();
+    expect(result.disabled).toBe(true); // 3-2 is not offered
+
+    menu.dispatchEvent(new KeyboardEvent('keydown', { key: 'Escape', bubbles: true }));
+    expect(host.querySelector('.laranail-emoji-picker-tonemenu')).toBeNull();
+    expect(document.activeElement).toBe(handshake);
+
+    handshake.dispatchEvent(new MouseEvent('contextmenu', { bubbles: true, cancelable: true }));
+    menu = host.querySelector('.laranail-emoji-picker-tonemenu');
+    menu.querySelectorAll('[role="radiogroup"]')[0].querySelector('[data-laranail-emoji-tone="1"]').click();
+    menu.querySelectorAll('[role="radiogroup"]')[1].querySelector('[data-laranail-emoji-tone="3"]').click();
+    menu.querySelector('.laranail-emoji-picker-tonemenu-result').click();
+    expect(textarea.value).toBe('🫱🏻‍🫲🏽');
+  });
+
+  it('opens the tone menu on a long press, without picking the emoji it was held on', async () => {
+    vi.useFakeTimers();
+
+    try {
+      const { host, textarea } = await mount();
+      const wave = host.querySelector('[aria-label="waving hand"]');
+
+      wave.dispatchEvent(new PointerEvent('pointerdown', { bubbles: true, pointerType: 'touch', clientX: 5, clientY: 5 }));
+      vi.advanceTimersByTime(500);
+      expect(host.querySelector('.laranail-emoji-picker-tonemenu')).not.toBeNull();
+
+      wave.dispatchEvent(new PointerEvent('pointerup', { bubbles: true, pointerType: 'touch' }));
+      wave.click();
+      expect(textarea.value).toBe('');
+    } finally {
+      vi.useRealTimers();
+    }
   });
 });
 

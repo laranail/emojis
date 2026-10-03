@@ -14,7 +14,7 @@ use Simtabi\Laranail\Package\Tools\Services\Doctor\DoctorResult;
 /**
  * The emoji picker's delivery: that the payload builds, how large it is, and whether the configuration can
  * deliver it. Warns, rather than fails, on a payload embedded into every page that is large enough to matter,
- * and on `delivery: api` without the API, which falls back to embedding.
+ * on `delivery: api` without the API, which falls back to embedding, and on an image set with no coverage data.
  */
 final readonly class PickerCheck implements DoctorCheck
 {
@@ -40,7 +40,8 @@ final readonly class PickerCheck implements DoctorCheck
             $payloads = $this->payloads ?? app(PickerPayloads::class);
             $config = $this->config ?? app(PickerConfig::class);
             $settings = $this->settings ?? app(Repository::class);
-            $bytes = strlen(json_encode($payloads->payload(), JSON_UNESCAPED_UNICODE | JSON_THROW_ON_ERROR));
+            $payload = $payloads->payload();
+            $bytes = strlen(json_encode($payload, JSON_UNESCAPED_UNICODE | JSON_THROW_ON_ERROR));
         } catch (Throwable $e) {
             return DoctorResult::fail('The picker payload could not be built: ' . $e->getMessage());
         }
@@ -50,6 +51,12 @@ final readonly class PickerCheck implements DoctorCheck
 
         if ($config->delivery === 'api' && ! $api) {
             return DoctorResult::warn("picker.delivery is api but the API is off, so the payload ({$size}) is embedded instead. Set LARANAIL_EMOJIS_API=true, or delivery to inline.", ['bytes' => $bytes]);
+        }
+
+        // The dataset has no coverage for JoyPixels, so the payload cannot say which images it lacks: the picker
+        // requests some that do not exist, and shows the glyph when they fail.
+        if ($payload->images !== null && ($payload->images['set'] ?? null) === 'joypixels') {
+            return DoctorResult::warn('The picker falls back to JoyPixels, which has no coverage data: some image requests will 404 before the picker shows the glyph instead. Prefer twemoji, noto or openmoji for picker.image_set.', ['bytes' => $bytes]);
         }
 
         if ($bytes > self::INLINE_BUDGET && ($config->delivery === 'inline' || ! $api)) {
