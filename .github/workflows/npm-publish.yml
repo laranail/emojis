@@ -88,6 +88,23 @@ jobs:
             exit 1
           fi
 
+      # Without a token, show the identity GitHub vouches for, which npm compares with the package's trusted
+      # publisher (organization, repository, workflow file, environment). The claims only: the token is masked and
+      # never printed. A mismatch here is the usual reason trusted publishing answers 404.
+      - name: Show the trusted-publishing identity
+        env:
+          NPM_TOKEN: ${{ secrets.NPM_TOKEN }}
+        run: |
+          if [ -n "$NPM_TOKEN" ]; then
+            echo "NPM_TOKEN is set; trusted publishing is not used."
+            exit 0
+          fi
+          token=$(curl -sSf -H "Authorization: bearer $ACTIONS_ID_TOKEN_REQUEST_TOKEN" "$ACTIONS_ID_TOKEN_REQUEST_URL&audience=npm:registry.npmjs.org" | jq -r .value)
+          echo "::add-mask::$token"
+          payload=$(printf '%s' "$token" | cut -d. -f2 | tr '_-' '/+')
+          while [ $(( ${#payload} % 4 )) -ne 0 ]; do payload="$payload="; done
+          printf '%s' "$payload" | base64 -d | jq '{repository, repository_owner, workflow_ref, job_workflow_ref, ref, event_name, environment}'
+
       - name: Publish
         env:
           NPM_TOKEN: ${{ secrets.NPM_TOKEN }}
@@ -97,3 +114,9 @@ jobs:
           else
             npm publish --provenance --access public
           fi
+
+      # npm says why a trusted-publishing exchange failed only in its debug log, which the job does not keep.
+      - name: Show npm's OIDC log lines
+        if: failure()
+        run: |
+          { grep -hiE 'oidc|trusted|id.?token|provenance' ~/.npm/_logs/*-debug-0.log || echo "(no OIDC lines in the npm debug log)"; } | tail -40
