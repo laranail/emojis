@@ -67,6 +67,9 @@ jobs:
       # CI=true makes sync-check download the pinned upstream sources (sha256-verified against
       # database/sources/upstream.lock.json) and fail rather than skip, so the dataset comparison always really runs.
       - name: Generated data is still generated
+        # The token lifts the GitHub API's per-IP limit for the two listings fetched from it (lib/GitHubAuth.php).
+        env:
+          GITHUB_TOKEN: ${{ github.token }}
         run: composer sync-check
 
       - name: Core runs without Laravel

@@ -26,3 +26,30 @@ it('lists every generator once, so regenerate and sync-check cannot drift apart'
 
     expect((string) file_get_contents("{$tools}/refresh.php"))->toContain('regenerate.php');
 });
+
+it('sends a GitHub token to the GitHub API only, so a download never leaks it', function (string $url, ?string $token, ?string $expected): void {
+    require_once dirname(__DIR__, 2) . '/.dev/tools/lib/GitHubAuth.php';
+
+    expect(GitHubAuth::headerFor($url, $token))->toBe($expected);
+})->with([
+    'GitHub API, token'      => ['https://api.github.com/repos/googlefonts/noto-emoji/git/trees/abc', 'ghs_x', 'Authorization: Bearer ghs_x'],
+    'GitHub API, uppercase'  => ['https://API.GitHub.com/repos/a/b', 'ghs_x', 'Authorization: Bearer ghs_x'],
+    'no token'               => ['https://api.github.com/repos/a/b', null, null],
+    'empty token'            => ['https://api.github.com/repos/a/b', '', null],
+    'a CDN'                  => ['https://cdn.jsdelivr.net/npm/emojibase-data/en/data.json', 'ghs_x', null],
+    'raw GitHub content'     => ['https://raw.githubusercontent.com/github/gemoji/master/db/emoji.json', 'ghs_x', null],
+    'lookalike host'         => ['https://api.github.com.evil.example/repos', 'ghs_x', null],
+    'credentials in the URL' => ['https://user@api.github.com/repos/a/b', 'ghs_x', null],
+    'plain http'             => ['http://api.github.com/repos/a/b', 'ghs_x', null],
+    'another port'           => ['https://api.github.com:8443/repos/a/b', 'ghs_x', null],
+]);
+
+it('downloads every GitHub API source through the token helper', function (): void {
+    $lock = json_decode((string) file_get_contents(dirname(__DIR__, 2) . '/database/sources/upstream.lock.json'), true, flags: JSON_THROW_ON_ERROR);
+    $sources = $lock['sources'] ?? $lock;
+    $api = array_filter($sources, static fn (mixed $s): bool => is_array($s) && str_starts_with((string) ($s['url'] ?? ''), 'https://api.github.com/'));
+    $script = (string) file_get_contents(dirname(__DIR__, 2) . '/.dev/tools/build-dataset.php');
+
+    expect(count($api))->toBeGreaterThanOrEqual(1)
+        ->and($script)->toContain('GitHubAuth::curlArguments($source[\'url\'])');
+});
