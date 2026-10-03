@@ -76,4 +76,37 @@ return [
         'middleware'    => ['api', 'throttle:120,1'],
         'cache_headers' => 'public;max_age=3600;etag', // Laravel's cache.headers: ETag and 304; '' for none
     ],
+
+    // The emoji picker (<x-laranail-emojis::picker />, the Livewire component, the /picker endpoint). Each
+    // value is a default: a component attribute or a data-laranail-emoji-* attribute overrides it.
+    'picker' => [
+        // Parts of the picker that can be switched off, and the two extra content tabs that are off unless
+        // asked for (each adds its characters to the payload: about 2,100 kaomoji, 7,300 symbols).
+        'features' => [
+            'search'        => true,
+            'recents'       => true,
+            'skin_tones'    => true,
+            'preview'       => true,  // the hovered emoji, large, with its name and :shortcode:
+            'category_tabs' => true,
+            'custom'        => true,  // custom emoji, when the policy allows them
+            'kaomoji'       => false, // a Kaomoji tab: ¯\_(ツ)_/¯
+            'symbols'       => false, // a Symbols tab: arrows, currency, maths, punctuation, letters
+        ],
+
+        'placement'        => 'auto', // auto | top | bottom | start | end, optionally -start / -end
+        'offset'           => 8,      // px between the trigger and the popover
+        'arrow'            => true,   // the caret pointing at the trigger
+        'sheet_breakpoint' => 640,    // at or below this viewport width, a bottom sheet; 0 never
+        'columns'          => 8,
+        'max_recent'       => 36,
+        'sort'             => 'default', // default | name | newest
+        'recent_order'     => 'recent',  // recent | frequent
+        'close_on_select'  => true,
+        'trigger'          => '🙂',
+        'theme'            => 'auto', // auto (the OS, or a .dark / [data-theme] ancestor) | light | dark
+
+        // Where the payload comes from: inline (a JSON block in the page), api (GET /picker; needs the API
+        // enabled), or auto (the API when it is enabled, inline otherwise).
+        'delivery' => 'auto',
+    ],
 ];

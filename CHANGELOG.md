@@ -76,6 +76,20 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/),
 
 ### Added
 
+- **A `picker` config section.** Every picker option has a default in `laranail.emojis.picker` — placement,
+  offset, caret, sheet breakpoint, columns, recents, sort, closing, the trigger, the theme and the payload's
+  delivery — and `picker.features` switches parts off (`search`, `recents`, `skin_tones`, `preview`,
+  `category_tabs`, `custom`). Component attributes override it, and `data-laranail-emoji-*` attributes override
+  both. Values of the wrong type take the built-in default.
+- **Kaomoji and Symbols tabs**, off by default (`picker.features.kaomoji`, `.symbols`): an Emoji / Kaomoji /
+  Symbols switch over about 2,100 text faces and the special-character groups, inserted as text, with
+  `kind` on the select event. The payload carries them only when they are on.
+- **A refreshed layout**: outline icons for the category tabs with the current one following the scroll, an
+  accent colour (`--laranail-emoji-picker-accent`), sticky uppercase headings, a pill search field, and a
+  footer that previews the hovered emoji with its name and `:shortcode:` beside the skin tones.
+- **`theme`** (`light`, `dark`, `auto`) and **`delivery`** (`inline`, `api`, `auto`) options, and a
+  `laranail/emojis picker` doctor check that warns about a large embedded payload or `api` delivery with the
+  API off.
 - **A collision-aware popover with a caret.** The picker's popover opens in the top layer, so an ancestor's
   `overflow` or `z-index` can no longer clip it, and is positioned against its trigger: flipped above when
   there is no room below, shifted to stay on screen, capped to the height available, and kept in place on

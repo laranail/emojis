@@ -27,12 +27,17 @@ final class PickerPayloads
     /** @var array<string, PickerPayload> */
     private array $built = [];
 
+    private readonly PickerConfig $config;
+
     public function __construct(
         private readonly Emojis $emojis,
         private readonly PayloadBuilder $builder,
         private readonly Translator $translator,
         private readonly ?CacheRepository $cache = null,
-    ) {}
+        ?PickerConfig $config = null,
+    ) {
+        $this->config = $config ?? PickerConfig::fromArray([]);
+    }
 
     public function payload(?string $locale = null): PickerPayload
     {
@@ -44,7 +49,12 @@ final class PickerPayloads
             return $this->built[$key];
         }
 
-        $build = fn (): PickerPayload => $this->builder->build($locale, $labels);
+        $build = fn (): PickerPayload => $this->withoutCustomUnlessEnabled($this->builder->build(
+            $locale,
+            $labels,
+            kaomoji: $this->config->enabled('kaomoji'),
+            symbols: $this->config->enabled('symbols'),
+        ));
 
         try {
             $payload = $this->cache instanceof CacheRepository ? $this->cache->remember($key, 86_400, $build) : $build();
@@ -83,6 +93,9 @@ final class PickerPayloads
             'open'    => $text('open'),
             'loading' => $text('loading'),
             'failed'  => $text('failed'),
+            'emoji'   => $text('emoji'),
+            'kaomoji' => $text('kaomoji'),
+            'symbols' => $text('symbols'),
         ], static fn (mixed $v): bool => $v !== null);
     }
 
@@ -92,6 +105,16 @@ final class PickerPayloads
         $line = $this->lines($this->emojis->locales()->resolve($locale))['no_script'] ?? '';
 
         return is_string($line) ? $line : '';
+    }
+
+    /** The custom emoji are left out when `picker.features.custom` is off, whatever the policy allows. */
+    private function withoutCustomUnlessEnabled(PickerPayload $payload): PickerPayload
+    {
+        if ($this->config->enabled('custom') || $payload->custom === []) {
+            return $payload;
+        }
+
+        return new PickerPayload($payload->dataset, $payload->locale, $payload->groups, [], $payload->shortcodeOpen, $payload->shortcodeClose, $payload->kaomoji, $payload->symbols);
     }
 
     /**
@@ -128,6 +151,7 @@ final class PickerPayloads
             $options->shortcodeClose,
             array_map(static fn (CustomEmoji $c): array => [$c->name, $c->label(), $c->image->src, $c->fallback], $this->emojis->customEmojis()),
             $labels,
+            $this->config->features,
         ]));
     }
 }

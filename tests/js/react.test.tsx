@@ -280,6 +280,48 @@ describe('EmojiPicker (React) parity with the vanilla picker', () => {
   });
 });
 
+describe('EmojiPicker (React) phase 3', () => {
+  beforeEach(() => localStorage.clear());
+  afterEach(cleanup);
+
+  it('offers kaomoji in their own tab and inserts them as text; hides what features switch off', async () => {
+    const data = { ...payload(), kaomoji: [{ slug: 'shrugging', label: 'Shrugging', items: [{ text: '¯\\_(ツ)_/¯', name: 'shrug' }] }] };
+    const onSelect = vi.fn();
+    const source = new StaticSource(data);
+
+    function Kaomoji() {
+      const ref = useRef<HTMLTextAreaElement>(null);
+
+      return (
+        <>
+          <textarea aria-label="message" ref={ref} />
+          <EmojiPicker source={source} target={ref} inline store={memoryStore()} maxVersion={null} searchDelay={0} onSelect={onSelect} features={{ skinTones: false }} />
+        </>
+      );
+    }
+
+    render(<Kaomoji />);
+    await ready();
+
+    expect(screen.getByRole('radiogroup', { hidden: true }).hidden).toBe(true);
+    fireEvent.click(screen.getByRole('tab', { name: 'Kaomoji' }));
+    fireEvent.click(screen.getByRole('gridcell', { name: 'shrug' }));
+
+    expect((screen.getByLabelText('message') as HTMLTextAreaElement).value).toBe('¯\\_(ツ)_/¯');
+    expect(onSelect).toHaveBeenCalledWith(expect.objectContaining({ kind: 'kaomoji', emoji: '¯\\_(ツ)_/¯' }));
+  });
+
+  it('draws icon tabs and a preview of the focused emoji', async () => {
+    const { container } = render(<Form />);
+    await ready();
+
+    expect(container.querySelector('[role="tab"] svg path')).not.toBeNull();
+    act(() => cells()[0].focus());
+    expect(container.querySelector('.laranail-emoji-picker-preview-name')?.textContent).toBe('grinning face');
+    expect(container.querySelector('.laranail-emoji-picker-preview-code')?.textContent).toBe(':grinning:');
+  });
+});
+
 describe('the React build', () => {
   it('writes relative imports with .js, so its declarations resolve under moduleResolution node16/nodenext', () => {
     const files = ['index.ts', 'EmojiPicker.tsx', 'useEmojiPicker.ts'];

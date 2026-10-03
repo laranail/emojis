@@ -77,6 +77,7 @@ Hosted at <https://opensource.simtabi.com/documentation/laranail/emojis/>.
 - [Emoji in console output](docs/recipes/emoji-in-console-output.md)
 - [Store emoji in a utf8mb3 column](docs/recipes/store-emoji-in-utf8mb3.md)
 - [Add an emoji picker to a form](docs/recipes/add-an-emoji-picker.md)
+- [Configure the emoji picker](docs/recipes/configure-the-picker.md)
 - [Feed a JavaScript emoji picker](docs/recipes/feed-a-javascript-picker.md)
 - [Target older platforms](docs/recipes/target-older-platforms.md)
 - [Fit emoji into UI without padding](docs/recipes/fit-emoji-into-ui.md)

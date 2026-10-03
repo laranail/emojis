@@ -9,6 +9,7 @@ use Illuminate\Support\HtmlString;
 use Simtabi\Laranail\Emojis\Core\Emojis;
 use Illuminate\View\ComponentAttributeBag;
 use Simtabi\Laranail\Emojis\Laravel\View\PickerData;
+use Simtabi\Laranail\Emojis\Laravel\View\PickerConfig;
 use Simtabi\Laranail\Emojis\Laravel\View\PickerPayloads;
 
 /**
@@ -30,31 +31,32 @@ use Simtabi\Laranail\Emojis\Laravel\View\PickerPayloads;
  */
 final class Picker extends Component
 {
-    /** Where the popover may open; anything else is left to the script's default ('auto'). */
-    private const array PLACEMENTS = ['auto', 'top', 'bottom', 'start', 'end', 'top-start', 'top-end', 'bottom-start', 'bottom-end', 'start-start', 'start-end', 'end-start', 'end-end'];
-
     /** @param list<string> $categories */
     public function __construct(
         private readonly Emojis $emojis,
         private readonly PickerPayloads $payloads,
         private readonly PickerData $written,
+        private readonly PickerConfig $config,
         public ?string $target = null,
         public ?string $locale = null,
         public bool $inline = false,
         public array $categories = [],
         public ?int $maxRecent = null,
-        public string $sort = 'default',
-        public string $recentOrder = 'recent',
+        public ?string $sort = null,
+        public ?string $recentOrder = null,
         public ?int $tone = null,
         public ?int $columns = null,
-        public bool $closeOnSelect = true,
+        public ?bool $closeOnSelect = null,
         public ?string $userKey = null,
         public ?string $maxVersion = null,
         public ?string $trigger = null,
         public ?string $placement = null,
         public ?int $offset = null,
-        public bool $arrow = true,
+        public ?bool $arrow = null,
         public ?int $sheetBreakpoint = null,
+        public ?string $theme = null,
+        /** @var array<string, bool> feature name => on, over `picker.features` */
+        public array $features = [],
     ) {}
 
     /**
@@ -71,11 +73,14 @@ final class Picker extends Component
     {
         $extra ??= new ComponentAttributeBag;
         $resolved = $this->emojis->locales()->resolve($this->locale);
-        $api = config('laranail.emojis.api.enabled');
+        $c = $this->config;
+        $api = filter_var(config('laranail.emojis.api.enabled'), FILTER_VALIDATE_BOOLEAN) && app('router')->has('laranail.emojis.api.picker');
         $block = '';
         $source = [];
 
-        if (filter_var($api, FILTER_VALIDATE_BOOLEAN) && app('router')->has('laranail.emojis.api.picker')) {
+        // delivery: inline always embeds; api and auto fetch when the API is on. api without the API falls back
+        // to inline (the doctor reports it) rather than rendering a picker that cannot load.
+        if ($api && $c->delivery !== 'inline') {
             // Relative, so it is fetched from the host the page is on (tenant subdomains, www and apex,
             // preview domains), not APP_URL's, which would be cross-origin there.
             $source['source'] = route('laranail.emojis.api.picker', absolute: false);
@@ -91,25 +96,30 @@ final class Picker extends Component
             'wire:ignore' => '',
             ...$this->dataAttributes($source),
             ...$this->dataAttributes([
-                'target'           => $this->target,
-                'locale'           => $resolved,
-                'categories'       => $this->categories === [] ? null : implode(',', $this->categories),
-                'max-recent'       => $this->maxRecent === null ? null : max(0, $this->maxRecent),
-                'sort'             => in_array($this->sort, ['name', 'newest'], true) ? $this->sort : null,
-                'recent-order'     => $this->recentOrder === 'frequent' ? 'frequent' : null,
+                'target'     => $this->target,
+                'locale'     => $resolved,
+                'categories' => $this->categories === [] ? null : implode(',', $this->categories),
+                // Each option is the attribute, else the config default; written only when it differs from the
+                // module's own default, so the markup stays short.
+                'max-recent'       => $this->differs(max(0, $this->maxRecent ?? $c->maxRecent), 36),
+                'sort'             => $this->differs(in_array($this->sort, ['name', 'newest', 'default'], true) ? $this->sort : $c->sort, 'default'),
+                'recent-order'     => $this->differs(in_array($this->recentOrder, ['frequent', 'recent'], true) ? $this->recentOrder : $c->recentOrder, 'recent'),
                 'tone'             => $this->tone === null ? null : ($this->tone >= 0 && $this->tone <= 5 ? $this->tone : 0),
-                'columns'          => $this->columns === null ? null : ($this->columns >= 1 ? min($this->columns, 24) : 8),
-                'close-on-select'  => $this->closeOnSelect ? null : 'false',
+                'columns'          => $this->differs($this->columns === null ? $c->columns : ($this->columns >= 1 ? min($this->columns, 24) : 8), 8),
+                'close-on-select'  => ($this->closeOnSelect ?? $c->closeOnSelect) ? null : 'false',
                 'user-key'         => $this->userKey,
                 'max-version'      => $this->maxVersion,
-                'trigger'          => $this->trigger,
-                'placement'        => in_array($this->placement, self::PLACEMENTS, true) ? $this->placement : null,
-                'offset'           => $this->offset,
-                'arrow'            => $this->arrow ? null : 'false',
-                'sheet-breakpoint' => $this->sheetBreakpoint === null ? null : max(0, $this->sheetBreakpoint),
+                'trigger'          => $this->differs($this->trigger ?? $c->trigger, '🙂'),
+                'placement'        => $this->differs(in_array($this->placement, PickerConfig::PLACEMENTS, true) ? $this->placement : $c->placement, 'auto'),
+                'offset'           => $this->differs($this->offset ?? $c->offset, 8),
+                'arrow'            => ($this->arrow ?? $c->arrow) ? null : 'false',
+                'sheet-breakpoint' => $this->differs(max(0, $this->sheetBreakpoint ?? $c->sheetBreakpoint), 640),
+                'features'         => $this->featureAttribute(),
                 'strings'          => json_encode($this->payloads->strings($resolved), JSON_UNESCAPED_UNICODE | JSON_THROW_ON_ERROR),
             ]),
             ...($this->inline ? ['data-laranail-emoji-inline' => ''] : []),
+            // A fixed theme marks the mount point, which the stylesheet reads as an ancestor.
+            ...(($theme = in_array($this->theme, ['auto', 'light', 'dark'], true) ? $this->theme : $c->theme) !== 'auto' ? ['data-theme' => $theme] : []),
         ];
 
         // Passed-through attributes never override the picker's own data-laranail-emoji-* options.
@@ -123,6 +133,30 @@ final class Picker extends Component
         $fallback = e($this->payloads->noScript($resolved));
 
         return new HtmlString("{$block}<div {$html}><noscript>{$fallback}</noscript></div>");
+    }
+
+    private function differs(int|string $value, int|string $default): int|string|null
+    {
+        return $value === $default ? null : $value;
+    }
+
+    /**
+     * The features that are off, as JSON for the module (everything is on unless listed), or null when
+     * none is. Kaomoji and symbols need no flag here: the payload carries them only when they are on.
+     */
+    private function featureAttribute(): ?string
+    {
+        $off = [];
+
+        foreach (PickerConfig::FEATURES as $name) {
+            $on = is_bool($this->features[$name] ?? null) ? $this->features[$name] : $this->config->enabled($name);
+
+            if (! $on && ! in_array($name, ['kaomoji', 'symbols'], true)) {
+                $off[lcfirst(str_replace('_', '', ucwords($name, '_')))] = false;
+            }
+        }
+
+        return $off === [] ? null : json_encode($off, JSON_THROW_ON_ERROR);
     }
 
     /**

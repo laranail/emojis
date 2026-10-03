@@ -17,6 +17,9 @@ return [
     'loading'     => 'Đang tải biểu tượng cảm xúc',
     'failed'      => 'Không thể tải biểu tượng cảm xúc',
     'no_script'   => 'Bộ chọn biểu tượng cảm xúc cần JavaScript. Bạn vẫn có thể gõ biểu tượng cảm xúc trực tiếp.',
+    'emoji'       => 'Biểu tượng cảm xúc',
+    'kaomoji'     => 'Kaomoji',
+    'symbols'     => 'Ký hiệu',
     'groups'      => [
         'smileys_and_emotion' => 'Mặt cười và cảm xúc',
         'people_and_body'     => 'Con người và cơ thể',

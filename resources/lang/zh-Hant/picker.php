@@ -17,6 +17,9 @@ return [
     'loading'     => '正在載入表情符號',
     'failed'      => '無法載入表情符號',
     'no_script'   => '表情符號選擇器需要 JavaScript。你仍然可以直接輸入表情符號。',
+    'emoji'       => '表情符號',
+    'kaomoji'     => '顏文字',
+    'symbols'     => '符號',
     'groups'      => [
         'smileys_and_emotion' => '笑臉和情感',
         'people_and_body'     => '人物和身體',

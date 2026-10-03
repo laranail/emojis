@@ -46,12 +46,42 @@ export interface PickerCustom {
     image: string;
     fallback: string | null;
 }
+/** A kaomoji or a special character: inserted as text, named for screen readers. */
+export interface PickerText {
+    text: string;
+    name: string;
+}
+/** A group of kaomoji or symbols, as the payload carries them when those tabs are on. */
+export interface PickerTextGroup {
+    slug: string;
+    label: string;
+    items: Array<{
+        text?: string;
+        char?: string;
+        name: string;
+    }>;
+}
+/** What a picker shows: emoji (with custom ones), kaomoji, or special characters. */
+export type PickerKind = 'emoji' | 'kaomoji' | 'symbols';
+/** Parts of the picker that can be switched off; every one is on unless set to false. */
+export interface PickerFeatures {
+    search: boolean;
+    recents: boolean;
+    skinTones: boolean;
+    preview: boolean;
+    categoryTabs: boolean;
+    custom: boolean;
+}
 /** The payload GET /picker serves and PayloadBuilder builds. */
 export interface PickerPayload {
     dataset?: string;
     locale?: string;
     groups: PickerGroup[];
     custom?: PickerCustom[];
+    /** Present when the Kaomoji tab is on. */
+    kaomoji?: PickerTextGroup[];
+    /** Present when the Symbols tab is on. */
+    symbols?: PickerTextGroup[];
     /** The configured shortcode delimiters a custom emoji is inserted with; [':', ':'] when absent. */
     delimiters?: [string, string];
 }
@@ -69,6 +99,8 @@ export interface SelectDetail {
     name: string;
     shortcode: string | null;
     custom: boolean;
+    /** What was picked from: emoji (the default), kaomoji or symbols. */
+    kind?: PickerKind;
 }
 export interface RecentEntry {
     base: string;
@@ -91,6 +123,10 @@ export interface PickerStrings {
     open: string;
     loading: string;
     failed: string;
+    /** The content tabs, shown when the payload carries kaomoji or symbols. */
+    emoji?: string;
+    kaomoji?: string;
+    symbols?: string;
 }
 export interface PickerOptions {
     source?: PickerSource;
@@ -122,6 +158,8 @@ export interface PickerOptions {
     arrow?: boolean;
     /** At or below this viewport width, in CSS px, the popover is a bottom sheet (default 640; 0 never). */
     sheetBreakpoint?: number;
+    /** Parts to switch off: { search: false, preview: false, … }. Everything is on by default. */
+    features?: Partial<PickerFeatures>;
 }
 export interface PickerEvents {
     select: SelectDetail;
@@ -132,17 +170,25 @@ export interface PickerEvents {
         error: unknown;
     };
 }
-/** One rendered block: Frequently used, a Unicode group, or the custom emoji. */
+/** One rendered block: Frequently used, a Unicode group, the custom emoji, or a group of kaomoji or symbols. */
 export type PickerSection = {
     slug: string;
     label: string;
     custom?: false;
+    text?: false;
     items: PickerEmoji[];
 } | {
     slug: string;
     label: string;
     custom: true;
+    text?: false;
     items: PickerCustom[];
+} | {
+    slug: string;
+    label: string;
+    custom?: false;
+    text: true;
+    items: PickerText[];
 };
 export interface ParsedOptions {
     target: string | null;
@@ -165,6 +211,7 @@ export interface ParsedOptions {
     offset: number;
     arrow: boolean;
     sheetBreakpoint: number;
+    features: PickerFeatures;
 }
 /** Where a pick can be inserted: an input, a textarea, or a contenteditable element. */
 export type Insertable = HTMLInputElement | HTMLTextAreaElement | HTMLElement;
@@ -174,6 +221,31 @@ type Mountable = HTMLElement & {
 };
 /** The interface strings in English; every one can be replaced through the `strings` option. */
 export declare const DEFAULT_STRINGS: PickerStrings;
+/** Every feature on. */
+export declare const DEFAULT_FEATURES: PickerFeatures;
+/** Features from anywhere (an attribute's JSON, a prop): only booleans count, everything else stays on. */
+export declare function readFeatures(value: unknown): PickerFeatures;
+/**
+ * Outline icons for the category tabs, as SVG path data on a 24×24 grid, drawn with currentColor so they
+ * follow the theme. Paths, not markup: both pickers build the <svg> themselves, so nothing is parsed.
+ */
+export declare const TAB_ICONS: Readonly<Record<string, readonly string[]>>;
+/** The groups of one kind as sections. Kaomoji and symbols are text, inserted as they are. */
+export declare function textSections(data: PickerPayload, kind: Exclude<PickerKind, 'emoji'>): Array<{
+    slug: string;
+    label: string;
+    text: true;
+    items: PickerText[];
+}>;
+/** The kinds a payload can show, in tab order: emoji always, then kaomoji and symbols when it carries them. */
+export declare function kindsOf(data: PickerPayload | null): PickerKind[];
+/** Text items whose name or text matches every word of a term. */
+export declare function searchText(items: PickerText[], term: string, limit?: number): PickerText[];
+/**
+ * Marks the section scrolled to as the current tab: the topmost section still showing in the top third of
+ * the scrolling body. Returns the function that stops watching. Without IntersectionObserver it does nothing.
+ */
+export declare function spySections(body: HTMLElement, onActive: (slug: string) => void): () => void;
 /** The hand shown for each tone choice, 0 (default) to 5. */
 export declare const TONE_SWATCHES: readonly string[];
 /** Lower-case and strip diacritics, so "fusee" finds "fusée" and "CAFE" finds "café". */
@@ -412,7 +484,14 @@ export declare class Popover {
     /** Expands the sheet to full height (search focus does, so results are not hidden behind the keyboard). */
     expand(): void;
 }
-type ResolvedOptions = Required<Omit<PickerOptions, 'source' | 'target' | 'store'>> & Pick<PickerOptions, 'source' | 'target' | 'store'>;
+/**
+ * What a category tab shows: the group's outline icon when there is one, else its first emoji, else a short
+ * label (kaomoji and symbol groups). Built with createElementNS, so it stays CSP-safe.
+ */
+export declare function tabFace(section: PickerSection): Node;
+type ResolvedOptions = Required<Omit<PickerOptions, 'source' | 'target' | 'store' | 'features'>> & Pick<PickerOptions, 'source' | 'target' | 'store'> & {
+    features: PickerFeatures;
+};
 export declare class Picker {
     /**
      * Starts a picker on an element; chain the options, then mount(). An element that already has a live
@@ -429,6 +508,8 @@ export declare class Picker {
     panel: HTMLDivElement;
     searchInput: HTMLInputElement;
     private tabs;
+    private kinds;
+    private preview;
     private tones;
     private body;
     private status;
@@ -444,6 +525,8 @@ export declare class Picker {
     private abort;
     private searchTimer;
     private popover;
+    private kind;
+    private stopSpy;
     constructor(element: HTMLElement, options?: PickerOptions);
     source(source: PickerSource): this;
     locale(locale: string | null): this;
@@ -496,16 +579,25 @@ export declare class Picker {
     private scheduleSearch;
     private render;
     private sections;
+    /** The Emoji / Kaomoji / Symbols tabs, shown only when the payload carries more than emoji. */
+    private renderKinds;
+    private setKind;
+    /** The columns a kind's grid uses: kaomoji are wide, so fewer of them fit a row. */
+    private columnsFor;
+    private showPreview;
     private index;
     private sectionId;
     private renderTabs;
     /** Clears any search, marks the tab, and scrolls the body — never the page — to a section. */
     private showSection;
+    /** Marks a category tab as the current one, keeping it in view in a tab bar that scrolls sideways. */
+    private markTab;
     private renderTones;
     /** Applies a tone, updating the radios in place so the one the user is on keeps focus. */
     private setTone;
     private renderBody;
     private cell;
+    private textCell;
     private customCell;
     private onKey;
     private select;

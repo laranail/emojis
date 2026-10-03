@@ -9,10 +9,13 @@ use Illuminate\Support\Facades\Blade;
 use Simtabi\Laranail\Emojis\Core\Emojis;
 use Simtabi\Laranail\Emojis\Tests\TestCase;
 use Illuminate\Contracts\Translation\Translator;
+use Simtabi\Laranail\Emojis\Laravel\View\PickerConfig;
 use Simtabi\Laranail\Emojis\Core\Picker\PayloadBuilder;
+use Simtabi\Laranail\Emojis\Laravel\Doctor\PickerCheck;
 use Simtabi\Laranail\Emojis\Laravel\View\PickerPayloads;
 use Simtabi\Laranail\Emojis\Laravel\Livewire\EmojiPicker;
 use Simtabi\Laranail\Emojis\Core\Terminal\EnvTerminalProbe;
+use Simtabi\Laranail\Package\Tools\Services\Doctor\DoctorStatus;
 
 const PNG = 'data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAQAAAC1HAwCAAAAC0lEQVR42mNkYAAAAAYAAjCB0C8AAAAASUVORK5CYII=';
 
@@ -152,7 +155,7 @@ it('takes a version cap and a trigger, and corrects out-of-range options', funct
     expect($html)->toContain('data-laranail-emoji-max-version="13.0"')
         ->toContain('data-laranail-emoji-trigger="😺"')
         ->toContain('data-laranail-emoji-tone="0"')
-        ->toContain('data-laranail-emoji-columns="8"')
+        ->not->toContain('data-laranail-emoji-columns=') // corrected to 8, the module's own default
         ->toContain('data-laranail-emoji-max-recent="0"')
         ->not->toContain('data-laranail-emoji-sort=')
         ->not->toContain('data-laranail-emoji-recent-order=');
@@ -250,4 +253,85 @@ it('passes the popover options, and drops a placement the script would not know'
         ->toContain('data-laranail-emoji-arrow="false"')
         ->toContain('data-laranail-emoji-sheet-breakpoint="0"')
         ->and(Blade::render('<x-laranail-emojis::picker placement="sideways" />'))->not->toContain('data-laranail-emoji-placement');
+});
+
+it('takes its defaults from laranail.emojis.picker, which attributes override', function (): void {
+    TestCase::$bootConfig = ['laranail.emojis.picker' => [
+        'columns'  => 10, 'placement' => 'top-end', 'arrow' => false, 'trigger' => '😺', 'theme' => 'dark',
+        'features' => ['search' => false, 'preview' => false], 'sort' => 'bogus',
+    ]];
+    $this->refreshApplication();
+
+    $html = Blade::render('<x-laranail-emojis::picker />');
+    $override = Blade::render('<x-laranail-emojis::picker :columns="6" placement="bottom" :arrow="true" theme="auto" :features="[\'search\' => true]" />');
+
+    expect($html)->toContain('data-laranail-emoji-columns="10"')
+        ->toContain('data-laranail-emoji-placement="top-end"')
+        ->toContain('data-laranail-emoji-arrow="false"')
+        ->toContain('data-laranail-emoji-trigger="😺"')
+        ->toContain('data-theme="dark"')
+        ->toContain('data-laranail-emoji-features="{&quot;search&quot;:false,&quot;preview&quot;:false}"')
+        ->not->toContain('data-laranail-emoji-sort=')
+        ->and($override)->toContain('data-laranail-emoji-columns="6"')
+        ->toContain('data-laranail-emoji-placement="bottom"')
+        ->not->toContain('data-laranail-emoji-arrow=')
+        ->not->toContain('data-theme=')
+        ->toContain('data-laranail-emoji-features="{&quot;preview&quot;:false}"');
+});
+
+it('adds kaomoji and symbols to the payload only when their tabs are on, and drops custom emoji when that tab is off', function (): void {
+    expect(payloadIn(Blade::render('<x-laranail-emojis::picker />')))->not->toHaveKeys(['kaomoji', 'symbols']);
+
+    TestCase::$bootConfig = [
+        'laranail.emojis.picker.features' => ['kaomoji' => true, 'symbols' => true, 'custom' => false],
+        'laranail.emojis.extend.custom'   => ['partyparrot' => ['image' => PNG]],
+    ];
+    $this->refreshApplication();
+
+    $payload = payloadIn(Blade::render('<x-laranail-emojis::picker />'));
+
+    expect($payload['kaomoji'][0]['items'][0])->toHaveKeys(['text', 'name'])
+        ->and(array_sum(array_map(static fn (array $g): int => count($g['items']), $payload['kaomoji'])))->toBeGreaterThan(2000)
+        ->and($payload['symbols'][0]['slug'])->toBe('popular')
+        ->and($payload['symbols'][0]['items'][0])->toHaveKeys(['char', 'name'])
+        ->and($payload['custom'])->toBe([]);
+});
+
+it('reads the config defensively: a wrong type takes the built-in default', function (): void {
+    $config = PickerConfig::fromArray(['columns' => '12', 'offset' => 999, 'placement' => 'sideways', 'features' => ['search' => 'no', 'kaomoji' => true], 'delivery' => 'carrier-pigeon']);
+
+    expect([$config->columns, $config->offset, $config->placement, $config->delivery])->toBe([8, 64, 'auto', 'auto'])
+        ->and($config->enabled('search'))->toBeTrue()
+        ->and($config->enabled('kaomoji'))->toBeTrue()
+        ->and($config->enabled('symbols'))->toBeFalse();
+});
+
+it('embeds the payload when delivery is inline even with the API on, and fetches when it is api or auto', function (): void {
+    TestCase::$bootConfig = ['laranail.emojis.api.enabled' => true, 'laranail.emojis.picker.delivery' => 'inline'];
+    $this->refreshApplication();
+    expect(Blade::render('<x-laranail-emojis::picker />'))->toContain('application/json')->not->toContain('data-laranail-emoji-source');
+
+    TestCase::$bootConfig = ['laranail.emojis.api.enabled' => true, 'laranail.emojis.picker.delivery' => 'auto'];
+    $this->refreshApplication();
+    expect(Blade::render('<x-laranail-emojis::picker />'))->toContain('data-laranail-emoji-source')->not->toContain('application/json');
+
+    TestCase::$bootConfig = ['laranail.emojis.picker.delivery' => 'api'];
+    $this->refreshApplication();
+    // api without the API turned on falls back to embedding, so the picker still loads.
+    expect(Blade::render('<x-laranail-emojis::picker />'))->toContain('application/json');
+});
+
+it('has a doctor check that warns about a large embedded payload and about api delivery without the API', function (): void {
+    $check = static fn (array $picker, bool $api): PickerCheck => new PickerCheck(app(PickerPayloads::class), PickerConfig::fromArray($picker), new Illuminate\Config\Repository(['laranail' => ['emojis' => ['api' => ['enabled' => $api]]]]));
+
+    $inline = $check([], false)->run();
+    $api = $check(['delivery' => 'api'], false)->run();
+    $fetched = $check([], true)->run();
+
+    expect($inline->status)->toBe(DoctorStatus::Warn)
+        ->and($inline->message)->toContain('embedded in every page')
+        ->and($api->status)->toBe(DoctorStatus::Warn)
+        ->and($api->message)->toContain('the API is off')
+        ->and($fetched->status)->toBe(DoctorStatus::Pass)
+        ->and($fetched->message)->toContain('from the API');
 });

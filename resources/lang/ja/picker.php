@@ -17,6 +17,9 @@ return [
     'loading'     => '絵文字を読み込み中',
     'failed'      => '絵文字を読み込めませんでした',
     'no_script'   => '絵文字ピッカーには JavaScript が必要です。絵文字は直接入力することもできます。',
+    'emoji'       => '絵文字',
+    'kaomoji'     => '顔文字',
+    'symbols'     => '記号',
     'groups'      => [
         'smileys_and_emotion' => 'スマイリーと感情',
         'people_and_body'     => '人と体',

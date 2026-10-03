@@ -17,6 +17,9 @@ return [
     'loading'     => 'ইমোজি লোড হচ্ছে',
     'failed'      => 'ইমোজি লোড করা যায়নি',
     'no_script'   => 'ইমোজি পিকারের জন্য JavaScript প্রয়োজন। আপনি এখনও সরাসরি ইমোজি টাইপ করতে পারেন।',
+    'emoji'       => 'ইমোজি',
+    'kaomoji'     => 'কাওমোজি',
+    'symbols'     => 'প্রতীক',
     'groups'      => [
         'smileys_and_emotion' => 'স্মাইলি ও আবেগ',
         'people_and_body'     => 'মানুষ ও শরীর',

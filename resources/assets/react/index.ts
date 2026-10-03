@@ -13,7 +13,7 @@
  */
 
 export { EmojiPicker, type EmojiPickerProps } from './EmojiPicker.js';
-export { useEmojiPicker, type EmojiPickerState, type UseEmojiPickerOptions } from './useEmojiPicker.js';
+export { useEmojiPicker, type EmojiPickerState, type PickerItem, type UseEmojiPickerOptions } from './useEmojiPicker.js';
 // The pure building blocks, for a picker UI of your own over useEmojiPicker(). This bundle has no auto-init,
 // so importing them here mounts nothing — unlike importing the vanilla module.
 export {
@@ -23,6 +23,12 @@ export {
   memoryStore,
   DEFAULT_STRINGS,
   MAX_RESULTS,
+  DEFAULT_FEATURES,
+  TAB_ICONS,
+  kindsOf,
+  readFeatures,
+  spySections,
+  textSections,
   Popover,
   autoUpdate,
   computePosition,
@@ -49,6 +55,10 @@ export {
   type PositionOptions,
   type Rect,
   type PickerCustom,
+  type PickerFeatures,
+  type PickerKind,
+  type PickerText,
+  type PickerTextGroup,
   type PickerEmoji,
   type PickerGroup,
   type PickerPayload,

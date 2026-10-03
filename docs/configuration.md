@@ -41,6 +41,12 @@ Grouped by concern; each group's keys are listed once.
 | `api.prefix`, `api.version` | `'laranail/emojis/api'`, `'v1'` | Where it is served. |
 | `api.middleware` | `['api', 'throttle:120,1']` | Its middleware; put authentication here. |
 | `api.cache_headers` | `'public;max_age=3600;etag'` | Laravel's `cache.headers` value; `''` for none. |
+| `picker.features.*` | all on, except `kaomoji` and `symbols` | Switch parts of the [picker](tools/picker.md#configuration) off — `search`, `recents`, `skin_tones`, `preview`, `category_tabs`, `custom` — or the Kaomoji and Symbols tabs on. |
+| `picker.placement`, `picker.offset`, `picker.arrow` | `'auto'`, `8`, `true` | Where the popover opens, its gap from the trigger, and its caret. |
+| `picker.sheet_breakpoint` | `640` | At or below this viewport width the popover is a bottom sheet; `0` never. |
+| `picker.columns`, `picker.max_recent`, `picker.sort`, `picker.recent_order` | `8`, `36`, `'default'`, `'recent'` | Grid and recents defaults. |
+| `picker.close_on_select`, `picker.trigger`, `picker.theme` | `true`, `'🙂'`, `'auto'` | Popover behaviour, the trigger's glyph, and `light`/`dark` to fix the theme. |
+| `picker.delivery` | `'auto'` | `inline` embeds the payload, `api` fetches it (falls back to inline while the API is off), `auto` fetches when the API is on. |
 
 Outside Laravel, `Emojis::create()` takes the same array:
 

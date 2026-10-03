@@ -17,6 +17,9 @@ return [
     'loading'     => 'Inapakia emoji',
     'failed'      => 'Emoji hazikuweza kupakiwa',
     'no_script'   => 'Kichaguzi cha emoji kinahitaji JavaScript. Bado unaweza kuandika emoji moja kwa moja.',
+    'emoji'       => 'Emoji',
+    'kaomoji'     => 'Kaomoji',
+    'symbols'     => 'Alama',
     'groups'      => [
         'smileys_and_emotion' => 'Vikaragosi na hisia',
         'people_and_body'     => 'Watu na mwili',

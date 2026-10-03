@@ -106,6 +106,43 @@ canvas, no colour emoji font, or a canvas that adds noise against fingerprinting
 `data-laranail-emoji-max-version` (or `maxVersion()` in JavaScript) to a version to cap it yourself, or to
 `''`/`null` to show everything.
 
+## Configuration
+
+Every option above has a default in `config/laranail/emojis.php` under `picker`, so a site sets its picker once
+and each `<x-laranail-emojis::picker>` only names what differs. An attribute on the component wins over the
+config, and a `data-laranail-emoji-*` attribute wins over both.
+
+```php
+'picker' => [
+    'features' => [
+        'search' => true, 'recents' => true, 'skin_tones' => true, 'preview' => true,
+        'category_tabs' => true, 'custom' => true,
+        'kaomoji' => false, 'symbols' => false,
+    ],
+    'placement' => 'auto', 'offset' => 8, 'arrow' => true, 'sheet_breakpoint' => 640,
+    'columns' => 8, 'max_recent' => 36, 'sort' => 'default', 'recent_order' => 'recent',
+    'close_on_select' => true, 'trigger' => '🙂', 'theme' => 'auto',
+    'delivery' => 'auto',
+],
+```
+
+```blade
+<x-laranail-emojis::picker target="#reply" :features="['preview' => false, 'recents' => false]" theme="dark" />
+```
+
+- **`features`** switch parts off. `kaomoji` and `symbols` switch on a content tab each — Emoji, Kaomoji
+  (about 2,100 text faces) and Symbols (arrows, currency, maths, punctuation, letters) — which add those
+  characters to the payload, so they are off by default. A kaomoji or symbol is inserted as text; its
+  `laranail-emoji:select` event carries `kind: 'kaomoji'` or `kind: 'symbols'`.
+- **`theme`** fixes the picker light or dark whatever the OS says; `auto` follows the OS, or a `.dark` /
+  `[data-theme]` ancestor.
+- **`delivery`** decides where the payload comes from. `auto` uses the API when it is enabled and embeds
+  otherwise; `inline` always embeds; `api` always fetches, and falls back to embedding while the API is off.
+- A value of the wrong type takes the built-in default rather than reaching the browser.
+
+`php artisan laranail::package-tools.doctor` checks the picker too: it warns when a large payload is embedded
+in every page and when `delivery` is `api` with the API off.
+
 ## The popover
 
 The popover opens in the browser's top layer (the `popover` attribute), so no `overflow: hidden` or
@@ -137,6 +174,19 @@ until the user asks for it.
 
 The positioning is exported as plain functions for other uses — `computePosition()` (pure, testable without
 a browser), `autoUpdate()` and the `Popover` controller both adapters use.
+
+## Layout
+
+From the top: the search field, the Emoji / Kaomoji / Symbols switch (only when the payload carries more than
+emoji), the category tabs, the emoji grid, and a footer with the preview and the skin tones.
+
+- **Category tabs** are outline icons for the nine Unicode groups, Frequently used and Custom, drawn with
+  `currentColor` (inline SVG built with `createElementNS`, so still CSP-safe). The current tab follows the
+  scroll: whichever section is at the top of the grid.
+- **Section headings** stay at the top of the grid while their section scrolls.
+- **The preview** shows the hovered or focused emoji large, with its name and `:shortcode:` (a custom emoji
+  shows its code in the configured delimiters). It is decoration for sighted users; every cell carries its
+  name for assistive technology.
 
 ## Searching
 
@@ -225,7 +275,7 @@ export function Composer() {
 `<EmojiPicker>` takes the same options as the vanilla picker as props — `source`, `target` (a ref),
 `locale`, `tone`, `maxRecent`, `recentOrder`, `sort`, `categories`, `columns`, `maxVersion`, `inline`,
 `closeOnSelect`, `userKey`, `store`, `strings`, `searchDelay`, `trigger`, `placement`, `offset`, `arrow`,
-`sheetBreakpoint` — and `onSelect`. It renders the
+`sheetBreakpoint`, `features` — and `onSelect`. It renders the
 same markup, classes and ARIA, so `picker.css` styles it and the keyboard behaviour is the same. The target
 may be a controlled `<textarea value={…} onChange={…}>`; the pick lands in its state. To draw your own UI, use
 the hook behind it:
@@ -297,6 +347,7 @@ them without declaring them, so they can be set on the picker, on its mount poin
 
 | Property | Default (light / dark) |
 |---|---|
+| `--laranail-emoji-picker-accent` | `#0969da` / `#4493f8` (the current tab, the focused search field) |
 | `--laranail-emoji-picker-bg` | `#fff` / `#1f2328` |
 | `--laranail-emoji-picker-fg` | `#1f2328` / `#f0f3f6` |
 | `--laranail-emoji-picker-muted` | `#59636e` / `#9198a1` |
@@ -304,7 +355,7 @@ them without declaring them, so they can be set on the picker, on its mount poin
 | `--laranail-emoji-picker-hover` | `#eef1f4` / `#2a313c` |
 | `--laranail-emoji-picker-focus` | `#0969da` / `#4493f8` |
 | `--laranail-emoji-picker-shadow` | a soft drop shadow |
-| `--laranail-emoji-picker-radius` | `12px` |
+| `--laranail-emoji-picker-radius` | `14px` |
 | `--laranail-emoji-picker-cell-radius` | `8px` |
 | `--laranail-emoji-picker-cell` | `2.25rem` (`2.75rem` on phones) |
 | `--laranail-emoji-picker-width` | columns × cell + padding |

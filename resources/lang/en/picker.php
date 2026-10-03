@@ -19,6 +19,9 @@ return [
     'loading'     => 'Loading emoji',
     'failed'      => 'Emoji could not be loaded',
     'no_script'   => 'The emoji picker needs JavaScript. You can still type emoji directly.',
+    'emoji'       => 'Emoji',
+    'kaomoji'     => 'Kaomoji',
+    'symbols'     => 'Symbols',
     'groups'      => [
         'smileys_and_emotion' => 'Smileys & Emotion',
         'people_and_body'     => 'People & Body',

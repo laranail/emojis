@@ -8,6 +8,9 @@ import {
   clampTone,
   customCode,
   detectMaxVersionOnce,
+  kindsOf,
+  readFeatures,
+  textSections,
   indexPayload,
   localStorageStore,
   readRecent,
@@ -16,6 +19,9 @@ import {
   withTone,
   type PickerCustom,
   type PickerEmoji,
+  type PickerFeatures,
+  type PickerKind,
+  type PickerText,
   type PickerPayload,
   type PickerSection,
   type PickerSource,
@@ -44,6 +50,8 @@ export interface UseEmojiPickerOptions {
   strings?: Partial<PickerStrings>;
   /** Milliseconds to wait after the last keystroke before searching (default 80). */
   searchDelay?: number;
+  /** Parts to switch off: { recents: false, custom: false, … }. Everything is on by default. */
+  features?: Partial<PickerFeatures>;
   onSelect?: (detail: SelectDetail) => void;
 }
 
@@ -57,6 +65,12 @@ export interface EmojiPickerState {
   setQuery: (query: string) => void;
   tone: number;
   setTone: (tone: number) => void;
+  /** The features in effect: every one on unless the options switched it off. */
+  features: PickerFeatures;
+  /** The kinds the payload offers (emoji, then kaomoji and symbols when it carries them), and the one shown. */
+  kinds: PickerKind[];
+  kind: PickerKind;
+  setKind: (kind: PickerKind) => void;
   /** What to draw: the sections, or the search result sections while a query is typed. */
   sections: PickerSection[];
   /** The sections a tab bar names, whatever is being searched; empty ones are left out. */
@@ -66,9 +80,9 @@ export interface EmojiPickerState {
   /** The hexcode a cell shows for an emoji under the current tone (a recent shows the form it was picked in). */
   hexcodeOf: (item: PickerEmoji) => string;
   /** What picking an item would produce, without recording it: insert this, then call select(). */
-  detailOf: (item: PickerEmoji | PickerCustom) => SelectDetail;
-  /** Picks an emoji or a custom one: records it as recent, calls onSelect, and returns the detail. */
-  select: (item: PickerEmoji | PickerCustom) => SelectDetail;
+  detailOf: (item: PickerItem) => SelectDetail;
+  /** Picks an item: records an emoji as recent, calls onSelect, and returns the detail. */
+  select: (item: PickerItem) => SelectDetail;
   /**
    * Shows the picks made since the last call in Frequently used. A pick is not shown at once, so the grid
    * does not move under the pointer; <EmojiPicker /> calls this when the popover opens or the pointer leaves.
@@ -76,7 +90,11 @@ export interface EmojiPickerState {
   commitRecents: () => void;
 }
 
-const isCustom = (item: PickerEmoji | PickerCustom): item is PickerCustom => 'image' in item;
+/** Anything a cell can hold: an emoji, a custom emoji, or a kaomoji or symbol. */
+export type PickerItem = PickerEmoji | PickerCustom | PickerText;
+
+const isCustom = (item: PickerItem): item is PickerCustom => 'image' in item;
+const isText = (item: PickerItem): item is PickerText => 'text' in item;
 
 /**
  * The picker's state for React, over the same pure functions the vanilla Picker uses (buildSections,
@@ -98,6 +116,9 @@ export function useEmojiPicker(options: UseEmojiPickerOptions): EmojiPickerState
   const [term, setTerm] = useState('');
   const [tone, setToneState] = useState<number>(clampTone(options.tone ?? 0));
   const [recent, setRecent] = useState<RecentEntry[]>([]);
+  const [kind, setKindState] = useState<PickerKind>('emoji');
+  const featureKey = JSON.stringify(options.features ?? {});
+  const features = useMemo(() => readFeatures(JSON.parse(featureKey)), [featureKey]);
   const onSelect = useRef(options.onSelect);
   onSelect.current = options.onSelect;
   const initialTone = useRef(options.tone);
@@ -153,10 +174,14 @@ export function useEmojiPicker(options: UseEmojiPickerOptions): EmojiPickerState
   // Compared by content, so an inline array prop does not rebuild every section on every render.
   const categoryKey = (categories ?? []).join('\u0000');
   const wanted = useMemo(() => (categoryKey === '' ? [] : categoryKey.split('\u0000')), [categoryKey]);
-  const base = useMemo(
-    () => (data ? buildSections(data, { categories: wanted, sort, recent, recentOrder, strings }) : []),
-    [data, wanted, sort, recent, recentOrder, strings],
-  );
+  const kinds = useMemo(() => kindsOf(data), [data]);
+  const shown: PickerKind = kinds.includes(kind) ? kind : 'emoji';
+  const base = useMemo((): PickerSection[] => {
+    if (!data) return [];
+    if (shown !== 'emoji') return textSections(data, shown);
+
+    return buildSections(data, { categories: wanted, sort, recent: features.recents ? recent : [], recentOrder, strings }).filter((section) => features.custom || !section.custom);
+  }, [data, shown, wanted, sort, recent, recentOrder, strings, features]);
   const trimmed = term.trim();
   const results = useMemo(() => (trimmed ? searchResults(base, trimmed, strings, MAX_RESULTS) : null), [base, trimmed, strings]);
   const tabs = useMemo(() => base.filter((section) => section.items.length > 0), [base]);
@@ -172,27 +197,37 @@ export function useEmojiPicker(options: UseEmojiPickerOptions): EmojiPickerState
     [store],
   );
 
-  const hexcodeOf = useCallback((item: PickerEmoji) => item.pick ?? withTone(item, tone), [tone]);
+  const effectiveTone = features.skinTones ? tone : 0;
+  const hexcodeOf = useCallback((item: PickerEmoji) => item.pick ?? withTone(item, effectiveTone), [effectiveTone]);
+
+  const setKind = useCallback((next: PickerKind) => {
+    setKindState(next);
+    setQuery('');
+  }, []);
 
   const detailOf = useCallback(
-    (item: PickerEmoji | PickerCustom): SelectDetail => {
+    (item: PickerItem): SelectDetail => {
+      if (isText(item)) {
+        return { emoji: item.text, hexcode: null, name: item.name, shortcode: null, custom: false, kind: shown };
+      }
+
       if (isCustom(item)) {
         return { emoji: customCode(item.name, data), hexcode: null, name: item.label, shortcode: item.name, custom: true };
       }
 
-      const hexcode = item.pick ?? withTone(item, tone);
+      const hexcode = item.pick ?? withTone(item, effectiveTone);
       const known = index.get(item.hexcode) ?? item;
 
       return { emoji: charOf(hexcode), hexcode, name: known.name, shortcode: known.shortcode, custom: false };
     },
-    [tone, index, data],
+    [effectiveTone, index, data, shown],
   );
 
   const select = useCallback(
-    (item: PickerEmoji | PickerCustom): SelectDetail => {
+    (item: PickerItem): SelectDetail => {
       const detail = detailOf(item);
 
-      if (!detail.custom && detail.hexcode !== null) {
+      if (features.recents && !detail.custom && detail.hexcode !== null) {
         store.set('recent', recordRecent(store.get('recent'), (item as PickerEmoji).hexcode, detail.hexcode, maxRecent));
       }
 
@@ -200,7 +235,7 @@ export function useEmojiPicker(options: UseEmojiPickerOptions): EmojiPickerState
 
       return detail;
     },
-    [detailOf, store, maxRecent],
+    [detailOf, store, maxRecent, features],
   );
 
   const commitRecents = useCallback(() => setRecent(readRecent(store.get('recent'))), [store]);
@@ -212,8 +247,12 @@ export function useEmojiPicker(options: UseEmojiPickerOptions): EmojiPickerState
     strings,
     query,
     setQuery,
-    tone,
+    tone: features.skinTones ? tone : 0,
     setTone,
+    features,
+    kinds,
+    kind: shown,
+    setKind,
     sections: results ?? base,
     tabs,
     resultCount: results ? results.reduce((sum, section) => sum + section.items.length, 0) : null,

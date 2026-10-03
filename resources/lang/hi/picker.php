@@ -17,6 +17,9 @@ return [
     'loading'     => 'इमोजी लोड हो रहे हैं',
     'failed'      => 'इमोजी लोड नहीं हो सके',
     'no_script'   => 'इमोजी पिकर को JavaScript चाहिए। आप अब भी सीधे इमोजी टाइप कर सकते हैं।',
+    'emoji'       => 'इमोजी',
+    'kaomoji'     => 'काओमोजी',
+    'symbols'     => 'प्रतीक',
     'groups'      => [
         'smileys_and_emotion' => 'स्माइली और भावनाएँ',
         'people_and_body'     => 'लोग और शरीर',

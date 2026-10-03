@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace Simtabi\Laranail\Emojis\Tests;
 
+use Illuminate\View\Component;
 use Livewire\LivewireServiceProvider;
 use Simtabi\Laranail\Emojis\Providers\EmojisServiceProvider;
 use Simtabi\Laranail\Package\Tools\Testing\IsolatedTestCase;
@@ -22,6 +23,12 @@ abstract class TestCase extends IsolatedTestCase
     protected function defineEnvironment($app): void
     {
         parent::defineEnvironment($app);
+
+        // Blade caches inline component views statically, under a view namespace each application registers
+        // with the view factory it also keeps statically; a test that refreshes the application mid-test would
+        // otherwise render through the old factory and find the namespace gone.
+        Component::flushCache();
+        Component::forgetFactory();
 
         foreach (self::$bootConfig as $key => $value) {
             $app['config']->set($key, $value);

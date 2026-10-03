@@ -17,6 +17,9 @@ return [
     'loading'     => '이모지를 불러오는 중',
     'failed'      => '이모지를 불러올 수 없습니다',
     'no_script'   => '이모지 선택기를 사용하려면 JavaScript가 필요합니다. 이모지를 직접 입력할 수도 있습니다.',
+    'emoji'       => '이모지',
+    'kaomoji'     => '카오모지',
+    'symbols'     => '기호',
     'groups'      => [
         'smileys_and_emotion' => '스마일리 및 감정',
         'people_and_body'     => '사람 및 신체',

@@ -17,6 +17,9 @@ return [
     'loading'     => 'Emoji laden',
     'failed'      => 'Emoji konden niet worden geladen',
     'no_script'   => 'De emojikiezer heeft JavaScript nodig. Je kunt emoji nog steeds rechtstreeks typen.',
+    'emoji'       => 'Emoji',
+    'kaomoji'     => 'Kaomoji',
+    'symbols'     => 'Symbolen',
     'groups'      => [
         'smileys_and_emotion' => 'Smileys & emoties',
         'people_and_body'     => 'Mensen & lichaam',
