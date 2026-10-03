@@ -137,9 +137,11 @@ Both are thin over the same pure functions the vanilla picker uses, so the two c
 React 19 is a peer dependency; nothing else is.
 
 The package is `@laranail/emojis-picker` on npm, with the version of the Composer package: `.` is the vanilla
-module, `./react` the React adapter, `./styles.css` the picker stylesheet. The release workflow publishes it
-with provenance once npm publishing is switched on for the repository; until then, build it from a checkout
-with `npm run build:react && npm run types && npm pack`.
+module, `./react` the React adapter, `./styles.css` the picker stylesheet. `.github/workflows/npm-publish.yml` publishes it
+with provenance on every release tag once npm publishing is switched on for the repository (the
+`NPM_PUBLISH` variable), and a maintainer can publish an existing tag by hand with
+`gh workflow run npm-publish.yml -f tag=vX.Y.Z`. To build it from a checkout instead:
+`npm run build:react && npm run types && npm pack`.
 
 ## Accessibility
 
