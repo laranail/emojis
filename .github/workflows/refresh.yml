@@ -49,6 +49,8 @@ jobs:
         run: php .dev/tools/refresh.php
 
       - name: Gates
+        env:
+          GITHUB_TOKEN: ${{ github.token }}
         run: |
           composer sync-check
           composer test
