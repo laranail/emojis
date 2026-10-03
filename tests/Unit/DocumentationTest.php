@@ -44,13 +44,17 @@ it('opens every page with its title and ends it with exactly one footer at the r
     }
 });
 
-it('keeps the README spine: Install, then Quick start, then Documentation', function (): void {
+it('keeps the README spine: Install, then Quick start guide and usage, then Documentation', function (): void {
     $readme = (string) file_get_contents(dirname(__DIR__, 2) . '/README.md');
     $at = static fn (string $heading): int|false => strpos($readme, "\n" . $heading . "\n");
+    $quick = '## Quick start guide and usage';
 
     expect($at('## Install'))->toBeInt()
-        ->and($at('## Quick start'))->toBeGreaterThan($at('## Install'))
-        ->and($at('## <a name="documentation"></a>Documentation'))->toBeGreaterThan($at('## Quick start'));
+        ->and($at($quick))->toBeGreaterThan($at('## Install'))
+        ->and($at('### Getting started'))->toBeGreaterThan($at($quick))
+        ->and($at('### Usage'))->toBeGreaterThan($at('### Getting started'))
+        ->and($at('## <a name="documentation"></a>Documentation'))->toBeGreaterThan($at('### Usage'))
+        ->and($at('## Quick start'))->toBeFalse();
 });
 
 it('lists every public converter and query method on its reference page', function (string $class, string $page): void {
