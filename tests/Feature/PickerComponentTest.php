@@ -3,9 +3,16 @@
 declare(strict_types=1);
 
 use Livewire\Livewire;
+use Illuminate\Cache\ArrayStore;
+use Illuminate\Cache\Repository;
 use Illuminate\Support\Facades\Blade;
+use Simtabi\Laranail\Emojis\Core\Emojis;
 use Simtabi\Laranail\Emojis\Tests\TestCase;
+use Illuminate\Contracts\Translation\Translator;
+use Simtabi\Laranail\Emojis\Core\Picker\PayloadBuilder;
+use Simtabi\Laranail\Emojis\Laravel\View\PickerPayloads;
 use Simtabi\Laranail\Emojis\Laravel\Livewire\EmojiPicker;
+use Simtabi\Laranail\Emojis\Core\Terminal\EnvTerminalProbe;
 
 const PNG = 'data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAQAAAC1HAwCAAAAC0lEQVR42mNkYAAAAAYAAjCB0C8AAAAASUVORK5CYII=';
 
@@ -88,7 +95,8 @@ it('loads from the API instead of embedding when the API is enabled', function (
 
     $html = Blade::render('<x-laranail-emojis::picker locale="fr" />');
 
-    expect($html)->toContain('data-laranail-emoji-source="http://localhost/laranail/emojis/api/v1/picker"')
+    // Relative: fetched from whichever host serves the page, not APP_URL's.
+    expect($html)->toContain('data-laranail-emoji-source="/laranail/emojis/api/v1/picker"')
         ->toContain('data-laranail-emoji-locale="fr"')
         ->not->toContain('application/json');
 });
@@ -126,4 +134,110 @@ it('carries the configured shortcode delimiters, so a custom emoji is inserted a
     $this->refreshApplication();
 
     expect(payloadIn(Blade::render('<x-laranail-emojis::picker />'))['delimiters'])->toBe(['{{', '}}']);
+});
+
+it('passes other attributes through to the mount point, without letting them override its options', function (): void {
+    $html = Blade::render('<x-laranail-emojis::picker class="reply-picker" id="reply" data-laranail-emoji-locale="xx" data-testid="p" />');
+
+    expect($html)->toContain('class="reply-picker"')
+        ->toContain('id="reply"')
+        ->toContain('data-testid="p"')
+        ->toContain('data-laranail-emoji-locale="en"')
+        ->not->toContain('data-laranail-emoji-locale="xx"');
+});
+
+it('takes a version cap and a trigger, and corrects out-of-range options', function (): void {
+    $html = Blade::render('<x-laranail-emojis::picker max-version="13.0" trigger="😺" :tone="9" :columns="0" sort="bogus" recent-order="bogus" :max-recent="-3" />');
+
+    expect($html)->toContain('data-laranail-emoji-max-version="13.0"')
+        ->toContain('data-laranail-emoji-trigger="😺"')
+        ->toContain('data-laranail-emoji-tone="0"')
+        ->toContain('data-laranail-emoji-columns="8"')
+        ->toContain('data-laranail-emoji-max-recent="0"')
+        ->not->toContain('data-laranail-emoji-sort=')
+        ->not->toContain('data-laranail-emoji-recent-order=');
+});
+
+it('translates group names from the picker translations', function (): void {
+    app('translator')->addLines(['picker.groups.flags' => 'Drapeaux', 'picker.results_one' => '1 résultat'], 'fr', 'laranail/emojis');
+
+    $html = Blade::render('<x-laranail-emojis::picker locale="fr" />');
+    $groups = array_column(payloadIn($html)['groups'], 'label', 'slug');
+
+    expect($groups['flags'])->toBe('Drapeaux')
+        ->and($groups['smileys_and_emotion'])->toBe('Smileys & Emotion')
+        ->and(html_entity_decode($html))->toContain('"resultsOne":"1 résultat"');
+});
+
+it('ships picker translations for every dataset locale, each complete and shaped like English', function (): void {
+    $root = dirname(__DIR__, 2);
+    $locales = array_map(static fn (string $f): string => basename($f, '.php'), glob($root . '/database/generated/locales/*.php') ?: []);
+    $english = require $root . '/resources/lang/en/picker.php';
+    $shape = static fn (array $lines): array => [array_keys($lines), array_keys($lines['groups']), count($lines['tones'])];
+
+    expect(count($locales))->toBeGreaterThanOrEqual(20);
+
+    foreach ($locales as $locale) {
+        $file = $root . "/resources/lang/{$locale}/picker.php";
+
+        expect($file)->toBeFile();
+
+        $lines = require $file;
+
+        expect($shape($lines))->toBe($shape($english), $locale)
+            ->and($lines['results'])->toContain('{count}');
+    }
+});
+
+it('serves translated interface strings, and English where a locale lacks one', function (): void {
+    preg_match('/data-laranail-emoji-strings="([^"]+)"/', Blade::render('<x-laranail-emojis::picker locale="sw" />'), $m);
+    $strings = json_decode(html_entity_decode($m[1], ENT_QUOTES | ENT_HTML5), true, flags: JSON_THROW_ON_ERROR);
+
+    expect($strings['search'])->toBe('Tafuta emoji')
+        ->and($strings['tones'])->toHaveCount(6)
+        ->and(array_column(payloadIn(Blade::render('<x-laranail-emojis::picker locale="sw" />'))['groups'] ?? [], 'label'))->each->toBeString();
+
+    // A group the translator cannot find comes back as its key, a string: that must read as no strings.
+    $translator = Mockery::mock(Translator::class);
+    $translator->allows('get')->andReturn('laranail/emojis::picker');
+    $payloads = new PickerPayloads(app(Emojis::class), app(PayloadBuilder::class), $translator);
+
+    expect($payloads->strings('en'))->toBe([])
+        ->and($payloads->noScript('en'))->toBe('')
+        ->and($payloads->payload('en')->groups[0]['label'])->toBe('Smileys & Emotion');
+});
+
+it('writes the data block from the layout, and pickers after it do not repeat it', function (): void {
+    $html = Blade::render('<x-laranail-emojis::picker-data /><x-laranail-emojis::picker /><x-laranail-emojis::picker />');
+
+    expect(substr_count($html, '<script type="application/json"'))->toBe(1)
+        ->and($html)->toStartWith('<script type="application/json" id="laranail-emoji-picker-data-en">');
+
+    // Unconditional: written again even after a picker claimed the locale (its markup may have been a
+    // cached fragment that never reached this page).
+    expect(substr_count(Blade::render('<x-laranail-emojis::picker /><x-laranail-emojis::picker-data />'), 'application/json'))->toBe(1);
+});
+
+it('caches the payload, under a key that changes with what the payload depends on', function (): void {
+    $cache = new Repository(new ArrayStore(serializesValues: true));
+    $payloads = static fn (Emojis $emojis): PickerPayloads => new PickerPayloads($emojis, new PayloadBuilder($emojis), app('translator'), $cache);
+    $plain = Emojis::create(terminal: new EnvTerminalProbe(override: true));
+    $first = $payloads($plain)->payload('en');
+
+    expect($cache->getStore()->all())->toHaveCount(1)
+        ->and($payloads($plain)->payload('en'))->toEqual($first);
+
+    $custom = Emojis::create(terminal: new EnvTerminalProbe(override: true))->addCustom('partyparrot', PNG);
+    $after = $payloads($custom)->payload('en');
+
+    expect($cache->getStore()->all())->toHaveCount(2)
+        ->and(array_column($after->custom, 'name'))->toBe(['partyparrot']);
+});
+
+it('gives the Livewire textarea a name and an accessible name, and locks the locale', function (): void {
+    Livewire::test(EmojiPicker::class, ['name' => 'body', 'placeholder' => 'Say hi'])
+        ->assertSeeHtml('name="body"')
+        ->assertSeeHtml('aria-label="Say hi"');
+
+    expect(fn () => Livewire::test(EmojiPicker::class, ['locale' => 'fr'])->set('locale', 'de'))->toThrow(Exception::class);
 });

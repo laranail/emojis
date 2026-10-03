@@ -29,6 +29,60 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/),
   `wire:ignore`, and a mounted element that lost its picker is mounted again.
 - **Custom emoji were always inserted as `:name:`**, ignoring `shortcodes.delimiters`, so with other delimiters
   the text never rendered. The payload carries `delimiters`, and both pickers insert with them.
+- **Keyboard, focus and ARIA in both pickers.** ArrowUp and ArrowDown stepped through one flat list, so a
+  short last row sent focus to the wrong column or into the wrong section; they now keep the column. Category
+  tabs were all tab stops with no `aria-selected`; they are a roving tablist that controls its sections and
+  scrolls the picker instead of the page. Tone radios had no arrow keys and lost focus on every change. Escape
+  was swallowed even by an inline picker, which blocked a surrounding `<dialog>`; it is now taken only when a
+  popover actually closes. Left and Right mirror on right-to-left pages.
+- **The popover did not close on a click or Tab outside**, and a pick sent focus to the trigger instead of the
+  field. Both are fixed: outside interaction closes it and leaves focus where the user put it, and a pick
+  returns focus to the field so typing carries on.
+- **Version detection hid too much, or nothing.** With no sample drawn (fonts not yet loaded, no colour emoji
+  font) it fell back to Emoji 11.0 and hid everything newer; on macOS, the LastResort font drew a different
+  placeholder per block, so missing emoji read as supported. It now waits for web fonts, counts a sample only
+  when it comes out in colour as one glyph, caches the result per page, and hides nothing when it cannot tell
+  — including on a canvas that adds noise against fingerprinting.
+- **Stored state could break the picker.** A corrupt or foreign `recent` value threw on every load until
+  storage was cleared, and an out-of-range or string tone left no radio reachable by keyboard. Stored values
+  are validated, and tones and columns are clamped everywhere they are read.
+- **Lifecycle.** Listeners piled up on every tone change; a slow load from before `destroy()` could draw into a
+  remounted picker in the old locale; `Picker.create()` on an auto-initialised element returned a detached copy
+  whose `.open()` threw; setters called after `mount()` did nothing. All fixed.
+- **Recents.** The vanilla picker never redrew Frequently used after a pick, while the React one redrew it under
+  the pointer. Both now show a pick once the popover reopens or the pointer leaves, in the tone it was picked
+  in, and drop entries the policy or the version cap no longer offers.
+- **Inserting.** Picks now also dispatch `change` (for `wire:model.change`, `x-model.lazy`), respect
+  `maxlength`, and work in contenteditable editors.
+- **React.** The target's focus listener never re-attached when the ref's element changed; `userKey` changes
+  kept the previous user's recents and tone; a server render disagreed with the first client render; a later
+  successful load did not clear an earlier error; and two cells could be tab stops. The bundle is marked
+  `"use client"`, and its declarations resolve under `moduleResolution: node16`/`nodenext`.
+- **The Blade picker dropped its attributes** (`class`, `id`, `style`) and had no `max-version` prop although
+  the docs listed one. Unknown values for `tone`, `columns`, `sort` and `recent-order` are corrected.
+- **Group names were always English**, whatever the picker's locale, and the interface strings existed only in
+  English. Group names and strings now come from `resources/lang/<locale>/picker.php`, shipped for all 24
+  dataset locales (machine-seeded; corrections welcome), with "1 result" in the singular.
+- **The data block went missing** when the first picker in a request was in a cached fragment or a Livewire
+  update. `<x-laranail-emojis::picker-data />` writes it from the layout. In API mode the source URL is relative,
+  so it works on any host the app answers on, and pickers share one request per locale.
+- **Theming through custom properties did not work as documented.** The picker declared every
+  `--laranail-emoji-picker-*` property on itself, so a value set on a wrapper or `:root` was ignored. It now
+  only reads them. Dark mode also follows a `.dark` or `[data-theme]` ancestor, and an inline picker no longer
+  takes the phone bottom-sheet layout.
+- **The shipped OpenAPI file was not valid YAML** (an unquoted comma in a flow mapping), and `/picker` had no
+  response schema. Both are fixed, and a test checks the served payload against the schema.
+- `ApiSource` dropped `Accept` when given headers, and broke a URL that already had a query string.
+
+### Added
+
+- Search accepts `:shortcode:` and pasted emoji, finds custom emoji, waits for a pause in typing
+  (`searchDelay`, 80 ms), and draws at most 200 results.
+- A `trigger` option (Blade `trigger`, `data-laranail-emoji-trigger`, React `trigger`) for the trigger's glyph.
+- The Livewire component takes `name` and `label`, and its `locale` is locked.
+- The picker payload is cached per locale under a key that changes with everything it depends on.
+- New theme tokens: `--laranail-emoji-picker-shadow`, `-cell-radius`, `-z` and `-image-size`.
+- `./react` exports the pure helpers for a custom UI; the hook gains `detailOf()` and `commitRecents()`.
 
 ## [0.5.1] - 2026-10-03
 

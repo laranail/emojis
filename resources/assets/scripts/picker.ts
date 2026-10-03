@@ -34,6 +34,8 @@ export interface PickerEmoji {
   skin_versions?: string | Record<string, string>;
   /** False when the policy refuses the emoji itself but permits some of its toned forms. */
   base?: false;
+  /** Set on a Frequently used entry: the exact form that was picked, which the cell shows whatever the tone. */
+  pick?: string;
 }
 
 export interface PickerGroup {
@@ -60,7 +62,8 @@ export interface PickerPayload {
 }
 
 export interface PickerSource {
-  load(locale?: string | null): Promise<PickerPayload>;
+  /** `signal` aborts the load when the picker is destroyed first; sources may ignore it. */
+  load(locale?: string | null, signal?: AbortSignal): Promise<PickerPayload>;
 }
 
 export interface PickerStore {
@@ -89,6 +92,8 @@ export type RecentOrder = 'recent' | 'frequent';
 export interface PickerStrings {
   search: string;
   results: string;
+  /** The count when it is exactly one ("1 result"); `results` is used when absent. */
+  resultsOne?: string;
   noResults: string;
   recent: string;
   custom: string;
@@ -101,7 +106,8 @@ export interface PickerStrings {
 
 export interface PickerOptions {
   source?: PickerSource;
-  target?: HTMLInputElement | HTMLTextAreaElement | null;
+  /** An input, a textarea, or a contenteditable element. */
+  target?: Insertable | null;
   locale?: string | null;
   tone?: number;
   maxRecent?: number;
@@ -116,6 +122,10 @@ export interface PickerOptions {
   userKey?: string;
   store?: PickerStore;
   strings?: Partial<PickerStrings>;
+  /** Milliseconds to wait after the last keystroke before searching (default 80). */
+  searchDelay?: number;
+  /** What the trigger button shows (default 🙂). */
+  trigger?: string;
 }
 
 export interface PickerEvents {
@@ -145,9 +155,11 @@ export interface ParsedOptions {
   inline: boolean;
   userKey: string;
   strings: Partial<PickerStrings>;
+  trigger: string;
 }
 
-type Insertable = HTMLInputElement | HTMLTextAreaElement;
+/** Where a pick can be inserted: an input, a textarea, or a contenteditable element. */
+export type Insertable = HTMLInputElement | HTMLTextAreaElement | HTMLElement;
 
 /**
  * Build-time switch for the import-time auto-init at the bottom of this module. Undefined (the default build
@@ -167,6 +179,7 @@ type Mountable = HTMLElement & { [MOUNTED]?: Picker };
 export const DEFAULT_STRINGS: PickerStrings = {
   search: 'Search emoji',
   results: '{count} results',
+  resultsOne: '1 result',
   noResults: 'No emoji found',
   recent: 'Frequently used',
   custom: 'Custom',
@@ -234,9 +247,15 @@ const VERSION_SAMPLES: ReadonlyArray<readonly [string, string]> = [
 ];
 
 /**
- * The newest Emoji version this browser draws, or null when it cannot tell (no canvas, as in tests and
- * old browsers): then nothing is hidden. An emoji the font lacks draws exactly like an unassigned code point
- * (the "tofu" box), and a sequence it lacks draws as its parts, wider than one emoji.
+ * The newest Emoji version this browser draws, or null when it cannot tell — no canvas (tests, old
+ * browsers), a canvas that adds noise against fingerprinting, or no colour emoji font at all — and then
+ * nothing is hidden.
+ *
+ * A sample counts as drawn when it comes out in colour and as one glyph. Comparing against a "tofu" box
+ * is not enough: macOS's LastResort font draws a different placeholder per Unicode block, so a missing
+ * emoji never matched the probe and everything read as supported. Colour sidesteps that: placeholders and
+ * fallback text are drawn in the fill colour (black), emoji fonts are not. A sequence the font lacks draws
+ * as its parts, wider than one emoji.
  */
 export function detectMaxVersion(doc: Pick<Document, 'createElement'> | undefined = globalThis.document): string | null {
   const canvas = doc?.createElement?.('canvas') as HTMLCanvasElement | undefined;
@@ -248,26 +267,64 @@ export function detectMaxVersion(doc: Pick<Document, 'createElement'> | undefine
 
   const size = 24;
   canvas.width = canvas.height = size * 2;
-  context.font = `${size}px 'Apple Color Emoji','Segoe UI Emoji','Noto Color Emoji',sans-serif`;
+  context.font = `${size}px 'Apple Color Emoji','Segoe UI Emoji','Noto Color Emoji','Twemoji Mozilla','Android Emoji',sans-serif`;
   context.textBaseline = 'top';
+  context.fillStyle = '#000';
 
-  const draw = (text: string): string => {
+  const pixels = (text: string): ArrayLike<number> => {
     context.clearRect(0, 0, canvas.width, canvas.height);
     context.fillText(text, 0, 0);
 
-    return Array.prototype.join.call(context.getImageData(0, 0, canvas.width, canvas.height).data, ',');
+    return context.getImageData(0, 0, canvas.width, canvas.height).data;
+  };
+  const colourful = (text: string): boolean => {
+    const data = pixels(text);
+
+    for (let i = 0; i + 3 < data.length; i += 4) {
+      const [r = 0, g = 0, b = 0, a = 0] = [data[i], data[i + 1], data[i + 2], data[i + 3]];
+
+      if (a > 0 && Math.max(Math.abs(r - g), Math.abs(g - b), Math.abs(r - b)) > 48) {
+        return true;
+      }
+    }
+
+    return false;
   };
 
-  const tofu = draw('\u{10FFFD}');
+  // A canvas that randomises its output reports colour where nothing was drawn: it cannot be trusted.
+  if (colourful('')) {
+    return null;
+  }
+
   const single = context.measureText('\u{1F600}').width;
 
   for (const [version, sample] of VERSION_SAMPLES) {
-    if (draw(sample) !== tofu && context.measureText(sample).width < single * 1.5) {
+    if (colourful(sample) && context.measureText(sample).width < single * 1.5) {
       return version;
     }
   }
 
-  return '11.0';
+  return null;
+}
+
+let detected: Promise<string | null> | null = null;
+
+/**
+ * detectMaxVersion() once per page, after web fonts have loaded: a page whose emoji font is a web font
+ * (Noto Color Emoji from Google Fonts) would otherwise be measured before the font arrives.
+ */
+export function detectMaxVersionOnce(): Promise<string | null> {
+  detected ??= (async () => {
+    try {
+      await (globalThis.document as Document | undefined)?.fonts?.ready;
+    } catch {
+      // No font loading API: measure now.
+    }
+
+    return detectMaxVersion();
+  })();
+
+  return detected;
 }
 
 /**
@@ -308,8 +365,16 @@ export function capPayload(data: PickerPayload, cap: string | null | undefined, 
  * Ranks emoji for a search term: exact name, name prefix, shortcode, keyword prefix, anywhere. Every word
  * of the term must match somewhere.
  */
-export function search(items: PickerEmoji[], term: string): PickerEmoji[] {
-  const words = fold(term).split(/\s+/).filter(Boolean);
+export function search(items: PickerEmoji[], term: string, limit: number = Infinity): PickerEmoji[] {
+  const glyph = bare(term.trim());
+
+  // A pasted emoji finds itself, toned or not.
+  if (glyph !== '' && /\p{Extended_Pictographic}|\p{Regional_Indicator}/u.test(glyph)) {
+    return items.filter((item) => [item.hexcode, ...Object.values(item.skins ?? {})].some((hex) => bare(charOf(hex)) === glyph)).slice(0, limit);
+  }
+
+  // ":smile", ":smile:" and "smile" are the same search.
+  const words = fold(term).split(/\s+/).map((word) => word.replace(/^:+|:+$/g, '')).filter(Boolean);
 
   if (words.length === 0) {
     return [];
@@ -338,7 +403,71 @@ export function search(items: PickerEmoji[], term: string): PickerEmoji[] {
     scored.push([score, scored.length, item]);
   }
 
-  return scored.sort((a, b) => a[0] - b[0] || a[1] - b[1]).map(([, , item]) => item);
+  return scored.sort((a, b) => a[0] - b[0] || a[1] - b[1]).slice(0, limit).map(([, , item]) => item);
+}
+
+/** A string without variation selectors, so 😶‍🌫️ and 😶‍🌫 compare equal. */
+function bare(text: string): string {
+  return text.replace(/\uFE0F|\uFE0E/g, '');
+}
+
+/** "No emoji found", "1 result", "12 results". */
+export function resultText(strings: Pick<PickerStrings, 'noResults' | 'results' | 'resultsOne'>, count: number): string {
+  if (count === 0) {
+    return strings.noResults;
+  }
+
+  return (count === 1 && strings.resultsOne ? strings.resultsOne : strings.results).replace('{count}', String(count));
+}
+
+/** The custom emoji whose name or label matches every word of a term, name prefix first. */
+export function searchCustom(items: PickerCustom[], term: string): PickerCustom[] {
+  const words = fold(term).split(/\s+/).map((word) => word.replace(/^:+|:+$/g, '')).filter(Boolean);
+
+  if (words.length === 0) {
+    return [];
+  }
+
+  return items
+    .filter((item) => words.every((word) => `${fold(item.name)} ${fold(item.label)}`.includes(word)))
+    .sort((a, b) => Number(!fold(b.name).startsWith(words[0] ?? '')) - Number(!fold(a.name).startsWith(words[0] ?? '')));
+}
+
+/** A tone from anywhere (an attribute, storage, a prop): 0–5, and 0 for anything else. */
+export function clampTone(value: unknown): number {
+  const tone = typeof value === 'number' || typeof value === 'string' ? Math.trunc(Number(value)) : NaN;
+
+  return Number.isFinite(tone) && tone >= 0 && tone <= 5 ? tone : 0;
+}
+
+/** A column count: a whole number from 1 to 24, else the fallback. */
+export function clampColumns(value: unknown, fallback = 8): number {
+  const columns = typeof value === 'number' || typeof value === 'string' ? Math.trunc(Number(value)) : NaN;
+
+  return Number.isFinite(columns) && columns >= 1 ? Math.min(columns, 24) : fallback;
+}
+
+/**
+ * Recents as read back from storage: only well-formed entries. A corrupt value or one an older or newer
+ * version wrote reads as no recents, instead of breaking the picker until storage is cleared.
+ */
+export function readRecent(value: unknown): RecentEntry[] {
+  if (!Array.isArray(value)) {
+    return [];
+  }
+
+  return value.flatMap((entry): RecentEntry[] => {
+    const e = entry as Partial<RecentEntry> | null;
+
+    if (typeof e !== 'object' || e === null || typeof e.base !== 'string') {
+      return [];
+    }
+
+    const count = typeof e.count === 'number' && Number.isFinite(e.count) ? e.count : 1;
+    const at = typeof e.at === 'number' && Number.isFinite(e.at) ? e.at : 0;
+
+    return [{ base: e.base, hexcode: typeof e.hexcode === 'string' ? e.hexcode : e.base, count, at }];
+  });
 }
 
 /** Orders a list: "default" keeps CLDR order, "name" sorts by name, "newest" puts the latest Emoji version first. */
@@ -358,7 +487,8 @@ export function sortItems(items: PickerEmoji[], mode: SortMode): PickerEmoji[] {
  * Records a pick in the recent list: newest first, once per base emoji (a toned 👋🏽 replaces 👋), at most
  * `max` entries. Returns a new list.
  */
-export function recordRecent(list: RecentEntry[], base: string, hexcode: string, max: number, now: number = Date.now()): RecentEntry[] {
+export function recordRecent(stored: unknown, base: string, hexcode: string, max: number, now: number = Date.now()): RecentEntry[] {
+  const list = readRecent(stored);
   const previous = list.find((entry) => entry.base === base);
   const entry = { base, hexcode, count: (previous?.count ?? 0) + 1, at: now };
 
@@ -367,7 +497,7 @@ export function recordRecent(list: RecentEntry[], base: string, hexcode: string,
 
 /** Orders recents: "recent" by time of last use, "frequent" by count then time. */
 export function orderRecent(list: RecentEntry[], mode: RecentOrder): RecentEntry[] {
-  return [...list].sort((a, b) => (mode === 'frequent' ? b.count - a.count || b.at - a.at : b.at - a.at));
+  return [...readRecent(list)].sort((a, b) => (mode === 'frequent' ? b.count - a.count || b.at - a.at : b.at - a.at));
 }
 
 /** Every emoji of the payload by its base hexcode. */
@@ -387,8 +517,14 @@ export function buildSections(
   const strings = { ...DEFAULT_STRINGS, ...options.strings };
   const wanted = (slug: string): boolean => categories.length === 0 || categories.includes(slug);
   const byHex = indexPayload(data);
+  // A recent keeps the form that was picked (👋🏽), unless the policy or a version cap no longer offers it.
   const recents = orderRecent(options.recent ?? [], options.recentOrder ?? 'recent')
-    .map((r) => byHex.get(r.base))
+    .map((r): PickerEmoji | undefined => {
+      const item = byHex.get(r.base);
+      const offered = item && ((r.hexcode === item.hexcode && item.base !== false) || Object.values(item.skins ?? {}).includes(r.hexcode));
+
+      return item && offered ? { ...item, pick: r.hexcode } : item;
+    })
     .filter((item): item is PickerEmoji => item !== undefined);
   const sections: PickerSection[] = [];
 
@@ -410,44 +546,193 @@ export function buildSections(
 }
 
 /** The search results over a list of sections: the emoji of every non-custom group, ranked. */
-export function searchSections(sections: PickerSection[], term: string): PickerEmoji[] {
-  return search(sections.filter((s): s is Extract<PickerSection, { custom?: false }> => !s.custom && s.slug !== 'recent').flatMap((s) => s.items), term);
+export function searchSections(sections: PickerSection[], term: string, limit: number = Infinity): PickerEmoji[] {
+  return search(sections.filter((s): s is Extract<PickerSection, { custom?: false }> => !s.custom && s.slug !== 'recent').flatMap((s) => s.items), term, limit);
+}
+
+/** The most results a search draws; a one-letter term would otherwise draw nearly every emoji. */
+export const MAX_RESULTS = 200;
+
+/**
+ * What a search shows: the ranked emoji, then the matching custom emoji, as sections. Shared by both
+ * pickers so a term finds the same things in each.
+ */
+export function searchResults(sections: PickerSection[], term: string, strings: Pick<PickerStrings, 'search' | 'custom'>, limit: number = MAX_RESULTS): PickerSection[] {
+  const custom = sections.find((s): s is Extract<PickerSection, { custom: true }> => s.custom === true);
+  const out: PickerSection[] = [{ slug: 'search', label: strings.search, items: searchSections(sections, term, limit) }];
+  const customHits = custom ? searchCustom(custom.items, term) : [];
+
+  if (customHits.length > 0) {
+    out.push({ slug: 'search-custom', label: strings.custom, custom: true, items: customHits });
+  }
+
+  return out;
 }
 
 /**
- * Inserts text into an input or textarea and dispatches `input`, so frameworks see it. At the caret when
- * `caretKnown` (the field has had focus); otherwise at the end, because a field nobody has focused reports
- * its caret at 0 and the text would land before what is already there.
+ * The cell a grid key moves focus to, read from the rendered rows so both pickers share it: arrows keep
+ * the column across rows and sections (clamped to a shorter row), Left and Right swap under RTL,
+ * PageUp/PageDown jump a section, Home/End go to the first and last cell. 'search' means ArrowUp left the
+ * first row. null means the key is not a grid key, or there is nowhere to go.
  */
-export function insertText(target: Insertable, text: string, caretKnown: boolean): void {
-  const caret = caretKnown || target.ownerDocument?.activeElement === target;
-  const length = target.value.length;
-  const start = caret ? (selection(target, 'selectionStart') ?? length) : length;
-  const end = caret ? (selection(target, 'selectionEnd') ?? length) : length;
+export function gridTarget(body: ParentNode, cell: Element, key: string, rtl = false): HTMLElement | 'search' | null {
+  const rows = [...body.querySelectorAll<HTMLElement>('[role="row"]')];
+  const cellsOf = (row: Element | undefined): HTMLElement[] => (row ? [...row.querySelectorAll<HTMLElement>('[role="gridcell"]')] : []);
+  const row = cell.closest('[role="row"]');
+  const r = row ? rows.indexOf(row as HTMLElement) : -1;
+  const c = cellsOf(row ?? undefined).indexOf(cell as HTMLElement);
+  const all = rows.flatMap((x) => cellsOf(x));
+  const at = (target: Element | undefined): HTMLElement | null => {
+    const cells = cellsOf(target);
+
+    return cells[Math.min(c, cells.length - 1)] ?? null;
+  };
+
+  if (r < 0) {
+    return null;
+  }
+
+  switch (key) {
+    case 'ArrowRight':
+    case 'ArrowLeft': {
+      const step = (key === 'ArrowRight') !== rtl ? 1 : -1;
+
+      return all[all.indexOf(cell as HTMLElement) + step] ?? null;
+    }
+    case 'ArrowDown':
+      return at(rows[r + 1]);
+    case 'ArrowUp':
+      return r === 0 ? 'search' : at(rows[r - 1]);
+    case 'PageDown':
+    case 'PageUp': {
+      const sections = [...body.querySelectorAll('[role="grid"]')];
+      const s = sections.indexOf(cell.closest('[role="grid"]') as Element);
+      const next = sections[s + (key === 'PageDown' ? 1 : -1)];
+
+      return next ? at(next.querySelector('[role="row"]') ?? undefined) : null;
+    }
+    case 'Home':
+      return all[0] ?? null;
+    case 'End':
+      return all[all.length - 1] ?? null;
+    default:
+      return null;
+  }
+}
+
+/**
+ * The index a roving-tabindex key moves to in a row of tabs or radios: arrows wrap, Left and Right swap
+ * under RTL, Home and End go to the ends. null for any other key.
+ */
+export function rovingIndex(count: number, current: number, key: string, rtl = false): number | null {
+  if (count <= 0) {
+    return null;
+  }
+
+  const forward = rtl ? 'ArrowLeft' : 'ArrowRight';
+  const back = rtl ? 'ArrowRight' : 'ArrowLeft';
+
+  if (key === forward || key === 'ArrowDown') return (current + 1) % count;
+  if (key === back || key === 'ArrowUp') return (current - 1 + count) % count;
+  if (key === 'Home') return 0;
+  if (key === 'End') return count - 1;
+
+  return null;
+}
+
+/**
+ * Inserts text into an input, a textarea or a contenteditable element, and dispatches `input` and
+ * `change`, so frameworks see it (wire:model.change and x-model.lazy listen for change). In a field at the
+ * caret when `caretKnown` (the field has had focus); otherwise at the end, because a field nobody has
+ * focused reports its caret at 0 and the text would land before what is already there. Returns false, and
+ * changes nothing, when the text would take the field past its maxlength.
+ */
+export function insertText(target: Insertable, text: string, caretKnown: boolean): boolean {
+  if (!('value' in target) || typeof target.value !== 'string') {
+    return insertEditable(target, text);
+  }
+
+  const field = target as HTMLInputElement | HTMLTextAreaElement;
+  const caret = caretKnown || field.ownerDocument?.activeElement === field;
+  const length = field.value.length;
+  const start = caret ? (selection(field, 'selectionStart') ?? length) : length;
+  const end = caret ? (selection(field, 'selectionEnd') ?? length) : length;
+  const next = field.value.slice(0, start) + text + field.value.slice(end);
+
+  if (field.maxLength > 0 && next.length > field.maxLength) {
+    return false;
+  }
 
   // Write through the prototype's setter, not the element's own: a framework that tracks the value by
   // shadowing that setter (React's controlled inputs) then still holds the old value, sees the change on the
   // input event and keeps it, instead of writing its stale state back over the pick.
-  const next = target.value.slice(0, start) + text + target.value.slice(end);
-  const setter = Object.getOwnPropertyDescriptor(Object.getPrototypeOf(target) as object, 'value')?.set;
+  const setter = Object.getOwnPropertyDescriptor(Object.getPrototypeOf(field) as object, 'value')?.set;
 
   if (setter) {
-    setter.call(target, next);
+    setter.call(field, next);
   } else {
-    target.value = next;
+    field.value = next;
   }
 
   try {
-    target.setSelectionRange(start + text.length, start + text.length);
+    field.setSelectionRange(start + text.length, start + text.length);
   } catch {
     // type=email and type=number have no selection API.
   }
 
+  field.dispatchEvent(new Event('input', { bubbles: true }));
+  field.dispatchEvent(new Event('change', { bubbles: true }));
+
+  return true;
+}
+
+/**
+ * Inserts into a contenteditable element (Trix, TipTap, a plain one) at its selection, or at the end when
+ * the selection is elsewhere. execCommand keeps the editor's undo history and fires its own input event;
+ * where it is unavailable a text node is inserted by hand.
+ */
+function insertEditable(target: HTMLElement, text: string): boolean {
+  if (!target.isContentEditable) {
+    return false;
+  }
+
+  const doc = target.ownerDocument;
+  const selection = doc.getSelection();
+  const inside = selection !== null && selection.rangeCount > 0 && target.contains(selection.getRangeAt(0).commonAncestorContainer);
+
+  target.focus();
+
+  if (!inside && selection) {
+    const range = doc.createRange();
+    range.selectNodeContents(target);
+    range.collapse(false);
+    selection.removeAllRanges();
+    selection.addRange(range);
+  }
+
+  if (typeof doc.execCommand === 'function' && doc.execCommand('insertText', false, text)) {
+    return true;
+  }
+
+  const range = selection && selection.rangeCount > 0 ? selection.getRangeAt(0) : null;
+  const node = doc.createTextNode(text);
+
+  if (range) {
+    range.deleteContents();
+    range.insertNode(node);
+    range.setStartAfter(node);
+    range.collapse(true);
+  } else {
+    target.append(node);
+  }
+
   target.dispatchEvent(new Event('input', { bubbles: true }));
+
+  return true;
 }
 
 /** selectionStart/End, or null on fields that throw for them (type=email, number). */
-function selection(target: Insertable, key: 'selectionStart' | 'selectionEnd'): number | null {
+function selection(target: HTMLInputElement | HTMLTextAreaElement, key: 'selectionStart' | 'selectionEnd'): number | null {
   try {
     return target[key];
   } catch {
@@ -472,17 +757,18 @@ export function parseOptions(element: Element): ParsedOptions {
     source: data('source'),
     payload: data('payload'),
     locale: data('locale'),
-    tone: int('tone', 0),
+    tone: clampTone(int('tone', 0)),
     maxRecent: int('max-recent', 36),
     recentOrder: data('recent-order') === 'frequent' ? 'frequent' : 'recent',
     sort: sort === 'name' || sort === 'newest' ? sort : 'default',
     categories: list('categories'),
-    columns: int('columns', 8),
+    columns: clampColumns(int('columns', 8)),
     maxVersion: data('max-version') ?? 'auto',
     closeOnSelect: data('close-on-select') !== 'false',
     inline: element.hasAttribute(`${ATTR}-inline`),
     userKey: data('user-key') ?? '',
     strings: strings ? safeJson<Partial<PickerStrings>>(strings, {}) : {},
+    trigger: data('trigger') ?? '🙂',
   };
 }
 
@@ -504,10 +790,71 @@ export class ApiSource implements PickerSource {
     this.url = String(url).replace(/\/+$/, '');
   }
 
-  async load(locale?: string | null): Promise<PickerPayload> {
-    const base = this.url.endsWith('/picker') ? this.url : `${this.url}/picker`;
-    const url = locale ? `${base}?locale=${encodeURIComponent(locale)}` : base;
-    const response = await fetch(url, { headers: { Accept: 'application/json' }, credentials: 'same-origin', ...this.init });
+  /**
+   * One request per URL and locale for every picker on the page: a thread with a reply picker per message
+   * fetches the payload once instead of once each (and does not spend the API's rate limit doing it).
+   */
+  private static inflight = new Map<string, Promise<PickerPayload>>();
+
+  load(locale?: string | null, signal?: AbortSignal): Promise<PickerPayload> {
+    const key = `${this.url}\u0000${locale ?? ''}\u0000${JSON.stringify(this.init.headers ?? null)}`;
+    let shared = ApiSource.inflight.get(key);
+
+    if (!shared) {
+      shared = this.fetch(locale);
+      ApiSource.inflight.set(key, shared);
+      // A failure is not cached: the next picker tries again.
+      shared.catch(() => ApiSource.inflight.delete(key));
+    }
+
+    if (!signal) {
+      return shared;
+    }
+
+    // Aborting one picker's load rejects its own promise, never the shared request others wait on.
+    return new Promise((resolve, reject) => {
+      const abort = (): void => reject(new DOMException('Aborted', 'AbortError'));
+
+      if (signal.aborted) {
+        abort();
+
+        return;
+      }
+
+      signal.addEventListener('abort', abort, { once: true });
+      shared.then(resolve, reject).finally(() => signal.removeEventListener('abort', abort));
+    });
+  }
+
+  /** Forgets every shared request, so the next load fetches again (after a locale's data changed, or in tests). */
+  static clear(): void {
+    ApiSource.inflight.clear();
+  }
+
+  private async fetch(locale?: string | null): Promise<PickerPayload> {
+    // The URL may carry its own query string (a signed URL, a tenant parameter): keep it.
+    const [path = '', query = ''] = this.url.split('?', 2);
+    const base = path.replace(/\/+$/, '');
+    const endpoint = base.endsWith('/picker') ? base : `${base}/picker`;
+    const params = new URLSearchParams(query);
+
+    if (locale) {
+      params.set('locale', locale);
+    }
+
+    const search = params.toString();
+    // Merged, so headers passed in (a CSRF token, an auth header) do not drop Accept.
+    const headers = new Headers(this.init.headers);
+
+    if (!headers.has('Accept')) {
+      headers.set('Accept', 'application/json');
+    }
+
+    const response = await fetch(search ? `${endpoint}?${search}` : endpoint, {
+      credentials: 'same-origin',
+      ...this.init,
+      headers,
+    });
 
     if (!response.ok) {
       throw new Error(`picker payload: HTTP ${response.status}`);
@@ -597,9 +944,14 @@ type ResolvedOptions = Required<Omit<PickerOptions, 'source' | 'target' | 'store
 type Handler<K extends keyof PickerEvents> = (detail: PickerEvents[K]) => void;
 
 export class Picker {
-  /** Starts a picker on an element; chain the options, then mount(). */
+  /**
+   * Starts a picker on an element; chain the options, then mount(). An element that already has a live
+   * picker (auto-initialised, say) returns that picker, so its handlers and methods reach the one on screen.
+   */
   static create(element: HTMLElement, options: PickerOptions = {}): Picker {
-    return new Picker(element, options);
+    const live = (element as Mountable)[MOUNTED];
+
+    return live && live.isAttached() ? live : new Picker(element, options);
   }
 
   readonly element: Mountable;
@@ -617,8 +969,15 @@ export class Picker {
   private status!: HTMLDivElement;
   private handlers = new Map<keyof PickerEvents, Array<Handler<keyof PickerEvents>>>();
   private cleanup: Array<() => void> = [];
+  private targetCleanup: Array<() => void> = [];
   private caretKnown = false;
   private byHex: Map<string, PickerEmoji> | null = null;
+  private memo: PickerSection[] | null = null;
+  private recentStale = false;
+  private activeTab: string | null = null;
+  private loads = 0;
+  private abort: AbortController | null = null;
+  private searchTimer: ReturnType<typeof setTimeout> | null = null;
 
   constructor(element: HTMLElement, options: PickerOptions = {}) {
     this.element = element as Mountable;
@@ -635,18 +994,28 @@ export class Picker {
       inline: false,
       userKey: '',
       strings: {},
+      searchDelay: 80,
+      trigger: '🙂',
       ...options,
     } as ResolvedOptions;
+    this.options.tone = clampTone(this.options.tone);
+    this.options.columns = clampColumns(this.options.columns);
   }
 
-  source(source: PickerSource): this { this.options.source = source; return this; }
-  locale(locale: string | null): this { this.options.locale = locale; return this; }
-  skinTone(tone: number): this { this.options.tone = Math.max(0, Math.min(5, Number(tone) || 0)); return this; }
-  sort(mode: SortMode): this { this.options.sort = mode; return this; }
-  categories(list: string[]): this { this.options.categories = [...list]; return this; }
-  columns(count: number): this { this.options.columns = Math.max(1, Number(count) || 8); return this; }
+  // Every setter takes effect on a mounted picker too: display options redraw, data options reload.
+  source(source: PickerSource): this { this.options.source = source; return this.reload(); }
+  locale(locale: string | null): this { this.options.locale = locale; return this.reload(); }
+  skinTone(tone: number): this { this.options.tone = clampTone(tone); return this.refresh(); }
+  sort(mode: SortMode): this { this.options.sort = mode; return this.refresh(); }
+  categories(list: string[]): this { this.options.categories = [...list]; return this.refresh(); }
+  columns(count: number): this {
+    this.options.columns = clampColumns(count);
+    this.root?.style.setProperty(`--${PREFIX}-picker-columns`, String(this.options.columns));
+
+    return this.refresh();
+  }
   /** Hide emoji newer than this Emoji version: 'auto' (default) asks the browser, null shows everything. */
-  maxVersion(version: string | null): this { this.options.maxVersion = version; return this; }
+  maxVersion(version: string | null): this { this.options.maxVersion = version; return this.reload(); }
   closeOnSelect(close = true): this { this.options.closeOnSelect = close; return this; }
   inline(inline = true): this { this.options.inline = inline; return this; }
 
@@ -654,7 +1023,7 @@ export class Picker {
     this.options.target = typeof target === 'string' ? query<Insertable>(target) : target;
     this.caretKnown = false;
 
-    if (this.options.target && this.root) {
+    if (this.root) {
       this.watchTarget();
     }
 
@@ -666,7 +1035,7 @@ export class Picker {
     if (store !== undefined) this.options.store = store;
     if (order !== undefined) this.options.recentOrder = order;
 
-    return this;
+    return this.refresh();
   }
 
   on<K extends keyof PickerEvents>(event: K, handler: (detail: PickerEvents[K]) => void): this {
@@ -687,24 +1056,15 @@ export class Picker {
 
   /** Builds the UI and loads the payload. Resolves once the emoji are drawn. */
   async mount(): Promise<this> {
-    if (this.element[MOUNTED]) {
+    if (this.element[MOUNTED] === this && this.isAttached()) {
       return this;
     }
 
     this.element[MOUNTED] = this;
-    this.options.tone = (this.store.get('tone') as number | null) ?? this.options.tone;
+    const stored = this.store.get('tone');
+    this.options.tone = stored === null || stored === undefined ? this.options.tone : clampTone(stored);
     this.buildShell();
-
-    try {
-      const source = this.options.source ?? new StaticSource({ groups: [], custom: [] });
-
-      this.data = capPayload(await source.load(this.options.locale), this.options.maxVersion);
-      this.render();
-      this.emit('ready', { picker: this });
-    } catch (error) {
-      this.status.textContent = this.strings.failed;
-      this.emit('error', { error });
-    }
+    await this.load();
 
     return this;
   }
@@ -715,30 +1075,60 @@ export class Picker {
   }
 
   destroy(): void {
-    for (const undo of this.cleanup.splice(0)) {
+    this.loads++;
+    this.abort?.abort();
+    this.abort = null;
+
+    if (this.searchTimer !== null) {
+      clearTimeout(this.searchTimer);
+    }
+
+    for (const undo of [...this.cleanup.splice(0), ...this.targetCleanup.splice(0)]) {
       undo();
     }
 
     this.root?.remove();
     this.trigger?.remove();
-    delete this.element[MOUNTED];
+    this.root = undefined;
+    this.trigger = undefined;
+    this.data = null;
+    this.byHex = null;
+    this.memo = null;
+
+    if (this.element[MOUNTED] === this) {
+      delete this.element[MOUNTED];
+    }
+
     this.handlers.clear();
   }
 
   open(): void {
+    if (this.recentStale) {
+      this.refreshRecents();
+    }
+
     this.panel.hidden = false;
     this.trigger?.setAttribute('aria-expanded', 'true');
     this.searchInput.focus();
   }
 
-  close(): void {
-    if (this.options.inline) {
+  /**
+   * Closes the popover. Focus goes back to the trigger by default; `'target'` sends it to the field a pick
+   * was inserted into, so typing carries on; `'none'` leaves it where it went (an outside click).
+   */
+  close(focus: 'trigger' | 'target' | 'none' = 'trigger'): void {
+    if (this.options.inline || this.panel.hidden) {
       return;
     }
 
     this.panel.hidden = true;
     this.trigger?.setAttribute('aria-expanded', 'false');
-    this.trigger?.focus();
+
+    if (focus === 'target' && this.options.target) {
+      this.options.target.focus();
+    } else if (focus !== 'none') {
+      this.trigger?.focus();
+    }
   }
 
   focusCell(cell: HTMLElement | null | undefined): void {
@@ -755,11 +1145,78 @@ export class Picker {
     this.active = cell;
   }
 
+  // ---- loading ----
+
+  private async load(): Promise<void> {
+    if (!this.root) {
+      return;
+    }
+
+    // Only the newest load may draw: one that a remount, a locale change or destroy() overtook is dropped.
+    const id = ++this.loads;
+    this.abort?.abort();
+    this.abort = typeof AbortController === 'undefined' ? null : new AbortController();
+    this.status.textContent = this.strings.loading;
+
+    try {
+      const source = this.options.source ?? new StaticSource({ groups: [], custom: [] });
+      const payload = await source.load(this.options.locale, this.abort?.signal);
+
+      if (id !== this.loads) {
+        return;
+      }
+
+      const cap = this.options.maxVersion === 'auto' ? await detectMaxVersionOnce() : this.options.maxVersion;
+
+      if (id !== this.loads) {
+        return;
+      }
+
+      this.data = capPayload(payload, cap);
+      this.byHex = null;
+      this.memo = null;
+      this.status.textContent = '';
+      this.render();
+      this.emit('ready', { picker: this });
+    } catch (error) {
+      if (id !== this.loads) {
+        return;
+      }
+
+      this.status.textContent = this.strings.failed;
+      this.emit('error', { error });
+    }
+  }
+
+  private reload(): this {
+    if (this.root) {
+      void this.load();
+    }
+
+    return this;
+  }
+
+  private refresh(): this {
+    this.memo = null;
+
+    if (this.root && this.data) {
+      this.render();
+    }
+
+    return this;
+  }
+
+  /** Redraws Frequently used after picks made while the panel was open, now that nothing is under the pointer. */
+  private refreshRecents(): void {
+    this.recentStale = false;
+    this.refresh();
+  }
+
   // ---- building ----
 
-  private listen<K extends keyof HTMLElementEventMap>(node: EventTarget, type: K, handler: (event: HTMLElementEventMap[K]) => void): void {
+  private listen<K extends keyof HTMLElementEventMap>(node: EventTarget, type: K, handler: (event: HTMLElementEventMap[K]) => void, bucket: Array<() => void> = this.cleanup): void {
     node.addEventListener(type, handler as EventListener);
-    this.cleanup.push(() => node.removeEventListener(type, handler as EventListener));
+    bucket.push(() => node.removeEventListener(type, handler as EventListener));
   }
 
   private emit<K extends keyof PickerEvents>(name: K, detail: PickerEvents[K]): void {
@@ -770,9 +1227,14 @@ export class Picker {
 
   /**
    * A field nobody has focused reports its caret at 0, so the first pick would land before text already in
-   * it. The caret is trusted once the field has had focus; until then, picks append.
+   * it. The caret is trusted once the field has had focus; until then, picks append. Re-targeting drops the
+   * previous field's listener.
    */
   private watchTarget(): void {
+    for (const undo of this.targetCleanup.splice(0)) {
+      undo();
+    }
+
     const target = this.options.target;
 
     if (!target) {
@@ -781,26 +1243,32 @@ export class Picker {
 
     this.listen(target, 'focus', () => {
       this.caretKnown = true;
-    });
+    }, this.targetCleanup);
     this.caretKnown = document.activeElement === target;
+  }
+
+  private get rtl(): boolean {
+    return (this.root?.closest('[dir]')?.getAttribute('dir') ?? document.documentElement.getAttribute('dir')) === 'rtl';
   }
 
   private buildShell(): void {
     const s = this.strings;
     const id = `${PREFIX}-picker-${Math.random().toString(36).slice(2, 9)}`;
+    const inline = this.options.inline;
 
     this.root = el('div', { class: `${PREFIX}-picker` });
     this.root.style.setProperty(`--${PREFIX}-picker-columns`, String(this.options.columns));
 
-    if (!this.options.inline) {
-      this.trigger = el('button', { type: 'button', class: `${PREFIX}-picker-trigger`, 'aria-haspopup': 'dialog', 'aria-expanded': 'false', 'aria-controls': id, 'aria-label': s.open }, '🙂');
+    if (!inline) {
+      this.trigger = el('button', { type: 'button', class: `${PREFIX}-picker-trigger`, 'aria-haspopup': 'dialog', 'aria-expanded': 'false', 'aria-controls': id, 'aria-label': s.open }, this.options.trigger || '🙂');
       this.listen(this.trigger, 'click', () => (this.panel.hidden ? this.open() : this.close()));
       this.root.append(this.trigger);
     }
 
-    this.panel = el('div', { class: `${PREFIX}-picker-panel`, id, role: 'dialog', 'aria-label': s.open, hidden: !this.options.inline });
+    // Inline, the picker is part of the page, not a dialog.
+    this.panel = el('div', { class: `${PREFIX}-picker-panel`, id, role: inline ? 'group' : 'dialog', 'aria-label': s.open, hidden: !inline });
     this.searchInput = el('input', { type: 'search', class: `${PREFIX}-picker-search`, placeholder: s.search, 'aria-label': s.search, autocomplete: 'off', spellcheck: 'false' });
-    this.tabs = el('div', { class: `${PREFIX}-picker-tabs`, role: 'tablist' });
+    this.tabs = el('div', { class: `${PREFIX}-picker-tabs`, role: 'tablist', 'aria-label': s.open });
     this.tones = el('div', { class: `${PREFIX}-picker-tones`, role: 'radiogroup', 'aria-label': s.tone });
     this.body = el('div', { class: `${PREFIX}-picker-body` });
     this.status = el('div', { class: `${PREFIX}-picker-status`, role: 'status', 'aria-live': 'polite' }, s.loading);
@@ -808,16 +1276,11 @@ export class Picker {
     this.panel.append(this.searchInput, this.tabs, this.body, this.tones, this.status);
     this.root.append(this.panel);
     this.element.replaceChildren(this.root);
+    this.watchTarget();
 
-    if (this.options.target) {
-      this.watchTarget();
-    }
-
-    this.listen(this.searchInput, 'input', () => {
-      this.query = this.searchInput.value;
-      this.renderBody();
-    });
+    this.listen(this.searchInput, 'input', () => this.scheduleSearch());
     this.listen(this.panel, 'keydown', (event) => this.onKey(event));
+    // One listener per container, not per button, so redrawing never stacks listeners.
     this.listen(this.body, 'click', (event) => {
       const cell = (event.target as Element | null)?.closest?.<HTMLElement>(`[${ATTR}-hexcode], [${ATTR}-custom]`);
 
@@ -825,6 +1288,66 @@ export class Picker {
         this.select(cell);
       }
     });
+    this.listen(this.tabs, 'click', (event) => {
+      const tab = (event.target as Element | null)?.closest?.<HTMLElement>('[role="tab"]');
+
+      if (tab) {
+        this.showSection(tab.getAttribute(`${ATTR}-section`) ?? '');
+      }
+    });
+    this.listen(this.tones, 'click', (event) => {
+      const radio = (event.target as Element | null)?.closest?.<HTMLElement>('[role="radio"]');
+
+      if (radio) {
+        this.setTone(Number(radio.getAttribute(`${ATTR}-tone`)));
+      }
+    });
+
+    // A popover closes when the user clicks or tabs away from it, leaving focus where they put it.
+    this.listen(document, 'pointerdown', (event) => {
+      if (!this.panel.hidden && this.root && !this.root.contains(event.target as Node)) {
+        this.close('none');
+      }
+    });
+    this.listen(this.root, 'focusout', (event) => {
+      const next = event.relatedTarget as Node | null;
+
+      if (next !== null && this.root && !this.root.contains(next)) {
+        this.close('none');
+
+        if (inline && this.recentStale) {
+          this.refreshRecents();
+        }
+      }
+    });
+
+    if (inline) {
+      this.listen(this.root, 'pointerleave', () => {
+        if (this.recentStale && !this.root?.contains(document.activeElement)) {
+          this.refreshRecents();
+        }
+      });
+    }
+  }
+
+  private scheduleSearch(): void {
+    if (this.searchTimer !== null) {
+      clearTimeout(this.searchTimer);
+      this.searchTimer = null;
+    }
+
+    const run = (): void => {
+      this.searchTimer = null;
+      this.query = this.searchInput.value;
+      this.renderBody();
+    };
+    const delay = Math.max(0, Number(this.options.searchDelay) || 0);
+
+    if (delay === 0) {
+      run();
+    } else {
+      this.searchTimer = setTimeout(run, delay);
+    }
   }
 
   private render(): void {
@@ -834,13 +1357,15 @@ export class Picker {
   }
 
   private sections(): PickerSection[] {
-    return buildSections(this.data ?? { groups: [] }, {
+    this.memo ??= buildSections(this.data ?? { groups: [] }, {
       categories: this.options.categories,
       sort: this.options.sort,
-      recent: (this.store.get('recent') as RecentEntry[] | null) ?? [],
+      recent: readRecent(this.store.get('recent')),
       recentOrder: this.options.recentOrder,
       strings: this.options.strings,
     });
+
+    return this.memo;
   }
 
   private index(): Map<string, PickerEmoji> {
@@ -849,46 +1374,95 @@ export class Picker {
     return this.byHex;
   }
 
+  private sectionId(slug: string): string {
+    return `${this.panel.id}-section-${slug}`;
+  }
+
   private renderTabs(): void {
-    const tabs = this.sections().map((section) => {
-      const first = section.custom ? null : section.items[0];
-      const tab = el('button', { type: 'button', role: 'tab', class: `${PREFIX}-picker-tab`, title: section.label, 'aria-label': section.label, [`${ATTR}-section`]: section.slug }, first ? charOf(first.hexcode) : '★');
+    // A section the cap or the policy emptied gets no tab: it would scroll to nothing.
+    const sections = this.sections().filter((section) => section.items.length > 0);
+    const active = sections.some((section) => section.slug === this.activeTab) ? this.activeTab : (sections[0]?.slug ?? null);
 
-      this.listen(tab, 'click', () => {
-        this.query = '';
-        this.searchInput.value = '';
-        this.renderBody();
-        this.body.querySelector(`[${ATTR}-section="${section.slug}"]`)?.scrollIntoView?.({ block: 'start' });
-      });
+    this.activeTab = active;
+    this.tabs.replaceChildren(
+      ...sections.map((section) => {
+        const first = section.custom ? null : section.items[0];
+        const selected = section.slug === active;
 
-      return tab;
-    });
+        return el('button', {
+          type: 'button',
+          role: 'tab',
+          class: `${PREFIX}-picker-tab`,
+          title: section.label,
+          'aria-label': section.label,
+          'aria-selected': String(selected),
+          'aria-controls': this.sectionId(section.slug),
+          tabindex: selected ? '0' : '-1',
+          [`${ATTR}-section`]: section.slug,
+        }, first ? charOf(first.pick ?? first.hexcode) : '★');
+      }),
+    );
+  }
 
-    this.tabs.replaceChildren(...tabs);
+  /** Clears any search, marks the tab, and scrolls the body — never the page — to a section. */
+  private showSection(slug: string): void {
+    if (this.query !== '' || this.searchInput.value !== '') {
+      this.query = '';
+      this.searchInput.value = '';
+      this.renderBody();
+    }
+
+    this.activeTab = slug;
+
+    for (const tab of this.tabs.querySelectorAll<HTMLElement>('[role="tab"]')) {
+      const selected = tab.getAttribute(`${ATTR}-section`) === slug;
+      tab.setAttribute('aria-selected', String(selected));
+      tab.tabIndex = selected ? 0 : -1;
+    }
+
+    const section = this.body.querySelector<HTMLElement>(`section[${ATTR}-section="${slug}"]`);
+
+    if (section) {
+      this.body.scrollTop = section.offsetTop - this.body.offsetTop;
+    }
   }
 
   private renderTones(): void {
     const s = this.strings;
-    const tones = TONE_SWATCHES.map((hand, tone) => {
-      const radio = el('button', { type: 'button', role: 'radio', class: `${PREFIX}-picker-tone`, 'aria-checked': String(tone === this.options.tone), 'aria-label': s.tones[tone], tabindex: tone === this.options.tone ? '0' : '-1' }, hand);
 
-      this.listen(radio, 'click', () => {
-        this.options.tone = tone;
-        this.store.set('tone', tone);
-        this.renderTones();
-        this.renderBody();
-      });
+    this.tones.replaceChildren(
+      ...TONE_SWATCHES.map((hand, tone) =>
+        el('button', {
+          type: 'button',
+          role: 'radio',
+          class: `${PREFIX}-picker-tone`,
+          'aria-checked': String(tone === this.options.tone),
+          'aria-label': s.tones[tone] ?? DEFAULT_STRINGS.tones[tone],
+          tabindex: tone === this.options.tone ? '0' : '-1',
+          [`${ATTR}-tone`]: String(tone),
+        }, hand),
+      ),
+    );
+  }
 
-      return radio;
-    });
+  /** Applies a tone, updating the radios in place so the one the user is on keeps focus. */
+  private setTone(tone: number): void {
+    this.options.tone = clampTone(tone);
+    this.store.set('tone', this.options.tone);
 
-    this.tones.replaceChildren(...tones);
+    for (const radio of this.tones.querySelectorAll<HTMLElement>('[role="radio"]')) {
+      const checked = Number(radio.getAttribute(`${ATTR}-tone`)) === this.options.tone;
+      radio.setAttribute('aria-checked', String(checked));
+      radio.tabIndex = checked ? 0 : -1;
+    }
+
+    this.renderBody();
   }
 
   private renderBody(): void {
     const s = this.strings;
     const term = this.query.trim();
-    const sections: PickerSection[] = term ? [{ slug: 'search', label: s.search, items: searchSections(this.sections(), term) }] : this.sections();
+    const sections: PickerSection[] = term ? searchResults(this.sections(), term, s) : this.sections();
     const nodes: HTMLElement[] = [];
     let count = 0;
 
@@ -911,16 +1485,18 @@ export class Picker {
         count++;
       });
 
-      const block = el('section', { class: `${PREFIX}-picker-section`, [`${ATTR}-section`]: section.slug });
+      const block = el('section', { class: `${PREFIX}-picker-section`, id: this.sectionId(section.slug), [`${ATTR}-section`]: section.slug });
 
       block.append(heading, grid);
       nodes.push(block);
     }
 
     this.body.replaceChildren(...nodes);
-    this.status.textContent = term ? (count === 0 ? s.noResults : s.results.replace('{count}', String(count))) : '';
+    this.status.textContent = term ? resultText(s, count) : '';
 
     const first = this.body.querySelector<HTMLElement>('[role="gridcell"]');
+
+    this.active = null;
 
     if (first) {
       first.tabIndex = 0;
@@ -929,7 +1505,7 @@ export class Picker {
   }
 
   private cell(item: PickerEmoji): HTMLButtonElement {
-    const hexcode = withTone(item, this.options.tone);
+    const hexcode = item.pick ?? withTone(item, this.options.tone);
 
     return el('button', { type: 'button', role: 'gridcell', tabindex: '-1', class: `${PREFIX}-picker-cell`, title: item.name, 'aria-label': item.name, [`${ATTR}-hexcode`]: hexcode, [`${ATTR}-base`]: item.hexcode }, charOf(hexcode));
   }
@@ -946,17 +1522,46 @@ export class Picker {
   // ---- interaction ----
 
   private onKey(event: KeyboardEvent): void {
+    const target = event.target as Element | null;
+
     if (event.key === 'Escape') {
-      event.preventDefault();
-      this.close();
+      // Only a popover that actually closes takes the key; otherwise it reaches the page (a <dialog> around
+      // an inline picker still closes on Escape).
+      if (!this.options.inline && !this.panel.hidden) {
+        event.preventDefault();
+        event.stopPropagation();
+        this.close();
+      }
 
       return;
     }
 
-    const cell = (event.target as Element | null)?.closest?.<HTMLElement>('[role="gridcell"]');
+    const tab = target?.closest?.<HTMLElement>('[role="tab"]');
+    const radio = target?.closest?.<HTMLElement>('[role="radio"]');
+
+    if (tab || radio) {
+      const items = [...(tab ? this.tabs : this.tones).querySelectorAll<HTMLElement>(tab ? '[role="tab"]' : '[role="radio"]')];
+      const next = rovingIndex(items.length, items.indexOf((tab ?? radio) as HTMLElement), event.key, this.rtl);
+
+      if (next !== null) {
+        event.preventDefault();
+        const item = items[next];
+        item?.focus();
+
+        if (tab && item) {
+          this.showSection(item.getAttribute(`${ATTR}-section`) ?? '');
+        } else if (item) {
+          this.setTone(Number(item.getAttribute(`${ATTR}-tone`)));
+        }
+      }
+
+      return;
+    }
+
+    const cell = target?.closest?.<HTMLElement>('[role="gridcell"]');
 
     if (!cell) {
-      if (event.key === 'ArrowDown' && event.target === this.searchInput) {
+      if (event.key === 'ArrowDown' && target === this.searchInput) {
         event.preventDefault();
         this.focusCell(this.body.querySelector<HTMLElement>('[role="gridcell"]'));
       }
@@ -964,27 +1569,29 @@ export class Picker {
       return;
     }
 
-    const cells = [...this.body.querySelectorAll<HTMLElement>('[role="gridcell"]')];
-    const index = cells.indexOf(cell);
-    const steps: Record<string, number> = { ArrowRight: 1, ArrowLeft: -1, ArrowDown: this.options.columns, ArrowUp: -this.options.columns };
-    const step = steps[event.key];
-
-    if (step !== undefined) {
-      event.preventDefault();
-
-      if (index + step < 0 && event.key === 'ArrowUp') {
-        this.searchInput.focus();
-
-        return;
-      }
-
-      this.focusCell(cells[Math.max(0, Math.min(cells.length - 1, index + step))]);
-    } else if (event.key === 'Home' || event.key === 'End') {
-      event.preventDefault();
-      this.focusCell(event.key === 'Home' ? cells[0] : cells[cells.length - 1]);
-    } else if (event.key === 'Enter' || event.key === ' ') {
+    if (event.key === 'Enter' || event.key === ' ') {
       event.preventDefault();
       this.select(cell);
+
+      return;
+    }
+
+    const next = gridTarget(this.body, cell, event.key, this.rtl);
+
+    if (next === null) {
+      if (['ArrowUp', 'ArrowDown', 'ArrowLeft', 'ArrowRight', 'PageUp', 'PageDown', 'Home', 'End'].includes(event.key)) {
+        event.preventDefault();
+      }
+
+      return;
+    }
+
+    event.preventDefault();
+
+    if (next === 'search') {
+      this.searchInput.focus();
+    } else {
+      this.focusCell(next);
     }
   }
 
@@ -1001,18 +1608,22 @@ export class Picker {
       const item = this.index().get(base);
 
       detail = { emoji: charOf(hexcode), hexcode, name: item?.name ?? '', shortcode: item?.shortcode ?? null, custom: false };
-      this.store.set('recent', recordRecent((this.store.get('recent') as RecentEntry[] | null) ?? [], base, hexcode, this.options.maxRecent));
+      this.store.set('recent', recordRecent(this.store.get('recent'), base, hexcode, this.options.maxRecent));
+      // Redrawn once nothing is under the pointer, so a quick second click never lands on a moved cell.
+      this.recentStale = true;
     }
 
-    if (this.options.target && 'value' in this.options.target) {
-      insertText(this.options.target, detail.emoji, this.caretKnown);
+    const target = this.options.target;
+
+    if (target) {
+      insertText(target, detail.emoji, this.caretKnown);
     }
 
     this.element.dispatchEvent(new CustomEvent(EVENT, { detail, bubbles: true }));
     this.emit('select', detail);
 
-    if (this.options.closeOnSelect) {
-      this.close();
+    if (this.options.closeOnSelect && !this.options.inline) {
+      this.close(target ? 'target' : 'trigger');
     }
   }
 }

@@ -7,8 +7,9 @@ namespace Simtabi\Laranail\Emojis\Laravel\View\Components;
 use Illuminate\View\Component;
 use Illuminate\Support\HtmlString;
 use Simtabi\Laranail\Emojis\Core\Emojis;
+use Illuminate\View\ComponentAttributeBag;
 use Simtabi\Laranail\Emojis\Laravel\View\PickerData;
-use Simtabi\Laranail\Emojis\Core\Picker\PayloadBuilder;
+use Simtabi\Laranail\Emojis\Laravel\View\PickerPayloads;
 
 /**
  * <x-laranail-emojis::picker target="#message" />
@@ -22,13 +23,17 @@ use Simtabi\Laranail\Emojis\Core\Picker\PayloadBuilder;
  *
  * Without JavaScript the target still accepts typed emoji, and the mount point says so. The mount point
  * carries wire:ignore, so it survives inside a Livewire component; outside Livewire the attribute is inert.
+ * Any other attribute (class, id, style, data-*) is passed through to it.
+ *
+ * Out-of-range options are corrected rather than passed on: a tone outside 0–5 is 0, fewer than one column
+ * is 8, and an unknown sort or recent order is the default.
  */
 final class Picker extends Component
 {
     /** @param list<string> $categories */
     public function __construct(
         private readonly Emojis $emojis,
-        private readonly PayloadBuilder $builder,
+        private readonly PickerPayloads $payloads,
         private readonly PickerData $written,
         public ?string $target = null,
         public ?string $locale = null,
@@ -41,26 +46,35 @@ final class Picker extends Component
         public ?int $columns = null,
         public bool $closeOnSelect = true,
         public ?string $userKey = null,
+        public ?string $maxVersion = null,
+        public ?string $trigger = null,
     ) {}
 
-    public function render(): HtmlString
+    /**
+     * Blade hands a component its attribute bag only after render() has run, so the markup is built by html(),
+     * which the one-line view below calls once the bag exists. The view is a fixed string; nothing from the
+     * options is compiled as Blade.
+     */
+    public function render(): string
     {
-        $locale = $this->emojis->locales()->resolve($this->locale);
-        $strings = (array) trans('laranail/emojis::picker', [], $locale);
+        return '{!! $html($attributes) !!}';
+    }
+
+    public function html(?ComponentAttributeBag $extra = null): HtmlString
+    {
+        $extra ??= new ComponentAttributeBag;
+        $resolved = $this->emojis->locales()->resolve($this->locale);
         $api = config('laranail.emojis.api.enabled');
         $block = '';
         $source = [];
 
         if (filter_var($api, FILTER_VALIDATE_BOOLEAN) && app('router')->has('laranail.emojis.api.picker')) {
-            $source['source'] = route('laranail.emojis.api.picker');
+            // Relative, so it is fetched from the host the page is on (tenant subdomains, www and apex,
+            // preview domains), not APP_URL's, which would be cross-origin there.
+            $source['source'] = route('laranail.emojis.api.picker', absolute: false);
         } else {
-            $id = 'laranail-emoji-picker-data-' . $locale;
-            $source['payload'] = $id;
-
-            if ($this->written->claim($locale)) {
-                $json = json_encode($this->builder->build($locale), JSON_HEX_TAG | JSON_HEX_AMP | JSON_HEX_APOS | JSON_HEX_QUOT | JSON_UNESCAPED_UNICODE | JSON_THROW_ON_ERROR);
-                $block = '<script type="application/json" id="' . e($id) . "\">{$json}</script>";
-            }
+            $source['payload'] = PickerData::elementId($resolved);
+            $block = $this->written->block($resolved, $this->payloads);
         }
 
         $attributes = [
@@ -71,27 +85,31 @@ final class Picker extends Component
             ...$this->dataAttributes($source),
             ...$this->dataAttributes([
                 'target'          => $this->target,
-                'locale'          => $locale,
+                'locale'          => $resolved,
                 'categories'      => $this->categories === [] ? null : implode(',', $this->categories),
-                'max-recent'      => $this->maxRecent,
-                'sort'            => $this->sort === 'default' ? null : $this->sort,
-                'recent-order'    => $this->recentOrder === 'recent' ? null : $this->recentOrder,
-                'tone'            => $this->tone,
-                'columns'         => $this->columns,
+                'max-recent'      => $this->maxRecent === null ? null : max(0, $this->maxRecent),
+                'sort'            => in_array($this->sort, ['name', 'newest'], true) ? $this->sort : null,
+                'recent-order'    => $this->recentOrder === 'frequent' ? 'frequent' : null,
+                'tone'            => $this->tone === null ? null : ($this->tone >= 0 && $this->tone <= 5 ? $this->tone : 0),
+                'columns'         => $this->columns === null ? null : ($this->columns >= 1 ? min($this->columns, 24) : 8),
                 'close-on-select' => $this->closeOnSelect ? null : 'false',
                 'user-key'        => $this->userKey,
-                'strings'         => json_encode(array_filter([
-                    'search' => $strings['search'] ?? null, 'results' => $strings['results'] ?? null, 'noResults' => $strings['no_results'] ?? null,
-                    'recent' => $strings['recent'] ?? null, 'custom' => $strings['custom'] ?? null, 'tone' => $strings['tone'] ?? null,
-                    'tones'  => $strings['tones'] ?? null, 'open' => $strings['open'] ?? null, 'loading' => $strings['loading'] ?? null,
-                    'failed' => $strings['failed'] ?? null,
-                ], static fn (mixed $v): bool => $v !== null), JSON_UNESCAPED_UNICODE | JSON_THROW_ON_ERROR),
+                'max-version'     => $this->maxVersion,
+                'trigger'         => $this->trigger,
+                'strings'         => json_encode($this->payloads->strings($resolved), JSON_UNESCAPED_UNICODE | JSON_THROW_ON_ERROR),
             ]),
             ...($this->inline ? ['data-laranail-emoji-inline' => ''] : []),
         ];
 
+        // Passed-through attributes never override the picker's own data-laranail-emoji-* options.
+        foreach ($extra->getAttributes() as $name => $value) {
+            if (! isset($attributes[$name]) && is_scalar($value) && $value !== false) {
+                $attributes[$name] = $value === true ? '' : (string) $value;
+            }
+        }
+
         $html = implode(' ', array_map(static fn (string $name, string $value): string => $value === '' ? $name : $name . '="' . e($value) . '"', array_keys($attributes), $attributes));
-        $fallback = e(is_string($strings['no_script'] ?? null) ? $strings['no_script'] : '');
+        $fallback = e($this->payloads->noScript($resolved));
 
         return new HtmlString("{$block}<div {$html}><noscript>{$fallback}</noscript></div>");
     }

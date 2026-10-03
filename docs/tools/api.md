@@ -61,7 +61,8 @@ fails when a route is missing from it.
 - **The emoji policy applies.** An emoji `policy` denies is neither listed nor shown, and `/picker` leaves
   out emoji newer than `policy.max_version`, and custom emoji when `allow_custom` is off. The policy is
   checked on every skin-tone form in an emoji's `skins` map too, not only on the emoji, so no toned form is
-  offered that `sanitize()` would strip. Everything is built by `Core\Picker\PayloadBuilder`, which the
+  offered that `sanitize()` would strip. Group names in `/picker` come from the picker translations for the
+  requested locale. Everything is built by `Core\Picker\PayloadBuilder`, which the
   Blade picker shares.
 - **Throttled per client IP** by default. Behind a proxy or load balancer, configure Laravel's
   `TrustProxies`, or every client shares the proxy's address and its limit.

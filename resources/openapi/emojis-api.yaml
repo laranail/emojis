@@ -5,7 +5,8 @@ info:
   description: >-
     Read-only JSON over the emoji catalogue, symbols, kaomoji, emoticons and status tags. Disabled by default;
     enable with laranail.emojis.api.enabled. Paths are relative to the configured prefix and version
-    (default /laranail/emojis/api/v1). Responses carry an ETag and answer 304 to If-None-Match.
+    (default /laranail/emojis/api/v1). With laranail.emojis.api.cache_headers set (the default), responses
+    carry an ETag and answer 304 to If-None-Match.
   license:
     name: MIT
 servers:
@@ -25,13 +26,72 @@ components:
           schema: { type: object, properties: { message: { type: string } }, required: [message] }
     Invalid:
       description: A parameter is out of bounds. The message names the field, never the input.
+    Throttled:
+      description: Too many requests from this client; retry after the Retry-After header's seconds.
   schemas:
+    PickerEmoji:
+      type: object
+      required: [emoji, hexcode, name, shortcode, keywords, version, skins]
+      properties:
+        emoji: { type: string, examples: ['🤝'] }
+        hexcode: { type: string, examples: ['1F91D'] }
+        name: { type: string, description: 'In the requested locale.' }
+        shortcode: { type: [string, 'null'] }
+        keywords: { type: array, items: { type: string } }
+        version: { type: string, description: 'The Emoji version that added it.', examples: ['3.0'] }
+        skins:
+          type: object
+          description: >-
+            Tone key to hexcode, for the toned forms the policy permits: "1" to "5" for one person, "1-5" and
+            so on (a tone per person) for several. Hexcodes, not characters. Empty when it takes no tone.
+          additionalProperties: { type: string }
+          examples: [{ '3': '1F91D-1F3FD', '3-5': '1FAF1-1F3FD-200D-1FAF2-1F3FF' }]
+        skin_versions:
+          description: >-
+            Present when the toned forms are newer than the emoji: their Emoji version, one string when they
+            share it, otherwise tone key to version.
+          oneOf:
+            - { type: string, examples: ['14.0'] }
+            - { type: object, additionalProperties: { type: string } }
+        base:
+          description: Present, and false, when the policy refuses the emoji itself but permits some of its toned forms.
+          const: false
+    PickerGroup:
+      type: object
+      required: [slug, label, emoji]
+      properties:
+        slug: { type: string, examples: [smileys_and_emotion] }
+        label: { type: string, description: 'Translated through the picker translations; English when the locale has none.' }
+        emoji: { type: array, items: { $ref: '#/components/schemas/PickerEmoji' } }
+    PickerPayload:
+      type: object
+      required: [dataset, locale, groups, custom, delimiters]
+      properties:
+        dataset: { type: string }
+        locale: { type: string, description: 'The locale the payload is in, after fallback.' }
+        groups: { type: array, items: { $ref: '#/components/schemas/PickerGroup' } }
+        custom:
+          type: array
+          items:
+            type: object
+            required: [name, label, image, fallback]
+            properties:
+              name: { type: string }
+              label: { type: string }
+              image: { type: string, description: 'A URL or a data URI.' }
+              fallback: { type: [string, 'null'] }
+        delimiters:
+          type: array
+          description: The configured shortcode delimiters; a custom emoji is inserted as open + name + close.
+          prefixItems: [{ type: string }, { type: string }]
+          minItems: 2
+          maxItems: 2
     Emoji:
       type: object
       properties:
         emoji: { type: string, examples: ['🚀'] }
         hexcode: { type: string, examples: ['1F680'] }
-        name: { type: string, description: In the requested locale. }
+        name: { type: string, description: 'In the requested locale.' }
         english_name: { type: string }
         slug: { type: string }
         shortcode: { type: [string, 'null'] }
@@ -47,13 +107,13 @@ components:
         base: { type: [string, 'null'] }
         region: { type: [string, 'null'] }
         text_presentation: { type: boolean }
-        tag: { type: [string, 'null'], description: The status tag the emoji is written as, if any. }
+        tag: { type: [string, 'null'], description: 'The status tag the emoji is written as, if any.' }
 paths:
   /:
     get:
       summary: Describe the dataset, counts, locales, groups and links.
       parameters: [{ $ref: '#/components/parameters/locale' }]
-      responses: { '200': { description: The description. } }
+      responses: { '200': { description: 'The description.' } }
   /emojis:
     get:
       summary: List emoji, filtered and paged. The configured emoji policy applies.
@@ -90,17 +150,29 @@ paths:
     get:
       summary: Everything an emoji picker draws for one locale, grouped, with custom emoji. Policy applied.
       parameters: [{ $ref: '#/components/parameters/locale' }]
-      responses: { '200': { description: 'data: {dataset, locale, groups[{slug, label, emoji[]}], custom[]}; meta.count.' } }
+      responses:
+        '200':
+          description: The payload, and how many emoji and custom emoji it lists.
+          content:
+            application/json:
+              schema:
+                type: object
+                required: [data, meta]
+                properties:
+                  data: { $ref: '#/components/schemas/PickerPayload' }
+                  meta: { type: object, required: [count], properties: { count: { type: integer } } }
+        '422': { $ref: '#/components/responses/Invalid' }
+        '429': { $ref: '#/components/responses/Throttled' }
   /symbols:
     get:
       summary: The symbol groups, with each group's characters.
-      responses: { '200': { description: The groups. } }
+      responses: { '200': { description: 'The groups.' } }
   /symbols/{group}:
     get:
       summary: Every symbol in one group.
       parameters: [{ name: group, in: path, required: true, schema: { type: string } }]
       responses:
-        '200': { description: The symbols. }
+        '200': { description: 'The symbols.' }
         '404': { $ref: '#/components/responses/NotFound' }
   /kaomoji:
     get:
@@ -109,13 +181,13 @@ paths:
         - { name: group, in: query, schema: { type: string, pattern: '^[a-z0-9_]+$' } }
         - { name: ascii, in: query, schema: { type: boolean } }
       responses:
-        '200': { description: The kaomoji, with every group in meta. }
+        '200': { description: 'The kaomoji, with every group in meta.' }
         '404': { $ref: '#/components/responses/NotFound' }
   /emoticons:
     get:
       summary: Every emoticon text conversion recognises, mapped to its emoji's hexcode; meta.opt_in_only lists the risky ones.
-      responses: { '200': { description: The map. } }
+      responses: { '200': { description: 'The map.' } }
   /tags:
     get:
       summary: The status tags, with their groups.
-      responses: { '200': { description: The tags. } }
+      responses: { '200': { description: 'The tags.' } }

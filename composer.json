@@ -59,7 +59,8 @@
         "phpstan/phpstan-strict-rules": "^2.0",
         "phpunit/phpunit": "^12.0",
         "rector/rector": "^2.5.8",
-        "roave/security-advisories": "dev-latest"
+        "roave/security-advisories": "dev-latest",
+        "symfony/yaml": "^7.3 || ^8.0"
     },
     "suggest": {
         "ext-dom": "Needed only to accept uploaded or custom SVG emoji images: SvgSanitizer parses them with DOMDocument and refuses SVG without it. Raster images and the bundled sets do not need it.",

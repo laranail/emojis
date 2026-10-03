@@ -29,8 +29,10 @@ use Simtabi\Laranail\Emojis\Core\Enums\ImageSetName;
 use Simtabi\Laranail\Emojis\Core\Image\HttpsFetcher;
 use Simtabi\Laranail\Emojis\Laravel\View\PickerData;
 use Simtabi\Laranail\Emojis\Core\Contracts\HtmlFactory;
+use Simtabi\Laranail\Emojis\Core\Picker\PayloadBuilder;
 use Simtabi\Laranail\Emojis\Core\Contracts\EmojisFluent;
 use Simtabi\Laranail\Emojis\Laravel\Doctor\DatasetCheck;
+use Simtabi\Laranail\Emojis\Laravel\View\PickerPayloads;
 use Simtabi\Laranail\Emojis\Core\Contracts\TerminalProbe;
 use Simtabi\Laranail\Emojis\Laravel\ConsoleTerminalProbe;
 use Simtabi\Laranail\Emojis\Laravel\Livewire\EmojiPicker;
@@ -126,6 +128,12 @@ final class EmojisServiceProvider extends PackageServiceProvider
 
         $this->app->alias(Emojis::class, EmojisFluent::class);
         $this->app->scoped(PickerData::class);
+        $this->app->singleton(PickerPayloads::class, static fn (Application $app): PickerPayloads => new PickerPayloads(
+            $app->make(Emojis::class),
+            $app->make(PayloadBuilder::class),
+            $app->make('translator'),
+            $app->bound('cache.store') ? $app->make('cache.store') : null,
+        ));
     }
 
     #[Override]

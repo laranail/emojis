@@ -6,7 +6,7 @@ import { payload } from './fixture.mjs';
 globalThis.__laranailEmojiNoAutoInit = true;
 
 const module = await import('../../resources/assets/scripts/picker.ts');
-const { Picker, StaticSource, ApiSource, memoryStore, localStorageStore, fold, charOf, withTone, search, sortItems, recordRecent, orderRecent, parseOptions, autoInit, byVersion, detectMaxVersion, buildSections, searchSections, capPayload, insertText, indexPayload, customCode, mountElement } = module;
+const { Picker, StaticSource, ApiSource, memoryStore, localStorageStore, fold, charOf, withTone, search, sortItems, recordRecent, orderRecent, parseOptions, autoInit, byVersion, detectMaxVersion, buildSections, searchSections, capPayload, insertText, indexPayload, customCode, mountElement, readRecent, clampTone, clampColumns, searchCustom, rovingIndex } = module;
 
 const root = resolve(import.meta.dirname, '../..');
 const flush = () => new Promise((r) => setTimeout(r, 0));
@@ -16,7 +16,7 @@ const mount = async (options = {}) => {
   const host = document.createElement('div');
   const textarea = document.createElement('textarea');
   document.body.append(host, textarea);
-  const picker = await Picker.create(host, { inline: true, store: memoryStore(), ...options }).source(new StaticSource(payload())).target(textarea).mount();
+  const picker = await Picker.create(host, { inline: true, store: memoryStore(), searchDelay: 0, ...options }).source(new StaticSource(payload())).target(textarea).mount();
 
   return { host, textarea, picker, cells: () => [...host.querySelectorAll('[role="gridcell"]')] };
 };
@@ -150,18 +150,30 @@ describe('version cap', () => {
     expect(cells()).toHaveLength(0);
   });
 
-  it('detects the newest version a canvas draws, treating tofu and split sequences as missing', () => {
-    // A fake canvas whose font knows emoji up to 14.0: newer singles draw as the tofu box, sequences split.
+  it('detects the newest version a canvas draws in colour as one glyph', () => {
+    // A fake canvas whose font knows emoji up to 14.0: newer ones draw as a black placeholder (macOS's
+    // LastResort draws a different one per block, so no single "tofu" probe matches), sequences split.
     const known = new Set(['\u{1FAE0}', '\u{1F972}', '\u{1F600}']);
     const context = {
-      font: '', textBaseline: '', last: '',
+      font: '', textBaseline: '', fillStyle: '', last: '',
       clearRect() {}, fillText(text) { this.last = text; },
-      getImageData() { return { data: [known.has(this.last) ? this.last : 'tofu'] }; },
+      getImageData() {
+        return { data: this.last === '' ? [0, 0, 0, 0] : known.has(this.last) ? [250, 200, 40, 255] : [0, 0, 0, 255] };
+      },
       measureText: (text) => ({ width: [...text].length > 2 ? 60 : 24 }),
     };
     const doc = { createElement: () => ({ getContext: () => context }) };
 
     expect(detectMaxVersion(doc)).toBe('14.0');
+  });
+
+  it('hides nothing when no sample draws in colour, or when the canvas adds noise', () => {
+    const fake = (data) => ({ createElement: () => ({ getContext: () => ({ font: '', textBaseline: '', fillStyle: '', clearRect() {}, fillText() {}, getImageData: () => ({ data }), measureText: () => ({ width: 24 }) }) }) });
+
+    // No colour emoji font: everything draws in the fill colour. The old probe fell back to 11.0 here.
+    expect(detectMaxVersion(fake([0, 0, 0, 255]))).toBeNull();
+    // Anti-fingerprinting noise colours even an empty canvas.
+    expect(detectMaxVersion(fake([90, 10, 200, 255]))).toBeNull();
   });
 });
 
@@ -185,6 +197,8 @@ describe('stores', () => {
 });
 
 describe('sources', () => {
+  beforeEach(() => ApiSource.clear());
+
   afterEach(() => vi.restoreAllMocks());
 
   it('loads from the API with the locale, and fails loudly on an error status', async () => {
@@ -195,6 +209,35 @@ describe('sources', () => {
 
     fetch.mockResolvedValue(new Response('{}', { status: 500 }));
     await expect(new ApiSource('/x/picker').load()).rejects.toThrow('HTTP 500');
+    fetch.mockRestore();
+  });
+
+  it('shares one request per URL and locale between pickers, and retries after a failure', async () => {
+    const fetch = vi.spyOn(globalThis, 'fetch').mockImplementation(async () => new Response(JSON.stringify({ data: payload() }), { status: 200 }));
+
+    await Promise.all([new ApiSource('/api/v1').load('en'), new ApiSource('/api/v1').load('en'), new ApiSource('/api/v1/').load('en')]);
+    expect(fetch).toHaveBeenCalledTimes(1);
+
+    await new ApiSource('/api/v1').load('fr');
+    expect(fetch).toHaveBeenCalledTimes(2);
+
+    ApiSource.clear();
+    fetch.mockResolvedValueOnce(new Response('{}', { status: 503 }));
+    await expect(new ApiSource('/api/v1').load('en')).rejects.toThrow('HTTP 503');
+    await expect(new ApiSource('/api/v1').load('en')).resolves.toMatchObject({ locale: 'en' });
+    fetch.mockRestore();
+  });
+
+  it('aborts one picker\'s load without failing the request the others share', async () => {
+    const fetch = vi.spyOn(globalThis, 'fetch').mockImplementation(async () => new Response(JSON.stringify({ data: payload() }), { status: 200 }));
+    const controller = new AbortController();
+    const aborted = new ApiSource('/api/v1').load('en', controller.signal);
+    const other = new ApiSource('/api/v1').load('en');
+
+    controller.abort();
+    await expect(aborted).rejects.toThrow('Aborted');
+    await expect(other).resolves.toMatchObject({ locale: 'en' });
+    fetch.mockRestore();
   });
 
   it('reads a JSON data block by id', async () => {
@@ -293,7 +336,7 @@ describe('Picker', () => {
     picker.searchInput.dispatchEvent(new Event('input'));
 
     expect(cells().map((c) => c.textContent)).toEqual(['🚀']);
-    expect(host.querySelector('[role="status"]').textContent).toBe('1 results');
+    expect(host.querySelector('[role="status"]').textContent).toBe('1 result');
 
     picker.searchInput.value = 'zzz';
     picker.searchInput.dispatchEvent(new Event('input'));
@@ -320,8 +363,21 @@ describe('Picker', () => {
     picker.focusCell(cells()[0]);
     key(cells()[0], 'ArrowRight');
     expect(document.activeElement).toBe(cells()[1]);
+    // 😀 😂 / 🫠 is a partial last row: ArrowDown from the second column lands on 🫠, not past it into the
+    // next section, and keeps going down by column across the section boundary.
     key(cells()[1], 'ArrowDown');
+    expect(document.activeElement).toBe(cells()[2]);
+    key(cells()[2], 'ArrowDown');
     expect(document.activeElement).toBe(cells()[3]);
+    key(cells()[3], 'ArrowUp');
+    expect(document.activeElement).toBe(cells()[2]);
+    key(cells()[2], 'PageDown');
+    expect(document.activeElement.getAttribute('aria-label')).toBe('waving hand');
+    key(document.activeElement, 'PageUp');
+    expect(document.activeElement).toBe(cells()[0]);
+    key(cells()[0], 'ArrowUp');
+    expect(document.activeElement).toBe(picker.searchInput);
+    picker.focusCell(cells()[3]);
     key(cells()[3], 'End');
     expect(document.activeElement).toBe(cells().at(-1));
     key(cells().at(-1), 'Home');
@@ -361,7 +417,9 @@ describe('Picker', () => {
   it('mounts once per element, and destroy() removes its DOM and listeners', async () => {
     const { host, picker } = await mount();
 
-    expect(await Picker.create(host).mount()).not.toBe(picker);
+    // create() on an element with a live picker hands back that picker, not a detached copy.
+    expect(Picker.create(host)).toBe(picker);
+    expect(await Picker.create(host).mount()).toBe(picker);
     expect(host.querySelectorAll('.laranail-emoji-picker')).toHaveLength(1);
     picker.destroy();
     expect(host.children).toHaveLength(0);
@@ -500,7 +558,268 @@ describe('policy and version fidelity (hotfix track)', () => {
   });
 });
 
+describe('interaction and lifecycle (phase 1)', () => {
+  const key = (target, k, init = {}) => target.dispatchEvent(new KeyboardEvent('keydown', { key: k, bubbles: true, cancelable: true, ...init }));
+  const popover = async (options = {}) => mount({ inline: false, ...options });
+
+  it('closes on a click outside, leaving focus where the user put it', async () => {
+    const { picker } = await popover();
+    // Not focusable, so only the pointerdown listener (not focusout) can close it.
+    const outside = document.createElement('div');
+    document.body.append(outside);
+
+    picker.open();
+    const focused = document.activeElement;
+    outside.dispatchEvent(new Event('pointerdown', { bubbles: true }));
+
+    expect(picker.panel.hidden).toBe(true);
+    expect(document.activeElement).toBe(focused);
+  });
+
+  it('closes when focus moves to something outside', async () => {
+    const { picker } = await popover();
+    const outside = document.createElement('button');
+    document.body.append(outside);
+
+    picker.open();
+    picker.searchInput.dispatchEvent(new FocusEvent('focusout', { bubbles: true, relatedTarget: outside }));
+
+    expect(picker.panel.hidden).toBe(true);
+  });
+
+  it('keeps the column moving between rows of different sections', async () => {
+    // Three columns: 😀 😂 🫠 / 👋 🤝 / 🚀. ArrowDown from 😂 (second column) lands on 🤝, not 👋.
+    const { cells, picker } = await mount({ columns: 3 });
+
+    picker.focusCell(cells()[1]);
+    key(cells()[1], 'ArrowDown');
+    expect(document.activeElement.getAttribute('aria-label')).toBe('handshake');
+    key(document.activeElement, 'ArrowDown');
+    expect(document.activeElement.getAttribute('aria-label')).toBe('fusée');
+  });
+
+  it('sends focus to the field after a pick, so typing carries on', async () => {
+    const { picker, textarea, cells } = await popover();
+
+    picker.open();
+    cells()[0].click();
+
+    expect(picker.panel.hidden).toBe(true);
+    expect(document.activeElement).toBe(textarea);
+  });
+
+  it('lets Escape through when inline, and swallows it only when a popover closes', async () => {
+    const inline = await mount();
+    const inlineEvent = new KeyboardEvent('keydown', { key: 'Escape', bubbles: true, cancelable: true });
+    inline.cells()[0].dispatchEvent(inlineEvent);
+    expect(inlineEvent.defaultPrevented).toBe(false);
+    expect(inline.host.querySelector('[role="group"]')).not.toBeNull();
+
+    const { picker, cells } = await popover();
+    picker.open();
+    const event = new KeyboardEvent('keydown', { key: 'Escape', bubbles: true, cancelable: true });
+    cells()[0].dispatchEvent(event);
+    expect(event.defaultPrevented).toBe(true);
+    expect(picker.panel.hidden).toBe(true);
+  });
+
+  it('marks the selected tab, roves between tabs with the arrows, and gives no tab to an empty section', async () => {
+    const { host } = await mount({ maxVersion: null, categories: ['smileys_and_emotion', 'people_and_body', 'travel_and_places'] });
+    const tabs = () => [...host.querySelectorAll('[role="tab"]')];
+
+    expect(tabs().map((t) => t.getAttribute('aria-selected'))).toEqual(['true', 'false', 'false']);
+    expect(tabs().filter((t) => t.tabIndex === 0)).toHaveLength(1);
+    expect(tabs()[0].getAttribute('aria-controls')).toBe(host.querySelector('section').id);
+
+    tabs()[0].focus();
+    key(tabs()[0], 'ArrowRight');
+    expect(document.activeElement).toBe(tabs()[1]);
+    expect(tabs()[1].getAttribute('aria-selected')).toBe('true');
+    key(tabs()[1], 'End');
+    expect(document.activeElement).toBe(tabs()[2]);
+
+    const capped = await mount({ maxVersion: '0.6' });
+    // Smileys keeps only 😂 (0.6); the capped picker still names only sections with emoji in them.
+    expect([...capped.host.querySelectorAll('[role="tab"]')].every((t) => capped.host.querySelector(`section[data-laranail-emoji-section="${t.getAttribute('data-laranail-emoji-section')}"]`))).toBe(true);
+  });
+
+  it('roves the tone radios with the arrows, keeping focus on the radio', async () => {
+    const { host, cells } = await mount();
+    const radios = () => [...host.querySelectorAll('[role="radio"]')];
+
+    radios()[0].focus();
+    key(radios()[0], 'ArrowRight');
+    key(document.activeElement, 'ArrowRight');
+    key(document.activeElement, 'ArrowRight');
+
+    expect(document.activeElement).toBe(radios()[3]);
+    expect(radios()[3].getAttribute('aria-checked')).toBe('true');
+    expect(cells().find((c) => c.getAttribute('aria-label') === 'waving hand').textContent).toBe('👋🏽');
+  });
+
+  it('clamps a tone or column count from anywhere', () => {
+    expect([clampTone(9), clampTone('3'), clampTone(-1), clampTone('x'), clampTone(2.7)]).toEqual([0, 3, 0, 0, 2]);
+    expect([clampColumns(0), clampColumns(-4), clampColumns('9'), clampColumns(99)]).toEqual([8, 8, 9, 24]);
+    expect(rovingIndex(3, 2, 'ArrowRight')).toBe(0);
+    expect(rovingIndex(3, 0, 'ArrowRight', true)).toBe(2);
+  });
+
+  it('survives a corrupt or foreign recents value in storage', async () => {
+    expect(readRecent({})).toEqual([]);
+    expect(readRecent([5, null, { base: '1F600', hexcode: '1F600', count: 2, at: 1 }])).toHaveLength(1);
+
+    const store = memoryStore();
+    store.set('recent', { future: 'schema' });
+    const { cells } = await mount({ store });
+
+    expect(cells().length).toBeGreaterThan(0);
+    cells()[0].click();
+    expect(readRecent(store.get('recent'))).toHaveLength(1);
+  });
+
+  it('keeps Frequently used still while the popover is open, then shows the pick, in the tone it was picked in', async () => {
+    const { picker, host, cells } = await popover();
+
+    picker.open();
+    picker.skinTone(3);
+    cells().find((c) => c.getAttribute('aria-label') === 'waving hand').click();
+    expect(host.querySelector('[data-laranail-emoji-section="recent"]')).toBeNull();
+
+    picker.skinTone(0);
+    picker.open();
+    const recent = host.querySelector('section[data-laranail-emoji-section="recent"] [role="gridcell"]');
+    expect(recent.textContent).toBe('👋🏽');
+  });
+
+  it('finds :shortcode:, a pasted glyph, and custom emoji by name', async () => {
+    const { picker, cells } = await mount();
+    const find = (term) => {
+      picker.searchInput.value = term;
+      picker.searchInput.dispatchEvent(new Event('input'));
+
+      return cells().map((c) => c.getAttribute('aria-label'));
+    };
+
+    expect(find(':rocket:')).toEqual(['fusée']);
+    expect(find(':rock')).toEqual(['fusée']);
+    expect(find('👋🏽')).toEqual(['waving hand']);
+    expect(find('parrot')).toEqual(['Party parrot']);
+    expect(searchCustom(payload().custom, 'party')).toHaveLength(1);
+  });
+
+  it('waits for typing to pause before searching', async () => {
+    vi.useFakeTimers();
+
+    try {
+      const { picker, cells } = await mount({ searchDelay: 80 });
+      const before = cells().length;
+
+      picker.searchInput.value = 'rocket';
+      picker.searchInput.dispatchEvent(new Event('input'));
+      expect(cells()).toHaveLength(before);
+
+      vi.advanceTimersByTime(80);
+      expect(cells()).toHaveLength(1);
+    } finally {
+      vi.useRealTimers();
+    }
+  });
+
+  it('respects maxlength, fires change, and inserts into contenteditable', () => {
+    const input = document.createElement('input');
+    input.maxLength = 2;
+    input.value = 'ab';
+    const onChange = vi.fn();
+    input.addEventListener('change', onChange);
+
+    expect(insertText(input, '😀', false)).toBe(false);
+    expect(input.value).toBe('ab');
+
+    input.maxLength = 10;
+    expect(insertText(input, '😀', false)).toBe(true);
+    expect(onChange).toHaveBeenCalledOnce();
+
+    const editable = document.createElement('div');
+    editable.contentEditable = 'true';
+    editable.textContent = 'hi ';
+    document.body.append(editable);
+
+    expect(insertText(editable, '😀', false)).toBe(true);
+    expect(editable.textContent).toBe('hi 😀');
+  });
+
+  it('draws only the newest load: a remount overtakes a slow one', async () => {
+    document.body.replaceChildren();
+    const host = document.createElement('div');
+    document.body.append(host);
+    let release;
+    const slow = { load: () => new Promise((resolve) => (release = () => resolve({ groups: [{ slug: 'old', label: 'Old', emoji: [payload().groups[0].emoji[0]] }] }))) };
+    const first = Picker.create(host, { inline: true, store: memoryStore() }).source(slow);
+    const pending = first.mount();
+
+    first.destroy();
+    const second = await Picker.create(host, { inline: true, store: memoryStore() }).source(new StaticSource(payload())).mount();
+    release();
+    await pending;
+
+    expect(host.querySelector('[data-laranail-emoji-section="old"]')).toBeNull();
+    expect(second.isAttached()).toBe(true);
+  });
+
+  it('re-renders when an option changes after mount', async () => {
+    const { picker, host } = await mount();
+
+    picker.categories(['travel_and_places']);
+    expect([...host.querySelectorAll('section')].map((x) => x.getAttribute('data-laranail-emoji-section'))).toEqual(['travel_and_places']);
+  });
+
+  it('shows a configured trigger', async () => {
+    const { picker } = await popover({ trigger: '😺' });
+
+    expect(picker.trigger.textContent).toBe('😺');
+  });
+
+  it('mirrors Left and Right under RTL', async () => {
+    const { host, cells, picker } = await mount();
+    host.setAttribute('dir', 'rtl');
+
+    picker.focusCell(cells()[0]);
+    key(cells()[0], 'ArrowLeft');
+    expect(document.activeElement).toBe(cells()[1]);
+  });
+
+  it('merges headers into the API request and keeps a query string', async () => {
+    ApiSource.clear();
+    const calls = [];
+    const spy = vi.spyOn(globalThis, 'fetch').mockImplementation(async (url, init) => {
+      calls.push([url, init]);
+
+      return new Response(JSON.stringify({ data: payload() }), { status: 200 });
+    });
+
+    await new ApiSource('/api/v1?tenant=7', { headers: { 'X-CSRF-TOKEN': 't' } }).load('fr');
+    spy.mockRestore();
+
+    expect(calls[0][0]).toBe('/api/v1/picker?tenant=7&locale=fr');
+    const headers = new Headers(calls[0][1].headers);
+    expect([headers.get('accept'), headers.get('x-csrf-token')]).toEqual(['application/json', 't']);
+  });
+});
+
 describe('the build', () => {
+  it('reads its public theme tokens without declaring them, so a value set above the picker wins', () => {
+    const css = readFileSync(resolve(root, 'public/assets/css/picker.css'), 'utf8');
+    const declared = [...css.matchAll(/(?:^|[;{])\s*(--laranail-emoji-picker-[a-z-]+)\s*:/g)].map((m) => m[1]);
+    const read = new Set([...css.matchAll(/var\((--laranail-emoji-picker-[a-z-]+)/g)].map((m) => m[1]));
+
+    expect(read.size).toBeGreaterThanOrEqual(12);
+    expect(declared).toEqual([]);
+    expect(css).toMatch(/\.dark \.laranail-emoji-picker/);
+    expect(css).toMatch(/\[data-theme=dark\] \.laranail-emoji-picker/);
+    // The phone bottom sheet applies to the popover only, never to an inline picker.
+    expect(css).toMatch(/max-width:\s*480px\)\{\.laranail-emoji-picker:has\(\.laranail-emoji-picker-trigger\) \.laranail-emoji-picker-panel/);
+  });
+
   it('keeps every export of the module, and declares each one', async () => {
     const built = readFileSync(resolve(root, 'public/assets/js/picker.js'), 'utf8');
     const declared = [...readFileSync(resolve(root, 'resources/assets/types/picker.d.ts'), 'utf8').matchAll(/^export declare (?:class|function|const) (\w+)/gm)].map((m) => m[1]).sort();
