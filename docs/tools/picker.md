@@ -57,6 +57,19 @@ small. Otherwise the payload (about 400 KB, less compressed) is embedded once pe
 applies, `policy.max_version` caps the version, and custom emoji appear in a Custom tab unless
 `allow_custom` is off.
 
+The policy is applied to every skin-tone form as well as to each emoji, because a toned form can be newer
+than its emoji (🤝 is Emoji 3.0, its toned forms 14.0) and can be denied or allowed on its own:
+
+- A toned form the policy refuses is left out of the emoji's `skins` map, and picking that tone inserts the
+  untoned emoji instead.
+- An emoji the policy refuses while allowing some of its toned forms (`allow_only => ['1F44D-1F3FD']`) is
+  still listed, marked `"base": false`, and the picker inserts only those forms.
+- `skin_versions` carries the version of the toned forms newer than their emoji — one string when they share
+  it, otherwise tone key → version — so the browser's own version cap applies to tones too.
+
+Custom emoji are inserted between the configured `shortcodes.delimiters`, which the payload carries as
+`delimiters`, so the text reads back through the scanner.
+
 The picker also hides emoji newer than the browser can draw: it renders one sample per Emoji version on a
 canvas and drops anything newer than the newest that is not an empty box. Set
 `data-laranail-emoji-max-version` (or `maxVersion()` in JavaScript) to a version to cap it yourself, or to
@@ -70,7 +83,10 @@ canvas and drops anything newer than the newest that is not an empty box. Set
 ```
 
 A textarea with the picker beside it, bound to the parent's property. Registered only when
-`livewire/livewire` is installed. The Blade picker pointed at any `wire:model` field does the same without it.
+`livewire/livewire` is installed. The Blade picker pointed at any `wire:model` field does the same without it:
+its mount point carries `wire:ignore`, so a component update does not strip the mounted picker. Point it at
+the field with an attribute selector (`[id='…']`) when the id is generated — `#id` cannot express an id that
+starts with a digit, and Livewire's do one time in six.
 
 ## JavaScript
 

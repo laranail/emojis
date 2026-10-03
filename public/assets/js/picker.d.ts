@@ -28,6 +28,10 @@ export interface PickerEmoji {
     keywords: string[];
     version: string;
     skins: Record<string, string>;
+    /** The Emoji version of the variants newer than the base: one for all of them, or per tone key. */
+    skin_versions?: string | Record<string, string>;
+    /** False when the policy refuses the emoji itself but permits some of its toned forms. */
+    base?: false;
 }
 export interface PickerGroup {
     slug: string;
@@ -46,6 +50,8 @@ export interface PickerPayload {
     locale?: string;
     groups: PickerGroup[];
     custom?: PickerCustom[];
+    /** The configured shortcode delimiters a custom emoji is inserted with; [':', ':'] when absent. */
+    delimiters?: [string, string];
 }
 export interface PickerSource {
     load(locale?: string | null): Promise<PickerPayload>;
@@ -150,8 +156,13 @@ export declare const TONE_SWATCHES: readonly string[];
 export declare function fold(text: string): string;
 /** "1F44B-1F3FD" → "👋🏽". */
 export declare function charOf(hexcode: string): string;
-/** The hexcode an emoji takes with a skin tone (1–5), or its own when it takes none. */
+/**
+ * The hexcode an emoji takes with a skin tone (1–5), or its own when it takes none. An emoji whose base the
+ * policy refuses (`base: false`) falls back to its first permitted toned form, never to the base.
+ */
 export declare function withTone(item: PickerEmoji, tone: number): string;
+/** The text a custom emoji is inserted as: its name between the payload's shortcode delimiters. */
+export declare function customCode(name: string, data?: Pick<PickerPayload, 'delimiters'> | null): string;
 /** Compares two dotted Emoji versions ("15.1" > "15.0"). */
 export declare function byVersion(a: string, b: string): number;
 /**
@@ -160,7 +171,11 @@ export declare function byVersion(a: string, b: string): number;
  * (the "tofu" box), and a sequence it lacks draws as its parts, wider than one emoji.
  */
 export declare function detectMaxVersion(doc?: Pick<Document, 'createElement'> | undefined): string | null;
-/** The payload without emoji newer than `cap` ('auto' asks the browser; null or '' keeps everything). */
+/**
+ * The payload without emoji newer than `cap` ('auto' asks the browser; null or '' keeps everything). Toned
+ * forms are capped on their own version, since they can be newer than their base (🤝 is 3.0, its tones
+ * 14.0): a capped tone is dropped from `skins`, and the emoji then falls back to its untoned form.
+ */
 export declare function capPayload(data: PickerPayload, cap: string | null | undefined, detect?: () => string | null): PickerPayload;
 /**
  * Ranks emoji for a search term: exact name, name prefix, shortcode, keyword prefix, anywhere. Every word
@@ -262,6 +277,8 @@ export declare class Picker {
     get store(): PickerStore;
     /** Builds the UI and loads the payload. Resolves once the emoji are drawn. */
     mount(): Promise<this>;
+    /** Whether the picker's UI is still inside its element (a morph can strip it out). */
+    isAttached(): boolean;
     destroy(): void;
     open(): void;
     close(): void;
@@ -285,7 +302,10 @@ export declare class Picker {
     private onKey;
     private select;
 }
-/** Mounts a picker from its data-laranail-emoji-* attributes. Idempotent: a mounted element is left alone. */
+/**
+ * Mounts a picker from its data-laranail-emoji-* attributes. Idempotent: a mounted element is left alone,
+ * unless something (a Livewire or Turbo morph) stripped the picker out of it, when it is mounted afresh.
+ */
 export declare function mountElement(element: HTMLElement): Picker;
 /**
  * Mounts every [data-laranail-emoji-picker] under root now and as they are added later, with one

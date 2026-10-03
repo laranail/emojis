@@ -5,6 +5,31 @@ All notable changes to `laranail/emojis` are documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/), and this project adheres to
 [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [Unreleased]
+
+### Fixed
+
+- **The picker offered toned emoji the emoji policy refuses.** `PayloadBuilder` checked the policy on each
+  emoji but copied its `skins` map unfiltered, so `policy.max_version => '13.0'` still offered 🤝 with tones
+  (toned handshakes are Emoji 14.0), and `deny => ['1F44D-1F3FF']` still inserted exactly that sequence. Every
+  toned form is now checked on its own. An emoji the policy refuses while allowing some of its toned forms
+  (`allow_only => ['1F44D-1F3FD']`) is listed with `"base": false` and offers only those forms; before, it
+  vanished. The payload gains `skin_versions`, and the browser's own version cap now drops tones the platform
+  cannot draw instead of showing the emoji beside a separate tone square.
+- **The Livewire picker failed to mount one time in six**, and took every later picker on the page with it.
+  Its target was `#<id>-input`, and a Livewire id starting with a digit makes that an invalid CSS selector,
+  which `querySelector` throws on. The target is now `[id='…']`, a selector the browser rejects resolves to
+  no target instead of throwing, and one picker failing to mount no longer stops the others.
+- **Picks into a React-controlled field were lost.** The text was written through the element's own `value`
+  setter, which React shadows to track the value, so React saw no change and wrote its state back over the
+  pick. The picker now writes through the prototype's setter, and no longer throws on `type="email"` or
+  `type="number"` fields, which have no selection API.
+- **The Blade picker vanished inside a Livewire component** after the component's next update: the morph
+  stripped the picker's markup but left the element marked as mounted. The mount point now carries
+  `wire:ignore`, and a mounted element that lost its picker is mounted again.
+- **Custom emoji were always inserted as `:name:`**, ignoring `shortcodes.delimiters`, so with other delimiters
+  the text never rendered. The payload carries `delimiters`, and both pickers insert with them.
+
 ## [0.5.1] - 2026-10-03
 
 ### Fixed

@@ -105,3 +105,25 @@ it('registers the Livewire component under a vendor-scoped name, bound to the pa
         ->set('value', 'hi 👋')
         ->assertSet('value', 'hi 👋');
 });
+
+it('targets the Livewire textarea with a selector that holds for ids starting with a digit', function (): void {
+    $html = Livewire::test(EmojiPicker::class)->html();
+
+    preg_match('/<textarea id="([^"]+)"/', $html, $id);
+    preg_match('/data-laranail-emoji-target="([^"]+)"/', $html, $target);
+
+    // "#3abc-input" is not a valid CSS selector, and Livewire ids start with a digit one time in six.
+    expect(html_entity_decode($target[1], ENT_QUOTES | ENT_HTML5))->toBe("[id='{$id[1]}']")
+        ->and($target[1])->not->toStartWith('#');
+});
+
+it('marks the mount point wire:ignore, so a Livewire morph does not strip the mounted picker', function (): void {
+    expect(Blade::render('<x-laranail-emojis::picker />'))->toMatch('/<div data-laranail-emoji-picker wire:ignore /');
+});
+
+it('carries the configured shortcode delimiters, so a custom emoji is inserted as a code that reads back', function (): void {
+    TestCase::$bootConfig = ['laranail.emojis.shortcodes.delimiters' => ['{{', '}}']];
+    $this->refreshApplication();
+
+    expect(payloadIn(Blade::render('<x-laranail-emojis::picker />'))['delimiters'])->toBe(['{{', '}}']);
+});

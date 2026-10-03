@@ -15,6 +15,9 @@ use Livewire\Attributes\Modelable;
  * Livewire is installed. It is thin on purpose: the picker inserts at the caret and dispatches `input`, which
  * wire:model already listens for, so the Blade picker pointed at any wire:model'd field works the same way
  * without this component. Recents and the chosen tone stay in the browser; nothing round-trips per pick.
+ *
+ * The target is an attribute selector, not "#id": Livewire ids are random alphanumerics, and one in six
+ * starts with a digit, which "#id" cannot express — querySelector throws on it.
  */
 final class EmojiPicker extends Component
 {
@@ -33,7 +36,7 @@ final class EmojiPicker extends Component
             <div class="laranail-emoji-picker-field">
                 <textarea id="{{ $this->getId() }}-input" wire:model="value" rows="{{ $rows }}" placeholder="{{ $placeholder }}"></textarea>
                 <div wire:ignore>
-                    <x-laranail-emojis::picker :target="'#' . $this->getId() . '-input'" :locale="$locale" />
+                    <x-laranail-emojis::picker :target="'[id=\'' . $this->getId() . '-input\']'" :locale="$locale" />
                 </div>
             </div>
             BLADE;

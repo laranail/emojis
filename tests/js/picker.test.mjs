@@ -6,7 +6,7 @@ import { payload } from './fixture.mjs';
 globalThis.__laranailEmojiNoAutoInit = true;
 
 const module = await import('../../resources/assets/scripts/picker.ts');
-const { Picker, StaticSource, ApiSource, memoryStore, localStorageStore, fold, charOf, withTone, search, sortItems, recordRecent, orderRecent, parseOptions, autoInit, byVersion, detectMaxVersion, buildSections, searchSections, capPayload, insertText, indexPayload } = module;
+const { Picker, StaticSource, ApiSource, memoryStore, localStorageStore, fold, charOf, withTone, search, sortItems, recordRecent, orderRecent, parseOptions, autoInit, byVersion, detectMaxVersion, buildSections, searchSections, capPayload, insertText, indexPayload, customCode, mountElement } = module;
 
 const root = resolve(import.meta.dirname, '../..');
 const flush = () => new Promise((r) => setTimeout(r, 0));
@@ -385,6 +385,117 @@ describe('Picker', () => {
     await flush();
 
     expect(later.querySelectorAll('[role="gridcell"]').length).toBeGreaterThan(0);
+    stop();
+  });
+});
+
+describe('policy and version fidelity (hotfix track)', () => {
+  const handshake = { emoji: '🤝', hexcode: '1F91D', name: 'handshake', shortcode: 'handshake', keywords: [], version: '3.0', skins: { 3: '1F91D-1F3FD', '3-3': '1F91D-1F3FD' }, skin_versions: '14.0' };
+  const data = () => ({ groups: [{ slug: 'people_and_body', label: 'People', emoji: [structuredClone(handshake)] }] });
+
+  it('caps toned forms on their own version, so an older platform falls back to the untoned emoji', () => {
+    const capped = capPayload(data(), '13.0').groups[0].emoji[0];
+
+    expect(capped.hexcode).toBe('1F91D');
+    expect(capped.skins).toEqual({});
+    expect(withTone(capped, 3)).toBe('1F91D');
+    expect(withTone(capPayload(data(), '14.0').groups[0].emoji[0], 3)).toBe('1F91D-1F3FD');
+  });
+
+  it('caps per tone key when the variants differ in version', () => {
+    const mixed = { ...structuredClone(handshake), skin_versions: { 3: '12.0', '3-3': '14.0' } };
+    const capped = capPayload({ groups: [{ slug: 'p', label: 'P', emoji: [mixed] }] }, '13.0').groups[0].emoji[0];
+
+    expect(Object.keys(capped.skins)).toEqual(['3']);
+  });
+
+  it('never offers a base the policy refuses: it falls back to a permitted toned form', () => {
+    const only = { emoji: '👍', hexcode: '1F44D', name: 'thumbs up', shortcode: '+1', keywords: [], version: '0.6', skins: { 3: '1F44D-1F3FD' }, base: false };
+
+    expect(withTone(only, 0)).toBe('1F44D-1F3FD');
+    expect(withTone(only, 5)).toBe('1F44D-1F3FD');
+    expect(withTone(only, 3)).toBe('1F44D-1F3FD');
+    // Capping away its only permitted form drops it entirely.
+    expect(capPayload({ groups: [{ slug: 'p', label: 'P', emoji: [{ ...only, skin_versions: '15.0' }] }] }, '13.0').groups[0].emoji).toEqual([]);
+  });
+
+  it('inserts a custom emoji between the configured delimiters', async () => {
+    expect(customCode('parrot', null)).toBe(':parrot:');
+    expect(customCode('parrot', { delimiters: ['{{', '}}'] })).toBe('{{parrot}}');
+
+    document.body.replaceChildren();
+    const host = document.createElement('div');
+    const textarea = document.createElement('textarea');
+    document.body.append(host, textarea);
+    await Picker.create(host, { inline: true, store: memoryStore() }).source(new StaticSource({ ...payload(), delimiters: ['{{', '}}'] })).target(textarea).mount();
+    host.querySelector('[data-laranail-emoji-custom="partyparrot"]').click();
+
+    expect(textarea.value).toBe('{{partyparrot}}');
+  });
+
+  it('inserts below the value setter, so a framework tracking that setter sees the change', () => {
+    const field = document.createElement('textarea');
+    document.body.append(field);
+    let tracked = '';
+    // What React does: shadow the instance's value setter to remember the last value it wrote.
+    const proto = Object.getOwnPropertyDescriptor(HTMLTextAreaElement.prototype, 'value');
+    Object.defineProperty(field, 'value', { configurable: true, get() { return proto.get.call(this); }, set(v) { tracked = v; proto.set.call(this, v); } });
+    field.value = 'hi';
+
+    insertText(field, '😀', false);
+
+    expect(field.value).toBe('hi😀');
+    expect(tracked).toBe('hi'); // the tracker still holds the old value, so React fires onChange
+  });
+
+  it('inserts into a field without a selection API instead of throwing', () => {
+    const email = document.createElement('input');
+    email.type = 'email';
+    document.body.append(email);
+    email.value = 'a';
+    const onInput = vi.fn();
+    email.addEventListener('input', onInput);
+
+    expect(() => insertText(email, '😀', false)).not.toThrow();
+    expect(email.value).toBe('a😀');
+    expect(onInput).toHaveBeenCalledOnce();
+  });
+
+  it('mounts every picker even when one names a target selector the browser rejects', async () => {
+    document.body.replaceChildren();
+    const bad = document.createElement('div');
+    bad.setAttribute('data-laranail-emoji-picker', '');
+    bad.setAttribute('data-laranail-emoji-target', '#3abc-input');
+    bad.setAttribute('data-laranail-emoji-inline', '');
+    const good = bad.cloneNode();
+    good.setAttribute('data-laranail-emoji-target', "[id='3abc-input']");
+    const field = document.createElement('textarea');
+    field.id = '3abc-input';
+    document.body.append(bad, good, field);
+
+    const stop = autoInit(document);
+    await flush();
+
+    expect(bad.querySelector('.laranail-emoji-picker')).not.toBeNull();
+    expect(good.querySelector('.laranail-emoji-picker')).not.toBeNull();
+    stop();
+  });
+
+  it('mounts again when a morph strips a mounted picker out of its element', async () => {
+    document.body.replaceChildren();
+    const host = document.createElement('div');
+    host.setAttribute('data-laranail-emoji-picker', '');
+    host.setAttribute('data-laranail-emoji-inline', '');
+    document.body.append(host);
+    const stop = autoInit(document);
+    await flush();
+    const first = mountElement(host);
+
+    host.replaceChildren(); // what a Livewire morph does to children it did not render
+    await flush();
+
+    expect(host.querySelector('.laranail-emoji-picker')).not.toBeNull();
+    expect(mountElement(host)).not.toBe(first);
     stop();
   });
 });

@@ -30,6 +30,10 @@ export interface PickerEmoji {
   keywords: string[];
   version: string;
   skins: Record<string, string>;
+  /** The Emoji version of the variants newer than the base: one for all of them, or per tone key. */
+  skin_versions?: string | Record<string, string>;
+  /** False when the policy refuses the emoji itself but permits some of its toned forms. */
+  base?: false;
 }
 
 export interface PickerGroup {
@@ -51,6 +55,8 @@ export interface PickerPayload {
   locale?: string;
   groups: PickerGroup[];
   custom?: PickerCustom[];
+  /** The configured shortcode delimiters a custom emoji is inserted with; [':', ':'] when absent. */
+  delimiters?: [string, string];
 }
 
 export interface PickerSource {
@@ -186,14 +192,27 @@ export function charOf(hexcode: string): string {
   return hexcode.split('-').map((part) => String.fromCodePoint(parseInt(part, 16))).join('');
 }
 
-/** The hexcode an emoji takes with a skin tone (1–5), or its own when it takes none. */
+/**
+ * The hexcode an emoji takes with a skin tone (1–5), or its own when it takes none. An emoji whose base the
+ * policy refuses (`base: false`) falls back to its first permitted toned form, never to the base.
+ */
 export function withTone(item: PickerEmoji, tone: number): string {
-  if (!tone || !item.skins) {
-    return item.hexcode;
+  const skins = item.skins ?? {};
+  // One person: "3". Several (🤝, 💏): the same tone on each, "3-3".
+  const toned = tone ? (skins[String(tone)] ?? skins[`${tone}-${tone}`]) : undefined;
+
+  if (toned) {
+    return toned;
   }
 
-  // One person: "3". Several (🤝, 💏): the same tone on each, "3-3".
-  return item.skins[String(tone)] ?? item.skins[`${tone}-${tone}`] ?? item.hexcode;
+  return item.base === false ? (Object.values(skins)[0] ?? item.hexcode) : item.hexcode;
+}
+
+/** The text a custom emoji is inserted as: its name between the payload's shortcode delimiters. */
+export function customCode(name: string, data?: Pick<PickerPayload, 'delimiters'> | null): string {
+  const [open, close] = data?.delimiters ?? [':', ':'];
+
+  return `${open}${name}${close}`;
 }
 
 /** Compares two dotted Emoji versions ("15.1" > "15.0"). */
@@ -251,7 +270,11 @@ export function detectMaxVersion(doc: Pick<Document, 'createElement'> | undefine
   return '11.0';
 }
 
-/** The payload without emoji newer than `cap` ('auto' asks the browser; null or '' keeps everything). */
+/**
+ * The payload without emoji newer than `cap` ('auto' asks the browser; null or '' keeps everything). Toned
+ * forms are capped on their own version, since they can be newer than their base (🤝 is 3.0, its tones
+ * 14.0): a capped tone is dropped from `skins`, and the emoji then falls back to its untoned form.
+ */
 export function capPayload(data: PickerPayload, cap: string | null | undefined, detect: () => string | null = detectMaxVersion): PickerPayload {
   const version = cap === 'auto' ? detect() : cap;
 
@@ -259,7 +282,26 @@ export function capPayload(data: PickerPayload, cap: string | null | undefined, 
     return data;
   }
 
-  return { ...data, groups: (data.groups ?? []).map((group) => ({ ...group, emoji: group.emoji.filter((item) => byVersion(item.version, version) <= 0) })) };
+  const fits = (v: string): boolean => byVersion(v, version) <= 0;
+  const trim = (item: PickerEmoji): PickerEmoji => {
+    const versions = item.skin_versions;
+
+    if (!versions || !item.skins) {
+      return item;
+    }
+
+    const skins = Object.fromEntries(Object.entries(item.skins).filter(([key]) => fits(typeof versions === 'string' ? versions : (versions[key] ?? item.version))));
+
+    return { ...item, skins };
+  };
+
+  return {
+    ...data,
+    groups: (data.groups ?? []).map((group) => ({
+      ...group,
+      emoji: group.emoji.filter((item) => fits(item.version)).map(trim).filter((item) => item.base !== false || Object.keys(item.skins ?? {}).length > 0),
+    })),
+  };
 }
 
 /**
@@ -379,12 +421,38 @@ export function searchSections(sections: PickerSection[], term: string): PickerE
  */
 export function insertText(target: Insertable, text: string, caretKnown: boolean): void {
   const caret = caretKnown || target.ownerDocument?.activeElement === target;
-  const start = caret ? (target.selectionStart ?? target.value.length) : target.value.length;
-  const end = caret ? (target.selectionEnd ?? target.value.length) : target.value.length;
+  const length = target.value.length;
+  const start = caret ? (selection(target, 'selectionStart') ?? length) : length;
+  const end = caret ? (selection(target, 'selectionEnd') ?? length) : length;
 
-  target.value = target.value.slice(0, start) + text + target.value.slice(end);
-  target.setSelectionRange?.(start + text.length, start + text.length);
+  // Write through the prototype's setter, not the element's own: a framework that tracks the value by
+  // shadowing that setter (React's controlled inputs) then still holds the old value, sees the change on the
+  // input event and keeps it, instead of writing its stale state back over the pick.
+  const next = target.value.slice(0, start) + text + target.value.slice(end);
+  const setter = Object.getOwnPropertyDescriptor(Object.getPrototypeOf(target) as object, 'value')?.set;
+
+  if (setter) {
+    setter.call(target, next);
+  } else {
+    target.value = next;
+  }
+
+  try {
+    target.setSelectionRange(start + text.length, start + text.length);
+  } catch {
+    // type=email and type=number have no selection API.
+  }
+
   target.dispatchEvent(new Event('input', { bubbles: true }));
+}
+
+/** selectionStart/End, or null on fields that throw for them (type=email, number). */
+function selection(target: Insertable, key: 'selectionStart' | 'selectionEnd'): number | null {
+  try {
+    return target[key];
+  } catch {
+    return null;
+  }
 }
 
 /** Reads every data-laranail-emoji-* option on an element, typed. Unknown attributes are ignored. */
@@ -583,7 +651,7 @@ export class Picker {
   inline(inline = true): this { this.options.inline = inline; return this; }
 
   target(target: string | Insertable | null): this {
-    this.options.target = typeof target === 'string' ? document.querySelector<Insertable>(target) : target;
+    this.options.target = typeof target === 'string' ? query<Insertable>(target) : target;
     this.caretKnown = false;
 
     if (this.options.target && this.root) {
@@ -639,6 +707,11 @@ export class Picker {
     }
 
     return this;
+  }
+
+  /** Whether the picker's UI is still inside its element (a morph can strip it out). */
+  isAttached(): boolean {
+    return this.root !== undefined && this.element.contains(this.root);
   }
 
   destroy(): void {
@@ -921,7 +994,7 @@ export class Picker {
 
     if (name !== null) {
       const custom = (this.data?.custom ?? []).find((c) => c.name === name);
-      detail = { emoji: `:${name}:`, hexcode: null, name: custom?.label ?? name, shortcode: name, custom: true };
+      detail = { emoji: customCode(name, this.data), hexcode: null, name: custom?.label ?? name, shortcode: name, custom: true };
     } else {
       const hexcode = cell.getAttribute(`${ATTR}-hexcode`) ?? '';
       const base = cell.getAttribute(`${ATTR}-base`) ?? hexcode;
@@ -946,13 +1019,27 @@ export class Picker {
 
 // ---- auto-init -------------------------------------------------------------------------------------------
 
-/** Mounts a picker from its data-laranail-emoji-* attributes. Idempotent: a mounted element is left alone. */
+/** querySelector, or null for a selector the browser rejects instead of a thrown SyntaxError. */
+function query<T extends Element>(selector: string): T | null {
+  try {
+    return document.querySelector<T>(selector);
+  } catch {
+    return null;
+  }
+}
+
+/**
+ * Mounts a picker from its data-laranail-emoji-* attributes. Idempotent: a mounted element is left alone,
+ * unless something (a Livewire or Turbo morph) stripped the picker out of it, when it is mounted afresh.
+ */
 export function mountElement(element: HTMLElement): Picker {
   const mounted = (element as Mountable)[MOUNTED];
 
-  if (mounted) {
+  if (mounted && mounted.isAttached()) {
     return mounted;
   }
+
+  mounted?.destroy();
 
   const options = parseOptions(element);
   const source = options.payload ? new StaticSource(options.payload) : options.source ? new ApiSource(options.source) : undefined;
@@ -974,10 +1061,18 @@ export function mountElement(element: HTMLElement): Picker {
  */
 export function autoInit(root: Document | Element = document): () => void {
   const selector = `[${ATTR}-picker]`;
+  // One picker that fails to mount (a bad option, a missing data block) must not stop the rest.
+  const mount = (element: HTMLElement): void => {
+    try {
+      mountElement(element);
+    } catch (error) {
+      console.error('[laranail/emojis] picker failed to mount', element, error);
+    }
+  };
   const scan = (node: Node): void => {
     if (!(node instanceof Element)) return;
-    if (node.matches(selector)) mountElement(node as HTMLElement);
-    node.querySelectorAll<HTMLElement>(selector).forEach(mountElement);
+    if (node.matches(selector)) mount(node as HTMLElement);
+    node.querySelectorAll<HTMLElement>(selector).forEach(mount);
   };
   const start = 'documentElement' in root ? root.documentElement : root;
 
@@ -987,7 +1082,14 @@ export function autoInit(root: Document | Element = document): () => void {
     return () => {};
   }
 
-  const observer = new MutationObserver((records) => records.forEach((r) => r.addedNodes.forEach(scan)));
+  // A morph that empties a mounted picker adds no node, so a picker that lost its children is rescanned too.
+  const observer = new MutationObserver((records) => records.forEach((r) => {
+    r.addedNodes.forEach(scan);
+
+    if (r.removedNodes.length > 0 && r.target instanceof Element && r.target.matches(selector)) {
+      scan(r.target);
+    }
+  }));
   observer.observe(start, { childList: true, subtree: true });
 
   return () => observer.disconnect();

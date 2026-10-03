@@ -20,7 +20,8 @@ use Simtabi\Laranail\Emojis\Core\Picker\PayloadBuilder;
  * escaped so it cannot close its <script> element. Either way PayloadBuilder decides what is offered, so the
  * picker never shows an emoji the configured policy refuses.
  *
- * Without JavaScript the target still accepts typed emoji, and the mount point says so.
+ * Without JavaScript the target still accepts typed emoji, and the mount point says so. The mount point
+ * carries wire:ignore, so it survives inside a Livewire component; outside Livewire the attribute is inert.
  */
 final class Picker extends Component
 {
@@ -64,6 +65,9 @@ final class Picker extends Component
 
         $attributes = [
             'data-laranail-emoji-picker' => '',
+            // The module fills this element in; a Livewire morph would strip what it added and leave the
+            // node marked as mounted, so the picker would vanish after the component's next update.
+            'wire:ignore' => '',
             ...$this->dataAttributes($source),
             ...$this->dataAttributes([
                 'target'          => $this->target,
