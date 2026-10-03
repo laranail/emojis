@@ -7,7 +7,7 @@
   "homepage": "https://opensource.simtabi.com/documentation/laranail/emojis/",
   "repository": {
     "type": "git",
-    "url": "https://github.com/laranail/emojis.git"
+    "url": "git+https://github.com/laranail/emojis.git"
   },
   "bugs": {
     "url": "https://github.com/laranail/emojis/issues"

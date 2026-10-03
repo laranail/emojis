@@ -1,0 +1,99 @@
+name: Publish to npm
+
+# Publishes @laranail/emojis-picker for a release tag. Its own workflow, not a job in release.yml, for two reasons:
+# a failed npm publish never touches the Composer release, and it can be started by hand for a tag that already
+# exists (`gh workflow run npm-publish.yml -f tag=v0.5.0`) using the workflow as it is on main. Re-running a
+# tag's run uses the workflow file as it was at the tag, so a fix here could never reach that tag that way.
+#
+# Off until the repository variable NPM_PUBLISH is 'true'. Authenticates by npm trusted publishing (configure
+# this file, npm-publish.yml, as the package's trusted publisher), or with an NPM_TOKEN secret when one is set.
+
+on:
+  push:
+    tags:
+      - 'v*.*.*'
+  workflow_dispatch:
+    inputs:
+      tag:
+        description: 'An existing release tag to publish, e.g. v0.5.0'
+        required: true
+
+concurrency:
+  group: ${{ github.workflow }}-${{ inputs.tag || github.ref_name }}
+  # Cancelling a half-finished publish can leave a version reserved with nothing behind it.
+  cancel-in-progress: false
+
+permissions:
+  contents: read
+
+jobs:
+  publish:
+    name: Publish @laranail/emojis-picker to npm
+    if: vars.NPM_PUBLISH == 'true'
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+    permissions:
+      contents: read
+      id-token: write # trusted publishing, and provenance
+
+    steps:
+      - name: Resolve the tag
+        id: tag
+        env:
+          INPUT_TAG: ${{ inputs.tag }}
+        run: |
+          tag="${INPUT_TAG:-$GITHUB_REF_NAME}"
+          if ! printf '%s' "$tag" | grep -Eq '^v[0-9]+\.[0-9]+\.[0-9]+(-[0-9A-Za-z.-]+)?$'; then
+            echo "::error::'$tag' is not a release tag (vX.Y.Z)." >&2
+            exit 1
+          fi
+          echo "tag=$tag" >> "$GITHUB_OUTPUT"
+          echo "version=${tag#v}" >> "$GITHUB_OUTPUT"
+
+      - uses: actions/checkout@v7
+        with:
+          ref: refs/tags/${{ steps.tag.outputs.tag }}
+
+      - uses: actions/setup-node@v7
+        with:
+          node-version: 24
+          registry-url: https://registry.npmjs.org
+
+      - name: Build the React adapter and the declarations
+        run: |
+          npm install --no-audit --no-fund --no-package-lock
+          npm run build:react
+          npm run types
+          npm test
+
+      # The npm version is the Composer version: one tag, two registries.
+      - name: Set the version
+        run: npm version "${{ steps.tag.outputs.version }}" --no-git-tag-version --allow-same-version
+
+      # With a token, say who it authenticates as before publishing, so a failure separates "the token does not
+      # authenticate" from "it authenticates but cannot write to @laranail". Prints the account name only.
+      - name: Check the token
+        env:
+          NPM_TOKEN: ${{ secrets.NPM_TOKEN }}
+        run: |
+          if [ -z "$NPM_TOKEN" ]; then
+            echo "No NPM_TOKEN: publishing through trusted publishing."
+            exit 0
+          fi
+          if account=$(NODE_AUTH_TOKEN="$NPM_TOKEN" npm whoami 2>/dev/null); then
+            echo "NPM_TOKEN authenticates as: $account"
+            NODE_AUTH_TOKEN="$NPM_TOKEN" npm access list packages @laranail 2>/dev/null || echo "(could not list @laranail packages with this token)"
+          else
+            echo "::error::NPM_TOKEN does not authenticate with npm (expired, revoked, or not an npm token)." >&2
+            exit 1
+          fi
+
+      - name: Publish
+        env:
+          NPM_TOKEN: ${{ secrets.NPM_TOKEN }}
+        run: |
+          if [ -n "$NPM_TOKEN" ]; then
+            NODE_AUTH_TOKEN="$NPM_TOKEN" npm publish --provenance --access public
+          else
+            npm publish --provenance --access public
+          fi

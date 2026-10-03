@@ -5,6 +5,17 @@ All notable changes to `laranail/emojis` are documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/), and this project adheres to
 [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [Unreleased]
+
+### Fixed
+
+- **npm publishing moved to its own workflow**, `.github/workflows/npm-publish.yml`, which runs on release tags
+  and can be started by hand for a tag that already exists (`gh workflow run npm-publish.yml -f tag=v0.5.0`).
+  As a job inside `release.yml` it could only be retried by re-running a tag's run, which uses the workflow as it
+  was at the tag. With a token it now checks the token (`npm whoami`) before publishing, so a failure says
+  whether the token authenticates at all. `package.json`'s `repository.url` uses the `git+https` form npm
+  expects.
+
 ## [0.5.0] - 2026-10-02
 
 ### Added
