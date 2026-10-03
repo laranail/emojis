@@ -114,6 +114,14 @@ export interface PickerOptions {
     searchDelay?: number;
     /** What the trigger button shows (default 🙂). */
     trigger?: string;
+    /** Where the popover opens: 'auto' (below, flipping above), or top/bottom/start/end, optionally -start/-end. */
+    placement?: Placement;
+    /** Gap between the trigger and the popover, in px (default 8). */
+    offset?: number;
+    /** Draw the caret pointing at the trigger (default true). */
+    arrow?: boolean;
+    /** At or below this viewport width, in CSS px, the popover is a bottom sheet (default 640; 0 never). */
+    sheetBreakpoint?: number;
 }
 export interface PickerEvents {
     select: SelectDetail;
@@ -153,6 +161,10 @@ export interface ParsedOptions {
     userKey: string;
     strings: Partial<PickerStrings>;
     trigger: string;
+    placement: Placement;
+    offset: number;
+    arrow: boolean;
+    sheetBreakpoint: number;
 }
 /** Where a pick can be inserted: an input, a textarea, or a contenteditable element. */
 export type Insertable = HTMLInputElement | HTMLTextAreaElement | HTMLElement;
@@ -271,6 +283,8 @@ export declare function rovingIndex(count: number, current: number, key: string,
 export declare function insertText(target: Insertable, text: string, caretKnown: boolean): boolean;
 /** Reads every data-laranail-emoji-* option on an element, typed. Unknown attributes are ignored. */
 export declare function parseOptions(element: Element): ParsedOptions;
+/** A placement from an attribute or prop; anything unknown is 'auto'. */
+export declare function parsePlacement(value: unknown): Placement;
 /** Loads the payload from the package's API (`…/api/v1`) or straight from a `…/picker` URL. */
 export declare class ApiSource implements PickerSource {
     private readonly init;
@@ -299,6 +313,105 @@ export declare function memoryStore(): PickerStore;
  * memory. Only hexcodes, counts and times are written — never text the user typed.
  */
 export declare function localStorageStore(namespace?: string): PickerStore;
+/** A box in viewport coordinates. */
+export interface Rect {
+    x: number;
+    y: number;
+    width: number;
+    height: number;
+}
+export type Side = 'top' | 'bottom' | 'left' | 'right';
+export type Align = 'start' | 'center' | 'end';
+/** Logical placements: start and end follow the reading direction. "auto" is below, flipping above when it does not fit. */
+export type Placement = 'auto' | 'top' | 'bottom' | 'start' | 'end' | `${'top' | 'bottom' | 'start' | 'end'}-${'start' | 'end'}`;
+export interface PositionOptions {
+    placement?: Placement;
+    /** Gap between the reference and the floating box, arrow included (default 8). */
+    offset?: number;
+    /** Space kept clear at the viewport's edges (default 8). */
+    padding?: number;
+    /** How close the arrow may come to the floating box's corners, so it never sits on the rounding (default 14). */
+    arrowPadding?: number;
+    rtl?: boolean;
+}
+export interface Position {
+    /** Top-left corner of the floating box, in viewport coordinates. */
+    x: number;
+    y: number;
+    /** The side it ended up on, after flipping. */
+    side: Side;
+    align: Align;
+    /** Where the arrow's centre sits along the floating box's edge, from its start; null when it cannot point at the reference. */
+    arrow: number | null;
+    /** The most room the box has on its side, to cap its height (or width) so it never runs off screen. */
+    available: number;
+    /** The reference has scrolled out of view. */
+    hidden: boolean;
+}
+/**
+ * Where to put a floating box next to a reference, the way Popper and Floating UI do it, in one pure
+ * function: offset, then flip to the opposite side when the preferred one is too small, then shift along the
+ * cross axis to stay on screen, then size to the room left, then place the arrow at the reference's centre,
+ * clamped clear of the corners, and hide when the reference has scrolled away. Pure, so it is tested without
+ * a browser; Popover applies it.
+ */
+export declare function computePosition(reference: Rect, floating: {
+    width: number;
+    height: number;
+}, viewport: Rect, options?: PositionOptions): Position;
+/**
+ * Calls `update` whenever either element could have moved: either one resizing, any scroll (captured, so a
+ * scrolling container counts too), a window resize, or the visual viewport changing (pinch zoom, the
+ * on-screen keyboard). Batched to one call per frame. Returns the function that stops it.
+ */
+export declare function autoUpdate(reference: Element, floating: Element, update: () => void): () => void;
+export interface PopoverOptions {
+    placement?: Placement;
+    offset?: number;
+    /** Draw the arrow (caret) pointing at the trigger (default true). */
+    arrow?: boolean;
+    /** At or below this viewport width (CSS px) the panel is a bottom sheet instead of a popover (default 640; 0 never). */
+    sheetBreakpoint?: number;
+    /** Called when the user dismisses the sheet (backdrop tap, drag down). */
+    onDismiss?: () => void;
+}
+/**
+ * The popover behind both pickers: puts the panel in the top layer (the `popover` attribute, so no ancestor's
+ * overflow or z-index can clip it), positions it against the trigger with computePosition() and keeps it
+ * there with autoUpdate(), and points the arrow at the trigger. `data-placement` carries the side it landed
+ * on, the way Bootstrap's popovers carry `data-popper-placement`, so the stylesheet turns the arrow with no
+ * script.
+ *
+ * On a narrow viewport it is a bottom sheet instead: a backdrop, a drag handle (drag down to dismiss, up to
+ * expand), the page's scroll locked, and the sheet kept above the on-screen keyboard through the visual
+ * viewport. Framework-free: the vanilla picker drives it from open() and close(), React from an effect.
+ */
+export declare class Popover {
+    private readonly root;
+    private readonly trigger;
+    private readonly panel;
+    private readonly arrow;
+    private readonly backdrop;
+    private readonly handle;
+    private readonly options;
+    private stop;
+    private undoSheet;
+    private sheet;
+    constructor(root: HTMLElement, trigger: HTMLElement, panel: HTMLElement, arrow: HTMLElement | null, backdrop: HTMLElement | null, handle: HTMLElement | null, options?: PopoverOptions);
+    /** Whether the panel is a bottom sheet (decided on each open, from the viewport's width). */
+    get isSheet(): boolean;
+    open(): void;
+    close(): void;
+    destroy(): void;
+    /** Positions the panel now; autoUpdate() calls this on every move. */
+    place(): void;
+    private showTopLayer;
+    private openSheet;
+    /** Drag the handle down past a fifth of the sheet to dismiss it, up to expand it to full height. */
+    private dragHandle;
+    /** Expands the sheet to full height (search focus does, so results are not hidden behind the keyboard). */
+    expand(): void;
+}
 type ResolvedOptions = Required<Omit<PickerOptions, 'source' | 'target' | 'store'>> & Pick<PickerOptions, 'source' | 'target' | 'store'>;
 export declare class Picker {
     /**
@@ -330,6 +443,7 @@ export declare class Picker {
     private loads;
     private abort;
     private searchTimer;
+    private popover;
     constructor(element: HTMLElement, options?: PickerOptions);
     source(source: PickerSource): this;
     locale(locale: string | null): this;
@@ -377,6 +491,8 @@ export declare class Picker {
     private watchTarget;
     private get rtl();
     private buildShell;
+    /** On the phone sheet, a horizontal swipe across the emoji moves to the next or previous category. */
+    private swipeSections;
     private scheduleSearch;
     private render;
     private sections;

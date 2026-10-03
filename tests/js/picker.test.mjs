@@ -6,7 +6,7 @@ import { payload } from './fixture.mjs';
 globalThis.__laranailEmojiNoAutoInit = true;
 
 const module = await import('../../resources/assets/scripts/picker.ts');
-const { Picker, StaticSource, ApiSource, memoryStore, localStorageStore, fold, charOf, withTone, search, sortItems, recordRecent, orderRecent, parseOptions, autoInit, byVersion, detectMaxVersion, buildSections, searchSections, capPayload, insertText, indexPayload, customCode, mountElement, readRecent, clampTone, clampColumns, searchCustom, rovingIndex } = module;
+const { Picker, StaticSource, ApiSource, memoryStore, localStorageStore, fold, charOf, withTone, search, sortItems, recordRecent, orderRecent, parseOptions, autoInit, byVersion, detectMaxVersion, buildSections, searchSections, capPayload, insertText, indexPayload, customCode, mountElement, readRecent, clampTone, clampColumns, searchCustom, rovingIndex, computePosition, parsePlacement } = module;
 
 const root = resolve(import.meta.dirname, '../..');
 const flush = () => new Promise((r) => setTimeout(r, 0));
@@ -806,6 +806,144 @@ describe('interaction and lifecycle (phase 1)', () => {
   });
 });
 
+describe('positioning (phase 2)', () => {
+  const viewport = { x: 0, y: 0, width: 1000, height: 800 };
+  const panel = { width: 300, height: 360 };
+  const trigger = (x, y) => ({ x, y, width: 36, height: 36 });
+
+  it('opens below, aligned to the trigger\'s start, with the caret on the trigger\'s centre', () => {
+    const p = computePosition(trigger(100, 100), panel, viewport);
+
+    expect([p.side, p.align, p.x, p.y]).toEqual(['bottom', 'start', 100, 144]);
+    expect(p.arrow).toBe(18); // the trigger's centre, 18px in from the panel's left
+    expect(p.hidden).toBe(false);
+  });
+
+  it('flips above when there is no room below, and keeps the room it has as the height cap', () => {
+    const p = computePosition(trigger(100, 700), panel, viewport);
+
+    expect(p.side).toBe('top');
+    expect(p.y).toBe(700 - 8 - 360);
+    expect(p.available).toBe(700 - 8 - 8);
+  });
+
+  it('stays on the side with more room when neither fits, capped to that room', () => {
+    const p = computePosition(trigger(100, 300), { width: 300, height: 700 }, viewport);
+
+    expect(p.side).toBe('bottom');
+    expect(p.available).toBe(800 - 336 - 16);
+  });
+
+  it('shifts along the edge to stay on screen, and the caret still points at the trigger', () => {
+    const p = computePosition(trigger(950, 100), panel, viewport);
+
+    expect(p.x).toBe(1000 - 8 - 300);
+    expect(p.arrow).toBe(950 + 18 - p.x);
+  });
+
+  it('keeps the caret clear of the rounded corners when the trigger is at the very edge', () => {
+    const p = computePosition({ x: 0, y: 100, width: 4, height: 36 }, panel, viewport, { arrowPadding: 14 });
+
+    expect(p.x).toBe(8);
+    expect(p.arrow).toBe(14);
+  });
+
+  it('centres on top/bottom/start/end placements, and resolves start and end by reading direction', () => {
+    expect(computePosition(trigger(400, 400), panel, viewport, { placement: 'top' }).align).toBe('center');
+    expect(computePosition(trigger(400, 400), panel, viewport, { placement: 'start' }).side).toBe('left');
+    expect(computePosition(trigger(400, 400), panel, viewport, { placement: 'start', rtl: true }).side).toBe('right');
+    expect(computePosition(trigger(400, 400), panel, viewport, { placement: 'bottom-end' }).x).toBe(400 + 36 - 300);
+    // In RTL, "start" alignment hangs from the trigger's right edge.
+    expect(computePosition(trigger(400, 400), panel, viewport, { placement: 'bottom-start', rtl: true }).x).toBe(400 + 36 - 300);
+    // Start with no room on the left flips to the right.
+    expect(computePosition(trigger(20, 400), panel, viewport, { placement: 'start' }).side).toBe('right');
+  });
+
+  it('reports a trigger scrolled out of view', () => {
+    expect(computePosition(trigger(100, -200), panel, viewport).hidden).toBe(true);
+  });
+
+  it('accepts only known placements', () => {
+    expect([parsePlacement('top-end'), parsePlacement('nope'), parsePlacement(null)]).toEqual(['top-end', 'auto', 'auto']);
+  });
+
+  it('puts the popover in the top layer with its placement, a caret, and a closed backdrop', async () => {
+    // happy-dom has no Popover API; a browser with one gets popover="manual" and showPopover().
+    const shown = vi.fn();
+    HTMLElement.prototype.showPopover = shown;
+    HTMLElement.prototype.hidePopover = () => {};
+
+    const { picker, host } = await mount({ inline: false });
+    const rect = (left, top, width, height) => () => ({ left, top, width, height, x: left, y: top, right: left + width, bottom: top + height });
+    picker.trigger.getBoundingClientRect = rect(100, 100, 36, 36);
+    // Drawn mid-animation at 96%: positioning must use the laid-out size, not this one.
+    picker.panel.getBoundingClientRect = rect(0, 0, 288, 345);
+    Object.defineProperty(picker.panel, 'offsetWidth', { configurable: true, get: () => 300 });
+    Object.defineProperty(picker.panel, 'offsetHeight', { configurable: true, get: () => 360 });
+
+    picker.open();
+
+    expect(picker.panel.getAttribute('popover')).toBe('manual');
+    expect([picker.panel.style.left, picker.panel.style.top]).toEqual(['100px', '144px']);
+    expect(host.querySelector('.laranail-emoji-picker-arrow').style.left).toBe('18px');
+
+    // At the right edge it shifts left by its laid-out width (300), not its scaled one (288).
+    picker.trigger.getBoundingClientRect = rect(window.innerWidth - 30, 100, 24, 24);
+    picker.close();
+    picker.open();
+    expect(picker.panel.style.left).toBe(`${window.innerWidth - 8 - 300}px`);
+    expect(shown).toHaveBeenCalledTimes(2); // once per open
+    delete HTMLElement.prototype.showPopover;
+    delete HTMLElement.prototype.hidePopover;
+    expect(picker.panel.getAttribute('data-placement')).toMatch(/^(bottom|top)-start$/);
+    expect(host.querySelector('.laranail-emoji-picker-arrow').hidden).toBe(false);
+    expect(host.querySelector('.laranail-emoji-picker-backdrop').hidden).toBe(true);
+    expect(host.querySelector('.laranail-emoji-picker').hasAttribute('data-sheet')).toBe(false);
+
+    picker.close();
+    const noArrow = await mount({ inline: false, arrow: false });
+    noArrow.picker.open();
+    expect(noArrow.host.querySelector('.laranail-emoji-picker-arrow').hidden).toBe(true);
+  });
+
+  it('becomes a bottom sheet on a narrow screen: backdrop, page scroll locked, dismissed by the backdrop', async () => {
+    const matchMedia = vi.spyOn(window, 'matchMedia').mockImplementation((query) => ({ matches: query.includes('640px'), media: query, addEventListener() {}, removeEventListener() {} }));
+
+    try {
+      const { picker, host } = await mount({ inline: false });
+      document.body.style.overflow = 'auto';
+
+      picker.open();
+
+      const backdrop = host.querySelector('.laranail-emoji-picker-backdrop');
+      expect(host.querySelector('.laranail-emoji-picker').hasAttribute('data-sheet')).toBe(true);
+      expect(backdrop.hidden).toBe(false);
+      expect(document.body.style.overflow).toBe('hidden');
+      expect(document.activeElement).toBe(picker.panel); // not search: that would raise the keyboard
+
+      picker.searchInput.dispatchEvent(new FocusEvent('focus'));
+      expect(picker.panel.hasAttribute('data-expanded')).toBe(true);
+
+      backdrop.click();
+      expect(picker.panel.hidden).toBe(true);
+      expect(document.body.style.overflow).toBe('auto');
+      expect(backdrop.hidden).toBe(true);
+    } finally {
+      matchMedia.mockRestore();
+    }
+  });
+
+  it('never becomes a sheet when the breakpoint is 0, and reads its options from attributes', async () => {
+    const element = document.createElement('div');
+    element.setAttribute('data-laranail-emoji-placement', 'top-end');
+    element.setAttribute('data-laranail-emoji-offset', '12');
+    element.setAttribute('data-laranail-emoji-arrow', 'false');
+    element.setAttribute('data-laranail-emoji-sheet-breakpoint', '0');
+
+    expect(parseOptions(element)).toMatchObject({ placement: 'top-end', offset: 12, arrow: false, sheetBreakpoint: 0 });
+  });
+});
+
 describe('the build', () => {
   it('reads its public theme tokens without declaring them, so a value set above the picker wins', () => {
     const css = readFileSync(resolve(root, 'public/assets/css/picker.css'), 'utf8');
@@ -816,8 +954,9 @@ describe('the build', () => {
     expect(declared).toEqual([]);
     expect(css).toMatch(/\.dark \.laranail-emoji-picker/);
     expect(css).toMatch(/\[data-theme=dark\] \.laranail-emoji-picker/);
-    // The phone bottom sheet applies to the popover only, never to an inline picker.
-    expect(css).toMatch(/max-width:\s*480px\)\{\.laranail-emoji-picker:has\(\.laranail-emoji-picker-trigger\) \.laranail-emoji-picker-panel/);
+    // The phone bottom sheet is switched by the script (data-sheet), which only a popover gets.
+    expect(css).toMatch(/\.laranail-emoji-picker\[data-sheet\] \.laranail-emoji-picker-panel\{/);
+    expect(css).not.toMatch(/max-width:\s*480px/);
   });
 
   it('keeps every export of the module, and declares each one', async () => {

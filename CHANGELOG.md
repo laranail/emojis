@@ -76,6 +76,16 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/),
 
 ### Added
 
+- **A collision-aware popover with a caret.** The picker's popover opens in the top layer, so an ancestor's
+  `overflow` or `z-index` can no longer clip it, and is positioned against its trigger: flipped above when
+  there is no room below, shifted to stay on screen, capped to the height available, and kept in place on
+  scroll and resize. A Bootstrap-5-style caret points at the trigger and turns with the side it opens on
+  (`data-placement`). New options in Blade, data attributes, JavaScript and React: `placement`, `offset`,
+  `arrow` and `sheetBreakpoint`. `computePosition()`, `autoUpdate()` and `Popover` are exported.
+- **A real phone sheet.** Below 640 px (`sheet-breakpoint`) the popover is a bottom sheet with a backdrop, a
+  drag handle (down to dismiss, up to expand), the page scroll locked, the safe area kept clear, the sheet
+  lifted above the on-screen keyboard, sideways-scrolling tabs, and swipe between categories. Opening it
+  focuses the sheet rather than search, so the keyboard does not cover the emoji.
 - Search accepts `:shortcode:` and pasted emoji, finds custom emoji, waits for a pause in typing
   (`searchDelay`, 80 ms), and draws at most 200 results.
 - A `trigger` option (Blade `trigger`, `data-laranail-emoji-trigger`, React `trigger`) for the trigger's glyph.

@@ -126,6 +126,14 @@ export interface PickerOptions {
   searchDelay?: number;
   /** What the trigger button shows (default 🙂). */
   trigger?: string;
+  /** Where the popover opens: 'auto' (below, flipping above), or top/bottom/start/end, optionally -start/-end. */
+  placement?: Placement;
+  /** Gap between the trigger and the popover, in px (default 8). */
+  offset?: number;
+  /** Draw the caret pointing at the trigger (default true). */
+  arrow?: boolean;
+  /** At or below this viewport width, in CSS px, the popover is a bottom sheet (default 640; 0 never). */
+  sheetBreakpoint?: number;
 }
 
 export interface PickerEvents {
@@ -156,6 +164,10 @@ export interface ParsedOptions {
   userKey: string;
   strings: Partial<PickerStrings>;
   trigger: string;
+  placement: Placement;
+  offset: number;
+  arrow: boolean;
+  sheetBreakpoint: number;
 }
 
 /** Where a pick can be inserted: an input, a textarea, or a contenteditable element. */
@@ -769,7 +781,18 @@ export function parseOptions(element: Element): ParsedOptions {
     userKey: data('user-key') ?? '',
     strings: strings ? safeJson<Partial<PickerStrings>>(strings, {}) : {},
     trigger: data('trigger') ?? '🙂',
+    placement: parsePlacement(data('placement')),
+    offset: int('offset', 8),
+    arrow: data('arrow') !== 'false',
+    sheetBreakpoint: Math.max(0, int('sheet-breakpoint', 640)),
   };
+}
+
+const PLACEMENTS = new Set(['auto', 'top', 'bottom', 'start', 'end', 'top-start', 'top-end', 'bottom-start', 'bottom-end', 'start-start', 'start-end', 'end-start', 'end-end']);
+
+/** A placement from an attribute or prop; anything unknown is 'auto'. */
+export function parsePlacement(value: unknown): Placement {
+  return typeof value === 'string' && PLACEMENTS.has(value) ? (value as Placement) : 'auto';
 }
 
 function safeJson<T>(text: string, fallback: T): T {
@@ -922,6 +945,401 @@ export function localStorageStore(namespace: string = PREFIX): PickerStore {
   };
 }
 
+// ---- positioning -----------------------------------------------------------------------------------------
+
+/** A box in viewport coordinates. */
+export interface Rect {
+  x: number;
+  y: number;
+  width: number;
+  height: number;
+}
+
+export type Side = 'top' | 'bottom' | 'left' | 'right';
+export type Align = 'start' | 'center' | 'end';
+/** Logical placements: start and end follow the reading direction. "auto" is below, flipping above when it does not fit. */
+export type Placement = 'auto' | 'top' | 'bottom' | 'start' | 'end' | `${'top' | 'bottom' | 'start' | 'end'}-${'start' | 'end'}`;
+
+export interface PositionOptions {
+  placement?: Placement;
+  /** Gap between the reference and the floating box, arrow included (default 8). */
+  offset?: number;
+  /** Space kept clear at the viewport's edges (default 8). */
+  padding?: number;
+  /** How close the arrow may come to the floating box's corners, so it never sits on the rounding (default 14). */
+  arrowPadding?: number;
+  rtl?: boolean;
+}
+
+export interface Position {
+  /** Top-left corner of the floating box, in viewport coordinates. */
+  x: number;
+  y: number;
+  /** The side it ended up on, after flipping. */
+  side: Side;
+  align: Align;
+  /** Where the arrow's centre sits along the floating box's edge, from its start; null when it cannot point at the reference. */
+  arrow: number | null;
+  /** The most room the box has on its side, to cap its height (or width) so it never runs off screen. */
+  available: number;
+  /** The reference has scrolled out of view. */
+  hidden: boolean;
+}
+
+const OPPOSITE: Record<Side, Side> = { top: 'bottom', bottom: 'top', left: 'right', right: 'left' };
+
+/**
+ * Where to put a floating box next to a reference, the way Popper and Floating UI do it, in one pure
+ * function: offset, then flip to the opposite side when the preferred one is too small, then shift along the
+ * cross axis to stay on screen, then size to the room left, then place the arrow at the reference's centre,
+ * clamped clear of the corners, and hide when the reference has scrolled away. Pure, so it is tested without
+ * a browser; Popover applies it.
+ */
+export function computePosition(reference: Rect, floating: { width: number; height: number }, viewport: Rect, options: PositionOptions = {}): Position {
+  const offset = options.offset ?? 8;
+  const padding = options.padding ?? 8;
+  const arrowPadding = options.arrowPadding ?? 14;
+  const rtl = options.rtl ?? false;
+  const [main = 'auto', alignPart] = String(options.placement ?? 'auto').split('-') as [string, string | undefined];
+  const logical = (side: string): Side => (side === 'start' ? (rtl ? 'right' : 'left') : side === 'end' ? (rtl ? 'left' : 'right') : (side as Side));
+  const preferred: Side = main === 'auto' ? 'bottom' : logical(main);
+  const align: Align = alignPart === 'start' || alignPart === 'end' ? alignPart : main === 'auto' ? 'start' : 'center';
+
+  const space: Record<Side, number> = {
+    top: reference.y - viewport.y - offset - padding,
+    bottom: viewport.y + viewport.height - (reference.y + reference.height) - offset - padding,
+    left: reference.x - viewport.x - offset - padding,
+    right: viewport.x + viewport.width - (reference.x + reference.width) - offset - padding,
+  };
+  const need = (side: Side): number => (side === 'top' || side === 'bottom' ? floating.height : floating.width);
+
+  // Flip: keep the preferred side if it fits; else the opposite if that fits; else whichever has more room.
+  let side = preferred;
+
+  if (space[side] < need(side)) {
+    const other = OPPOSITE[side];
+    side = space[other] >= need(other) || space[other] > space[side] ? other : side;
+  }
+
+  const vertical = side === 'top' || side === 'bottom';
+  const size = vertical ? Math.min(floating.height, Math.max(0, space[side])) : floating.height;
+  const width = vertical ? floating.width : Math.min(floating.width, Math.max(0, space[side]));
+
+  // Main axis.
+  let x = side === 'left' ? reference.x - offset - width : side === 'right' ? reference.x + reference.width + offset : 0;
+  let y = side === 'top' ? reference.y - offset - size : side === 'bottom' ? reference.y + reference.height + offset : 0;
+
+  // Cross axis: aligned, then shifted on screen. Start and end mirror under RTL for top and bottom.
+  if (vertical) {
+    const startEdge = rtl ? reference.x + reference.width - width : reference.x;
+    const endEdge = rtl ? reference.x : reference.x + reference.width - width;
+    x = align === 'start' ? startEdge : align === 'end' ? endEdge : reference.x + reference.width / 2 - width / 2;
+    x = Math.min(Math.max(x, viewport.x + padding), viewport.x + viewport.width - padding - width);
+  } else {
+    y = align === 'start' ? reference.y : align === 'end' ? reference.y + reference.height - size : reference.y + reference.height / 2 - size / 2;
+    y = Math.min(Math.max(y, viewport.y + padding), viewport.y + viewport.height - padding - size);
+  }
+
+  // The arrow points at the reference's centre, never into the floating box's rounded corners.
+  const along = vertical ? reference.x + reference.width / 2 - x : reference.y + reference.height / 2 - y;
+  const length = vertical ? width : size;
+  const arrow = length >= arrowPadding * 2 && along >= arrowPadding && along <= length - arrowPadding ? along : length >= arrowPadding * 2 ? Math.min(Math.max(along, arrowPadding), length - arrowPadding) : null;
+
+  const hidden =
+    reference.y + reference.height < viewport.y || reference.y > viewport.y + viewport.height || reference.x + reference.width < viewport.x || reference.x > viewport.x + viewport.width;
+
+  return { x: Math.round(x), y: Math.round(y), side, align, arrow: arrow === null ? null : Math.round(arrow), available: Math.max(0, Math.floor(space[side])), hidden };
+}
+
+/**
+ * Calls `update` whenever either element could have moved: either one resizing, any scroll (captured, so a
+ * scrolling container counts too), a window resize, or the visual viewport changing (pinch zoom, the
+ * on-screen keyboard). Batched to one call per frame. Returns the function that stops it.
+ */
+export function autoUpdate(reference: Element, floating: Element, update: () => void): () => void {
+  const view: Window = reference.ownerDocument.defaultView ?? (globalThis as unknown as Window);
+  let frame = 0;
+  const schedule = (): void => {
+    if (frame === 0) {
+      frame = (view.requestAnimationFrame ?? ((cb: FrameRequestCallback) => setTimeout(() => cb(0), 16) as unknown as number))(() => {
+        frame = 0;
+        update();
+      });
+    }
+  };
+  const observer = typeof ResizeObserver === 'undefined' ? null : new ResizeObserver(schedule);
+  const viewport = view.visualViewport ?? null;
+
+  observer?.observe(reference);
+  observer?.observe(floating);
+  view.addEventListener('scroll', schedule, { capture: true, passive: true });
+  view.addEventListener('resize', schedule, { passive: true });
+  viewport?.addEventListener('resize', schedule);
+  viewport?.addEventListener('scroll', schedule);
+  update();
+
+  return () => {
+    observer?.disconnect();
+    view.removeEventListener('scroll', schedule, { capture: true });
+    view.removeEventListener('resize', schedule);
+    viewport?.removeEventListener('resize', schedule);
+    viewport?.removeEventListener('scroll', schedule);
+
+    if (frame !== 0) {
+      (view.cancelAnimationFrame ?? clearTimeout)(frame);
+    }
+  };
+}
+
+export interface PopoverOptions {
+  placement?: Placement;
+  offset?: number;
+  /** Draw the arrow (caret) pointing at the trigger (default true). */
+  arrow?: boolean;
+  /** At or below this viewport width (CSS px) the panel is a bottom sheet instead of a popover (default 640; 0 never). */
+  sheetBreakpoint?: number;
+  /** Called when the user dismisses the sheet (backdrop tap, drag down). */
+  onDismiss?: () => void;
+}
+
+/**
+ * The popover behind both pickers: puts the panel in the top layer (the `popover` attribute, so no ancestor's
+ * overflow or z-index can clip it), positions it against the trigger with computePosition() and keeps it
+ * there with autoUpdate(), and points the arrow at the trigger. `data-placement` carries the side it landed
+ * on, the way Bootstrap's popovers carry `data-popper-placement`, so the stylesheet turns the arrow with no
+ * script.
+ *
+ * On a narrow viewport it is a bottom sheet instead: a backdrop, a drag handle (drag down to dismiss, up to
+ * expand), the page's scroll locked, and the sheet kept above the on-screen keyboard through the visual
+ * viewport. Framework-free: the vanilla picker drives it from open() and close(), React from an effect.
+ */
+export class Popover {
+  private stop: (() => void) | null = null;
+  private undoSheet: Array<() => void> = [];
+  private sheet = false;
+
+  constructor(
+    private readonly root: HTMLElement,
+    private readonly trigger: HTMLElement,
+    private readonly panel: HTMLElement,
+    private readonly arrow: HTMLElement | null,
+    private readonly backdrop: HTMLElement | null,
+    private readonly handle: HTMLElement | null,
+    private readonly options: PopoverOptions = {},
+  ) {
+    // Manual: the picker decides when to close (Escape, outside click), not the browser's light dismiss.
+    if (typeof (panel as HTMLElement & { showPopover?: unknown }).showPopover === 'function') {
+      panel.setAttribute('popover', 'manual');
+    }
+  }
+
+  /** Whether the panel is a bottom sheet (decided on each open, from the viewport's width). */
+  get isSheet(): boolean {
+    return this.sheet;
+  }
+
+  open(): void {
+    const view = this.root.ownerDocument.defaultView;
+    const breakpoint = this.options.sheetBreakpoint ?? 640;
+
+    this.sheet = breakpoint > 0 && !!view?.matchMedia?.(`(max-width: ${breakpoint}px)`).matches;
+    this.root.toggleAttribute('data-sheet', this.sheet);
+    this.panel.toggleAttribute('data-sheet', this.sheet);
+    this.showTopLayer();
+
+    if (this.sheet) {
+      this.openSheet();
+    } else {
+      this.stop = autoUpdate(this.trigger, this.panel, () => this.place());
+    }
+  }
+
+  close(): void {
+    this.stop?.();
+    this.stop = null;
+
+    for (const undo of this.undoSheet.splice(0)) {
+      undo();
+    }
+
+    this.panel.removeAttribute('data-expanded');
+
+    try {
+      (this.panel as HTMLElement & { hidePopover?: () => void }).hidePopover?.();
+    } catch {
+      // Already hidden.
+    }
+  }
+
+  destroy(): void {
+    this.close();
+  }
+
+  /** Positions the panel now; autoUpdate() calls this on every move. */
+  place(): void {
+    const view = this.root.ownerDocument.defaultView;
+
+    if (!view || this.sheet) {
+      return;
+    }
+
+    const trigger = this.trigger.getBoundingClientRect();
+    const viewport = view.visualViewport ?? null;
+    // The panel's natural size: measured with its cap lifted, so a cap from the last position cannot stick,
+    // and as laid out (offsetWidth), not as drawn: the open animation scales it, which getBoundingClientRect
+    // would report, leaving it too narrow to keep on screen once the animation ends.
+    this.panel.style.maxBlockSize = '';
+    const own = { width: this.panel.offsetWidth, height: this.panel.offsetHeight };
+    const rtl = (this.root.closest('[dir]')?.getAttribute('dir') ?? this.root.ownerDocument.documentElement.getAttribute('dir')) === 'rtl';
+    const showArrow = this.options.arrow !== false;
+    const result = computePosition(
+      { x: trigger.left, y: trigger.top, width: trigger.width, height: trigger.height },
+      { width: own.width, height: own.height },
+      { x: viewport?.offsetLeft ?? 0, y: viewport?.offsetTop ?? 0, width: viewport?.width ?? view.innerWidth, height: viewport?.height ?? view.innerHeight },
+      { placement: this.options.placement, offset: (this.options.offset ?? 8) + (showArrow ? 0 : -4), rtl },
+    );
+
+    this.panel.style.left = `${result.x}px`;
+    this.panel.style.top = `${result.y}px`;
+
+    if (result.side === 'top' || result.side === 'bottom') {
+      this.panel.style.maxBlockSize = `${Math.max(160, result.available)}px`;
+    }
+
+    this.panel.setAttribute('data-placement', `${result.side}-${result.align}`);
+    this.panel.toggleAttribute('data-reference-hidden', result.hidden);
+    this.panel.style.setProperty('--_lep-origin', result.arrow === null ? 'center' : result.side === 'top' || result.side === 'bottom' ? `${result.arrow}px ${result.side === 'top' ? '100%' : '0'}` : `${result.side === 'left' ? '100%' : '0'} ${result.arrow}px`);
+
+    if (this.arrow) {
+      this.arrow.hidden = !showArrow || result.arrow === null;
+      this.arrow.style.left = result.side === 'top' || result.side === 'bottom' ? `${result.arrow ?? 0}px` : '';
+      this.arrow.style.top = result.side === 'left' || result.side === 'right' ? `${result.arrow ?? 0}px` : '';
+    }
+  }
+
+  private showTopLayer(): void {
+    const panel = this.panel as HTMLElement & { showPopover?: () => void };
+
+    try {
+      if (panel.hasAttribute('popover') && !panel.matches(':popover-open')) {
+        panel.showPopover?.();
+      }
+    } catch {
+      // No top layer (an old browser, or the element is detached): it is positioned fixed in place instead.
+    }
+  }
+
+  private openSheet(): void {
+    const doc = this.root.ownerDocument;
+    const view = doc.defaultView;
+    const body = doc.body;
+    const previous = body.style.overflow;
+
+    this.panel.style.left = '';
+    this.panel.style.top = '';
+    this.panel.style.maxBlockSize = '';
+    this.panel.setAttribute('data-placement', 'bottom-center');
+
+    if (this.arrow) {
+      this.arrow.hidden = true;
+    }
+
+    // The page behind does not scroll while the sheet is up.
+    body.style.overflow = 'hidden';
+    this.undoSheet.push(() => {
+      body.style.overflow = previous;
+    });
+
+    // Above the on-screen keyboard: the visual viewport shrinks when it opens, the layout viewport does not.
+    const viewport = view?.visualViewport ?? null;
+
+    if (view && viewport) {
+      const lift = (): void => {
+        this.panel.style.setProperty('--_lep-keyboard', `${Math.max(0, view.innerHeight - viewport.height - viewport.offsetTop)}px`);
+      };
+
+      lift();
+      viewport.addEventListener('resize', lift);
+      viewport.addEventListener('scroll', lift);
+      this.undoSheet.push(() => {
+        viewport.removeEventListener('resize', lift);
+        viewport.removeEventListener('scroll', lift);
+        this.panel.style.removeProperty('--_lep-keyboard');
+      });
+    }
+
+    if (this.backdrop) {
+      const dismiss = (): void => this.options.onDismiss?.();
+
+      this.backdrop.hidden = false;
+      this.backdrop.addEventListener('click', dismiss);
+      this.undoSheet.push(() => {
+        this.backdrop!.hidden = true;
+        this.backdrop!.removeEventListener('click', dismiss);
+      });
+    }
+
+    if (this.handle) {
+      this.undoSheet.push(this.dragHandle(this.handle));
+    }
+  }
+
+  /** Drag the handle down past a fifth of the sheet to dismiss it, up to expand it to full height. */
+  private dragHandle(handle: HTMLElement): () => void {
+    let start: number | null = null;
+    let delta = 0;
+
+    const down = (event: PointerEvent): void => {
+      start = event.clientY;
+      delta = 0;
+      handle.setPointerCapture?.(event.pointerId);
+    };
+    const move = (event: PointerEvent): void => {
+      if (start === null) return;
+      delta = event.clientY - start;
+      this.panel.style.transform = delta > 0 ? `translateY(${delta}px)` : '';
+    };
+    const up = (): void => {
+      if (start === null) return;
+      start = null;
+      this.panel.style.transform = '';
+
+      if (delta > Math.max(60, this.panel.getBoundingClientRect().height / 5)) {
+        this.options.onDismiss?.();
+      } else if (delta < -40) {
+        this.panel.setAttribute('data-expanded', '');
+      }
+    };
+    const toggle = (event: KeyboardEvent): void => {
+      if (event.key === 'Enter' || event.key === ' ') {
+        event.preventDefault();
+        this.panel.toggleAttribute('data-expanded');
+      }
+    };
+
+    handle.addEventListener('pointerdown', down);
+    handle.addEventListener('pointermove', move);
+    handle.addEventListener('pointerup', up);
+    handle.addEventListener('pointercancel', up);
+    handle.addEventListener('keydown', toggle);
+
+    return () => {
+      handle.removeEventListener('pointerdown', down);
+      handle.removeEventListener('pointermove', move);
+      handle.removeEventListener('pointerup', up);
+      handle.removeEventListener('pointercancel', up);
+      handle.removeEventListener('keydown', toggle);
+    };
+  }
+
+  /** Expands the sheet to full height (search focus does, so results are not hidden behind the keyboard). */
+  expand(): void {
+    if (this.sheet) {
+      this.panel.setAttribute('data-expanded', '');
+    }
+  }
+}
+
 // ---- the vanilla picker ------------------------------------------------------------------------------
 
 const el = <K extends keyof HTMLElementTagNameMap>(tag: K, attributes: Record<string, string | boolean | null | undefined> = {}, text?: string): HTMLElementTagNameMap[K] => {
@@ -978,6 +1396,7 @@ export class Picker {
   private loads = 0;
   private abort: AbortController | null = null;
   private searchTimer: ReturnType<typeof setTimeout> | null = null;
+  private popover: Popover | null = null;
 
   constructor(element: HTMLElement, options: PickerOptions = {}) {
     this.element = element as Mountable;
@@ -996,8 +1415,13 @@ export class Picker {
       strings: {},
       searchDelay: 80,
       trigger: '🙂',
+      placement: 'auto',
+      offset: 8,
+      arrow: true,
+      sheetBreakpoint: 640,
       ...options,
     } as ResolvedOptions;
+    this.options.placement = parsePlacement(this.options.placement);
     this.options.tone = clampTone(this.options.tone);
     this.options.columns = clampColumns(this.options.columns);
   }
@@ -1075,6 +1499,8 @@ export class Picker {
   }
 
   destroy(): void {
+    this.popover?.destroy();
+    this.popover = null;
     this.loads++;
     this.abort?.abort();
     this.abort = null;
@@ -1109,7 +1535,14 @@ export class Picker {
 
     this.panel.hidden = false;
     this.trigger?.setAttribute('aria-expanded', 'true');
-    this.searchInput.focus();
+    this.popover?.open();
+
+    // On a phone sheet, focusing search would raise the keyboard over half the emoji; focus the sheet itself.
+    if (this.popover?.isSheet) {
+      this.panel.focus();
+    } else {
+      this.searchInput.focus();
+    }
   }
 
   /**
@@ -1121,6 +1554,7 @@ export class Picker {
       return;
     }
 
+    this.popover?.close();
     this.panel.hidden = true;
     this.trigger?.setAttribute('aria-expanded', 'false');
 
@@ -1274,6 +1708,27 @@ export class Picker {
     this.status = el('div', { class: `${PREFIX}-picker-status`, role: 'status', 'aria-live': 'polite' }, s.loading);
 
     this.panel.append(this.searchInput, this.tabs, this.body, this.tones, this.status);
+
+    if (!inline && this.trigger) {
+      // The caret, a backdrop and a drag handle for the phone sheet: decoration, hidden from assistive tech.
+      const arrow = el('div', { class: `${PREFIX}-picker-arrow`, 'aria-hidden': 'true', hidden: !this.options.arrow });
+      const handle = el('div', { class: `${PREFIX}-picker-handle`, 'aria-hidden': 'true' });
+      const backdrop = el('div', { class: `${PREFIX}-picker-backdrop`, 'aria-hidden': 'true', hidden: true });
+
+      this.panel.tabIndex = -1;
+      this.panel.prepend(arrow, handle);
+      this.root.append(backdrop);
+      this.popover = new Popover(this.root, this.trigger, this.panel, arrow, backdrop, handle, {
+        placement: this.options.placement,
+        offset: this.options.offset,
+        arrow: this.options.arrow,
+        sheetBreakpoint: this.options.sheetBreakpoint,
+        onDismiss: () => this.close(),
+      });
+      this.listen(this.searchInput, 'focus', () => this.popover?.expand());
+      this.swipeSections();
+    }
+
     this.root.append(this.panel);
     this.element.replaceChildren(this.root);
     this.watchTarget();
@@ -1328,6 +1783,32 @@ export class Picker {
         }
       });
     }
+  }
+
+  /** On the phone sheet, a horizontal swipe across the emoji moves to the next or previous category. */
+  private swipeSections(): void {
+    let start: { x: number; y: number } | null = null;
+
+    this.listen(this.body, 'pointerdown', (event) => {
+      start = event.pointerType === 'touch' && this.popover?.isSheet ? { x: event.clientX, y: event.clientY } : null;
+    });
+    this.listen(this.body, 'pointerup', (event) => {
+      if (!start) return;
+
+      const dx = event.clientX - start.x;
+      const dy = event.clientY - start.y;
+      start = null;
+
+      if (Math.abs(dx) < 60 || Math.abs(dx) < Math.abs(dy) * 1.5) return;
+
+      const tabs = [...this.tabs.querySelectorAll<HTMLElement>('[role="tab"]')];
+      const current = tabs.findIndex((tab) => tab.getAttribute('aria-selected') === 'true');
+      const next = tabs[current + ((dx < 0) !== this.rtl ? 1 : -1)];
+
+      if (next) {
+        this.showSection(next.getAttribute(`${ATTR}-section`) ?? '');
+      }
+    });
   }
 
   private scheduleSearch(): void {
@@ -1418,6 +1899,11 @@ export class Picker {
       const selected = tab.getAttribute(`${ATTR}-section`) === slug;
       tab.setAttribute('aria-selected', String(selected));
       tab.tabIndex = selected ? 0 : -1;
+
+      // A tab bar that scrolls sideways (phones) keeps the selected tab in view, without scrolling the page.
+      if (selected && this.tabs.scrollWidth > this.tabs.clientWidth) {
+        this.tabs.scrollLeft = tab.offsetLeft - this.tabs.offsetLeft - (this.tabs.clientWidth - tab.offsetWidth) / 2;
+      }
     }
 
     const section = this.body.querySelector<HTMLElement>(`section[${ATTR}-section="${slug}"]`);

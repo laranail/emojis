@@ -1,5 +1,5 @@
 import { useCallback, useEffect, useId, useRef, useState, type CSSProperties, type KeyboardEvent, type RefObject } from 'react';
-import { TONE_SWATCHES, charOf, clampColumns, gridTarget, insertText, resultText, rovingIndex, type Insertable, type PickerCustom, type PickerEmoji, type SelectDetail } from '../scripts/picker.js';
+import { Popover, TONE_SWATCHES, charOf, clampColumns, gridTarget, insertText, parsePlacement, resultText, rovingIndex, type Insertable, type Placement, type PickerCustom, type PickerEmoji, type SelectDetail } from '../scripts/picker.js';
 import { useEmojiPicker, type UseEmojiPickerOptions } from './useEmojiPicker.js';
 
 export interface EmojiPickerProps extends UseEmojiPickerOptions {
@@ -13,6 +13,14 @@ export interface EmojiPickerProps extends UseEmojiPickerOptions {
   columns?: number;
   /** What the trigger button shows (default 🙂). */
   trigger?: string;
+  /** Where the popover opens: 'auto' (below, flipping above), or top/bottom/start/end, optionally -start/-end. */
+  placement?: Placement;
+  /** Gap between the trigger and the popover, in px (default 8). */
+  offset?: number;
+  /** Draw the caret pointing at the trigger (default true). */
+  arrow?: boolean;
+  /** At or below this viewport width the popover is a bottom sheet (default 640; 0 never). */
+  sheetBreakpoint?: number;
   className?: string;
 }
 
@@ -26,7 +34,19 @@ const keyOf = (item: PickerEmoji | PickerCustom): string => ('image' in item ? `
  *
  *   <EmojiPicker source={source} target={textareaRef} onSelect={({ emoji }) => …} />
  */
-export function EmojiPicker({ target, inline = false, closeOnSelect = true, columns: columnsProp = 8, trigger: triggerGlyph = '🙂', className, ...options }: EmojiPickerProps) {
+export function EmojiPicker({
+  target,
+  inline = false,
+  closeOnSelect = true,
+  columns: columnsProp = 8,
+  trigger: triggerGlyph = '🙂',
+  placement = 'auto',
+  offset = 8,
+  arrow = true,
+  sheetBreakpoint = 640,
+  className,
+  ...options
+}: EmojiPickerProps) {
   const state = useEmojiPicker(options);
   const { strings } = state;
   const columns = clampColumns(columnsProp);
@@ -38,6 +58,12 @@ export function EmojiPicker({ target, inline = false, closeOnSelect = true, colu
   const body = useRef<HTMLDivElement>(null);
   const search = useRef<HTMLInputElement>(null);
   const trigger = useRef<HTMLButtonElement>(null);
+  const panel = useRef<HTMLDivElement>(null);
+  const arrowEl = useRef<HTMLDivElement>(null);
+  const backdrop = useRef<HTMLDivElement>(null);
+  const handle = useRef<HTMLDivElement>(null);
+  const popover = useRef<Popover | null>(null);
+  const swipe = useRef<{ x: number; y: number } | null>(null);
   const caretKnown = useRef(false);
   const watched = useRef<Insertable | null>(null);
   const [scrollTo, setScrollTo] = useState<string | null>(null);
@@ -82,12 +108,36 @@ export function EmojiPicker({ target, inline = false, closeOnSelect = true, colu
     }
   }, [scrollTo, state.query, state.sections]);
 
+  // The same Popover the vanilla picker uses: top layer, placement, caret, and the phone sheet.
   useEffect(() => {
-    if (open && !inline) {
-      commitRecents();
+    if (!open || inline || !root.current || !trigger.current || !panel.current) {
+      return;
+    }
+
+    const controller = new Popover(root.current, trigger.current, panel.current, arrowEl.current, backdrop.current, handle.current, {
+      placement: parsePlacement(placement),
+      offset,
+      arrow,
+      sheetBreakpoint,
+      onDismiss: () => setOpen(false),
+    });
+
+    popover.current = controller;
+    controller.open();
+    commitRecents();
+
+    // On a phone sheet, focusing search would raise the keyboard over half the emoji; focus the sheet itself.
+    if (controller.isSheet) {
+      panel.current.focus();
+    } else {
       search.current?.focus();
     }
-  }, [open, inline, commitRecents]);
+
+    return () => {
+      controller.close();
+      popover.current = null;
+    };
+  }, [open, inline, commitRecents, placement, offset, arrow, sheetBreakpoint]);
 
   const close = useCallback(
     (focus: 'trigger' | 'target' | 'none' = 'trigger'): void => {
@@ -271,7 +321,19 @@ export function EmojiPicker({ target, inline = false, closeOnSelect = true, colu
           {triggerGlyph || '🙂'}
         </button>
       )}
-      <div id={`${id}-panel`} className={`${P}-panel`} role={inline ? 'group' : 'dialog'} aria-label={strings.open} hidden={!open} onKeyDown={onKeyDown}>
+      {!inline && <div ref={backdrop} className={`${P}-backdrop`} aria-hidden="true" hidden />}
+      <div
+        ref={panel}
+        id={`${id}-panel`}
+        className={`${P}-panel`}
+        role={inline ? 'group' : 'dialog'}
+        aria-label={strings.open}
+        hidden={!open}
+        tabIndex={inline ? undefined : -1}
+        onKeyDown={onKeyDown}
+      >
+        {!inline && <div ref={arrowEl} className={`${P}-arrow`} aria-hidden="true" hidden={!arrow} />}
+        {!inline && <div ref={handle} className={`${P}-handle`} aria-hidden="true" />}
         <input
           ref={search}
           type="search"
@@ -282,6 +344,7 @@ export function EmojiPicker({ target, inline = false, closeOnSelect = true, colu
           spellCheck={false}
           value={state.query}
           onChange={(event) => state.setQuery(event.target.value)}
+          onFocus={() => popover.current?.expand()}
         />
         <div className={`${P}-tabs`} role="tablist" aria-label={strings.open}>
           {tabs.map((section) => {
@@ -307,7 +370,30 @@ export function EmojiPicker({ target, inline = false, closeOnSelect = true, colu
             );
           })}
         </div>
-        <div ref={body} className={`${P}-body`}>
+        <div
+          ref={body}
+          className={`${P}-body`}
+          onPointerDown={(event) => {
+            swipe.current = event.pointerType === 'touch' && popover.current?.isSheet ? { x: event.clientX, y: event.clientY } : null;
+          }}
+          onPointerUp={(event) => {
+            // On the phone sheet, a horizontal swipe moves to the next or previous category.
+            const start = swipe.current;
+            swipe.current = null;
+
+            if (!start) return;
+
+            const dx = event.clientX - start.x;
+            const dy = event.clientY - start.y;
+
+            if (Math.abs(dx) < 60 || Math.abs(dx) < Math.abs(dy) * 1.5) return;
+
+            const current = tabs.findIndex((t) => t.slug === selectedTab);
+            const next = tabs[current + ((dx < 0) !== rtl() ? 1 : -1)];
+
+            if (next) showSection(next.slug);
+          }}
+        >
           {visible.map((section) => {
             const rows: Array<Array<PickerEmoji | PickerCustom>> = [];
 

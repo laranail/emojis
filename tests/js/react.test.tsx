@@ -247,6 +247,34 @@ describe('EmojiPicker (React) parity with the vanilla picker', () => {
     spy.mockRestore();
   });
 
+  it('opens with the caret, and as a bottom sheet on a narrow screen that the backdrop dismisses', async () => {
+    render(<Form inline={false} />);
+    fireEvent.click(screen.getByRole('button', { name: 'Choose an emoji' }));
+    await ready();
+
+    expect(document.querySelector('.laranail-emoji-picker-arrow')).not.toBeNull();
+    expect(document.querySelector('.laranail-emoji-picker-panel')!.getAttribute('data-placement')).toMatch(/-start$/);
+    fireEvent.click(cells()[0]);
+    cleanup();
+
+    const matchMedia = vi.spyOn(window, 'matchMedia').mockImplementation((query: string) => ({ matches: true, media: query, addEventListener() {}, removeEventListener() {} }) as unknown as MediaQueryList);
+
+    try {
+      render(<Form inline={false} />);
+      fireEvent.click(screen.getByRole('button', { name: 'Choose an emoji' }));
+      await ready();
+
+      const backdrop = document.querySelector<HTMLElement>('.laranail-emoji-picker-backdrop')!;
+      expect(document.querySelector('.laranail-emoji-picker')!.hasAttribute('data-sheet')).toBe(true);
+      expect(backdrop.hidden).toBe(false);
+
+      fireEvent.click(backdrop);
+      await waitFor(() => expect(screen.getByRole('dialog', { hidden: true }).hidden).toBe(true));
+    } finally {
+      matchMedia.mockRestore();
+    }
+  });
+
   it('marks its bundle for the client', () => {
     expect(readFileSync(resolve(root, 'dist/react/index.js'), 'utf8')).toMatch(/^["']use client["'];/);
   });
