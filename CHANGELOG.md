@@ -9,6 +9,12 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/),
 
 ### Fixed
 
+- **CI's sync-check failed with HTTP 403 when GitHub's anonymous rate limit ran out.** Two upstream listings
+  come from `api.github.com`, which allows 60 unauthenticated requests an hour per IP, shared by every job on a
+  runner's address. `build-dataset.php` now sends `GITHUB_TOKEN` to `api.github.com` (and nowhere else),
+  through a private temporary header file rather than the command line, and the static-analysis and weekly
+  refresh workflows pass the workflow's token to it.
+
 - **npm publishing moved to its own workflow**, `.github/workflows/npm-publish.yml`, which runs on release tags
   and can be started by hand for a tag that already exists (`gh workflow run npm-publish.yml -f tag=v0.5.0`).
   As a job inside `release.yml` it could only be retried by re-running a tag's run, which uses the workflow as it
