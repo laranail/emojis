@@ -208,7 +208,12 @@ export interface PickerOptions {
   features?: Partial<PickerFeatures>;
   /** 'auto' (default): the device's emoji, images for what it cannot draw; 'native': its own only; 'image': all images. */
   render?: RenderMode;
+  /** 'auto' (default) follows the OS or the page's theme; 'light' or 'dark' fixes it. */
+  theme?: PickerTheme;
 }
+
+/** The picker's colour scheme: the OS's or the page's, or fixed. */
+export type PickerTheme = 'auto' | 'light' | 'dark';
 
 export interface PickerEvents {
   select: SelectDetail;
@@ -712,10 +717,7 @@ export function search(items: PickerEmoji[], term: string, limit: number = Infin
   const scored: Array<[number, number, PickerEmoji]> = [];
 
   for (const item of items) {
-    const name = fold(item.name);
-    const code = fold(item.shortcode ?? '');
-    const keywords = (item.keywords ?? []).map(fold);
-    const haystack = `${name} ${code} ${keywords.join(' ')}`;
+    const { name, code, keywords, haystack } = folded(item);
 
     if (!words.every((word) => haystack.includes(word))) {
       continue;
@@ -732,6 +734,27 @@ export function search(items: PickerEmoji[], term: string, limit: number = Infin
   }
 
   return scored.sort((a, b) => a[0] - b[0] || a[1] - b[1]).slice(0, limit).map(([, , item]) => item);
+}
+
+/**
+ * An emoji's searchable text, folded once and kept for as long as the emoji object lives: folding (Unicode
+ * NFD and diacritic stripping) every name and keyword of ~1,900 emoji on every keystroke was the bulk of a
+ * search's cost.
+ */
+const foldedCache = new WeakMap<PickerEmoji, { name: string; code: string; keywords: string[]; haystack: string }>();
+
+function folded(item: PickerEmoji): { name: string; code: string; keywords: string[]; haystack: string } {
+  let entry = foldedCache.get(item);
+
+  if (!entry) {
+    const name = fold(item.name);
+    const code = fold(item.shortcode ?? '');
+    const keywords = (item.keywords ?? []).map(fold);
+    entry = { name, code, keywords, haystack: `${name} ${code} ${keywords.join(' ')}` };
+    foldedCache.set(item, entry);
+  }
+
+  return entry;
 }
 
 /** A string without variation selectors, so 😶‍🌫️ and 😶‍🌫 compare equal. */
@@ -1221,6 +1244,12 @@ export class ApiSource implements PickerSource {
 
 /** A payload already in hand: an object, or the id of a <script type="application/json"> holding one. */
 export class StaticSource implements PickerSource {
+  /**
+   * Each data block parsed once, however many pickers read it: ten pickers on a page share one ~400 KB
+   * JSON.parse. Keyed by the element, so a block a morph replaces is read afresh.
+   */
+  private static parsed = new WeakMap<Element, PickerPayload>();
+
   constructor(private readonly payload: PickerPayload | string) {}
 
   async load(): Promise<PickerPayload> {
@@ -1234,7 +1263,28 @@ export class StaticSource implements PickerSource {
       throw new Error(`picker payload: no element #${this.payload}`);
     }
 
-    return JSON.parse(block.textContent ?? '{}') as PickerPayload;
+    let parsed = StaticSource.parsed.get(block);
+
+    if (!parsed) {
+      parsed = JSON.parse(block.textContent ?? '{}') as PickerPayload;
+      StaticSource.parsed.set(block, parsed);
+    }
+
+    return parsed;
+  }
+}
+
+/** How many cells a grid draws before the browser first paints; the rest follow in idle time. */
+export const FIRST_PAINT_CELLS = 200;
+
+/** Runs a callback when the browser is idle, or soon after where it cannot say (Safari, tests). */
+function whenIdle(callback: () => void): void {
+  const idle = (globalThis as { requestIdleCallback?: (cb: () => void, options?: { timeout: number }) => number }).requestIdleCallback;
+
+  if (idle) {
+    idle(callback, { timeout: 120 });
+  } else {
+    setTimeout(callback, 1);
   }
 }
 
@@ -2069,6 +2119,12 @@ export class Picker {
   private support: { version: string | null; flags: boolean | null } = { version: null, flags: null };
   private closeToneMenu: (() => void) | null = null;
   private switcher: HTMLSelectElement | null = null;
+  /** A popover's grid is built the first time it opens, not on page load. */
+  private pendingRender = false;
+  /** The sections still to draw in idle time, and which render they belong to. */
+  private rest: PickerSection[] = [];
+  private bodyToken = 0;
+  private finishBody: (() => void) | null = null;
 
   private readonly imageFailed = (event: Event): void => {
     const image = event.target as Element | null;
@@ -2102,6 +2158,7 @@ export class Picker {
       arrow: true,
       sheetBreakpoint: 640,
       render: 'auto',
+      theme: 'auto',
       ...options,
       features: readFeatures(options.features),
     } as ResolvedOptions;
@@ -2126,6 +2183,22 @@ export class Picker {
   /** Hide emoji newer than this Emoji version: 'auto' (default) asks the browser, null shows everything. */
   maxVersion(version: string | null): this { this.options.maxVersion = version; return this.reload(); }
   closeOnSelect(close = true): this { this.options.closeOnSelect = close; return this; }
+
+  /** Fixes the colour scheme ('light', 'dark'), or follows the OS and the page again ('auto'). */
+  theme(theme: PickerTheme): this {
+    this.options.theme = theme === 'light' || theme === 'dark' ? theme : 'auto';
+    this.applyTheme();
+
+    return this;
+  }
+
+  private applyTheme(): void {
+    if (this.options.theme === 'auto') {
+      this.root?.removeAttribute('data-theme');
+    } else {
+      this.root?.setAttribute('data-theme', this.options.theme);
+    }
+  }
   inline(inline = true): this { this.options.inline = inline; return this; }
 
   target(target: string | Insertable | null): this {
@@ -2217,11 +2290,14 @@ export class Picker {
   }
 
   open(): void {
-    if (this.recentStale) {
-      this.refreshRecents();
+    this.panel.hidden = false;
+
+    if (this.recentStale || this.pendingRender) {
+      this.recentStale = false;
+      this.memo = null;
+      this.renderWhenShown();
     }
 
-    this.panel.hidden = false;
     this.trigger?.setAttribute('aria-expanded', 'true');
     this.popover?.open();
 
@@ -2301,7 +2377,7 @@ export class Picker {
       this.byHex = null;
       this.memo = null;
       this.status.textContent = '';
-      this.render();
+      this.renderWhenShown();
       this.emit('ready', { picker: this });
     } catch (error) {
       if (id !== this.loads) {
@@ -2351,10 +2427,22 @@ export class Picker {
     this.memo = null;
 
     if (this.root && this.data) {
-      this.render();
+      this.renderWhenShown();
     }
 
     return this;
+  }
+
+  /** Draws now when the picker is visible; a closed popover is drawn when it next opens. */
+  private renderWhenShown(): void {
+    if (!this.options.inline && this.panel.hidden) {
+      this.pendingRender = true;
+
+      return;
+    }
+
+    this.pendingRender = false;
+    this.render();
   }
 
   /** Redraws Frequently used after picks made while the panel was open, now that nothing is under the pointer. */
@@ -2409,6 +2497,7 @@ export class Picker {
 
     this.root = el('div', { class: `${PREFIX}-picker` });
     this.root.style.setProperty(`--${PREFIX}-picker-columns`, String(this.options.columns));
+    this.applyTheme();
 
     if (!inline) {
       this.trigger = el('button', { type: 'button', class: `${PREFIX}-picker-trigger`, 'aria-haspopup': 'dialog', 'aria-expanded': 'false', 'aria-controls': id, 'aria-label': s.open }, this.options.trigger || '🙂');
@@ -2786,6 +2875,7 @@ export class Picker {
     }
 
     this.markTab(slug);
+    this.flushBody();
 
     const section = this.body.querySelector<HTMLElement>(`section[${ATTR}-section="${slug}"]`);
 
@@ -2842,51 +2932,53 @@ export class Picker {
     this.renderBody();
   }
 
+  /**
+   * Draws the grid. A search draws its results (at most 200) at once. Browsing draws the first sections,
+   * about a screenful, before the browser paints, and the rest in idle time, so opening the picker does not
+   * wait for ~1,900 buttons; anything that needs a section not drawn yet (a tab, a key) finishes the job first.
+   */
   private renderBody(): void {
     const s = this.strings;
     const term = this.query.trim();
-    const sections: PickerSection[] = term ? searchResults(this.sections(), term, s) : this.sections();
+    const sections: PickerSection[] = (term ? searchResults(this.sections(), term, s) : this.sections()).filter((section) => section.items.length > 0);
+    const token = ++this.bodyToken;
     const nodes: HTMLElement[] = [];
-    let count = 0;
+    let drawn = 0;
 
-    for (const section of sections) {
-      if (section.items.length === 0) {
-        continue;
-      }
+    while (sections.length > 0 && (term !== '' || drawn < FIRST_PAINT_CELLS)) {
+      const section = sections.shift() as PickerSection;
 
-      const heading = el('div', { class: `${PREFIX}-picker-heading`, id: `${this.panel.id}-${section.slug}` }, section.label);
-      const grid = el('div', { class: `${PREFIX}-picker-grid`, role: 'grid', 'aria-labelledby': heading.id });
-      let row: HTMLDivElement | null = null;
-
-      const columns = this.columnsFor(section);
-
-      if (section.text) {
-        grid.classList.add(`${PREFIX}-picker-grid-text`);
-        grid.style.setProperty(`--${PREFIX}-picker-columns`, String(columns));
-      }
-
-      section.items.forEach((item, index) => {
-        if (index % columns === 0 || row === null) {
-          row = el('div', { role: 'row', class: `${PREFIX}-picker-row` });
-          grid.append(row);
-        }
-
-        row.append(section.text ? this.textCell(item as PickerText) : section.custom ? this.customCell(item as PickerCustom) : this.cell(item as PickerEmoji));
-        count++;
-      });
-
-      const block = el('section', { class: `${PREFIX}-picker-section`, id: this.sectionId(section.slug), [`${ATTR}-section`]: section.slug });
-
-      block.append(heading, grid);
-      nodes.push(block);
+      nodes.push(this.buildSection(section));
+      drawn += section.items.length;
     }
 
     this.body.replaceChildren(...nodes);
-    this.status.textContent = term ? resultText(s, count) : '';
-
-    // The tab follows the scroll: whichever section is at the top of the body is the current one.
+    this.status.textContent = term ? resultText(s, drawn) : '';
+    this.rest = sections;
     this.stopSpy?.();
-    this.stopSpy = term ? null : spySections(this.body, (slug) => this.markTab(slug));
+    this.stopSpy = null;
+    // The tab follows the scroll: whichever section is at the top of the body is the current one.
+    this.finishBody = (): void => {
+      this.finishBody = null;
+      this.stopSpy = term ? null : spySections(this.body, (slug) => this.markTab(slug));
+    };
+
+    if (this.rest.length === 0) {
+      this.finishBody();
+    } else {
+      const step = (): void => {
+        if (token !== this.bodyToken) return;
+
+        const next = this.rest.shift();
+
+        if (next) this.body.append(this.buildSection(next));
+
+        if (this.rest.length > 0) whenIdle(step);
+        else this.finishBody?.();
+      };
+
+      whenIdle(step);
+    }
 
     const first = this.body.querySelector<HTMLElement>('[role="gridcell"]');
 
@@ -2896,6 +2988,41 @@ export class Picker {
       first.tabIndex = 0;
       this.active = first;
     }
+  }
+
+  /** Draws every section still waiting for idle time, now. */
+  flushBody(): void {
+    if (this.rest.length === 0) return;
+
+    this.body.append(...this.rest.splice(0).map((section) => this.buildSection(section)));
+    this.finishBody?.();
+  }
+
+  private buildSection(section: PickerSection): HTMLElement {
+    const heading = el('div', { class: `${PREFIX}-picker-heading`, id: `${this.panel.id}-${section.slug}` }, section.label);
+    const grid = el('div', { class: `${PREFIX}-picker-grid`, role: 'grid', 'aria-labelledby': heading.id });
+    const columns = this.columnsFor(section);
+    let row: HTMLDivElement | null = null;
+
+    if (section.text) {
+      grid.classList.add(`${PREFIX}-picker-grid-text`);
+      grid.style.setProperty(`--${PREFIX}-picker-columns`, String(columns));
+    }
+
+    section.items.forEach((item, index) => {
+      if (index % columns === 0 || row === null) {
+        row = el('div', { role: 'row', class: `${PREFIX}-picker-row` });
+        grid.append(row);
+      }
+
+      row.append(section.text ? this.textCell(item as PickerText) : section.custom ? this.customCell(item as PickerCustom) : this.cell(item as PickerEmoji));
+    });
+
+    const block = el('section', { class: `${PREFIX}-picker-section`, id: this.sectionId(section.slug), [`${ATTR}-section`]: section.slug });
+
+    block.append(heading, grid);
+
+    return block;
   }
 
   private cell(item: PickerEmoji): HTMLButtonElement {
@@ -2993,6 +3120,9 @@ export class Picker {
 
       return;
     }
+
+    // Keys that can reach past what is drawn (End, PageDown, the last row) need every section.
+    this.flushBody();
 
     const next = gridTarget(this.body, cell, event.key, this.rtl);
 

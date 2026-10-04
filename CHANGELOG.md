@@ -5,6 +5,24 @@ All notable changes to `laranail/emojis` are documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/), and this project adheres to
 [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [Unreleased]
+
+### Added
+
+- **Full light and dark mode.** The picker follows the OS, then the page's theme on any ancestor — `.dark` /
+  `.light`, `[data-theme]`, and now Bootstrap 5.3's `[data-bs-theme]` — then its own `theme`, which JavaScript
+  (`theme` option, `picker.theme()`) and React (`theme` prop) can now set too. The palette sets `color-scheme`,
+  so the browser's own parts (the search clear button, the set select, scrollbars) match, and the grid's
+  scrollbar is thin and themed.
+
+### Changed
+
+- **The picker loads faster.** A closed popover no longer builds its grid on page load, only when it first
+  opens. Grids paint about a screenful first and draw the rest in idle time. An embedded payload is parsed
+  once per page instead of once per picker. Search folds each emoji's text once. In Chromium with the full
+  catalogue, an inline picker's cold first paint went from 156 ms to about 60 ms, and a closed popover's mount
+  from 6–12 ms to under a millisecond.
+
 ## [0.6.0] - 2026-10-03
 
 ### Fixed

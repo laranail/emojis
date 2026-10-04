@@ -365,6 +365,36 @@ describe('EmojiPicker (React) phase 4', () => {
   });
 });
 
+describe('EmojiPicker (React) theme and loading', () => {
+  beforeEach(() => localStorage.clear());
+  afterEach(cleanup);
+
+  it('fixes its theme, and builds a popover\'s grid only once it opens', async () => {
+    const { container } = render(<EmojiPicker source={new StaticSource(payload())} theme="dark" store={memoryStore()} maxVersion={null} />);
+
+    expect(container.querySelector('.laranail-emoji-picker')?.getAttribute('data-theme')).toBe('dark');
+    await waitFor(() => expect(container.querySelector('[role="status"]')?.textContent).toBe(''));
+    expect(container.querySelectorAll('[role="gridcell"]')).toHaveLength(0);
+
+    fireEvent.click(screen.getByRole('button', { name: 'Choose an emoji' }));
+    await waitFor(() => expect(container.querySelectorAll('[role="gridcell"]').length).toBeGreaterThan(0));
+  });
+
+  it('draws a long grid progressively, ending with every section', async () => {
+    const big = {
+      groups: ['a', 'b', 'c'].map((slug, g) => ({
+        slug,
+        label: slug,
+        emoji: Array.from({ length: 150 }, (_, i) => ({ emoji: '', hexcode: (0x1f300 + g * 150 + i).toString(16).toUpperCase(), name: `e${g}-${i}`, shortcode: null, keywords: [], version: '1.0', skins: {} })),
+      })),
+    };
+    const { container } = render(<EmojiPicker source={new StaticSource(big)} inline store={memoryStore()} maxVersion={null} />);
+
+    await waitFor(() => expect(container.querySelectorAll('[role="gridcell"]').length).toBeGreaterThan(0));
+    await waitFor(() => expect(container.querySelectorAll('[role="gridcell"]')).toHaveLength(450));
+  });
+});
+
 describe('the React build', () => {
   it('writes relative imports with .js, so its declarations resolve under moduleResolution node16/nodenext', () => {
     const files = ['index.ts', 'EmojiPicker.tsx', 'useEmojiPicker.ts'];

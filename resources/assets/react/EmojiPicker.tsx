@@ -1,6 +1,7 @@
 import { useCallback, useEffect, useId, useRef, useState, type CSSProperties, type KeyboardEvent, type RefObject } from 'react';
 import {
   DEFAULT_STRINGS,
+  FIRST_PAINT_CELLS,
   Popover,
   TAB_ICONS,
   TONE_SWATCHES,
@@ -44,6 +45,8 @@ export interface EmojiPickerProps extends UseEmojiPickerOptions {
   arrow?: boolean;
   /** At or below this viewport width the popover is a bottom sheet (default 640; 0 never). */
   sheetBreakpoint?: number;
+  /** 'auto' (default) follows the OS or the page's theme; 'light' or 'dark' fixes it. */
+  theme?: 'auto' | 'light' | 'dark';
   className?: string;
 }
 
@@ -95,6 +98,7 @@ export function EmojiPicker({
   offset = 8,
   arrow = true,
   sheetBreakpoint = 640,
+  theme = 'auto',
   className,
   ...options
 }: EmojiPickerProps) {
@@ -103,6 +107,14 @@ export function EmojiPicker({
   const columns = clampColumns(columnsProp);
   const id = useId();
   const [open, setOpen] = useState(inline);
+  // A popover's grid is built the first time it opens, not on page load.
+  const [opened, setOpened] = useState(inline);
+  // How many sections are drawn: about a screenful first, the rest added in idle time.
+  const [drawnSections, setDrawnSections] = useState(0);
+
+  useEffect(() => {
+    if (open) setOpened(true);
+  }, [open]);
   const [activeCell, setActiveCell] = useState<string | null>(null);
   const [activeTab, setActiveTab] = useState<string | null>(null);
   const root = useRef<HTMLDivElement>(null);
@@ -318,6 +330,7 @@ export function EmojiPicker({
   const rtl = (): boolean => (root.current?.closest('[dir]')?.getAttribute('dir') ?? document.documentElement.getAttribute('dir')) === 'rtl';
 
   const showSection = (slug: string): void => {
+    drawAll();
     setActiveTab(slug);
     state.setQuery('');
     setScrollTo(slug);
@@ -403,7 +416,48 @@ export function EmojiPicker({
   };
 
   // One tab stop in the grid: the cell last focused, or the first cell.
-  const visible = state.sections.filter((section) => section.items.length > 0);
+  const allSections = state.sections.filter((section) => section.items.length > 0);
+  const firstScreen = (() => {
+    let cells = 0;
+    let count = 0;
+
+    for (const section of allSections) {
+      if (state.resultCount === null && cells >= FIRST_PAINT_CELLS) break;
+      cells += section.items.length;
+      count++;
+    }
+
+    return count;
+  })();
+  const sectionsKey = allSections.map((section) => `${section.slug}:${section.items.length}`).join(',');
+
+  // A new set of sections starts from a screenful again, then grows a section at a time while idle.
+  useEffect(() => {
+    setDrawnSections(firstScreen);
+  }, [sectionsKey, firstScreen]);
+
+  useEffect(() => {
+    if (!opened || drawnSections >= allSections.length) return;
+
+    let cancelled = false;
+    const idle = (globalThis as { requestIdleCallback?: (cb: () => void, o?: { timeout: number }) => number }).requestIdleCallback;
+    const next = (): void => {
+      if (!cancelled) setDrawnSections((n) => n + 1);
+    };
+
+    if (idle) idle(next, { timeout: 120 });
+    else setTimeout(next, 1);
+
+    return () => {
+      cancelled = true;
+    };
+  }, [opened, drawnSections, allSections.length]);
+
+  /** Draws every section now: a tab or a key that can reach past what is drawn needs them all. */
+  const drawAll = (): void => {
+    if (drawnSections < allSections.length) setDrawnSections(allSections.length);
+  };
+  const visible = opened ? allSections.slice(0, Math.max(drawnSections, firstScreen)) : [];
   const firstKey = visible[0]?.items[0] ? keyOf(visible[0].items[0]) : null;
   const allKeys = new Set(visible.flatMap((section) => (section.items as PickerItem[]).map(keyOf)));
   const stop = activeCell !== null && allKeys.has(activeCell) ? activeCell : firstKey;
@@ -431,6 +485,7 @@ export function EmojiPicker({
       ref={root}
       className={className ? `${P} ${className}` : P}
       style={style}
+      data-theme={theme === 'light' || theme === 'dark' ? theme : undefined}
       onBlur={(event) => {
         const next = event.relatedTarget as Node | null;
 
@@ -534,6 +589,8 @@ export function EmojiPicker({
         <div
           ref={body}
           className={`${P}-body`}
+          // Keyboard focus entering the grid draws every section, so End and PageDown can reach them all.
+          onFocus={drawAll}
           onPointerDown={(event) => {
             swipe.current = event.pointerType === 'touch' && popover.current?.isSheet ? { x: event.clientX, y: event.clientY } : null;
           }}

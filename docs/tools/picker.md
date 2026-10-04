@@ -228,6 +228,28 @@ emoji), the category tabs, the emoji grid, and a footer with the preview and the
   shows its code in the configured delimiters). It is decoration for sighted users; every cell carries its
   name for assistive technology.
 
+## Loading fast
+
+The picker is built to cost nothing until it is used:
+
+- **A closed popover builds nothing.** Its payload is loaded, but its grid is built the first time it opens.
+- **The grid paints a screenful first.** About 200 cells are drawn before the browser paints; the other
+  sections follow in idle time, so opening the picker never waits for ~1,900 buttons. A tab or a key that
+  needs a section not drawn yet draws the rest at once.
+- **The payload is parsed once per page**, however many pickers read the same data block, and fetched once
+  per URL and locale in API mode. On the server it is built once and cached.
+- **Search** keeps each emoji's folded text after the first search, so a keystroke costs well under a
+  millisecond; it waits for a pause in typing and draws at most 200 results.
+- Off-screen sections skip layout and paint (`content-visibility`), and images are lazy-loaded and decoded
+  off the main thread.
+
+Measured in Chromium with the full catalogue (1,923 emoji): an inline picker paints in about 60 ms cold and
+15–40 ms warm (it was 156 and 36–40 ms in 0.6.0); a closed popover mounts in under a millisecond (6–12 ms);
+a search takes about 0.4 ms.
+
+For the smallest pages, turn the API on so the payload is fetched and cached by the browser once rather than
+embedded in every page.
+
 ## Searching
 
 The search matches names, shortcodes and keywords in the picker's locale, every word required, best match
@@ -315,7 +337,7 @@ export function Composer() {
 `<EmojiPicker>` takes the same options as the vanilla picker as props — `source`, `target` (a ref),
 `locale`, `tone`, `maxRecent`, `recentOrder`, `sort`, `categories`, `columns`, `maxVersion`, `inline`,
 `closeOnSelect`, `userKey`, `store`, `strings`, `searchDelay`, `trigger`, `placement`, `offset`, `arrow`,
-`sheetBreakpoint`, `features`, `render` — and `onSelect`. It renders the
+`sheetBreakpoint`, `features`, `render`, `theme` — and `onSelect`. It renders the
 same markup, classes and ARIA, so `picker.css` styles it and the keyboard behaviour is the same. The target
 may be a controlled `<textarea value={…} onChange={…}>`; the pick lands in its state. To draw your own UI, use
 the hook behind it:
@@ -406,9 +428,24 @@ them without declaring them, so they can be set on the picker, on its mount poin
 | `--laranail-emoji-picker-arrow-height` | `0.5rem` |
 | `--laranail-emoji-picker-backdrop` | `rgb(0 0 0 / 0.4)` (phone sheet) |
 
-Dark follows `prefers-color-scheme`, unless the page says otherwise: a `.dark` or `[data-theme="dark"]`
-ancestor turns it on (Tailwind's class strategy and most theme switchers), and `[data-theme="light"]` or
-`.light` keeps it off.
+### Light and dark
+
+The picker has a light and a dark palette, and picks one in this order, each step overriding the last:
+
+1. **The OS** (`prefers-color-scheme`), live: switching the OS switches an open picker.
+2. **The page's theme**, on any ancestor: `.dark` / `.light` (Tailwind's class strategy), `[data-theme]` (most
+   theme switchers) or `[data-bs-theme]` (Bootstrap 5.3). If both a light and a dark ancestor are set, light
+   wins.
+3. **The picker's own theme**: `theme="light"` or `"dark"` on the component (config `picker.theme`), the
+   `theme` option or `picker.theme('dark')` in JavaScript, the `theme` prop in React. `auto` hands it back.
+
+The palette sets `color-scheme` too, so the parts the browser draws — the search field's clear button, the
+image set select, scrollbars — match it, and the grid's scrollbar is thin and in the border colour. Every colour
+is still a custom property (above), so a brand palette is a few lines of CSS for either scheme:
+
+```css
+.dark { --laranail-emoji-picker-bg: #18181b; --laranail-emoji-picker-accent: #a78bfa; }
+```
 
 ## Translations
 

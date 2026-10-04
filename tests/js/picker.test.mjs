@@ -1242,6 +1242,107 @@ describe('image sets, the full catalogue and per-person tones (phase 4)', () => 
   });
 });
 
+describe('light and dark, and loading fast', () => {
+  const big = () => ({
+    groups: ['smileys_and_emotion', 'people_and_body', 'objects'].map((slug, g) => ({
+      slug,
+      label: slug,
+      emoji: Array.from({ length: 150 }, (_, i) => {
+        const hexcode = (0x1f300 + g * 150 + i).toString(16).toUpperCase();
+
+        return { emoji: '', hexcode, name: `e${g}-${i}`, shortcode: null, keywords: [], version: '1.0', skins: {} };
+      }),
+    })),
+  });
+  const mountBig = async (options = {}) => {
+    document.body.replaceChildren();
+    const host = document.createElement('div');
+    document.body.append(host);
+    const picker = await Picker.create(host, { inline: true, store: memoryStore(), maxVersion: null, searchDelay: 0, ...options }).source(new StaticSource(big())).mount();
+
+    return { host, picker, cells: () => host.querySelectorAll('[role="gridcell"]').length };
+  };
+  const idle = () => new Promise((r) => setTimeout(r, 30));
+
+  it('fixes its theme on request, and follows the page again on auto', async () => {
+    const { picker, host } = await mount();
+    const root = host.querySelector('.laranail-emoji-picker');
+
+    expect(root.hasAttribute('data-theme')).toBe(false);
+    picker.theme('dark');
+    expect(root.getAttribute('data-theme')).toBe('dark');
+    picker.theme('auto');
+    expect(root.hasAttribute('data-theme')).toBe(false);
+
+    const fixed = await mount({ theme: 'light' });
+    expect(fixed.host.querySelector('.laranail-emoji-picker').getAttribute('data-theme')).toBe('light');
+  });
+
+  it('parses an embedded payload once, however many pickers read it', async () => {
+    document.body.replaceChildren();
+    const block = document.createElement('script');
+    block.type = 'application/json';
+    block.id = 'shared-payload';
+    block.textContent = JSON.stringify(payload());
+    document.body.append(block);
+    const parse = vi.spyOn(JSON, 'parse');
+
+    try {
+      const loads = await Promise.all([1, 2, 3].map(() => new StaticSource('shared-payload').load()));
+
+      expect(parse.mock.calls.filter(([text]) => typeof text === 'string' && text.includes('grinning'))).toHaveLength(1);
+      expect(loads[0]).toBe(loads[2]);
+    } finally {
+      parse.mockRestore();
+    }
+  });
+
+  it('builds a popover\'s grid the first time it opens, not on page load', async () => {
+    const { picker, host } = await mount({ inline: false });
+
+    expect(host.querySelectorAll('[role="gridcell"]')).toHaveLength(0);
+    picker.open();
+    expect(host.querySelectorAll('[role="gridcell"]').length).toBeGreaterThan(0);
+  });
+
+  it('draws about a screenful first and the rest in idle time', async () => {
+    const { cells } = await mountBig();
+
+    expect(cells()).toBeGreaterThanOrEqual(150);
+    expect(cells()).toBeLessThan(450);
+
+    await idle();
+    await idle();
+    expect(cells()).toBe(450);
+  });
+
+  it('draws everything at once when a tab or a key needs a section not drawn yet', async () => {
+    const { host, cells } = await mountBig();
+
+    host.querySelector('[role="tab"][data-laranail-emoji-section="objects"]').click();
+    expect(cells()).toBe(450);
+
+    const again = await mountBig();
+    const first = again.host.querySelector('[role="gridcell"]');
+    first.focus();
+    first.dispatchEvent(new KeyboardEvent('keydown', { key: 'End', bubbles: true }));
+    expect(document.activeElement.getAttribute('aria-label')).toBe('e2-149');
+  });
+
+  // Guards the queue being replaced on each render; the token check in renderBody is a second line of
+  // defence that this cannot tell apart from it.
+  it('shows only search results when a search starts while sections are still being drawn', async () => {
+    const { picker, host } = await mountBig();
+
+    picker.searchInput.value = 'e2-14';
+    picker.searchInput.dispatchEvent(new Event('input'));
+    await idle();
+    await idle();
+
+    expect([...host.querySelectorAll('[role="gridcell"]')].every((c) => c.getAttribute('aria-label').startsWith('e2-14'))).toBe(true);
+  });
+});
+
 describe('the build', () => {
   it('reads its public theme tokens without declaring them, so a value set above the picker wins', () => {
     const css = readFileSync(resolve(root, 'public/assets/css/picker.css'), 'utf8');
@@ -1250,8 +1351,15 @@ describe('the build', () => {
 
     expect(read.size).toBeGreaterThanOrEqual(12);
     expect(declared).toEqual([]);
-    expect(css).toMatch(/\.dark \.laranail-emoji-picker/);
-    expect(css).toMatch(/\[data-theme=dark\] \.laranail-emoji-picker/);
+    // Page themes (Tailwind, theme switchers, Bootstrap 5.3) under :where(), so the picker's own theme
+    // outranks them; light after dark, so an explicit light wins a tie.
+    const dark = css.indexOf(':where(.dark,[data-theme=dark],[data-bs-theme=dark]) .laranail-emoji-picker');
+    const light = css.indexOf(':where(.light,[data-theme=light],[data-bs-theme=light]) .laranail-emoji-picker');
+    const own = css.indexOf('.laranail-emoji-picker[data-theme=dark]');
+    expect(dark).toBeGreaterThan(-1);
+    expect(light).toBeGreaterThan(dark);
+    expect(own).toBeGreaterThan(light);
+    expect(css).toMatch(/color-scheme:\s*dark/);
     // The phone bottom sheet is switched by the script (data-sheet), which only a popover gets.
     expect(css).toMatch(/\.laranail-emoji-picker\[data-sheet\] \.laranail-emoji-picker-panel\{/);
     expect(css).not.toMatch(/max-width:\s*480px/);
