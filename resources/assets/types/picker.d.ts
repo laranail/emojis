@@ -239,6 +239,15 @@ export type PickerSection = {
     custom?: false;
     text?: false;
     items: PickerEmoji[];
+}
+/** Frequently used, when it holds custom emoji beside Unicode ones. */
+ | {
+    slug: string;
+    label: string;
+    custom?: false;
+    text?: false;
+    mixed: true;
+    items: Array<PickerEmoji | PickerCustom>;
 } | {
     slug: string;
     label: string;
@@ -405,6 +414,9 @@ export declare function sortItems(items: PickerEmoji[], mode: SortMode): PickerE
 export declare function recordRecent(stored: unknown, base: string, hexcode: string, max: number, now?: number): RecentEntry[];
 /** Orders recents: "recent" by time of last use, "frequent" by count then time. */
 export declare function orderRecent(list: RecentEntry[], mode: RecentOrder): RecentEntry[];
+/** How a custom emoji is recorded among recents, so it cannot collide with a hexcode. */
+export declare const CUSTOM_RECENT = "custom:";
+export declare function customRecentKey(name: string): string;
 /** Every emoji of the payload by its base hexcode. */
 export declare function indexPayload(data: PickerPayload): Map<string, PickerEmoji>;
 /**
@@ -417,6 +429,7 @@ export declare function buildSections(data: PickerPayload, options?: {
     recent?: RecentEntry[];
     recentOrder?: RecentOrder;
     strings?: Partial<PickerStrings>;
+    custom?: boolean;
 }): PickerSection[];
 /** The search results over a list of sections: the emoji of every non-custom group, ranked. */
 export declare function searchSections(sections: PickerSection[], term: string, limit?: number): PickerEmoji[];
@@ -721,7 +734,7 @@ export interface AutocompleteOptions {
     /** Suggestions shown at most (default 8). */
     limit?: number;
     rtl?: () => boolean;
-    /** Called with what was inserted, after the field has it. */
+    /** Called with what was inserted, after the field has it, and its recents key (the base hexcode, or custom:name). */
     onPick: (detail: SelectDetail, base: string | null) => void;
 }
 /**

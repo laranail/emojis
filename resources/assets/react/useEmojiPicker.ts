@@ -7,6 +7,7 @@ import {
   charOf,
   clampTone,
   customCode,
+  customRecentKey,
   detectFlagsOnce,
   detectMaxVersionOnce,
   parseRender,
@@ -219,7 +220,7 @@ export function useEmojiPicker(options: UseEmojiPickerOptions): EmojiPickerState
     if (!data) return [];
     if (shown !== 'emoji') return textSections(data, shown);
 
-    return buildSections(data, { categories: wanted, sort, recent: features.recents ? recent : [], recentOrder, strings }).filter((section) => features.custom || !section.custom);
+    return buildSections(data, { categories: wanted, sort, recent: features.recents ? recent : [], recentOrder, strings, custom: features.custom }).filter((section) => features.custom || !section.custom);
   }, [data, shown, wanted, sort, recent, recentOrder, strings, features]);
   const trimmed = term.trim();
   const results = useMemo(() => (trimmed ? searchResults(base, trimmed, strings, MAX_RESULTS) : null), [base, trimmed, strings]);
@@ -268,6 +269,8 @@ export function useEmojiPicker(options: UseEmojiPickerOptions): EmojiPickerState
 
       if (features.recents && !detail.custom && detail.hexcode !== null) {
         store.set('recent', recordRecent(store.get('recent'), (item as PickerEmoji).hexcode, detail.hexcode, maxRecent));
+      } else if (features.recents && isCustom(item)) {
+        store.set('recent', recordRecent(store.get('recent'), customRecentKey(item.name), customRecentKey(item.name), maxRecent));
       }
 
       onSelect.current?.(detail);

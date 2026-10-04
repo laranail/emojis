@@ -82,7 +82,7 @@ function TabFace({ section }: { section: PickerSection }) {
 
   if (section.text) return <>{first ? (first as PickerText).text.slice(0, 4) : section.label.slice(0, 2)}</>;
 
-  return <>{first && !section.custom ? charOf((first as PickerEmoji).pick ?? (first as PickerEmoji).hexcode) : '★'}</>;
+  return <>{first && !section.custom && !('image' in first) ? charOf((first as PickerEmoji).pick ?? (first as PickerEmoji).hexcode) : '★'}</>;
 }
 
 interface Preview {
@@ -339,8 +339,8 @@ export function EmojiPicker({
       onPick: (detail, base) => {
         const current = autocompleteState.current.state;
 
-        if (base && detail.hexcode && current.features.recents) {
-          current.store.set('recent', recordRecent(current.store.get('recent'), base, detail.hexcode, options.maxRecent ?? 36));
+        if (base && current.features.recents) {
+          current.store.set('recent', recordRecent(current.store.get('recent'), base, detail.hexcode ?? base, options.maxRecent ?? 36));
         }
 
         options.onSelect?.(detail);

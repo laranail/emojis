@@ -23,6 +23,8 @@ export {
   memoryStore,
   DEFAULT_STRINGS,
   MAX_RESULTS,
+  CUSTOM_RECENT,
+  customRecentKey,
   DEFAULT_SHORTCUT,
   GEAR_ICON,
   attachAutocomplete,
