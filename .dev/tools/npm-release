@@ -19,7 +19,7 @@ set -euo pipefail
 REPO=laranail/emojis
 PACKAGE=@laranail/emojis-picker
 WORKFLOW=npm-publish.yml
-REGISTRY=https://registry.npmjs.org
+REGISTRY=${NPM_RELEASE_REGISTRY:-https://registry.npmjs.org} # overridable for the tests only
 PACKAGE_URL="$REGISTRY/@laranail%2femojis-picker"
 
 keep_token=false dry_run=false validate_only=false
@@ -43,14 +43,33 @@ read_token() {
   if [ ! -t 0 ]; then cat; elif command -v pbpaste >/dev/null; then pbpaste; else die "no token: pipe it in, or run on macOS to read the clipboard" 2; fi
 }
 
-# A granular or automation token is one line: npm_ and about 36 letters and digits. Anything else (a token ID,
-# a copied page, a partial paste) is refused here, before it reaches GitHub, with its length and line count only.
+# Copying from a web page can carry characters nobody can see: zero-width spaces, a byte-order mark, a soft
+# hyphen, non-breaking spaces at either end. None of them is ever part of a token, so they are removed here and
+# named (as U+XXXX, never the token's own characters) so the paste that carried them is not a mystery.
+clean_token() {
+  perl -CSD -0777 -ne '
+    my %removed;
+    s/([\x{200B}-\x{200D}\x{2060}\x{FEFF}\x{00AD}])/$removed{sprintf("U+%04X", ord $1)}++; ""/ge;
+    s/\r//g;
+    s/^[\s\p{Zs}]+|[\s\p{Zs}]+$//g;
+    print STDERR "==> removed invisible characters from the paste: ", join(" ", sort keys %removed), "\n" if %removed;
+    print;
+  '
+}
+
+# A granular or automation token is one line: npm_ and letters and digits. Anything else (a token ID, a copied
+# page, a partial paste) is refused here, before it reaches GitHub, with its length, its line count and any
+# character a token never contains, as U+XXXX. The token's own letters and digits are never shown.
 check_shape() {
-  local token=$1 lines
+  local token=$1 lines prefix stray length
   lines=$(printf '%s\n' "$token" | wc -l | tr -d ' ')
   # grep matches line by line, so the line count is checked too: two tokens pasted together are not one.
-  if [ "$lines" -ne 1 ] || ! printf '%s' "$token" | grep -Eq '^npm_[A-Za-z0-9]{30,}$'; then
-    die "that is not an npm token: ${#token} characters on $lines line(s). Copy the token npm shows once after 'Generate token' (npm_ and about 36 characters), not the token's ID or the page." 2
+  if [ "$lines" -ne 1 ] || ! printf '%s' "$token" | grep -Eq '^npm_[A-Za-z0-9_]{30,}$'; then
+    case "$token" in npm_*) prefix='starts with npm_' ;; *) prefix='does not start with npm_' ;; esac
+    # Characters, not bytes, whatever the locale: bash's ${#token} counts bytes outside a UTF-8 locale.
+    length=$(printf '%s' "$token" | perl -CSD -0777 -ne 'print length')
+    stray=$(printf '%s' "$token" | perl -CSD -0777 -ne 'my %u; $u{sprintf("U+%04X", ord $1)}++ while /([^A-Za-z0-9_\n])/g; print join(" ", sort keys %u)')
+    die "that is not an npm token: $length characters on $lines line(s), $prefix${stray:+, contains $stray}. Copy the token npm shows once after 'Generate token' (npm_ and letters and digits), not the token's ID or the page." 2
   fi
 }
 
@@ -76,7 +95,7 @@ verify_token() {
 }
 
 if $validate_only; then
-  token=$(read_token | tr -d '\r' | sed -e 's/^[[:space:]]*//' -e 's/[[:space:]]*$//')
+  token=$(read_token | clean_token)
   check_shape "$token"
   verify_token "$token"
   exit 0
@@ -105,7 +124,7 @@ say "npm has: ${highest:-nothing}; to publish: ${tags[*]:-nothing}"
 [ ${#tags[@]} -gt 0 ] || exit 0
 
 if ! $keep_token; then
-  token=$(read_token | tr -d '\r' | sed -e 's/^[[:space:]]*//' -e 's/[[:space:]]*$//')
+  token=$(read_token | clean_token)
   check_shape "$token"
   verify_token "$token"
   if $dry_run; then
