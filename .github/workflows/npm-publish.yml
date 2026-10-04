@@ -9,6 +9,10 @@ name: Publish to npm
 # this file, npm-publish.yml, as the package's trusted publisher), or with an NPM_TOKEN secret when one is set.
 # This repository was created after 2026-07-15, so GitHub issues it immutable OIDC subjects, which npm does
 # not accept for publishing yet (npm/cli#9969): until that is fixed, publishing needs the NPM_TOKEN secret.
+#
+# The registry input publishes to GitHub Packages (npm.pkg.github.com) instead, with the run's own GITHUB_TOKEN:
+# no npm account or secret involved, and the fallback .dev/tools/npm-release uses when npm will not take a token.
+# GitHub Packages always requires authentication to install, even for a public package (see docs/tools/picker.md).
 
 on:
   push:
@@ -19,9 +23,14 @@ on:
       tag:
         description: 'An existing release tag to publish, e.g. v0.5.0'
         required: true
+      registry:
+        description: 'npm (registry.npmjs.org) or github (GitHub Packages)'
+        type: choice
+        options: [npm, github]
+        default: npm
 
 concurrency:
-  group: ${{ github.workflow }}-${{ inputs.tag || github.ref_name }}
+  group: ${{ github.workflow }}-${{ inputs.registry || 'npm' }}-${{ inputs.tag || github.ref_name }}
   # Cancelling a half-finished publish can leave a version reserved with nothing behind it.
   cancel-in-progress: false
 
@@ -30,13 +39,16 @@ permissions:
 
 jobs:
   publish:
-    name: Publish @laranail/emojis-picker to npm
+    name: Publish @laranail/emojis-picker to ${{ inputs.registry || 'npm' }}
     if: vars.NPM_PUBLISH == 'true'
     runs-on: ubuntu-latest
     timeout-minutes: 15
     permissions:
       contents: read
       id-token: write # trusted publishing, and provenance
+      packages: write # GitHub Packages, with the run's GITHUB_TOKEN
+    env:
+      TARGET: ${{ inputs.registry || 'npm' }}
 
     steps:
       - name: Resolve the tag
@@ -59,7 +71,8 @@ jobs:
       - uses: actions/setup-node@v7
         with:
           node-version: 24
-          registry-url: https://registry.npmjs.org
+          registry-url: ${{ (inputs.registry || 'npm') == 'github' && 'https://npm.pkg.github.com' || 'https://registry.npmjs.org' }}
+          scope: ${{ (inputs.registry || 'npm') == 'github' && '@laranail' || '' }}
 
       - name: Build the React adapter and the declarations
         run: |
@@ -75,6 +88,7 @@ jobs:
       # With a token, say who it authenticates as before publishing, so a failure separates "the token does not
       # authenticate" from "it authenticates but cannot write to @laranail". Prints the account name only.
       - name: Check the token
+        if: env.TARGET == 'npm'
         env:
           NPM_TOKEN: ${{ secrets.NPM_TOKEN }}
         run: |
@@ -101,6 +115,7 @@ jobs:
       # publisher (organization, repository, workflow file, environment). The claims only: the token is masked and
       # never printed. A mismatch here is the usual reason trusted publishing answers 404.
       - name: Show the trusted-publishing identity
+        if: env.TARGET == 'npm'
         id: identity
         env:
           NPM_TOKEN: ${{ secrets.NPM_TOKEN }}
@@ -120,8 +135,12 @@ jobs:
       - name: Publish
         env:
           NPM_TOKEN: ${{ secrets.NPM_TOKEN }}
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         run: |
-          if [ -n "$NPM_TOKEN" ]; then
+          if [ "$TARGET" = github ]; then
+            # GitHub Packages signs no provenance, and its package inherits the repository's visibility.
+            NODE_AUTH_TOKEN="$GITHUB_TOKEN" npm publish --provenance=false --registry https://npm.pkg.github.com
+          elif [ -n "$NPM_TOKEN" ]; then
             # npm tries trusted publishing first whenever the job can mint an OIDC token, even with a token
             # configured, and this repository's immutable OIDC subject makes that exchange end in a 403
             # (npm/cli#9969). Hide the OIDC request variables from npm so the token is what authenticates.
@@ -135,7 +154,7 @@ jobs:
 
       # npm says why a trusted-publishing exchange failed only in its debug log, which the job does not keep.
       - name: Show npm's OIDC log lines
-        if: failure()
+        if: failure() && env.TARGET == 'npm'
         run: |
           { grep -hiE 'oidc|trusted|id.?token|provenance' ~/.npm/_logs/*-debug-0.log || echo "(no OIDC lines in the npm debug log)"; } | tail -40
 

@@ -1,18 +1,20 @@
 #!/usr/bin/env bash
-# Publishes @laranail/emojis-picker for every release tag npm does not have yet, in version order, with an
-# NPM_TOKEN taken from the clipboard (or stdin). One command for what otherwise takes five and fails quietly:
+# Publishes @laranail/emojis-picker for every release tag not published yet, in version order. One command:
 #
-#   .dev/tools/npm-release              token from the clipboard, publish every missing version
-#   .dev/tools/npm-release --keep-token use the NPM_TOKEN secret already set
+#   .dev/tools/npm-release              npm with the token on the clipboard; GitHub Packages if npm will not take it
+#   .dev/tools/npm-release --github     GitHub Packages only (no npm token needed)
+#   .dev/tools/npm-release --npm        npm only, never falling back
+#   .dev/tools/npm-release --keep-token npm with the NPM_TOKEN secret already set
 #   .dev/tools/npm-release v0.6.0       publish only the tags named
 #   .dev/tools/npm-release --dry-run    check everything, change nothing
 #   pbpaste | .dev/tools/npm-release --validate-only    check a token's shape and that npm accepts it
 #
 # Why a token at all: this repository issues GitHub's immutable OIDC subject, which npm's trusted publishing
-# does not accept yet (npm/cli#9969). See docs/tools/picker.md.
+# does not accept yet (npm/cli#9969). GitHub Packages needs none: the workflow publishes there with its own
+# GITHUB_TOKEN. See docs/tools/picker.md.
 #
 # The token is never printed, never put on a command line (curl reads the header from stdin, gh reads the
-# secret from stdin) and never written to disk. Only its length and line count are ever reported.
+# secret from stdin) and never written to disk. Only its length, line count and stray characters are reported.
 
 set -euo pipefail
 
@@ -22,14 +24,16 @@ WORKFLOW=npm-publish.yml
 REGISTRY=${NPM_RELEASE_REGISTRY:-https://registry.npmjs.org} # overridable for the tests only
 PACKAGE_URL="$REGISTRY/@laranail%2femojis-picker"
 
-keep_token=false dry_run=false validate_only=false
+keep_token=false dry_run=false validate_only=false target=auto
 tags=()
 for arg in "$@"; do
   case "$arg" in
     --keep-token) keep_token=true ;;
     --dry-run) dry_run=true ;;
     --validate-only) validate_only=true ;;
-    -h|--help) sed -n '2,15p' "$0" | sed 's/^# \{0,1\}//'; exit 0 ;;
+    --github) target=github ;;
+    --npm) target=npm ;;
+    -h|--help) sed -n '2,18p' "$0" | sed 's/^# \{0,1\}//'; exit 0 ;;
     v[0-9]*.[0-9]*.[0-9]*) tags+=("$arg") ;;
     *) echo "npm-release: unknown argument '$arg' (see --help)" >&2; exit 64 ;;
   esac
@@ -123,41 +127,93 @@ fi
 say "npm has: ${highest:-nothing}; to publish: ${tags[*]:-nothing}"
 [ ${#tags[@]} -gt 0 ] || exit 0
 
-if ! $keep_token; then
-  token=$(read_token | clean_token)
-  check_shape "$token"
-  verify_token "$token"
-  if $dry_run; then
-    say "dry run: would set NPM_TOKEN on $REPO"
-  else
-    before=$(gh api "repos/$REPO/actions/secrets/NPM_TOKEN" --jq .updated_at 2>/dev/null || echo none)
-    printf '%s' "$token" | gh secret set NPM_TOKEN -R "$REPO" >/dev/null
-    after=$(gh api "repos/$REPO/actions/secrets/NPM_TOKEN" --jq .updated_at)
-    [ "$after" != "$before" ] || die "GitHub still reports NPM_TOKEN updated at $before: the secret did not change"
-    say "NPM_TOKEN updated at $after (was $before)"
-  fi
-  unset token
-fi
+# GitHub Packages' versions, when the gh login may read them (read:packages); empty otherwise.
+github_versions() {
+  gh api "orgs/laranail/packages/npm/emojis-picker/versions" --paginate --jq '.[].name' 2>/dev/null || true
+}
 
-for tag in "${tags[@]}"; do
-  version=${tag#v}
-  if $dry_run; then say "dry run: would publish $tag"; continue; fi
-  say "publishing $tag"
-  out=$(gh workflow run "$WORKFLOW" -R "$REPO" -f tag="$tag" 2>&1) || die "could not start the workflow: $out"
+# Starts one publish and waits for it. Returns non-zero when the run fails, after showing why.
+publish() {
+  local tag=$1 registry=$2 out run
+  if $dry_run; then say "dry run: would publish $tag to $registry"; return 0; fi
+  say "publishing $tag to $registry"
+  out=$(gh workflow run "$WORKFLOW" -R "$REPO" -f tag="$tag" -f registry="$registry" 2>&1) || { printf '%s\n' "$out" >&2; return 1; }
   # gh prints the new run's URL; reading it avoids picking up someone else's run.
   run=$(printf '%s\n' "$out" | grep -oE '/actions/runs/[0-9]+' | grep -oE '[0-9]+$' | head -1)
-  [ -n "$run" ] || die "gh did not report the run it started: $out"
+  [ -n "$run" ] || { printf 'gh did not report the run it started: %s\n' "$out" >&2; return 1; }
   say "run https://github.com/$REPO/actions/runs/$run"
   if ! gh run watch "$run" -R "$REPO" --exit-status >/dev/null; then
     gh run view "$run" -R "$REPO" --log-failed | grep -E 'error|warning' | cut -c1-240 | tail -20 >&2 || true
-    die "$tag did not publish; later tags were not started, so the versions stay in order"
+    return 1
   fi
+}
+
+on_npm() {
+  local version=$1
   for _ in $(seq 1 12); do
-    [ "$(curl -sS "$PACKAGE_URL/$version" | jq -r '.version // empty' 2>/dev/null)" = "$version" ] && break
+    [ "$(curl -sS "$PACKAGE_URL/$version" | jq -r '.version // empty' 2>/dev/null)" = "$version" ] && return 0
     sleep 5
   done
-  [ "$(curl -sS "$PACKAGE_URL/$version" | jq -r '.version // empty' 2>/dev/null)" = "$version" ] || die "the run passed but $PACKAGE@$version is not on the registry yet"
-  say "$PACKAGE@$version is on npm"
-done
+  return 1
+}
 
-$dry_run || say "latest is now $(curl -sS "$PACKAGE_URL" | jq -r '.["dist-tags"].latest')"
+# Decide the registry. npm needs a token npm accepts; in the default mode, anything short of that (no token on the
+# clipboard, the wrong text, a 401) is reported and the release goes to GitHub Packages instead.
+use=$target
+if [ "$use" != github ] && ! $keep_token; then
+  token=$(read_token 2>/dev/null | clean_token || true)
+  if ( check_shape "$token" && verify_token "$token" ); then
+    use=npm
+    if $dry_run; then
+      say "dry run: would set NPM_TOKEN on $REPO"
+    else
+      before=$(gh api "repos/$REPO/actions/secrets/NPM_TOKEN" --jq .updated_at 2>/dev/null || echo none)
+      printf '%s' "$token" | gh secret set NPM_TOKEN -R "$REPO" >/dev/null
+      after=$(gh api "repos/$REPO/actions/secrets/NPM_TOKEN" --jq .updated_at)
+      [ "$after" != "$before" ] || die "GitHub still reports NPM_TOKEN updated at $before: the secret did not change"
+      say "NPM_TOKEN updated at $after (was $before)"
+    fi
+  elif [ "$use" = npm ]; then
+    die "npm needs a token it accepts (see above); run with --github to publish to GitHub Packages instead" 2
+  else
+    say "no npm token npm accepts, so publishing to GitHub Packages instead"
+    use=github
+  fi
+  unset token
+elif [ "$use" = auto ]; then
+  use=npm # --keep-token: the secret already set decides
+fi
+
+if [ "$use" = npm ]; then
+  for i in "${!tags[@]}"; do
+    tag=${tags[$i]}
+    if publish "$tag" npm; then
+      $dry_run && continue
+      on_npm "${tag#v}" || die "the run passed but $PACKAGE@${tag#v} is not on npm yet"
+      say "$PACKAGE@${tag#v} is on npm"
+    elif [ "$target" = auto ]; then
+      # Keep the order: this tag and every later one go to GitHub Packages.
+      say "npm refused $tag, so it and the tags after it go to GitHub Packages"
+      tags=("${tags[@]:$i}")
+      use=github
+      break
+    else
+      die "$tag did not publish to npm; later tags were not started, so the versions stay in order"
+    fi
+  done
+  [ "$use" = npm ] && { $dry_run || say "npm latest is now $(curl -sS "$PACKAGE_URL" | jq -r '.["dist-tags"].latest')"; exit 0; }
+fi
+
+existing=$(github_versions)
+for tag in "${tags[@]}"; do
+  if printf '%s\n' "$existing" | grep -qxF "${tag#v}"; then say "$PACKAGE@${tag#v} is already on GitHub Packages"; continue; fi
+  publish "$tag" github || die "$tag did not publish to GitHub Packages; later tags were not started, so the versions stay in order"
+  $dry_run && continue
+  if [ -z "$existing" ] && [ -z "$(github_versions)" ]; then
+    say "$tag published (the run passed; listing GitHub Packages needs read:packages on the gh login, so not re-checked)"
+  else
+    github_versions | grep -qxF "${tag#v}" || die "the run passed but $PACKAGE@${tag#v} is not listed on GitHub Packages"
+    say "$PACKAGE@${tag#v} is on GitHub Packages"
+  fi
+done
+$dry_run || say "installs from GitHub Packages need, in the consuming project's .npmrc: @laranail:registry=https://npm.pkg.github.com, and a token with read:packages"

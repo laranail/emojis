@@ -415,21 +415,37 @@ of the two known causes it hit. With the token, npm's trusted-publishing attempt
 publish, and so is provenance, which is signed with the same identity. Once npm fixes #9969, delete the secret
 and trusted publishing, with provenance, takes over again.
 
-One command sets the token and publishes every release npm does not have yet, oldest first, so `latest` ends
-on the newest. Copy the token npm shows after *Generate token* (one line, `npm_` and about 36 characters),
-then run it from a checkout, signed in to `gh` as a maintainer:
+One command publishes every release that is not out yet, oldest first, so `latest` ends on the newest. Copy the
+token npm shows after *Generate token* (one line, `npm_` and 36 letters and digits), then run it from a
+checkout, signed in to `gh` as a maintainer:
 
 ```bash
 .dev/tools/npm-release
 ```
 
 It removes the invisible characters a copied page can carry, and refuses anything that is not token-shaped
-before it reaches GitHub, reporting only its length, its line count and any stray character as `U+XXXX`, and asks npm who the token belongs to before setting the secret: a 401 stops it with npm's own message, any
-other answer is reported and the publish decides. Then it confirms GitHub recorded a
-new secret, starts one publish per version, waits for each run, and checks the version is on the registry
-before starting the next. `--dry-run` checks everything and changes nothing, `--keep-token` uses the secret
-already set, naming tags (`v0.6.0 v0.7.0`) publishes only those, and `pbpaste | .dev/tools/npm-release
---validate-only` only checks a token. The token is never printed or passed on a command line.
+before it reaches GitHub, reporting only its length, its line count and any stray character as `U+XXXX`. Then
+it asks npm who the token belongs to: a 401 is npm refusing the token, any other answer is reported and the
+publish decides. With a token npm accepts, it sets the secret, confirms GitHub recorded it, starts one publish
+per version, waits for each run, and checks the version is on the registry before starting the next.
+
+**When npm will not take a token, it publishes to GitHub Packages instead**, with the workflow's own
+`GITHUB_TOKEN`, so no npm account or secret is involved; a version npm refuses mid-way goes there too, with
+every version after it, so the order holds. `--github` goes straight there, `--npm` never falls back,
+`--dry-run` checks everything and changes nothing, `--keep-token` uses the secret already set, naming tags
+(`v0.6.0 v0.7.0`) publishes only those, and `pbpaste | .dev/tools/npm-release --validate-only` only checks a
+token. The token is never printed or passed on a command line.
+
+GitHub Packages serves the same package under the same name, without provenance, and always asks for
+authentication to install, even though the package is public. A consuming project adds to its `.npmrc`:
+
+```ini
+@laranail:registry=https://npm.pkg.github.com
+//npm.pkg.github.com/:_authToken=${GITHUB_TOKEN}
+```
+
+with a GitHub token that has `read:packages`. Once npm publishing works, drop the first line and the package
+comes from npm again.
 
 ## Accessibility
 
