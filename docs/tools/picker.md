@@ -411,7 +411,9 @@ Publishing needs an `NPM_TOKEN` repository secret for now: a granular npm token 
 subjects (`repo:laranail@<id>/emojis@<id>:…`), which npm's trusted publishing does not yet accept for a
 publish ([npm/cli#9969](https://github.com/npm/cli/issues/9969)). The token exchange succeeds and the upload is
 refused with `403 OIDC permission denied for this action`. When a publish fails, the workflow now names which
-of the two known causes it hit. Once npm fixes #9969, delete the secret and trusted publishing takes over.
+of the two known causes it hit. With the token, npm's trusted-publishing attempt is switched off for the
+publish, and so is provenance, which is signed with the same identity. Once npm fixes #9969, delete the secret
+and trusted publishing, with provenance, takes over again.
 
 ## Accessibility
 
