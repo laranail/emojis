@@ -100,3 +100,29 @@ it('removes the invisible characters a copied page carries, and names a stray ch
     'non-breaking spaces'         => ["\u{00A0}npm_SECRETabcdefghijklmnopqrstuvwxyz0123\u{00A0}\n", 3, 'could not reach'],
     'a non-breaking space inside' => ["npm_SECRETabcdefghij\u{00A0}klmnopqrstuvwxyz0123", 2, 'contains U+00A0'],
 ]);
+
+it('takes the registry as its first argument and refuses anything it does not know', function (): void {
+    if (PHP_OS_FAMILY === 'Windows' || ! is_executable('/bin/bash')) {
+        $this->markTestSkipped('npm-release is a bash tool for maintainers on macOS and Linux.');
+    }
+
+    $script = dirname(__DIR__, 2) . '/.dev/tools/npm-release';
+    $run = static function (string ...$args) use ($script): array {
+        $process = proc_open(['/bin/bash', $script, ...$args], [0 => ['pipe', 'r'], 1 => ['pipe', 'w'], 2 => ['pipe', 'w']], $pipes);
+        fclose($pipes[0]);
+        $output = stream_get_contents($pipes[1]) . stream_get_contents($pipes[2]);
+
+        return [proc_close($process), $output];
+    };
+
+    [$exit, $help] = $run('--help');
+    expect($exit)->toBe(0);
+
+    // Every mode the docs name is one the help names, and a typo is refused rather than read as a tag.
+    foreach (['npm-release github', 'npm-release npm', '--registry=npm|github|auto', '--keep-token', '--dry-run', '--validate-only'] as $usage) {
+        expect($help)->toContain($usage);
+    }
+
+    expect($run('gihtub'))->toBe([64, "npm-release: unknown argument 'gihtub' (see --help)\n"])
+        ->and($run('--registry=pypi')[0])->toBe(64);
+});

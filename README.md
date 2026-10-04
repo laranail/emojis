@@ -37,7 +37,7 @@ package, so add a GitHub token with `read:packages` to the project's `.npmrc`:
 npm install @laranail/emojis-picker@^0.7
 ```
 
-See [the picker's React and npm notes](docs/tools/picker.md#react).
+See [installing from GitHub Packages](docs/tools/picker.md#installing-from-github-packages).
 
 ## Quick start guide and usage
 

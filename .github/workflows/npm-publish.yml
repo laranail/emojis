@@ -13,6 +13,7 @@ name: Publish to npm
 # The registry input publishes to GitHub Packages (npm.pkg.github.com) instead, with the run's own GITHUB_TOKEN:
 # no npm account or secret involved, and the fallback .dev/tools/npm-release uses when npm will not take a token.
 # GitHub Packages always requires authentication to install, even for a public package (see docs/tools/picker.md).
+# A tag push publishes to the registry the repository variable PUBLISH_REGISTRY names (npm when unset).
 
 on:
   push:
@@ -30,7 +31,7 @@ on:
         default: npm
 
 concurrency:
-  group: ${{ github.workflow }}-${{ inputs.registry || 'npm' }}-${{ inputs.tag || github.ref_name }}
+  group: ${{ github.workflow }}-${{ inputs.registry || vars.PUBLISH_REGISTRY || 'npm' }}-${{ inputs.tag || github.ref_name }}
   # Cancelling a half-finished publish can leave a version reserved with nothing behind it.
   cancel-in-progress: false
 
@@ -39,7 +40,7 @@ permissions:
 
 jobs:
   publish:
-    name: Publish @laranail/emojis-picker to ${{ inputs.registry || 'npm' }}
+    name: Publish @laranail/emojis-picker to ${{ inputs.registry || vars.PUBLISH_REGISTRY || 'npm' }}
     if: vars.NPM_PUBLISH == 'true'
     runs-on: ubuntu-latest
     timeout-minutes: 15
@@ -48,7 +49,7 @@ jobs:
       id-token: write # trusted publishing, and provenance
       packages: write # GitHub Packages, with the run's GITHUB_TOKEN
     env:
-      TARGET: ${{ inputs.registry || 'npm' }}
+      TARGET: ${{ inputs.registry || vars.PUBLISH_REGISTRY || 'npm' }}
 
     steps:
       - name: Resolve the tag
@@ -71,8 +72,8 @@ jobs:
       - uses: actions/setup-node@v7
         with:
           node-version: 24
-          registry-url: ${{ (inputs.registry || 'npm') == 'github' && 'https://npm.pkg.github.com' || 'https://registry.npmjs.org' }}
-          scope: ${{ (inputs.registry || 'npm') == 'github' && '@laranail' || '' }}
+          registry-url: ${{ (inputs.registry || vars.PUBLISH_REGISTRY || 'npm') == 'github' && 'https://npm.pkg.github.com' || 'https://registry.npmjs.org' }}
+          scope: ${{ (inputs.registry || vars.PUBLISH_REGISTRY || 'npm') == 'github' && '@laranail' || '' }}
 
       - name: Build the React adapter and the declarations
         run: |

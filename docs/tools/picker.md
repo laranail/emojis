@@ -399,45 +399,58 @@ const picker = useEmojiPicker({ source, locale: 'fr', onSelect });
 render agree; changing `userKey` or `store` reads them again. Both adapters are thin over the same pure
 functions, so the two cannot behave differently. React 19 is a peer dependency; nothing else is.
 
-The package is `@laranail/emojis-picker` on npm, with the version of the Composer package: `.` is the vanilla
-module, `./react` the React adapter, `./styles.css` the picker stylesheet. `.github/workflows/npm-publish.yml` publishes it
-with provenance on every release tag once npm publishing is switched on for the repository (the
-`NPM_PUBLISH` variable), and a maintainer can publish an existing tag by hand with
-`gh workflow run npm-publish.yml -f tag=vX.Y.Z`. To build it from a checkout instead:
-`npm run build:react && npm run types && npm pack`.
+The package is `@laranail/emojis-picker`, with the version of the Composer package: `.` is the vanilla module,
+`./react` the React adapter, `./styles.css` the picker stylesheet. `.github/workflows/npm-publish.yml`
+publishes it on every release tag once publishing is switched on for the repository (the `NPM_PUBLISH`
+variable), to the registry the `PUBLISH_REGISTRY` variable names: `npm`, the default, or `github` for GitHub
+Packages. To build it from a checkout instead: `npm run build:react && npm run types && npm pack`.
 
-Publishing needs an `NPM_TOKEN` repository secret for now: a granular npm token with publish rights on
-`@laranail/emojis-picker`. This repository was created after 2026-07-15, so GitHub issues it immutable OIDC
-subjects (`repo:laranail@<id>/emojis@<id>:…`), which npm's trusted publishing does not yet accept for a
-publish ([npm/cli#9969](https://github.com/npm/cli/issues/9969)). The token exchange succeeds and the upload is
-refused with `403 OIDC permission denied for this action`. When a publish fails, the workflow now names which
-of the two known causes it hit. With the token, npm's trusted-publishing attempt is switched off for the
-publish, and so is provenance, which is signed with the same identity. Once npm fixes #9969, delete the secret
-and trusted publishing, with provenance, takes over again.
+**Where it is published today.** npm has 0.5.0 only. 0.5.1 onwards are on GitHub Packages
+(`npm.pkg.github.com`), because npm cannot take a publish from this repository without a token yet: it was
+created after 2026-07-15, so GitHub issues it immutable OIDC subjects (`repo:laranail@<id>/emojis@<id>:…`),
+which npm's trusted publishing does not accept ([npm/cli#9969](https://github.com/npm/cli/issues/9969)); the
+token exchange succeeds and the upload is refused with `403 OIDC permission denied for this action`. A
+granular npm token as the `NPM_TOKEN` secret works around it, without provenance, which is signed with the same
+identity. Once npm fixes #9969, delete the secret and trusted publishing, with provenance, takes over again.
 
-One command publishes every release that is not out yet, oldest first, so `latest` ends on the newest. Copy the
-token npm shows after *Generate token* (one line, `npm_` and 36 letters and digits), then run it from a
-checkout, signed in to `gh` as a maintainer:
+### Publishing a release
+
+One command publishes every release tag that is not out yet, oldest first, so `latest` ends on the newest. Run
+it from a checkout, signed in to `gh` as a maintainer:
 
 ```bash
-.dev/tools/npm-release
+.dev/tools/npm-release github        # GitHub Packages; needs no npm token
+.dev/tools/npm-release npm           # npm, with the token on the clipboard
+.dev/tools/npm-release               # npm if the clipboard holds a token npm accepts, GitHub Packages otherwise
 ```
 
-It removes the invisible characters a copied page can carry, and refuses anything that is not token-shaped
-before it reaches GitHub, reporting only its length, its line count and any stray character as `U+XXXX`. Then
-it asks npm who the token belongs to: a 401 is npm refusing the token, any other answer is reported and the
-publish decides. With a token npm accepts, it sets the secret, confirms GitHub recorded it, starts one publish
-per version, waits for each run, and checks the version is on the registry before starting the next.
+| Argument | Effect |
+|---|---|
+| `github` | Publishes to GitHub Packages with the workflow's own `GITHUB_TOKEN`; no npm account or secret involved. |
+| `npm` | Reads a token from the clipboard (or stdin), checks it, sets `NPM_TOKEN`, publishes to npm. Never falls back. |
+| `auto` (none) | `npm` when the clipboard holds a token npm accepts; otherwise `github`. A version npm refuses mid-way goes to GitHub Packages, with every version after it, so the order holds. |
+| `vX.Y.Z …` | Publishes only the tags named. Otherwise: every tag newer than npm's newest version. |
+| `--keep-token` | Uses the `NPM_TOKEN` secret already set instead of the clipboard. |
+| `--dry-run` | Checks everything and changes nothing. |
+| `--validate-only` | Only checks a token: `pbpaste \| .dev/tools/npm-release --validate-only`. |
 
-**When npm will not take a token, it publishes to GitHub Packages instead**, with the workflow's own
-`GITHUB_TOKEN`, so no npm account or secret is involved; a version npm refuses mid-way goes there too, with
-every version after it, so the order holds. `--github` goes straight there, `--npm` never falls back,
-`--dry-run` checks everything and changes nothing, `--keep-token` uses the secret already set, naming tags
-(`v0.6.0 v0.7.0`) publishes only those, and `pbpaste | .dev/tools/npm-release --validate-only` only checks a
-token. The token is never printed or passed on a command line.
+`--registry=npm|github|auto` is the long form of the first argument; `--npm` and `--github` still work.
 
-GitHub Packages serves the same package under the same name, without provenance, and always asks for
-authentication to install, even though the package is public. A consuming project adds to its `.npmrc`:
+For npm, copy the token npm shows once after *Generate token*: one line, `npm_` and 36 letters and digits. The
+command removes the invisible characters a copied page can carry and refuses anything that is not
+token-shaped before it reaches GitHub, reporting only its length, its line count and any stray character as
+`U+XXXX`. It then asks npm who the token belongs to: a 401 is npm refusing the token; any other answer is
+reported and the publish decides. The token is never printed or passed on a command line.
+
+Each publish is one workflow run: the command starts it, waits for it, and confirms the version before starting
+the next, on npm from the registry and on GitHub Packages from npm's own `+ name@version` line in the run's
+log, so the `gh` login needs no `read:packages` scope. A version GitHub Packages already holds is reported as
+such, so running the command again is safe.
+
+### Installing from GitHub Packages
+
+GitHub Packages serves the same package under the same name, without provenance, and asks for authentication
+to install even though the package is public. A consuming project adds to its `.npmrc`:
 
 ```ini
 @laranail:registry=https://npm.pkg.github.com

@@ -18,6 +18,16 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/),
   OIDC exchange first whenever the job can mint a token. The token branch now publishes without the OIDC
   variables, and without provenance, which needs them, until npm fixes #9969. The token check also reports
   npm's own error and the token's prefix and length (never its value) instead of stopping the job.
+- **`npm-release` reported a confirmed GitHub Packages upload as missing**, when the run's log said the version was
+  already there: `grep -q` stopped reading at the first match, `gh` died of SIGPIPE, and `pipefail` turned the
+  match into a failure. The log is now captured whole before it is searched.
+- **`npm-release` takes the registry as an argument** (`npm-release github`, `npm-release npm`, or `auto` by
+  default; `--registry=` is the long form, and `--npm`/`--github` still work), and reads the package, the
+  repository and the workflow from the checkout it sits in, so the same file serves every repository that
+  publishes to npm. In `auto`, a clipboard that holds no `npm_` token now means GitHub Packages without a
+  diagnostic of the clipboard's contents.
+- **A tag push publishes to the registry the `PUBLISH_REGISTRY` variable names** (`npm` when unset), so a release
+  reaches GitHub Packages without a hand-started run while npm will not take one.
 - **The README did not say how to install the JavaScript picker.** Its Install section now covers
   `@laranail/emojis-picker` from GitHub Packages: the `.npmrc` scope line, the `read:packages` token it needs,
   and that Blade and Livewire need none of it. `DocumentationTest` holds the npm install line to the release line.
