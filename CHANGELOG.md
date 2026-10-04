@@ -595,3 +595,5 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/),
   `AsEmoji` and `AsEmojiText` casts, `NoEmoji`, `ContainsEmoji`, `OnlyEmoji`, `SingleEmoji` and `MaxEmojis`
   rules, the `laranail::emojis.search`, `.show`, `.convert` and `.export` commands, a doctor check and an
   `about` section.
+
+[Unreleased]: https://github.com/laranail/emojis/compare/v0.7.0...HEAD
