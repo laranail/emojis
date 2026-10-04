@@ -82,12 +82,19 @@ jobs:
             echo "No NPM_TOKEN: publishing through trusted publishing."
             exit 0
           fi
-          if account=$(NODE_AUTH_TOKEN="$NPM_TOKEN" npm whoami 2>/dev/null); then
-            echo "NPM_TOKEN authenticates as: $account"
+          # The token's shape, never its value: a granular or automation token starts with npm_.
+          case "$NPM_TOKEN" in
+            npm_*) echo "NPM_TOKEN has the npm_ prefix (${#NPM_TOKEN} characters)." ;;
+            *) echo "::warning::NPM_TOKEN does not start with npm_ (${#NPM_TOKEN} characters): it may be a token ID or a partial paste rather than the token." ;;
+          esac
+          # npm's own answer, error lines only (they never contain the token). A failed whoami is reported, not
+          # fatal: some granular tokens cannot call it yet can publish, and the publish below is the real test.
+          if out=$(NODE_AUTH_TOKEN="$NPM_TOKEN" npm whoami 2>&1); then
+            echo "NPM_TOKEN authenticates as: $out"
             NODE_AUTH_TOKEN="$NPM_TOKEN" npm access list packages @laranail 2>/dev/null || echo "(could not list @laranail packages with this token)"
           else
-            echo "::error::NPM_TOKEN does not authenticate with npm (expired, revoked, or not an npm token)." >&2
-            exit 1
+            echo "::warning::npm whoami refused NPM_TOKEN; trying the publish anyway. npm said:"
+            { printf '%s\n' "$out" | grep -E '^npm (error|ERR!) (code|[0-9]{3}|E[0-9]{3})' || echo "(no error code in npm's output)"; } | head -5
           fi
 
       # Without a token, show the identity GitHub vouches for, which npm compares with the package's trusted
