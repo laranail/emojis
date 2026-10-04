@@ -60,7 +60,8 @@ it('refuses anything that is not an npm token before it reaches GitHub, and neve
     }
 
     $script = dirname(__DIR__, 2) . '/.dev/tools/npm-release';
-    $process = proc_open(['/bin/bash', $script, '--validate-only'], [0 => ['pipe', 'r'], 1 => ['pipe', 'w'], 2 => ['pipe', 'w']], $pipes);
+    // An unreachable registry: a refusal on shape must never get as far as a request.
+    $process = proc_open(['/bin/bash', $script, '--validate-only'], [0 => ['pipe', 'r'], 1 => ['pipe', 'w'], 2 => ['pipe', 'w']], $pipes, null, [...getenv(), 'NPM_RELEASE_REGISTRY' => 'http://127.0.0.1:9']);
     fwrite($pipes[0], $input);
     fclose($pipes[0]);
     $output = stream_get_contents($pipes[1]) . stream_get_contents($pipes[2]);
@@ -75,4 +76,27 @@ it('refuses anything that is not an npm token before it reaches GitHub, and neve
     'a token ID'        => ['SECRET-0f8e2c1a-4b7d-4e2a-9c3b-1d2e3f4a5b6c'],
     'a truncated token' => ['npm_SECRETabc'],
     'two tokens'        => ["npm_SECRETabcdefghijklmnopqrstuvwxyz0123\nnpm_SECRETabcdefghijklmnopqrstuvwxyz0123"],
+    'an ellipsis'       => ["npm_SECRETabcdefghijklmnopqrstuvwxyz\u{2026}"],
+]);
+
+it('removes the invisible characters a copied page carries, and names a stray character without the token', function (string $input, int $exit, string $expected): void {
+    if (PHP_OS_FAMILY === 'Windows' || ! is_executable('/bin/bash')) {
+        $this->markTestSkipped('npm-release is a bash tool for maintainers on macOS and Linux.');
+    }
+
+    $script = dirname(__DIR__, 2) . '/.dev/tools/npm-release';
+    $process = proc_open(['/bin/bash', $script, '--validate-only'], [0 => ['pipe', 'r'], 1 => ['pipe', 'w'], 2 => ['pipe', 'w']], $pipes, null, [...getenv(), 'NPM_RELEASE_REGISTRY' => 'http://127.0.0.1:9', 'LC_ALL' => 'C']);
+    fwrite($pipes[0], $input);
+    fclose($pipes[0]);
+    $output = stream_get_contents($pipes[1]) . stream_get_contents($pipes[2]);
+
+    // Exit 3 is "could not reach the registry": the cleaned token passed the shape check and was sent on.
+    expect(proc_close($process))->toBe($exit)
+        ->and($output)->toContain($expected)
+        ->and($output)->not->toContain('SECRET');
+})->with([
+    'a zero-width space'          => ["npm_SECRETabc\u{200B}defghijklmnopqrstuvwxyz0123", 3, 'removed invisible characters from the paste: U+200B'],
+    'a byte-order mark'           => ["\u{FEFF}npm_SECRETabcdefghijklmnopqrstuvwxyz0123", 3, 'U+FEFF'],
+    'non-breaking spaces'         => ["\u{00A0}npm_SECRETabcdefghijklmnopqrstuvwxyz0123\u{00A0}\n", 3, 'could not reach'],
+    'a non-breaking space inside' => ["npm_SECRETabcdefghij\u{00A0}klmnopqrstuvwxyz0123", 2, 'contains U+00A0'],
 ]);

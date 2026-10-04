@@ -22,7 +22,9 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/),
   publish then failed with npm's output masked. `.dev/tools/npm-release` (maintainers only, not shipped) checks
   the token's shape and asks npm who it belongs to before setting the secret, confirms GitHub recorded it,
   then publishes every missing version in order and checks each on the registry. It reports npm's status and
-  message for a refused token, and only a 401 stops it, since some granular tokens may not ask who-am-I.
+  message for a refused token, and only a 401 stops it, since some granular tokens may not ask who-am-I. Invisible characters a copied page carries (zero-width spaces,
+  a byte-order mark, non-breaking spaces at the ends) are removed and named, and a refusal names any stray
+  character as U+XXXX.
 - **Custom emoji never reached Frequently used.** A custom pick was inserted but not recorded, so the section
   held Unicode emoji only. Custom picks, from the grid or from autocomplete, are now remembered beside the
   others (keyed `custom:<name>`, so they cannot collide with a hexcode) and drop out when the payload no
