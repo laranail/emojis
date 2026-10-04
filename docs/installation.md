@@ -32,7 +32,7 @@ two it depends on to your root `composer.json`:
 Then:
 
 ```bash
-composer require laranail/emojis:^0.6
+composer require laranail/emojis:^0.7
 ```
 
 ## Laravel
