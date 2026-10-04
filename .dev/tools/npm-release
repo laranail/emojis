@@ -55,18 +55,30 @@ check_shape() {
 }
 
 # Asks the registry who the token belongs to. The header goes through stdin so the token never appears in ps.
-whoami_token() {
-  local body
-  body=$(printf 'Authorization: Bearer %s\n' "$1" | curl -sS -H @- "$REGISTRY/-/whoami") || die "could not reach $REGISTRY" 3
-  printf '%s' "$body" | sed -n 's/.*"username" *: *"\([^"]*\)".*/\1/p'
+# npm's answer is reported as it came: its status and its own message, which never contain the token. Only a
+# 401 is a refusal; granular tokens may be denied this lookup and still publish, so anything else continues
+# and the publish is the real test.
+verify_token() {
+  local response code body user message
+  response=$(printf 'Authorization: Bearer %s\n' "$1" | curl -sS -H @- -w '\n%{http_code}' "$REGISTRY/-/whoami") \
+    || die "could not reach $REGISTRY" 3
+  code=${response##*$'\n'}
+  body=${response%$'\n'*}
+  user=$(printf '%s' "$body" | jq -r '.username // empty' 2>/dev/null || true)
+  message=$(printf '%s' "$body" | jq -r '.error // .message // empty' 2>/dev/null || true)
+  if [ "$code" = 200 ] && [ -n "$user" ]; then
+    say "token accepted by npm as: $user"
+  elif [ "$code" = 401 ]; then
+    die "npm answered HTTP 401${message:+ ($message)}: it does not accept this token. It is mistyped, revoked or expired; the secret was not changed" 2
+  else
+    say "npm answered HTTP $code to who-am-I${message:+ ($message)}; some granular tokens cannot ask that, so continuing and letting the publish decide"
+  fi
 }
 
 if $validate_only; then
   token=$(read_token | tr -d '\r' | sed -e 's/^[[:space:]]*//' -e 's/[[:space:]]*$//')
   check_shape "$token"
-  user=$(whoami_token "$token")
-  [ -n "$user" ] || die "npm refused the token (expired, revoked, or not a publish token)" 2
-  say "token accepted by npm as: $user"
+  verify_token "$token"
   exit 0
 fi
 
@@ -95,9 +107,7 @@ say "npm has: ${highest:-nothing}; to publish: ${tags[*]:-nothing}"
 if ! $keep_token; then
   token=$(read_token | tr -d '\r' | sed -e 's/^[[:space:]]*//' -e 's/[[:space:]]*$//')
   check_shape "$token"
-  user=$(whoami_token "$token")
-  [ -n "$user" ] || die "npm refused the token (expired, revoked, or not a publish token); the secret was not changed" 2
-  say "token accepted by npm as: $user"
+  verify_token "$token"
   if $dry_run; then
     say "dry run: would set NPM_TOKEN on $REPO"
   else

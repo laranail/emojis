@@ -424,7 +424,8 @@ then run it from a checkout, signed in to `gh` as a maintainer:
 ```
 
 It refuses anything that is not token-shaped before it reaches GitHub, reporting only its length and line
-count, and asks npm who the token belongs to before setting the secret. Then it confirms GitHub recorded a
+count, and asks npm who the token belongs to before setting the secret: a 401 stops it with npm's own message, any
+other answer is reported and the publish decides. Then it confirms GitHub recorded a
 new secret, starts one publish per version, waits for each run, and checks the version is on the registry
 before starting the next. `--dry-run` checks everything and changes nothing, `--keep-token` uses the secret
 already set, naming tags (`v0.6.0 v0.7.0`) publishes only those, and `pbpaste | .dev/tools/npm-release
