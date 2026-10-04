@@ -18,6 +18,9 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/),
   OIDC exchange first whenever the job can mint a token. The token branch now publishes without the OIDC
   variables, and without provenance, which needs them, until npm fixes #9969. The token check also reports
   npm's own error and the token's prefix and length (never its value) instead of stopping the job.
+- **The README did not say how to install the JavaScript picker.** Its Install section now covers
+  `@laranail/emojis-picker` from GitHub Packages: the `.npmrc` scope line, the `read:packages` token it needs,
+  and that Blade and Livewire need none of it. `DocumentationTest` holds the npm install line to the release line.
 - **Publishing could not proceed while npm refused every token.** `npm-publish.yml` takes a `registry` input
   and publishes to GitHub Packages (`npm.pkg.github.com`) with the run's own `GITHUB_TOKEN`. `.dev/tools/npm-release`
   tries npm first and, when npm will not take a token or refuses a version, publishes that version and every later

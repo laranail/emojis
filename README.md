@@ -22,6 +22,23 @@ Add the laranail VCS repositories to your root `composer.json` (see
 composer require laranail/emojis:^0.7
 ```
 
+Blade and Livewire need nothing else: the built picker ships inside the Composer package. For the picker in
+your own JavaScript build, `@laranail/emojis-picker` (the vanilla picker and its React adapter) is published to
+GitHub Packages while npm publishing is blocked
+([npm/cli#9969](https://github.com/npm/cli/issues/9969)). GitHub Packages asks for a token even for a public
+package, so add a GitHub token with `read:packages` to the project's `.npmrc`:
+
+```ini
+@laranail:registry=https://npm.pkg.github.com
+//npm.pkg.github.com/:_authToken=${GITHUB_TOKEN}
+```
+
+```bash
+npm install @laranail/emojis-picker@^0.7
+```
+
+See [the picker's React and npm notes](docs/tools/picker.md#react).
+
 ## Quick start guide and usage
 
 ### Getting started
