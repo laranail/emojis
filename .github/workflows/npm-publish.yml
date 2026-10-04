@@ -122,7 +122,13 @@ jobs:
           NPM_TOKEN: ${{ secrets.NPM_TOKEN }}
         run: |
           if [ -n "$NPM_TOKEN" ]; then
-            NODE_AUTH_TOKEN="$NPM_TOKEN" npm publish --provenance --access public
+            # npm tries trusted publishing first whenever the job can mint an OIDC token, even with a token
+            # configured, and this repository's immutable OIDC subject makes that exchange end in a 403
+            # (npm/cli#9969). Hide the OIDC request variables from npm so the token is what authenticates.
+            # Provenance is signed with that same OIDC identity, so it goes too: package.json asks for it,
+            # hence the explicit --provenance=false. Restore both once npm fixes #9969 and the secret is gone.
+            env -u ACTIONS_ID_TOKEN_REQUEST_URL -u ACTIONS_ID_TOKEN_REQUEST_TOKEN \
+              NODE_AUTH_TOKEN="$NPM_TOKEN" npm publish --provenance=false --access public
           else
             npm publish --provenance --access public
           fi
