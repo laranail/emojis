@@ -241,3 +241,13 @@ it('gives the Livewire textarea a name and an accessible name, and locks the loc
 
     expect(fn () => Livewire::test(EmojiPicker::class, ['locale' => 'fr'])->set('locale', 'de'))->toThrow(Exception::class);
 });
+
+it('passes the popover options, and drops a placement the script would not know', function (): void {
+    $html = Blade::render('<x-laranail-emojis::picker placement="top-end" :offset="12" :arrow="false" :sheet-breakpoint="0" />');
+
+    expect($html)->toContain('data-laranail-emoji-placement="top-end"')
+        ->toContain('data-laranail-emoji-offset="12"')
+        ->toContain('data-laranail-emoji-arrow="false"')
+        ->toContain('data-laranail-emoji-sheet-breakpoint="0"')
+        ->and(Blade::render('<x-laranail-emojis::picker placement="sideways" />'))->not->toContain('data-laranail-emoji-placement');
+});

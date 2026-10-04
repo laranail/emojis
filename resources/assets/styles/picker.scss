@@ -4,8 +4,9 @@
  * Every class is .laranail-emoji-picker*, and every colour and size is a custom property, so
  * `--laranail-emoji-picker-bg: #111` on the picker or anything above it themes it without a rebuild. Light
  * and dark follow prefers-color-scheme, or a .dark / [data-theme] ancestor; forced-colors and reduced motion
- * are respected. Layout uses logical properties, so a
- * right-to-left page mirrors it. Below 480px wide it becomes a bottom sheet with 44px targets.
+ * are respected. The popover carries a caret, as Bootstrap 5's do, that turns with the side it opens on.
+ * Layout uses logical properties, so a
+ * right-to-left page mirrors it. On a phone (below 640px by default) it becomes a bottom sheet with 44px targets.
  */
 
 @use 'tokens' as t;
@@ -41,6 +42,9 @@ $sizes: (
   height: 22rem,
   z: 50,
   image-size: 1.5rem,
+  arrow-width: 1rem,
+  arrow-height: 0.5rem,
+  backdrop: rgb(0 0 0 / 0.4),
 );
 
 @mixin palette($colours) {
@@ -101,9 +105,13 @@ $sizes: (
 }
 
 .#{$picker}-panel {
-  position: absolute;
-  inset-block-start: calc(100% + 4px);
-  inset-inline-start: 0;
+  // Placed by the script (Popover), in the top layer where the browser has one, so no ancestor's overflow or
+  // stacking context can clip it; fixed in place where it has not. Author styles beat the [popover] UA sheet.
+  position: fixed;
+  inset: auto;
+  margin: 0;
+  overflow: visible;
+  color: inherit;
   z-index: var(--_lep-z);
   display: flex;
   flex-direction: column;
@@ -123,6 +131,143 @@ $sizes: (
   &[hidden] {
     display: none;
   }
+
+  &:focus-visible {
+    outline: 2px solid var(--_lep-focus);
+    outline-offset: 2px;
+  }
+
+  // Opens from the caret, so it grows out of the trigger.
+  &[data-placement] {
+    transform-origin: var(--_lep-origin, top center);
+    animation: #{$picker}-in 140ms cubic-bezier(0.2, 0.9, 0.3, 1.2);
+  }
+}
+
+@keyframes #{$picker}-in {
+  from {
+    opacity: 0;
+    transform: scale(0.96);
+  }
+}
+
+// The caret: two border triangles, as Bootstrap 5 draws its popover arrow. ::before is the outline in the
+// border colour, ::after the fill in the background colour, one border-width inside it. data-placement
+// carries the side the panel landed on, so a flip turns the caret with no script; the script only sets its
+// offset along the edge (left for top and bottom, top for start and end), pointing at the trigger.
+.#{$picker}-arrow {
+  position: absolute;
+  display: block;
+  inline-size: var(--_lep-arrow-width);
+  block-size: var(--_lep-arrow-height);
+  translate: -50% 0;
+  pointer-events: none;
+
+  &[hidden] {
+    display: none;
+  }
+
+  &::before,
+  &::after {
+    content: '';
+    position: absolute;
+    display: block;
+    border: 0 solid transparent;
+  }
+}
+
+.#{$picker}-panel[data-placement^='bottom'] > .#{$picker}-arrow {
+  inset-block-end: 100%;
+
+  &::before,
+  &::after {
+    border-width: 0 calc(var(--_lep-arrow-width) / 2) var(--_lep-arrow-height);
+  }
+
+  &::before {
+    inset-block-end: 0;
+    border-block-end-color: var(--_lep-border);
+  }
+
+  &::after {
+    inset-block-end: -1px;
+    border-block-end-color: var(--_lep-bg);
+  }
+}
+
+.#{$picker}-panel[data-placement^='top'] > .#{$picker}-arrow {
+  inset-block-start: 100%;
+
+  &::before,
+  &::after {
+    border-width: var(--_lep-arrow-height) calc(var(--_lep-arrow-width) / 2) 0;
+  }
+
+  &::before {
+    inset-block-start: 0;
+    border-block-start-color: var(--_lep-border);
+  }
+
+  &::after {
+    inset-block-start: -1px;
+    border-block-start-color: var(--_lep-bg);
+  }
+}
+
+// Start and end placements are physical once resolved (left, right), so the caret is too.
+.#{$picker}-panel:is([data-placement^='left'], [data-placement^='right']) > .#{$picker}-arrow {
+  inline-size: var(--_lep-arrow-height);
+  block-size: var(--_lep-arrow-width);
+  translate: 0 -50%;
+}
+
+.#{$picker}-panel[data-placement^='right'] > .#{$picker}-arrow {
+  left: auto;
+  right: 100%;
+
+  &::before,
+  &::after {
+    border-width: calc(var(--_lep-arrow-width) / 2) var(--_lep-arrow-height) calc(var(--_lep-arrow-width) / 2) 0;
+  }
+
+  &::before {
+    right: 0;
+    border-right-color: var(--_lep-border);
+  }
+
+  &::after {
+    right: -1px;
+    border-right-color: var(--_lep-bg);
+  }
+}
+
+.#{$picker}-panel[data-placement^='left'] > .#{$picker}-arrow {
+  left: 100%;
+
+  &::before,
+  &::after {
+    border-width: calc(var(--_lep-arrow-width) / 2) 0 calc(var(--_lep-arrow-width) / 2) var(--_lep-arrow-height);
+  }
+
+  &::before {
+    left: 0;
+    border-left-color: var(--_lep-border);
+  }
+
+  &::after {
+    left: -1px;
+    border-left-color: var(--_lep-bg);
+  }
+}
+
+// A trigger scrolled out of view takes its popover with it.
+.#{$picker}-panel[data-reference-hidden]:not([data-sheet]) {
+  visibility: hidden;
+}
+
+.#{$picker}-handle,
+.#{$picker}-backdrop {
+  display: none;
 }
 
 // The inline picker sits in the flow instead of floating, never wider than its container.
@@ -134,6 +279,7 @@ $sizes: (
     position: static;
     max-inline-size: 100%;
     box-shadow: none;
+    animation: none;
   }
 }
 
@@ -238,26 +384,97 @@ $sizes: (
   }
 }
 
-// Phones: a popover becomes a bottom sheet with 44px targets. An inline picker stays in the flow.
-@media (max-width: 480px) {
-  .#{$picker}:has(.#{$picker}-trigger) .#{$picker}-panel {
+// Phones: below the sheet breakpoint (640px by default; the script decides and sets data-sheet) the popover
+// is a bottom sheet over a backdrop, with a drag handle, 44px targets, the safe area kept clear and the
+// on-screen keyboard (--_lep-keyboard, from the visual viewport) never covering it. An inline picker stays
+// in the flow.
+.#{$picker}[data-sheet] {
+  // 44px targets where the width allows, unless the page set its own cell size.
+  --_lep-cell: var(--#{$picker}-cell, 2.75rem);
+
+  .#{$picker}-backdrop:not([hidden]) {
     position: fixed;
-    inset: auto 0 0;
-    inline-size: 100%;
-    max-inline-size: none;
-    block-size: min(60vh, 26rem);
-    border-radius: var(--_lep-radius) var(--_lep-radius) 0 0;
+    inset: 0;
+    z-index: var(--_lep-z);
+    display: block;
+    background: var(--_lep-backdrop);
+    animation: #{$picker}-fade 160ms ease-out;
   }
 
-  // 44px targets where the width allows, unless the page set its own cell size.
-  .#{$picker} {
-    --_lep-cell: var(--#{$picker}-cell, 2.75rem);
+  .#{$picker}-panel {
+    inset: auto 0 var(--_lep-keyboard, 0);
+    z-index: calc(var(--_lep-z) + 1);
+    inline-size: 100%;
+    max-inline-size: none;
+    block-size: min(55dvh, 28rem);
+    padding-block-end: calc(0.75rem + env(safe-area-inset-bottom, 0px));
+    border-radius: var(--_lep-radius) var(--_lep-radius) 0 0;
+    border-block-end: 0;
+    transform-origin: bottom center;
+    animation: #{$picker}-up 220ms cubic-bezier(0.2, 0.9, 0.3, 1);
+    transition: block-size 200ms ease, transform 120ms ease;
+    touch-action: manipulation;
+
+    &[data-expanded] {
+      block-size: calc(92dvh - var(--_lep-keyboard, 0px));
+    }
+  }
+
+  .#{$picker}-handle {
+    display: block;
+    align-self: center;
+    inline-size: 2.5rem;
+    block-size: 0.3rem;
+    margin-block: -0.25rem 0.25rem;
+    padding-block: 0.5rem;
+    background: var(--_lep-border);
+    background-clip: content-box;
+    border-radius: 999px;
+    cursor: grab;
+    touch-action: none;
+  }
+
+  // The category tabs scroll sideways instead of wrapping.
+  .#{$picker}-tabs {
+    overflow-x: auto;
+    scrollbar-width: none;
+    scroll-snap-type: x proximity;
+
+    > * {
+      flex: none;
+      scroll-snap-align: center;
+    }
+  }
+
+  .#{$picker}-tab,
+  .#{$picker}-tone {
+    inline-size: 2.75rem;
+    block-size: 2.75rem;
+  }
+}
+
+@keyframes #{$picker}-up {
+  from {
+    transform: translateY(100%);
+  }
+}
+
+@keyframes #{$picker}-fade {
+  from {
+    opacity: 0;
   }
 }
 
 @media (prefers-reduced-motion: reduce) {
   .#{$picker}-body {
     scroll-behavior: auto;
+  }
+
+  .#{$picker}-panel,
+  .#{$picker}-backdrop,
+  .#{$picker}[data-sheet] .#{$picker}-panel {
+    animation: none;
+    transition: none;
   }
 }
 

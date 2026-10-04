@@ -39,6 +39,10 @@ its own), or `link` to load the published files instead of inlining them
 | `user-key` | — | namespaces recents and tone in storage, for shared devices |
 | `max-version` | `auto` | hide emoji newer than this Emoji version; `auto` asks the browser, `''` shows all |
 | `trigger` | `🙂` | what the trigger button shows |
+| `placement` | `auto` | where the popover opens: `auto` (below, flipping above), `top`, `bottom`, `start`, `end`, each optionally `-start` or `-end` |
+| `:offset` | `8` | gap between the trigger and the popover, in px |
+| `:arrow` | `true` | draw the caret pointing at the trigger |
+| `:sheet-breakpoint` | `640` | at or below this viewport width the popover is a bottom sheet; `0` never |
 
 Any other attribute — `class`, `id`, `style`, `data-*` — is passed through to the mount point. Out-of-range
 values are corrected rather than passed on: a tone outside 0–5 is 0, fewer than one column is 8, and an
@@ -101,6 +105,38 @@ single glyph — a placeholder box, or a sequence drawn as its parts, does not c
 canvas, no colour emoji font, or a canvas that adds noise against fingerprinting), it hides nothing. Set
 `data-laranail-emoji-max-version` (or `maxVersion()` in JavaScript) to a version to cap it yourself, or to
 `''`/`null` to show everything.
+
+## The popover
+
+The popover opens in the browser's top layer (the `popover` attribute), so no `overflow: hidden` or
+`z-index` on an ancestor can clip or cover it. It is positioned against its trigger the way Popper and
+Floating UI position theirs: offset from the trigger, flipped to the other side when the preferred one is too
+small, shifted along the edge to stay on screen, capped to the height left, and kept there as the page
+scrolls or resizes. A trigger scrolled out of view takes the popover with it.
+
+Its caret is drawn the way Bootstrap 5 draws a popover arrow: two CSS triangles, the outline in the border
+colour and the fill in the background colour. The side the popover landed on is in `data-placement`
+(`bottom-start`, `top-start`, `right-center`, …), so a flip turns the caret with no script. The script only
+moves the caret along the edge so it points at the trigger's centre, and keeps it clear of the rounded
+corners. Size it with `--laranail-emoji-picker-arrow-width` and `-arrow-height`, or turn it off with
+`:arrow="false"`. The popover grows out of the caret as it opens, unless reduced motion is set.
+
+### On phones
+
+At or below `sheet-breakpoint` (640 px by default), the popover is a bottom sheet instead:
+
+- a backdrop that closes it when tapped, and the page behind it does not scroll;
+- a drag handle: drag down to dismiss, up to expand to nearly full height (focusing search expands it too);
+- 44 px targets, category tabs that scroll sideways, and a horizontal swipe across the emoji to move
+  between categories;
+- the safe area at the bottom kept clear, and the sheet lifted above the on-screen keyboard through the
+  visual viewport.
+
+Opening the sheet focuses the sheet, not the search field, so the keyboard does not cover half the emoji
+until the user asks for it.
+
+The positioning is exported as plain functions for other uses — `computePosition()` (pure, testable without
+a browser), `autoUpdate()` and the `Popover` controller both adapters use.
 
 ## Searching
 
@@ -188,7 +224,8 @@ export function Composer() {
 
 `<EmojiPicker>` takes the same options as the vanilla picker as props — `source`, `target` (a ref),
 `locale`, `tone`, `maxRecent`, `recentOrder`, `sort`, `categories`, `columns`, `maxVersion`, `inline`,
-`closeOnSelect`, `userKey`, `store`, `strings`, `searchDelay`, `trigger` — and `onSelect`. It renders the
+`closeOnSelect`, `userKey`, `store`, `strings`, `searchDelay`, `trigger`, `placement`, `offset`, `arrow`,
+`sheetBreakpoint` — and `onSelect`. It renders the
 same markup, classes and ARIA, so `picker.css` styles it and the keyboard behaviour is the same. The target
 may be a controlled `<textarea value={…} onChange={…}>`; the pick lands in its state. To draw your own UI, use
 the hook behind it:
@@ -231,7 +268,7 @@ with provenance on every release tag once npm publishing is switched on for the 
   pointer leaves.
 - `forced-colors` and `prefers-reduced-motion` are respected, and logical properties mirror the layout on
   right-to-left pages.
-- Below 480 px the popover becomes a bottom sheet with 44 px targets; an inline picker stays in the flow.
+- On phones the popover becomes a bottom sheet with 44 px targets; an inline picker stays in the flow.
 
 ## Security and privacy
 
@@ -274,6 +311,9 @@ them without declaring them, so they can be set on the picker, on its mount poin
 | `--laranail-emoji-picker-height` | `22rem` |
 | `--laranail-emoji-picker-z` | `50` |
 | `--laranail-emoji-picker-image-size` | `1.5rem` (custom emoji images) |
+| `--laranail-emoji-picker-arrow-width` | `1rem` |
+| `--laranail-emoji-picker-arrow-height` | `0.5rem` |
+| `--laranail-emoji-picker-backdrop` | `rgb(0 0 0 / 0.4)` (phone sheet) |
 
 Dark follows `prefers-color-scheme`, unless the page says otherwise: a `.dark` or `[data-theme="dark"]`
 ancestor turns it on (Tailwind's class strategy and most theme switchers), and `[data-theme="light"]` or

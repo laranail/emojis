@@ -30,6 +30,9 @@ use Simtabi\Laranail\Emojis\Laravel\View\PickerPayloads;
  */
 final class Picker extends Component
 {
+    /** Where the popover may open; anything else is left to the script's default ('auto'). */
+    private const array PLACEMENTS = ['auto', 'top', 'bottom', 'start', 'end', 'top-start', 'top-end', 'bottom-start', 'bottom-end', 'start-start', 'start-end', 'end-start', 'end-end'];
+
     /** @param list<string> $categories */
     public function __construct(
         private readonly Emojis $emojis,
@@ -48,6 +51,10 @@ final class Picker extends Component
         public ?string $userKey = null,
         public ?string $maxVersion = null,
         public ?string $trigger = null,
+        public ?string $placement = null,
+        public ?int $offset = null,
+        public bool $arrow = true,
+        public ?int $sheetBreakpoint = null,
     ) {}
 
     /**
@@ -84,19 +91,23 @@ final class Picker extends Component
             'wire:ignore' => '',
             ...$this->dataAttributes($source),
             ...$this->dataAttributes([
-                'target'          => $this->target,
-                'locale'          => $resolved,
-                'categories'      => $this->categories === [] ? null : implode(',', $this->categories),
-                'max-recent'      => $this->maxRecent === null ? null : max(0, $this->maxRecent),
-                'sort'            => in_array($this->sort, ['name', 'newest'], true) ? $this->sort : null,
-                'recent-order'    => $this->recentOrder === 'frequent' ? 'frequent' : null,
-                'tone'            => $this->tone === null ? null : ($this->tone >= 0 && $this->tone <= 5 ? $this->tone : 0),
-                'columns'         => $this->columns === null ? null : ($this->columns >= 1 ? min($this->columns, 24) : 8),
-                'close-on-select' => $this->closeOnSelect ? null : 'false',
-                'user-key'        => $this->userKey,
-                'max-version'     => $this->maxVersion,
-                'trigger'         => $this->trigger,
-                'strings'         => json_encode($this->payloads->strings($resolved), JSON_UNESCAPED_UNICODE | JSON_THROW_ON_ERROR),
+                'target'           => $this->target,
+                'locale'           => $resolved,
+                'categories'       => $this->categories === [] ? null : implode(',', $this->categories),
+                'max-recent'       => $this->maxRecent === null ? null : max(0, $this->maxRecent),
+                'sort'             => in_array($this->sort, ['name', 'newest'], true) ? $this->sort : null,
+                'recent-order'     => $this->recentOrder === 'frequent' ? 'frequent' : null,
+                'tone'             => $this->tone === null ? null : ($this->tone >= 0 && $this->tone <= 5 ? $this->tone : 0),
+                'columns'          => $this->columns === null ? null : ($this->columns >= 1 ? min($this->columns, 24) : 8),
+                'close-on-select'  => $this->closeOnSelect ? null : 'false',
+                'user-key'         => $this->userKey,
+                'max-version'      => $this->maxVersion,
+                'trigger'          => $this->trigger,
+                'placement'        => in_array($this->placement, self::PLACEMENTS, true) ? $this->placement : null,
+                'offset'           => $this->offset,
+                'arrow'            => $this->arrow ? null : 'false',
+                'sheet-breakpoint' => $this->sheetBreakpoint === null ? null : max(0, $this->sheetBreakpoint),
+                'strings'          => json_encode($this->payloads->strings($resolved), JSON_UNESCAPED_UNICODE | JSON_THROW_ON_ERROR),
             ]),
             ...($this->inline ? ['data-laranail-emoji-inline' => ''] : []),
         ];
