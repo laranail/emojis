@@ -194,7 +194,11 @@ export interface PickerOptions {
     features?: Partial<PickerFeatures>;
     /** 'auto' (default): the device's emoji, images for what it cannot draw; 'native': its own only; 'image': all images. */
     render?: RenderMode;
+    /** 'auto' (default) follows the OS or the page's theme; 'light' or 'dark' fixes it. */
+    theme?: PickerTheme;
 }
+/** The picker's colour scheme: the OS's or the page's, or fixed. */
+export type PickerTheme = 'auto' | 'light' | 'dark';
 export interface PickerEvents {
     select: SelectDetail;
     ready: {
@@ -441,9 +445,16 @@ export declare class ApiSource implements PickerSource {
 /** A payload already in hand: an object, or the id of a <script type="application/json"> holding one. */
 export declare class StaticSource implements PickerSource {
     private readonly payload;
+    /**
+     * Each data block parsed once, however many pickers read it: ten pickers on a page share one ~400 KB
+     * JSON.parse. Keyed by the element, so a block a morph replaces is read afresh.
+     */
+    private static parsed;
     constructor(payload: PickerPayload | string);
     load(): Promise<PickerPayload>;
 }
+/** How many cells a grid draws before the browser first paints; the rest follow in idle time. */
+export declare const FIRST_PAINT_CELLS = 200;
 /** A store that forgets on reload. */
 export declare function memoryStore(): PickerStore;
 /**
@@ -631,6 +642,12 @@ export declare class Picker {
     private support;
     private closeToneMenu;
     private switcher;
+    /** A popover's grid is built the first time it opens, not on page load. */
+    private pendingRender;
+    /** The sections still to draw in idle time, and which render they belong to. */
+    private rest;
+    private bodyToken;
+    private finishBody;
     private readonly imageFailed;
     private stopSpy;
     constructor(element: HTMLElement, options?: PickerOptions);
@@ -643,6 +660,9 @@ export declare class Picker {
     /** Hide emoji newer than this Emoji version: 'auto' (default) asks the browser, null shows everything. */
     maxVersion(version: string | null): this;
     closeOnSelect(close?: boolean): this;
+    /** Fixes the colour scheme ('light', 'dark'), or follows the OS and the page again ('auto'). */
+    theme(theme: PickerTheme): this;
+    private applyTheme;
     inline(inline?: boolean): this;
     target(target: string | Insertable | null): this;
     history({ max, store, order }?: {
@@ -674,6 +694,8 @@ export declare class Picker {
     private capped;
     private reload;
     private refresh;
+    /** Draws now when the picker is visible; a closed popover is drawn when it next opens. */
+    private renderWhenShown;
     /** Redraws Frequently used after picks made while the panel was open, now that nothing is under the pointer. */
     private refreshRecents;
     private listen;
@@ -710,7 +732,15 @@ export declare class Picker {
     private renderTones;
     /** Applies a tone, updating the radios in place so the one the user is on keeps focus. */
     private setTone;
+    /**
+     * Draws the grid. A search draws its results (at most 200) at once. Browsing draws the first sections,
+     * about a screenful, before the browser paints, and the rest in idle time, so opening the picker does not
+     * wait for ~1,900 buttons; anything that needs a section not drawn yet (a tab, a key) finishes the job first.
+     */
     private renderBody;
+    /** Draws every section still waiting for idle time, now. */
+    flushBody(): void;
+    private buildSection;
     private cell;
     private textCell;
     private customCell;

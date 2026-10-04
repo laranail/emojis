@@ -65,6 +65,7 @@ export {
   type PickerFeatures,
   type PickerImageSet,
   type RenderMode,
+  type PickerTheme,
   type ToneMenuOptions,
   type PickerKind,
   type PickerText,

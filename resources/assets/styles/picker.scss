@@ -70,18 +70,57 @@ $sizes: (
   font: inherit;
 }
 
-// Dark follows the OS unless the page says otherwise: a .dark or [data-theme="dark"] ancestor (Tailwind's
-// class strategy and most theme switchers) turns it on, [data-theme="light"] keeps it off.
+// Light and dark, decided in this order, each later rule winning:
+//   1. the OS (prefers-color-scheme);
+//   2. the page's theme on any ancestor: .dark / .light (Tailwind's class strategy), [data-theme]
+//      (most theme switchers) or [data-bs-theme] (Bootstrap 5.3); light wins if both are set;
+//   3. the picker's own theme: the `theme` option, written on the picker or its mount point.
+// The ancestor rules use :where() so they never outrank the picker's own theme. color-scheme follows the
+// palette, so the browser's own parts — the search field's clear button, the set select, scrollbars — match.
+.#{$picker} {
+  color-scheme: light;
+}
+
+@mixin dark {
+  @include palette($dark);
+
+  color-scheme: dark;
+}
+
+@mixin light {
+  @include palette($light);
+
+  color-scheme: light;
+}
+
 @media (prefers-color-scheme: dark) {
-  .#{$picker}:not([data-theme='light'], [data-theme='light'] *, .light *) {
-    @include palette($dark);
+  .#{$picker}:where(:not(.light *, [data-theme='light'] *, [data-bs-theme='light'] *, [data-theme='light'])) {
+    @include dark;
   }
 }
 
-.dark .#{$picker},
-[data-theme='dark'] .#{$picker},
-.#{$picker}[data-theme='dark'] {
-  @include palette($dark);
+:where(.dark, [data-theme='dark'], [data-bs-theme='dark']) .#{$picker} {
+  @include dark;
+}
+
+:where(.light, [data-theme='light'], [data-bs-theme='light']) .#{$picker} {
+  @include light;
+}
+
+.#{$picker}[data-theme='dark'],
+[data-laranail-emoji-picker][data-theme='dark'] > .#{$picker} {
+  @include dark;
+}
+
+.#{$picker}[data-theme='light'],
+[data-laranail-emoji-picker][data-theme='light'] > .#{$picker} {
+  @include light;
+}
+
+// Scrollbars in the palette's colours, thin, so the grid does not lose a column's width to them.
+.#{$picker}-body {
+  scrollbar-color: var(--_lep-border) transparent;
+  scrollbar-width: thin;
 }
 
 .#{$picker}-trigger,
