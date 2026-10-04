@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace Simtabi\Laranail\Emojis\Laravel\Livewire;
 
 use Livewire\Component;
+use Livewire\Attributes\Locked;
 use Livewire\Attributes\Modelable;
 
 /**
@@ -24,17 +25,25 @@ final class EmojiPicker extends Component
     #[Modelable]
     public string $value = '';
 
+    /** Locked: the picker inside is wire:ignore'd, so a locale changed from the browser would never show. */
+    #[Locked]
     public ?string $locale = null;
 
     public string $placeholder = '';
 
     public int $rows = 3;
 
+    /** The textarea's name, for a form that also posts without Livewire. */
+    public ?string $name = null;
+
+    /** The textarea's accessible name, when no <label> points at it. Defaults to the placeholder. */
+    public ?string $label = null;
+
     public function render(): string
     {
         return <<<'BLADE'
             <div class="laranail-emoji-picker-field">
-                <textarea id="{{ $this->getId() }}-input" wire:model="value" rows="{{ $rows }}" placeholder="{{ $placeholder }}"></textarea>
+                <textarea id="{{ $this->getId() }}-input" wire:model="value" rows="{{ $rows }}" placeholder="{{ $placeholder }}" @if ($name) name="{{ $name }}" @endif aria-label="{{ $label ?? ($placeholder !== '' ? $placeholder : __('laranail/emojis::picker.open')) }}"></textarea>
                 <div wire:ignore>
                     <x-laranail-emojis::picker :target="'[id=\'' . $this->getId() . '-input\']'" :locale="$locale" />
                 </div>

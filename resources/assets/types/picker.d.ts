@@ -32,6 +32,8 @@ export interface PickerEmoji {
     skin_versions?: string | Record<string, string>;
     /** False when the policy refuses the emoji itself but permits some of its toned forms. */
     base?: false;
+    /** Set on a Frequently used entry: the exact form that was picked, which the cell shows whatever the tone. */
+    pick?: string;
 }
 export interface PickerGroup {
     slug: string;
@@ -54,7 +56,8 @@ export interface PickerPayload {
     delimiters?: [string, string];
 }
 export interface PickerSource {
-    load(locale?: string | null): Promise<PickerPayload>;
+    /** `signal` aborts the load when the picker is destroyed first; sources may ignore it. */
+    load(locale?: string | null, signal?: AbortSignal): Promise<PickerPayload>;
 }
 export interface PickerStore {
     get(key: string): unknown;
@@ -78,6 +81,8 @@ export type RecentOrder = 'recent' | 'frequent';
 export interface PickerStrings {
     search: string;
     results: string;
+    /** The count when it is exactly one ("1 result"); `results` is used when absent. */
+    resultsOne?: string;
     noResults: string;
     recent: string;
     custom: string;
@@ -89,7 +94,8 @@ export interface PickerStrings {
 }
 export interface PickerOptions {
     source?: PickerSource;
-    target?: HTMLInputElement | HTMLTextAreaElement | null;
+    /** An input, a textarea, or a contenteditable element. */
+    target?: Insertable | null;
     locale?: string | null;
     tone?: number;
     maxRecent?: number;
@@ -104,6 +110,10 @@ export interface PickerOptions {
     userKey?: string;
     store?: PickerStore;
     strings?: Partial<PickerStrings>;
+    /** Milliseconds to wait after the last keystroke before searching (default 80). */
+    searchDelay?: number;
+    /** What the trigger button shows (default 🙂). */
+    trigger?: string;
 }
 export interface PickerEvents {
     select: SelectDetail;
@@ -142,8 +152,10 @@ export interface ParsedOptions {
     inline: boolean;
     userKey: string;
     strings: Partial<PickerStrings>;
+    trigger: string;
 }
-type Insertable = HTMLInputElement | HTMLTextAreaElement;
+/** Where a pick can be inserted: an input, a textarea, or a contenteditable element. */
+export type Insertable = HTMLInputElement | HTMLTextAreaElement | HTMLElement;
 declare const MOUNTED: unique symbol;
 type Mountable = HTMLElement & {
     [MOUNTED]?: Picker;
@@ -166,11 +178,22 @@ export declare function customCode(name: string, data?: Pick<PickerPayload, 'del
 /** Compares two dotted Emoji versions ("15.1" > "15.0"). */
 export declare function byVersion(a: string, b: string): number;
 /**
- * The newest Emoji version this browser draws, or null when it cannot tell (no canvas, as in tests and
- * old browsers): then nothing is hidden. An emoji the font lacks draws exactly like an unassigned code point
- * (the "tofu" box), and a sequence it lacks draws as its parts, wider than one emoji.
+ * The newest Emoji version this browser draws, or null when it cannot tell — no canvas (tests, old
+ * browsers), a canvas that adds noise against fingerprinting, or no colour emoji font at all — and then
+ * nothing is hidden.
+ *
+ * A sample counts as drawn when it comes out in colour and as one glyph. Comparing against a "tofu" box
+ * is not enough: macOS's LastResort font draws a different placeholder per Unicode block, so a missing
+ * emoji never matched the probe and everything read as supported. Colour sidesteps that: placeholders and
+ * fallback text are drawn in the fill colour (black), emoji fonts are not. A sequence the font lacks draws
+ * as its parts, wider than one emoji.
  */
 export declare function detectMaxVersion(doc?: Pick<Document, 'createElement'> | undefined): string | null;
+/**
+ * detectMaxVersion() once per page, after web fonts have loaded: a page whose emoji font is a web font
+ * (Noto Color Emoji from Google Fonts) would otherwise be measured before the font arrives.
+ */
+export declare function detectMaxVersionOnce(): Promise<string | null>;
 /**
  * The payload without emoji newer than `cap` ('auto' asks the browser; null or '' keeps everything). Toned
  * forms are capped on their own version, since they can be newer than their base (🤝 is 3.0, its tones
@@ -181,14 +204,27 @@ export declare function capPayload(data: PickerPayload, cap: string | null | und
  * Ranks emoji for a search term: exact name, name prefix, shortcode, keyword prefix, anywhere. Every word
  * of the term must match somewhere.
  */
-export declare function search(items: PickerEmoji[], term: string): PickerEmoji[];
+export declare function search(items: PickerEmoji[], term: string, limit?: number): PickerEmoji[];
+/** "No emoji found", "1 result", "12 results". */
+export declare function resultText(strings: Pick<PickerStrings, 'noResults' | 'results' | 'resultsOne'>, count: number): string;
+/** The custom emoji whose name or label matches every word of a term, name prefix first. */
+export declare function searchCustom(items: PickerCustom[], term: string): PickerCustom[];
+/** A tone from anywhere (an attribute, storage, a prop): 0–5, and 0 for anything else. */
+export declare function clampTone(value: unknown): number;
+/** A column count: a whole number from 1 to 24, else the fallback. */
+export declare function clampColumns(value: unknown, fallback?: number): number;
+/**
+ * Recents as read back from storage: only well-formed entries. A corrupt value or one an older or newer
+ * version wrote reads as no recents, instead of breaking the picker until storage is cleared.
+ */
+export declare function readRecent(value: unknown): RecentEntry[];
 /** Orders a list: "default" keeps CLDR order, "name" sorts by name, "newest" puts the latest Emoji version first. */
 export declare function sortItems(items: PickerEmoji[], mode: SortMode): PickerEmoji[];
 /**
  * Records a pick in the recent list: newest first, once per base emoji (a toned 👋🏽 replaces 👋), at most
  * `max` entries. Returns a new list.
  */
-export declare function recordRecent(list: RecentEntry[], base: string, hexcode: string, max: number, now?: number): RecentEntry[];
+export declare function recordRecent(stored: unknown, base: string, hexcode: string, max: number, now?: number): RecentEntry[];
 /** Orders recents: "recent" by time of last use, "frequent" by count then time. */
 export declare function orderRecent(list: RecentEntry[], mode: RecentOrder): RecentEntry[];
 /** Every emoji of the payload by its base hexcode. */
@@ -205,13 +241,34 @@ export declare function buildSections(data: PickerPayload, options?: {
     strings?: Partial<PickerStrings>;
 }): PickerSection[];
 /** The search results over a list of sections: the emoji of every non-custom group, ranked. */
-export declare function searchSections(sections: PickerSection[], term: string): PickerEmoji[];
+export declare function searchSections(sections: PickerSection[], term: string, limit?: number): PickerEmoji[];
+/** The most results a search draws; a one-letter term would otherwise draw nearly every emoji. */
+export declare const MAX_RESULTS = 200;
 /**
- * Inserts text into an input or textarea and dispatches `input`, so frameworks see it. At the caret when
- * `caretKnown` (the field has had focus); otherwise at the end, because a field nobody has focused reports
- * its caret at 0 and the text would land before what is already there.
+ * What a search shows: the ranked emoji, then the matching custom emoji, as sections. Shared by both
+ * pickers so a term finds the same things in each.
  */
-export declare function insertText(target: Insertable, text: string, caretKnown: boolean): void;
+export declare function searchResults(sections: PickerSection[], term: string, strings: Pick<PickerStrings, 'search' | 'custom'>, limit?: number): PickerSection[];
+/**
+ * The cell a grid key moves focus to, read from the rendered rows so both pickers share it: arrows keep
+ * the column across rows and sections (clamped to a shorter row), Left and Right swap under RTL,
+ * PageUp/PageDown jump a section, Home/End go to the first and last cell. 'search' means ArrowUp left the
+ * first row. null means the key is not a grid key, or there is nowhere to go.
+ */
+export declare function gridTarget(body: ParentNode, cell: Element, key: string, rtl?: boolean): HTMLElement | 'search' | null;
+/**
+ * The index a roving-tabindex key moves to in a row of tabs or radios: arrows wrap, Left and Right swap
+ * under RTL, Home and End go to the ends. null for any other key.
+ */
+export declare function rovingIndex(count: number, current: number, key: string, rtl?: boolean): number | null;
+/**
+ * Inserts text into an input, a textarea or a contenteditable element, and dispatches `input` and
+ * `change`, so frameworks see it (wire:model.change and x-model.lazy listen for change). In a field at the
+ * caret when `caretKnown` (the field has had focus); otherwise at the end, because a field nobody has
+ * focused reports its caret at 0 and the text would land before what is already there. Returns false, and
+ * changes nothing, when the text would take the field past its maxlength.
+ */
+export declare function insertText(target: Insertable, text: string, caretKnown: boolean): boolean;
 /** Reads every data-laranail-emoji-* option on an element, typed. Unknown attributes are ignored. */
 export declare function parseOptions(element: Element): ParsedOptions;
 /** Loads the payload from the package's API (`…/api/v1`) or straight from a `…/picker` URL. */
@@ -219,7 +276,15 @@ export declare class ApiSource implements PickerSource {
     private readonly init;
     readonly url: string;
     constructor(url: string, init?: RequestInit);
-    load(locale?: string | null): Promise<PickerPayload>;
+    /**
+     * One request per URL and locale for every picker on the page: a thread with a reply picker per message
+     * fetches the payload once instead of once each (and does not spend the API's rate limit doing it).
+     */
+    private static inflight;
+    load(locale?: string | null, signal?: AbortSignal): Promise<PickerPayload>;
+    /** Forgets every shared request, so the next load fetches again (after a locale's data changed, or in tests). */
+    static clear(): void;
+    private fetch;
 }
 /** A payload already in hand: an object, or the id of a <script type="application/json"> holding one. */
 export declare class StaticSource implements PickerSource {
@@ -236,7 +301,10 @@ export declare function memoryStore(): PickerStore;
 export declare function localStorageStore(namespace?: string): PickerStore;
 type ResolvedOptions = Required<Omit<PickerOptions, 'source' | 'target' | 'store'>> & Pick<PickerOptions, 'source' | 'target' | 'store'>;
 export declare class Picker {
-    /** Starts a picker on an element; chain the options, then mount(). */
+    /**
+     * Starts a picker on an element; chain the options, then mount(). An element that already has a live
+     * picker (auto-initialised, say) returns that picker, so its handlers and methods reach the one on screen.
+     */
     static create(element: HTMLElement, options?: PickerOptions): Picker;
     readonly element: Mountable;
     options: ResolvedOptions;
@@ -253,8 +321,15 @@ export declare class Picker {
     private status;
     private handlers;
     private cleanup;
+    private targetCleanup;
     private caretKnown;
     private byHex;
+    private memo;
+    private recentStale;
+    private activeTab;
+    private loads;
+    private abort;
+    private searchTimer;
     constructor(element: HTMLElement, options?: PickerOptions);
     source(source: PickerSource): this;
     locale(locale: string | null): this;
@@ -281,21 +356,38 @@ export declare class Picker {
     isAttached(): boolean;
     destroy(): void;
     open(): void;
-    close(): void;
+    /**
+     * Closes the popover. Focus goes back to the trigger by default; `'target'` sends it to the field a pick
+     * was inserted into, so typing carries on; `'none'` leaves it where it went (an outside click).
+     */
+    close(focus?: 'trigger' | 'target' | 'none'): void;
     focusCell(cell: HTMLElement | null | undefined): void;
+    private load;
+    private reload;
+    private refresh;
+    /** Redraws Frequently used after picks made while the panel was open, now that nothing is under the pointer. */
+    private refreshRecents;
     private listen;
     private emit;
     /**
      * A field nobody has focused reports its caret at 0, so the first pick would land before text already in
-     * it. The caret is trusted once the field has had focus; until then, picks append.
+     * it. The caret is trusted once the field has had focus; until then, picks append. Re-targeting drops the
+     * previous field's listener.
      */
     private watchTarget;
+    private get rtl();
     private buildShell;
+    private scheduleSearch;
     private render;
     private sections;
     private index;
+    private sectionId;
     private renderTabs;
+    /** Clears any search, marks the tab, and scrolls the body — never the page — to a section. */
+    private showSection;
     private renderTones;
+    /** Applies a tone, updating the radios in place so the one the user is on keeps focus. */
+    private setTone;
     private renderBody;
     private cell;
     private customCell;

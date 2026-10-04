@@ -18,7 +18,7 @@ function Form(props: { onSelect?: (d: unknown) => void; inline?: boolean; store?
   return (
     <>
       <textarea aria-label="message" ref={ref} defaultValue={props.initial ?? ''} />
-      <EmojiPicker source={source} target={ref} inline={props.inline ?? true} store={props.store ?? memoryStore()} maxVersion={props.maxVersion ?? null} columns={props.columns ?? 8} onSelect={props.onSelect} />
+      <EmojiPicker source={source} target={ref} inline={props.inline ?? true} store={props.store ?? memoryStore()} maxVersion={props.maxVersion ?? null} columns={props.columns ?? 8} onSelect={props.onSelect} searchDelay={0} />
     </>
   );
 }
@@ -89,7 +89,7 @@ describe('EmojiPicker (React)', () => {
 
     fireEvent.change(screen.getByRole('searchbox'), { target: { value: 'fusee' } });
     expect(cells().map((c) => c.textContent)).toEqual(['🚀']);
-    expect(screen.getByRole('status').textContent).toBe('1 results');
+    expect(screen.getByRole('status').textContent).toBe('1 result');
     expect(screen.getAllByRole('tab').length).toBeGreaterThan(0);
 
     fireEvent.change(screen.getByRole('searchbox'), { target: { value: 'zzz' } });
@@ -112,6 +112,10 @@ describe('EmojiPicker (React)', () => {
     await ready();
 
     fireEvent.click(screen.getByLabelText('fusée'));
+    // Not under the pointer: the grid stays put until the pointer leaves the picker.
+    expect(document.querySelector('section')?.getAttribute('data-laranail-emoji-section')).not.toBe('recent');
+
+    fireEvent.pointerLeave(document.querySelector('.laranail-emoji-picker')!);
     await waitFor(() => expect(document.querySelector('section')?.getAttribute('data-laranail-emoji-section')).toBe('recent'));
   });
 
@@ -123,8 +127,12 @@ describe('EmojiPicker (React)', () => {
     act(() => cells()[0].focus());
     fireEvent.keyDown(cells()[0], { key: 'ArrowRight' });
     expect(document.activeElement).toBe(cells()[1]);
+    // A partial last row (😀 😂 / 🫠): ArrowDown keeps to the column instead of skipping into the next section.
     fireEvent.keyDown(cells()[1], { key: 'ArrowDown' });
+    expect(document.activeElement).toBe(cells()[2]);
+    fireEvent.keyDown(cells()[2], { key: 'ArrowDown' });
     expect(document.activeElement).toBe(cells()[3]);
+    expect(cells().filter((c) => c.tabIndex === 0)).toEqual([cells()[3]]);
     fireEvent.keyDown(cells()[3], { key: 'End' });
     expect(document.activeElement).toBe(cells().at(-1));
     fireEvent.keyDown(cells().at(-1)!, { key: 'Home' });
@@ -171,7 +179,88 @@ describe('EmojiPicker (React)', () => {
   });
 });
 
+describe('EmojiPicker (React) parity with the vanilla picker', () => {
+  beforeEach(() => localStorage.clear());
+  afterEach(cleanup);
+
+  it('closes on an outside click and sends focus to the field after a pick', async () => {
+    render(<Form inline={false} />);
+    fireEvent.click(screen.getByRole('button', { name: 'Choose an emoji' }));
+    await ready();
+
+    fireEvent.click(cells()[0]);
+    expect(document.activeElement).toBe(screen.getByLabelText('message'));
+    expect(screen.getByRole('dialog', { hidden: true }).hidden).toBe(true);
+
+    fireEvent.click(screen.getByRole('button', { name: 'Choose an emoji' }));
+    fireEvent.pointerDown(document.body);
+    expect(screen.getByRole('dialog', { hidden: true }).hidden).toBe(true);
+  });
+
+  it('lets Escape through when inline, and names the inline picker a group', async () => {
+    render(<Form />);
+    await ready();
+
+    expect(screen.getByRole('group')).toBeTruthy();
+    const event = new KeyboardEvent('keydown', { key: 'Escape', bubbles: true, cancelable: true });
+    cells()[0].dispatchEvent(event);
+    expect(event.defaultPrevented).toBe(false);
+  });
+
+  it('marks the selected tab and roves tabs and tones with the arrow keys', async () => {
+    render(<Form />);
+    await ready();
+    const tabs = () => screen.getAllByRole('tab');
+    const radios = () => screen.getAllByRole('radio');
+
+    expect(tabs().map((t) => t.getAttribute('aria-selected'))).toEqual(['true', 'false', 'false', 'false']);
+    act(() => tabs()[0].focus());
+    fireEvent.keyDown(tabs()[0], { key: 'ArrowRight' });
+    expect(document.activeElement).toBe(tabs()[1]);
+    expect(tabs()[1].getAttribute('aria-selected')).toBe('true');
+
+    act(() => radios()[0].focus());
+    fireEvent.keyDown(radios()[0], { key: 'ArrowRight' });
+    expect(radios()[1].getAttribute('aria-checked')).toBe('true');
+    expect(document.activeElement).toBe(radios()[1]);
+  });
+
+  it('reads the stored tone again when userKey changes, so one user never sees the last one\'s', async () => {
+    localStorage.setItem('laranail-emoji:ann:tone', '3');
+    const source = new StaticSource(payload());
+    const { rerender } = render(<EmojiPicker source={source} inline userKey="ann" maxVersion={null} />);
+    await ready();
+    await waitFor(() => expect(screen.getAllByRole('radio')[3].getAttribute('aria-checked')).toBe('true'));
+
+    rerender(<EmojiPicker source={source} inline userKey="bob" maxVersion={null} />);
+    await waitFor(() => expect(screen.getAllByRole('radio')[0].getAttribute('aria-checked')).toBe('true'));
+  });
+
+  it('renders on the server without touching storage', async () => {
+    const { renderToString } = await import('react-dom/server');
+    const spy = vi.spyOn(Storage.prototype, 'getItem');
+
+    const html = renderToString(<EmojiPicker source={new StaticSource(payload())} inline />);
+
+    expect(html).toContain('laranail-emoji-picker');
+    expect(spy).not.toHaveBeenCalled();
+    spy.mockRestore();
+  });
+
+  it('marks its bundle for the client', () => {
+    expect(readFileSync(resolve(root, 'dist/react/index.js'), 'utf8')).toMatch(/^["']use client["'];/);
+  });
+});
+
 describe('the React build', () => {
+  it('writes relative imports with .js, so its declarations resolve under moduleResolution node16/nodenext', () => {
+    const files = ['index.ts', 'EmojiPicker.tsx', 'useEmojiPicker.ts'];
+    const specifiers = files.flatMap((file) => [...readFileSync(resolve(root, 'resources/assets/react', file), 'utf8').matchAll(/from '(\.{1,2}\/[^']+)'/g)].map((m) => m[1]));
+
+    expect(specifiers.length).toBeGreaterThanOrEqual(4);
+    expect(specifiers.filter((spec) => !spec.endsWith('.js'))).toEqual([]);
+  });
+
   it('keeps React external and compiles out the vanilla auto-init', () => {
     const built = readFileSync(resolve(root, 'dist/react/index.js'), 'utf8');
 

@@ -30,7 +30,11 @@ final readonly class PayloadBuilder
 {
     public function __construct(private Emojis $emojis) {}
 
-    public function build(?string $locale = null): PickerPayload
+    /**
+     * @param array<string, string> $groupLabels group slug => label in the payload's locale; a group without
+     *                                           one keeps its English CLDR name (the Core has no translator)
+     */
+    public function build(?string $locale = null, array $groupLabels = []): PickerPayload
     {
         $policy = $this->emojis->options()->policy;
         $query = $this->emojis->query();
@@ -45,7 +49,7 @@ final readonly class PayloadBuilder
                 continue;
             }
 
-            $groups[$emoji->group->value] ??= ['slug' => $emoji->group->value, 'label' => $emoji->group->label(), 'emoji' => []];
+            $groups[$emoji->group->value] ??= ['slug' => $emoji->group->value, 'label' => $groupLabels[$emoji->group->value] ?? $emoji->group->label(), 'emoji' => []];
             $groups[$emoji->group->value]['emoji'][] = $this->entry($emoji, $locale, $skins, $base);
         }
 

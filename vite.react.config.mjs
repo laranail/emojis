@@ -24,6 +24,8 @@ export default defineConfig({
     },
     rollupOptions: {
       external: ['react', 'react/jsx-runtime', 'react-dom'],
+      // The component holds state and touches the DOM: Next.js's App Router must load it on the client.
+      output: { banner: "'use client';" },
     },
   },
 });

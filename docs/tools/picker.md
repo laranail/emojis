@@ -26,8 +26,8 @@ its own), or `link` to load the published files instead of inlining them
 
 | Attribute | Default | Effect |
 |---|---|---|
-| `target` | — | CSS selector of the input or textarea to insert into |
-| `locale` | application locale | names, keywords and search language |
+| `target` | — | CSS selector of the input, textarea or contenteditable element to insert into |
+| `locale` | `locale.default`, else the application locale | names, keywords, group names, interface strings and search language |
 | `inline` | `false` | always open, in the flow, instead of a button and popover |
 | `:categories` | all | tabs to show, by slug: `recent`, `smileys_and_emotion`, …, `flags`, `custom` |
 | `:max-recent` | `36` | how many recently used emoji to keep |
@@ -37,10 +37,20 @@ its own), or `link` to load the published files instead of inlining them
 | `:columns` | `8` | grid columns; arrow keys move by this |
 | `:close-on-select` | `true` | close the popover after a pick |
 | `user-key` | — | namespaces recents and tone in storage, for shared devices |
+| `max-version` | `auto` | hide emoji newer than this Emoji version; `auto` asks the browser, `''` shows all |
+| `trigger` | `🙂` | what the trigger button shows |
 
-Picking inserts at the caret — or at the end of a field nobody has focused yet — and dispatches `input`, so
-`wire:model`, Alpine and every framework see the change. It also dispatches a bubbling
-`laranail-emoji:select` event:
+Any other attribute — `class`, `id`, `style`, `data-*` — is passed through to the mount point. Out-of-range
+values are corrected rather than passed on: a tone outside 0–5 is 0, fewer than one column is 8, and an
+unknown `sort` or `recent-order` is the default.
+
+Picking inserts at the caret — or at the end of a field nobody has focused yet — then sends focus back to
+the field so typing carries on. It dispatches `input` and `change`, so `wire:model`, `wire:model.change`,
+`x-model.lazy`, React's controlled inputs and every other framework see it, and it never takes a field past
+its `maxlength`. A contenteditable target (Trix, TipTap) gets the text at its selection, through the editor's
+own undo history.
+
+Each pick also dispatches a bubbling `laranail-emoji:select` event, after the text is inserted:
 
 ```js
 document.addEventListener('laranail-emoji:select', (event) => {
@@ -51,8 +61,23 @@ document.addEventListener('laranail-emoji:select', (event) => {
 ### Where the emoji come from
 
 With the [HTTP API](api.md) enabled, the picker fetches `/picker`, which is cacheable and keeps the page
-small. Otherwise the payload (about 400 KB, less compressed) is embedded once per locale per request as a
-`<script type="application/json">` data block, escaped so nothing in it can close the element. Either way
+small. The URL is relative, so it is fetched from whichever host serves the page, and every picker on the page
+shares one request per locale. Otherwise the payload (about 400 KB, less compressed) is embedded once per
+locale per request as a `<script type="application/json">` data block, escaped so nothing in it can close the
+element.
+
+Embedding once per request assumes the first picker's markup reaches the page. A picker inside a cached
+fragment, or one that first appears in a Livewire update, may be the first and still not be on the page. Put
+the block in the layout instead, where it always arrives, and every picker finds it:
+
+```blade
+<x-laranail-emojis::picker-data />            {{-- the request's locale --}}
+<x-laranail-emojis::picker-data locale="fr" />
+```
+
+The payload is built once and cached (the application's default cache store), under a key that changes with
+everything it depends on — the dataset, the policy, the shortcode settings, the custom emoji and the group
+names — so a configuration change never serves a stale one. Either way
 `Core\Picker\PayloadBuilder` decides what is offered: the emoji [policy](security.md#emoji-policy-opt-in)
 applies, `policy.max_version` caps the version, and custom emoji appear in a Custom tab unless
 `allow_custom` is off.
@@ -70,19 +95,30 @@ than its emoji (🤝 is Emoji 3.0, its toned forms 14.0) and can be denied or al
 Custom emoji are inserted between the configured `shortcodes.delimiters`, which the payload carries as
 `delimiters`, so the text reads back through the scanner.
 
-The picker also hides emoji newer than the browser can draw: it renders one sample per Emoji version on a
-canvas and drops anything newer than the newest that is not an empty box. Set
+The picker also hides emoji newer than the browser can draw. Once web fonts have loaded, it draws one sample
+per Emoji version on a canvas and keeps everything up to the newest one that comes out in colour and as a
+single glyph — a placeholder box, or a sequence drawn as its parts, does not count. When it cannot tell (no
+canvas, no colour emoji font, or a canvas that adds noise against fingerprinting), it hides nothing. Set
 `data-laranail-emoji-max-version` (or `maxVersion()` in JavaScript) to a version to cap it yourself, or to
 `''`/`null` to show everything.
+
+## Searching
+
+The search matches names, shortcodes and keywords in the picker's locale, every word required, best match
+first. `:smile`, `:smile:` and `smile` are the same search; a pasted emoji finds itself, toned or not; custom
+emoji match by name and label. It waits for a pause in typing (80 ms, `searchDelay`) and draws at most 200
+results.
 
 ## Livewire
 
 ```blade
 <livewire:laranail-emojis.picker wire:model="body" />
-<livewire:laranail-emojis.picker wire:model="body" locale="fr" placeholder="Say something" :rows="4" />
+<livewire:laranail-emojis.picker wire:model="body" locale="fr" placeholder="Say something" :rows="4" name="body" label="Message" />
 ```
 
-A textarea with the picker beside it, bound to the parent's property. Registered only when
+A textarea with the picker beside it, bound to the parent's property. `name` names the textarea for a form that
+also posts without Livewire, and `label` is its accessible name (the placeholder otherwise). `locale` is fixed
+once mounted. Registered only when
 `livewire/livewire` is installed. The Blade picker pointed at any `wire:model` field does the same without it:
 its mount point carries `wire:ignore`, so a component update does not strip the mounted picker. Point it at
 the field with an attribute selector (`[id='…']`) when the id is generated — `#id` cannot express an id that
@@ -107,15 +143,27 @@ const picker = await Picker.create(document.querySelector('#picker'))
 picker.destroy();
 ```
 
+Setters called after `mount()` take effect: display options redraw, and `source()`, `locale()` and
+`maxVersion()` reload. `Picker.create()` on an element that already has a live picker — one the module
+auto-initialised, say — returns that picker, so `.on()` and `.open()` reach the one on screen. A slow load
+that a remount or a locale change overtakes is discarded, and `destroy()` aborts it.
+
+`ApiSource` takes `fetch` options as its second argument; headers passed there are merged with
+`Accept: application/json`, and a URL with its own query string keeps it:
+
+```js
+new ApiSource('/laranail/emojis/api/v1?tenant=7', { headers: { 'X-CSRF-TOKEN': token } });
+```
+
 Every option also reads from `data-laranail-emoji-*` attributes on a `[data-laranail-emoji-picker]`
 element. Importing the module mounts those automatically; set `globalThis.__laranailEmojiNoAutoInit = true`
 first to mount by hand. The module is written in TypeScript (`resources/assets/scripts/picker.ts`), and its
 declarations ship beside the build as `js/picker.d.ts`, generated from the source by `npm run types` — a
 check fails when they differ.
 
-The state behind the picker is exported as pure functions — `buildSections()`, `searchSections()`,
-`capPayload()`, `insertText()`, `recordRecent()`, `withTone()` and the rest — so another renderer can reuse
-it.
+The state behind the picker is exported as pure functions — `buildSections()`, `searchResults()`,
+`capPayload()`, `insertText()`, `recordRecent()`, `readRecent()`, `withTone()`, `gridTarget()`,
+`rovingIndex()` and the rest — so another renderer can reuse it.
 
 ## React
 
@@ -140,17 +188,23 @@ export function Composer() {
 
 `<EmojiPicker>` takes the same options as the vanilla picker as props — `source`, `target` (a ref),
 `locale`, `tone`, `maxRecent`, `recentOrder`, `sort`, `categories`, `columns`, `maxVersion`, `inline`,
-`closeOnSelect`, `userKey`, `store`, `strings` — and `onSelect`. It renders the same markup, classes and
-ARIA, so `picker.css` styles it and the keyboard behaviour is the same. To draw your own UI, use the hook
-behind it:
+`closeOnSelect`, `userKey`, `store`, `strings`, `searchDelay`, `trigger` — and `onSelect`. It renders the
+same markup, classes and ARIA, so `picker.css` styles it and the keyboard behaviour is the same. The target
+may be a controlled `<textarea value={…} onChange={…}>`; the pick lands in its state. To draw your own UI, use
+the hook behind it:
 
 ```tsx
 const picker = useEmojiPicker({ source, locale: 'fr', onSelect });
-// picker.sections, picker.query / setQuery, picker.tone / setTone, picker.select(item), picker.status
+// picker.sections, picker.tabs, picker.query / setQuery, picker.tone / setTone, picker.status
+// picker.detailOf(item) — what a pick would insert; picker.select(item) — record it and call onSelect
+// picker.commitRecents() — show new picks in Frequently used once nothing is under the pointer
 ```
 
-Both are thin over the same pure functions the vanilla picker uses, so the two cannot behave differently.
-React 19 is a peer dependency; nothing else is.
+`./react` also exports the pure building blocks (`charOf`, `withTone`, `insertText`, `gridTarget`,
+`rovingIndex`, `searchResults`, …) without the vanilla module's auto-init. The bundle is marked
+`"use client"`, and it reads stored tone and recents in an effect, so a server render and the first client
+render agree; changing `userKey` or `store` reads them again. Both adapters are thin over the same pure
+functions, so the two cannot behave differently. React 19 is a peer dependency; nothing else is.
 
 The package is `@laranail/emojis-picker` on npm, with the version of the Composer package: `.` is the vanilla
 module, `./react` the React adapter, `./styles.css` the picker stylesheet. `.github/workflows/npm-publish.yml` publishes it
@@ -162,14 +216,22 @@ with provenance on every release tag once npm publishing is switched on for the 
 ## Accessibility
 
 - The trigger is a button with `aria-haspopup="dialog"` and `aria-expanded`; Escape closes the popover and
-  returns focus to it.
+  returns focus to it. A click or Tab outside closes it and leaves focus where the user put it. An inline
+  picker is a group, not a dialog, and leaves Escape to the page.
+- The category bar is an ARIA tablist: one tab in the tab order, `aria-selected` on the current one, arrow
+  keys, Home and End to move, and each tab controls its section. A tab scrolls the picker, never the page.
 - Each section is an ARIA grid labelled by its heading, and each cell is named with its localized CLDR
-  name. One cell is in the tab order; arrow keys move by cell and by row, Home and End jump, Enter and
-  Space pick, and ArrowDown from the search field enters the grid.
-- The tone control is a radio group, and a live region announces the number of results.
-- Light and dark follow `prefers-color-scheme`; `forced-colors` and `prefers-reduced-motion` are
-  respected, and logical properties mirror the layout on right-to-left pages.
-- Below 480 px the popover becomes a bottom sheet with 44 px targets.
+  name. One cell is in the tab order; arrow keys move by cell and by row, keeping the column across a short
+  last row and into the next section; PageUp and PageDown jump a section; Home and End go to the ends; Enter
+  and Space pick; ArrowDown from the search field enters the grid and ArrowUp from the first row returns.
+  Left and Right swap on right-to-left pages.
+- The tone control is a radio group that the arrow keys move through, and a live region announces the
+  number of results ("1 result", "12 results").
+- Frequently used does not redraw under the pointer: a pick shows there once the popover reopens or the
+  pointer leaves.
+- `forced-colors` and `prefers-reduced-motion` are respected, and logical properties mirror the layout on
+  right-to-left pages.
+- Below 480 px the popover becomes a bottom sheet with 44 px targets; an inline picker stays in the flow.
 
 ## Security and privacy
 
@@ -180,10 +242,11 @@ mode, a full quota or blocked storage fall back to memory without an error.
 
 ## Styling
 
-Every class is `.laranail-emoji-picker*`, and colours and sizes are custom properties:
+Every class is `.laranail-emoji-picker*`, and colours and sizes are custom properties. The picker reads
+them without declaring them, so they can be set on the picker, on its mount point, or anywhere above it:
 
 ```css
-.laranail-emoji-picker {
+:root {
   --laranail-emoji-picker-bg: #0d1117;
   --laranail-emoji-picker-fg: #e6edf3;
   --laranail-emoji-picker-cell: 2.5rem;
@@ -191,8 +254,37 @@ Every class is `.laranail-emoji-picker*`, and colours and sizes are custom prope
 }
 ```
 
-The interface strings are in `resources/lang/en/picker.php`; publish the translations to change them or add
-a language.
+```blade
+<x-laranail-emojis::picker target="#message" class="composer-picker" style="--laranail-emoji-picker-radius: 4px" />
+```
+
+| Property | Default (light / dark) |
+|---|---|
+| `--laranail-emoji-picker-bg` | `#fff` / `#1f2328` |
+| `--laranail-emoji-picker-fg` | `#1f2328` / `#f0f3f6` |
+| `--laranail-emoji-picker-muted` | `#59636e` / `#9198a1` |
+| `--laranail-emoji-picker-border` | `#d1d9e0` / `#3d444d` |
+| `--laranail-emoji-picker-hover` | `#eef1f4` / `#2a313c` |
+| `--laranail-emoji-picker-focus` | `#0969da` / `#4493f8` |
+| `--laranail-emoji-picker-shadow` | a soft drop shadow |
+| `--laranail-emoji-picker-radius` | `12px` |
+| `--laranail-emoji-picker-cell-radius` | `8px` |
+| `--laranail-emoji-picker-cell` | `2.25rem` (`2.75rem` on phones) |
+| `--laranail-emoji-picker-width` | columns × cell + padding |
+| `--laranail-emoji-picker-height` | `22rem` |
+| `--laranail-emoji-picker-z` | `50` |
+| `--laranail-emoji-picker-image-size` | `1.5rem` (custom emoji images) |
+
+Dark follows `prefers-color-scheme`, unless the page says otherwise: a `.dark` or `[data-theme="dark"]`
+ancestor turns it on (Tailwind's class strategy and most theme switchers), and `[data-theme="light"]` or
+`.light` keeps it off.
+
+## Translations
+
+The interface strings and group names are in `resources/lang/<locale>/picker.php`, one file for each of the
+dataset's 24 locales, named by its tag (`zh-Hant`, `pt`). English is the source; the others were seeded by
+machine translation, and corrections are welcome. Publish the translations
+(`--tag=laranail::emojis-translations`) to change them. A string a locale lacks falls back to English.
 
 ---
 

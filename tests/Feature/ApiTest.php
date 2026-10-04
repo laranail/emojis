@@ -3,6 +3,7 @@
 declare(strict_types=1);
 
 use Illuminate\Routing\Route;
+use Symfony\Component\Yaml\Yaml;
 use Simtabi\Laranail\Emojis\Tests\TestCase;
 use Illuminate\Support\Facades\Route as Router;
 
@@ -169,4 +170,23 @@ it('documents every registered route in the shipped OpenAPI file, and nothing th
 
     expect($routes)->toHaveCount(9)
         ->and(collect($m[1])->sort()->values()->all())->toBe($routes);
+});
+
+it('serves the picker payload in the shape the OpenAPI file describes', function (): void {
+    bootApi();
+    // Parsing the whole file is itself a check: unquoted commas in flow mappings once made it invalid YAML.
+    $spec = Yaml::parseFile(dirname(__DIR__, 2) . '/resources/openapi/emojis-api.yaml');
+    $schemas = $spec['components']['schemas'];
+    $payload = $this->getJson(API . '/picker')->assertOk()->json();
+    $required = static fn (string $schema): array => $schemas[$schema]['required'];
+    $first = $payload['data']['groups'][0]['emoji'][0];
+    $handshake = collect($payload['data']['groups'])->flatMap(static fn (array $g): array => $g['emoji'])->firstWhere('hexcode', '1F91D');
+
+    expect(array_keys($payload))->toEqualCanonicalizing(['data', 'meta'])
+        ->and(array_diff($required('PickerPayload'), array_keys($payload['data'])))->toBe([])
+        ->and(array_diff(array_keys($payload['data']), array_keys($schemas['PickerPayload']['properties'])))->toBe([])
+        ->and(array_diff($required('PickerGroup'), array_keys($payload['data']['groups'][0])))->toBe([])
+        ->and(array_diff($required('PickerEmoji'), array_keys($first)))->toBe([])
+        ->and(array_diff(array_keys($handshake), array_keys($schemas['PickerEmoji']['properties'])))->toBe([])
+        ->and($spec['paths']['/picker']['get']['responses'])->toHaveKeys(['200', '422', '429']);
 });

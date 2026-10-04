@@ -72,9 +72,16 @@ it('styles every class the picker module writes, and only prefixed ones', functi
 
     expect(count($written))->toBeGreaterThan(10);
 
-    foreach ($css as $class) {
+    // The page's own theme classes, read only as ancestors (`.dark .laranail-emoji-picker`) so a theme switch
+    // reaches the picker; the picker never writes them. A ceiling: anything else unprefixed fails, and so does
+    // an exemption the stylesheet stops using.
+    $hostThemes = ['dark', 'light'];
+
+    foreach (array_diff($css, $hostThemes) as $class) {
         expect($class)->toStartWith('laranail-emoji');
     }
+
+    expect(array_values(array_intersect($hostThemes, $css)))->toBe($hostThemes);
 
     foreach ($written as $class) {
         expect(in_array($class, $css, true))->toBeTrue("picker.js writes .{$class}, which picker.css does not define");
