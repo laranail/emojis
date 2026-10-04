@@ -581,6 +581,28 @@ export interface ToneMenuOptions {
     onPick: (hexcode: string) => void;
     onClose?: () => void;
 }
+export interface AnchoredOptions {
+    /** The element the menu points at; positions follow it as it moves. */
+    anchor: Element;
+    /** Where to point instead of the anchor's box (the text caret inside a field), recomputed on every move. */
+    rect?: () => Rect;
+    /** Where the menu lives in the DOM (inside the picker, so focus and clicks count as inside it). */
+    container: HTMLElement;
+    /** The caret element inside the menu, moved to point at the anchor. */
+    arrow?: HTMLElement | null;
+    placement?: Placement;
+    rtl?: boolean;
+    /** Close on a pointer press outside the menu (default true). */
+    dismissOnOutside?: boolean;
+    onClose?: () => void;
+}
+/**
+ * Shows a small menu beside an anchor, the way the tone menu, the settings menu and the shortcode suggestions
+ * all appear: in the top layer where the browser has one, placed by computePosition() and kept there by
+ * autoUpdate(), its caret pointing at the anchor, and closed by a press outside it. Returns the function
+ * that closes it.
+ */
+export declare function openAnchored(menu: HTMLElement, options: AnchoredOptions): () => void;
 /**
  * A small popover beside an emoji for choosing its tone for this one pick, as phones do on a long press:
  * six toned forms for one person, or a tone for each person in 🤝 and couples with the result previewed.

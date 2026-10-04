@@ -1758,6 +1758,102 @@ export interface ToneMenuOptions {
   onClose?: () => void;
 }
 
+export interface AnchoredOptions {
+  /** The element the menu points at; positions follow it as it moves. */
+  anchor: Element;
+  /** Where to point instead of the anchor's box (the text caret inside a field), recomputed on every move. */
+  rect?: () => Rect;
+  /** Where the menu lives in the DOM (inside the picker, so focus and clicks count as inside it). */
+  container: HTMLElement;
+  /** The caret element inside the menu, moved to point at the anchor. */
+  arrow?: HTMLElement | null;
+  placement?: Placement;
+  rtl?: boolean;
+  /** Close on a pointer press outside the menu (default true). */
+  dismissOnOutside?: boolean;
+  onClose?: () => void;
+}
+
+/**
+ * Shows a small menu beside an anchor, the way the tone menu, the settings menu and the shortcode suggestions
+ * all appear: in the top layer where the browser has one, placed by computePosition() and kept there by
+ * autoUpdate(), its caret pointing at the anchor, and closed by a press outside it. Returns the function
+ * that closes it.
+ */
+export function openAnchored(menu: HTMLElement, options: AnchoredOptions): () => void {
+  const { anchor, container, arrow = null } = options;
+  const doc = anchor.ownerDocument;
+  let close = (): void => {};
+  const onOutside = (event: Event): void => {
+    if (!menu.contains(event.target as Node)) close();
+  };
+
+  container.append(menu);
+
+  const popover = menu as HTMLElement & { showPopover?: () => void; hidePopover?: () => void };
+
+  if (typeof popover.showPopover === 'function') {
+    menu.setAttribute('popover', 'manual');
+
+    try {
+      popover.showPopover();
+    } catch {
+      // Fixed in place instead.
+    }
+  }
+
+  const place = (): void => {
+    const view = doc.defaultView;
+    const at = options.rect ? options.rect() : (() => {
+      const box = anchor.getBoundingClientRect();
+
+      return { x: box.left, y: box.top, width: box.width, height: box.height };
+    })();
+    const viewport = view?.visualViewport;
+    const result = computePosition(
+      at,
+      { width: menu.offsetWidth, height: menu.offsetHeight },
+      { x: viewport?.offsetLeft ?? 0, y: viewport?.offsetTop ?? 0, width: viewport?.width ?? view?.innerWidth ?? 0, height: viewport?.height ?? view?.innerHeight ?? 0 },
+      { placement: options.placement ?? 'top', offset: 8, rtl: options.rtl },
+    );
+
+    menu.style.left = `${result.x}px`;
+    menu.style.top = `${result.y}px`;
+    menu.setAttribute('data-placement', `${result.side}-${result.align}`);
+
+    if (arrow) {
+      arrow.hidden = result.arrow === null;
+      arrow.style.left = result.side === 'top' || result.side === 'bottom' ? `${result.arrow ?? 0}px` : '';
+      arrow.style.top = result.side === 'left' || result.side === 'right' ? `${result.arrow ?? 0}px` : '';
+    }
+  };
+  const stop = autoUpdate(anchor, menu, place);
+  // Deferred, so the long press or right click that opened it does not close it.
+  const timer = options.dismissOnOutside === false ? null : setTimeout(() => doc.addEventListener('pointerdown', onOutside, true), 0);
+  let closed = false;
+
+  close = (): void => {
+    if (closed) return;
+    closed = true;
+
+    if (timer !== null) clearTimeout(timer);
+
+    stop();
+    doc.removeEventListener('pointerdown', onOutside, true);
+
+    try {
+      popover.hidePopover?.();
+    } catch {
+      // Already hidden.
+    }
+
+    menu.remove();
+    options.onClose?.();
+  };
+
+  return close;
+}
+
 /**
  * A small popover beside an emoji for choosing its tone for this one pick, as phones do on a long press:
  * six toned forms for one person, or a tone for each person in 🤝 and couples with the result previewed.
@@ -1875,64 +1971,9 @@ export function openToneMenu(anchor: HTMLElement, container: HTMLElement, item: 
       all[(index + (event.key === 'ArrowDown' ? 5 : all.length - 5)) % all.length]?.focus();
     }
   };
-  const onOutside = (event: Event): void => {
-    if (!menu.contains(event.target as Node)) close();
-  };
 
   menu.addEventListener('keydown', onKey);
-  container.append(menu);
-
-  const popover = menu as HTMLElement & { showPopover?: () => void; hidePopover?: () => void };
-
-  if (typeof popover.showPopover === 'function') {
-    menu.setAttribute('popover', 'manual');
-
-    try {
-      popover.showPopover();
-    } catch {
-      // Fixed in place instead.
-    }
-  }
-
-  const place = (): void => {
-    const view = doc.defaultView;
-    const at = anchor.getBoundingClientRect();
-    const viewport = view?.visualViewport;
-    const result = computePosition(
-      { x: at.left, y: at.top, width: at.width, height: at.height },
-      { width: menu.offsetWidth, height: menu.offsetHeight },
-      { x: viewport?.offsetLeft ?? 0, y: viewport?.offsetTop ?? 0, width: viewport?.width ?? view?.innerWidth ?? 0, height: viewport?.height ?? view?.innerHeight ?? 0 },
-      { placement: 'top', offset: 8, rtl: options.rtl },
-    );
-
-    menu.style.left = `${result.x}px`;
-    menu.style.top = `${result.y}px`;
-    menu.setAttribute('data-placement', `${result.side}-${result.align}`);
-    arrow.hidden = result.arrow === null;
-    arrow.style.left = result.side === 'top' || result.side === 'bottom' ? `${result.arrow ?? 0}px` : '';
-    arrow.style.top = result.side === 'left' || result.side === 'right' ? `${result.arrow ?? 0}px` : '';
-  };
-  const stop = autoUpdate(anchor, menu, place);
-  // Deferred, so the long press or right click that opened it does not close it.
-  const timer = setTimeout(() => doc.addEventListener('pointerdown', onOutside, true), 0);
-  let closed = false;
-
-  close = (): void => {
-    if (closed) return;
-    closed = true;
-    clearTimeout(timer);
-    stop();
-    doc.removeEventListener('pointerdown', onOutside, true);
-
-    try {
-      popover.hidePopover?.();
-    } catch {
-      // Already hidden.
-    }
-
-    menu.remove();
-    options.onClose?.();
-  };
+  close = openAnchored(menu, { anchor, container, arrow, placement: 'top', rtl: options.rtl, onClose: options.onClose });
 
   (menu.querySelector<HTMLElement>('[role="radio"][tabindex="0"]') ?? focusables()[0])?.focus();
 
