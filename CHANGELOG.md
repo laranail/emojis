@@ -9,6 +9,11 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/),
 
 ### Fixed
 
+- **npm publishing failed with an unexplained 403.** The repository issues GitHub's immutable OIDC subject
+  claims (it was created after 2026-07-15), which npm's trusted publishing does not accept for a publish yet
+  ([npm/cli#9969](https://github.com/npm/cli/issues/9969)): the token exchange succeeded and the upload was
+  refused. `npm-publish.yml` now prints the subject claim and, on failure, names the cause and the fix (an
+  `NPM_TOKEN` secret here; enabling direct publish under the trusted publisher's Allowed actions otherwise).
 - **Custom emoji never reached Frequently used.** A custom pick was inserted but not recorded, so the section
   held Unicode emoji only. Custom picks, from the grid or from autocomplete, are now remembered beside the
   others (keyed `custom:<name>`, so they cannot collide with a hexcode) and drop out when the payload no

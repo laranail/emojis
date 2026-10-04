@@ -7,6 +7,8 @@ name: Publish to npm
 #
 # Off until the repository variable NPM_PUBLISH is 'true'. Authenticates by npm trusted publishing (configure
 # this file, npm-publish.yml, as the package's trusted publisher), or with an NPM_TOKEN secret when one is set.
+# This repository was created after 2026-07-15, so GitHub issues it immutable OIDC subjects, which npm does
+# not accept for publishing yet (npm/cli#9969): until that is fixed, publishing needs the NPM_TOKEN secret.
 
 on:
   push:
@@ -92,6 +94,7 @@ jobs:
       # publisher (organization, repository, workflow file, environment). The claims only: the token is masked and
       # never printed. A mismatch here is the usual reason trusted publishing answers 404.
       - name: Show the trusted-publishing identity
+        id: identity
         env:
           NPM_TOKEN: ${{ secrets.NPM_TOKEN }}
         run: |
@@ -103,7 +106,9 @@ jobs:
           echo "::add-mask::$token"
           payload=$(printf '%s' "$token" | cut -d. -f2 | tr '_-' '/+')
           while [ $(( ${#payload} % 4 )) -ne 0 ]; do payload="$payload="; done
-          printf '%s' "$payload" | base64 -d | jq '{repository, repository_owner, workflow_ref, job_workflow_ref, ref, event_name, environment}'
+          printf '%s' "$payload" | base64 -d | jq '{sub, repository, repository_owner, workflow_ref, job_workflow_ref, ref, event_name, environment}'
+          # The subject is not a secret; the failure step below reads it to say why npm refused.
+          echo "sub=$(printf '%s' "$payload" | base64 -d | jq -r .sub)" >> "$GITHUB_OUTPUT"
 
       - name: Publish
         env:
@@ -120,3 +125,19 @@ jobs:
         if: failure()
         run: |
           { grep -hiE 'oidc|trusted|id.?token|provenance' ~/.npm/_logs/*-debug-0.log || echo "(no OIDC lines in the npm debug log)"; } | tail -40
+
+      # A 403 "OIDC permission denied for this action" after a successful token exchange has two known causes,
+      # and the subject claim tells them apart. Repositories created or renamed after 2026-07-15 issue GitHub's
+      # immutable subject (repo:owner@<id>/repo@<id>:...), which npm does not accept for publishing yet
+      # (npm/cli#9969, open): only an NPM_TOKEN secret publishes from such a repository today. Otherwise the
+      # trusted publisher on npmjs.com may still allow staged publishes only.
+      - name: Explain a refused trusted publish
+        if: failure() && steps.identity.outputs.sub != ''
+        env:
+          SUB: ${{ steps.identity.outputs.sub }}
+        run: |
+          if printf '%s' "$SUB" | grep -Eq '^repo:[^/]+@[0-9]+/[^:]+@[0-9]+:'; then
+            echo "::error::This repository issues GitHub's immutable OIDC subject ($SUB), which npm does not accept for publishing yet (https://github.com/npm/cli/issues/9969). Add a granular npm token with publish rights on @laranail/emojis-picker as the NPM_TOKEN repository secret; this workflow then publishes with it, with provenance. Delete the secret once npm fixes #9969."
+          else
+            echo "::error::npm refused the publish although the token exchange worked. On npmjs.com, open the package's trusted publisher and enable direct npm publish under Allowed actions (new publishers allow staged publishes only)."
+          fi

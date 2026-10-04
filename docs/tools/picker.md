@@ -406,6 +406,13 @@ with provenance on every release tag once npm publishing is switched on for the 
 `gh workflow run npm-publish.yml -f tag=vX.Y.Z`. To build it from a checkout instead:
 `npm run build:react && npm run types && npm pack`.
 
+Publishing needs an `NPM_TOKEN` repository secret for now: a granular npm token with publish rights on
+`@laranail/emojis-picker`. This repository was created after 2026-07-15, so GitHub issues it immutable OIDC
+subjects (`repo:laranail@<id>/emojis@<id>:…`), which npm's trusted publishing does not yet accept for a
+publish ([npm/cli#9969](https://github.com/npm/cli/issues/9969)). The token exchange succeeds and the upload is
+refused with `403 OIDC permission denied for this action`. When a publish fails, the workflow now names which
+of the two known causes it hit. Once npm fixes #9969, delete the secret and trusted publishing takes over.
+
 ## Accessibility
 
 - The trigger is a button with `aria-haspopup="dialog"` and `aria-expanded`; Escape closes the popover and
