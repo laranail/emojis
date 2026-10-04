@@ -127,14 +127,17 @@ fi
 say "npm has: ${highest:-nothing}; to publish: ${tags[*]:-nothing}"
 [ ${#tags[@]} -gt 0 ] || exit 0
 
-# GitHub Packages' versions, when the gh login may read them (read:packages); empty otherwise.
+# GitHub Packages' versions, when the gh login may read them (read:packages); empty otherwise. gh prints an
+# error's JSON body on stdout, so the output counts only when the call succeeded.
 github_versions() {
-  gh api "orgs/laranail/packages/npm/emojis-picker/versions" --paginate --jq '.[].name' 2>/dev/null || true
+  local out
+  out=$(gh api "orgs/laranail/packages/npm/emojis-picker/versions" --paginate --jq '.[].name' 2>/dev/null) && printf '%s\n' "$out"
+  return 0
 }
 
 # Starts one publish and waits for it. Returns non-zero when the run fails, after showing why.
 publish() {
-  local tag=$1 registry=$2 out run
+  local tag=$1 registry=$2 out
   if $dry_run; then say "dry run: would publish $tag to $registry"; return 0; fi
   say "publishing $tag to $registry"
   out=$(gh workflow run "$WORKFLOW" -R "$REPO" -f tag="$tag" -f registry="$registry" 2>&1) || { printf '%s\n' "$out" >&2; return 1; }
@@ -209,11 +212,12 @@ for tag in "${tags[@]}"; do
   if printf '%s\n' "$existing" | grep -qxF "${tag#v}"; then say "$PACKAGE@${tag#v} is already on GitHub Packages"; continue; fi
   publish "$tag" github || die "$tag did not publish to GitHub Packages; later tags were not started, so the versions stay in order"
   $dry_run && continue
-  if [ -z "$existing" ] && [ -z "$(github_versions)" ]; then
-    say "$tag published (the run passed; listing GitHub Packages needs read:packages on the gh login, so not re-checked)"
-  else
-    github_versions | grep -qxF "${tag#v}" || die "the run passed but $PACKAGE@${tag#v} is not listed on GitHub Packages"
+  # npm's own "+ name@version" line in the run's log confirms the upload without read:packages; the run also
+  # reports a version GitHub Packages already had, so a re-run counts too.
+  if gh run view "$run" -R "$REPO" --log 2>/dev/null | grep -qE "(\+ $PACKAGE@${tag#v}|already on GitHub Packages: $PACKAGE@${tag#v})\$"; then
     say "$PACKAGE@${tag#v} is on GitHub Packages"
+  else
+    die "the run passed but its log does not show $PACKAGE@${tag#v} published"
   fi
 done
 $dry_run || say "installs from GitHub Packages need, in the consuming project's .npmrc: @laranail:registry=https://npm.pkg.github.com, and a token with read:packages"

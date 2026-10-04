@@ -138,6 +138,12 @@ jobs:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         run: |
           if [ "$TARGET" = github ]; then
+            # A version is published once; re-running for it reports it instead of failing on GitHub's 409.
+            version=$(node -p 'require("./package.json").version')
+            if NODE_AUTH_TOKEN="$GITHUB_TOKEN" npm view "@laranail/emojis-picker@$version" version --registry https://npm.pkg.github.com 2>/dev/null | grep -qxF "$version"; then
+              echo "already on GitHub Packages: @laranail/emojis-picker@$version"
+              exit 0
+            fi
             # GitHub Packages signs no provenance, and its package inherits the repository's visibility.
             NODE_AUTH_TOKEN="$GITHUB_TOKEN" npm publish --provenance=false --registry https://npm.pkg.github.com
           elif [ -n "$NPM_TOKEN" ]; then
