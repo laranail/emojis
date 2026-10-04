@@ -59,8 +59,10 @@ fails when a route is missing from it.
 
 - **Read-only.** Nothing here writes, and every input is bounded: no query asks for more than one page.
 - **The emoji policy applies.** An emoji `policy` denies is neither listed nor shown, and `/picker` leaves
-  out emoji newer than `policy.max_version`, and custom emoji when `allow_custom` is off. Everything is
-  built by `Core\Picker\PayloadBuilder`, which the Blade picker shares.
+  out emoji newer than `policy.max_version`, and custom emoji when `allow_custom` is off. The policy is
+  checked on every skin-tone form in an emoji's `skins` map too, not only on the emoji, so no toned form is
+  offered that `sanitize()` would strip. Everything is built by `Core\Picker\PayloadBuilder`, which the
+  Blade picker shares.
 - **Throttled per client IP** by default. Behind a proxy or load balancer, configure Laravel's
   `TrustProxies`, or every client shares the proxy's address and its limit.
 - **No cross-origin access by default.** The prefix sits outside `api/*`, so Laravel's CORS defaults do not

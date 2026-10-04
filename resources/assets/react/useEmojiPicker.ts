@@ -4,6 +4,7 @@ import {
   buildSections,
   capPayload,
   charOf,
+  customCode,
   indexPayload,
   localStorageStore,
   recordRecent,
@@ -131,7 +132,7 @@ export function useEmojiPicker(options: UseEmojiPickerOptions): EmojiPickerState
       let detail: SelectDetail;
 
       if (isCustom(item)) {
-        detail = { emoji: `:${item.name}:`, hexcode: null, name: item.label, shortcode: item.name, custom: true };
+        detail = { emoji: customCode(item.name, data), hexcode: null, name: item.label, shortcode: item.name, custom: true };
       } else {
         const hexcode = withTone(item, tone);
         const known = index.get(item.hexcode) ?? item;
@@ -146,7 +147,7 @@ export function useEmojiPicker(options: UseEmojiPickerOptions): EmojiPickerState
 
       return detail;
     },
-    [tone, index, store, maxRecent],
+    [tone, index, store, maxRecent, data],
   );
 
   return { status, error, data, strings, query, setQuery, tone, setTone, sections, tabs: base, resultCount: results ? results.length : null, hexcodeOf, select };

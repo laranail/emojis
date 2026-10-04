@@ -1,6 +1,6 @@
 import { readFileSync } from 'node:fs';
 import { resolve } from 'node:path';
-import { useRef } from 'react';
+import { useRef, useState } from 'react';
 import { act, cleanup, fireEvent, render, screen, waitFor } from '@testing-library/react';
 import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest';
 import { payload } from './fixture.mjs';
@@ -23,12 +23,36 @@ function Form(props: { onSelect?: (d: unknown) => void; inline?: boolean; store?
   );
 }
 
+function Controlled() {
+  const ref = useRef<HTMLTextAreaElement>(null);
+  const [value, setValue] = useState('hi ');
+  const source = useRef(new StaticSource(payload())).current;
+
+  return (
+    <>
+      <textarea aria-label="message" ref={ref} value={value} onChange={(e) => setValue(e.target.value)} />
+      <output data-testid="state">{value}</output>
+      <EmojiPicker source={source} target={ref} inline store={memoryStore()} maxVersion={null} />
+    </>
+  );
+}
+
 const ready = () => waitFor(() => expect(screen.getAllByRole('gridcell').length).toBeGreaterThan(0));
 const cells = () => screen.getAllByRole('gridcell');
 
 describe('EmojiPicker (React)', () => {
   beforeEach(() => localStorage.clear());
   afterEach(cleanup);
+
+  it('inserts into a controlled textarea, so its state keeps the pick instead of writing the old value back', async () => {
+    render(<Controlled />);
+    await ready();
+
+    fireEvent.click(cells()[0]);
+
+    await waitFor(() => expect(screen.getByTestId('state').textContent).toBe('hi 😀'));
+    expect((screen.getByLabelText('message') as HTMLTextAreaElement).value).toBe('hi 😀');
+  });
 
   it('renders the groups as labelled grids of named cells, with the vanilla classes', async () => {
     const { container } = render(<Form />);
