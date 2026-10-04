@@ -1524,6 +1524,31 @@ describe('shortcuts, settings and autocomplete', () => {
   });
 });
 
+describe('custom emoji in Frequently used', () => {
+  it('remembers a custom pick beside Unicode ones, in the order they were picked', async () => {
+    const store = memoryStore();
+    const { picker, host, cells } = await mount({ store });
+
+    host.querySelector('[data-laranail-emoji-custom="partyparrot"]').click();
+    cells()[0].click();
+    picker.categories([]); // redraw now
+
+    const recent = host.querySelector('section[data-laranail-emoji-section="recent"]');
+    const labels = [...recent.querySelectorAll('[role="gridcell"]')].map((c) => c.getAttribute('aria-label'));
+
+    expect(labels).toEqual(['grinning face', 'Party parrot']);
+    expect(recent.querySelector('[data-laranail-emoji-custom="partyparrot"] img')).not.toBeNull();
+    expect(readRecent(store.get('recent')).map((r) => r.base)).toEqual(['1F600', 'custom:partyparrot']);
+  });
+
+  it('drops a custom recent the payload no longer has, or when custom emoji are off', () => {
+    const recent = [{ base: 'custom:gone', hexcode: 'custom:gone', count: 1, at: 2 }, { base: 'custom:partyparrot', hexcode: 'custom:partyparrot', count: 1, at: 1 }];
+
+    expect(buildSections(payload(), { recent })[0].items.map((i) => i.name)).toEqual(['partyparrot']);
+    expect(buildSections(payload(), { recent, custom: false })[0].slug).not.toBe('recent');
+  });
+});
+
 describe('the build', () => {
   it('reads its public theme tokens without declaring them, so a value set above the picker wins', () => {
     const css = readFileSync(resolve(root, 'public/assets/css/picker.css'), 'utf8');

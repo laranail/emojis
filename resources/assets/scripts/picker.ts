@@ -248,6 +248,8 @@ export interface PickerEvents {
 /** One rendered block: Frequently used, a Unicode group, the custom emoji, or a group of kaomoji or symbols. */
 export type PickerSection =
   | { slug: string; label: string; custom?: false; text?: false; items: PickerEmoji[] }
+  /** Frequently used, when it holds custom emoji beside Unicode ones. */
+  | { slug: string; label: string; custom?: false; text?: false; mixed: true; items: Array<PickerEmoji | PickerCustom> }
   | { slug: string; label: string; custom: true; text?: false; items: PickerCustom[] }
   | { slug: string; label: string; custom?: false; text: true; items: PickerText[] };
 
@@ -899,6 +901,13 @@ export function orderRecent(list: RecentEntry[], mode: RecentOrder): RecentEntry
   return [...readRecent(list)].sort((a, b) => (mode === 'frequent' ? b.count - a.count || b.at - a.at : b.at - a.at));
 }
 
+/** How a custom emoji is recorded among recents, so it cannot collide with a hexcode. */
+export const CUSTOM_RECENT = 'custom:';
+
+export function customRecentKey(name: string): string {
+  return `${CUSTOM_RECENT}${name}`;
+}
+
 /** Every emoji of the payload by its base hexcode. */
 export function indexPayload(data: PickerPayload): Map<string, PickerEmoji> {
   return new Map((data.groups ?? []).flatMap((group) => group.emoji.map((item): [string, PickerEmoji] => [item.hexcode, item])));
@@ -910,25 +919,31 @@ export function indexPayload(data: PickerPayload): Map<string, PickerEmoji> {
  */
 export function buildSections(
   data: PickerPayload,
-  options: { categories?: string[]; sort?: SortMode; recent?: RecentEntry[]; recentOrder?: RecentOrder; strings?: Partial<PickerStrings> } = {},
+  options: { categories?: string[]; sort?: SortMode; recent?: RecentEntry[]; recentOrder?: RecentOrder; strings?: Partial<PickerStrings>; custom?: boolean } = {},
 ): PickerSection[] {
   const categories = options.categories ?? [];
   const strings = { ...DEFAULT_STRINGS, ...options.strings };
   const wanted = (slug: string): boolean => categories.length === 0 || categories.includes(slug);
   const byHex = indexPayload(data);
-  // A recent keeps the form that was picked (👋🏽), unless the policy or a version cap no longer offers it.
+  const customs = new Map((data.custom ?? []).map((c) => [customRecentKey(c.name), c]));
+  // A recent keeps the form that was picked (👋🏽), unless the policy or a version cap no longer offers it. A
+  // custom emoji comes back while the payload still has it (and custom emoji are on).
   const recents = orderRecent(options.recent ?? [], options.recentOrder ?? 'recent')
-    .map((r): PickerEmoji | undefined => {
+    .map((r): PickerEmoji | PickerCustom | undefined => {
+      if (r.base.startsWith(CUSTOM_RECENT)) {
+        return options.custom === false ? undefined : customs.get(r.base);
+      }
+
       const item = byHex.get(r.base);
       const offered = item && ((r.hexcode === item.hexcode && item.base !== false) || Object.values(item.skins ?? {}).includes(r.hexcode));
 
       return item && offered ? { ...item, pick: r.hexcode } : item;
     })
-    .filter((item): item is PickerEmoji => item !== undefined);
+    .filter((item): item is PickerEmoji | PickerCustom => item !== undefined);
   const sections: PickerSection[] = [];
 
   if (wanted('recent') && recents.length > 0) {
-    sections.push({ slug: 'recent', label: strings.recent, items: recents });
+    sections.push(recents.some((item) => 'image' in item) ? { slug: 'recent', label: strings.recent, mixed: true, items: recents } : { slug: 'recent', label: strings.recent, items: recents as PickerEmoji[] });
   }
 
   for (const group of data.groups ?? []) {
@@ -2380,7 +2395,7 @@ export interface AutocompleteOptions {
   /** Suggestions shown at most (default 8). */
   limit?: number;
   rtl?: () => boolean;
-  /** Called with what was inserted, after the field has it. */
+  /** Called with what was inserted, after the field has it, and its recents key (the base hexcode, or custom:name). */
   onPick: (detail: SelectDetail, base: string | null) => void;
 }
 
@@ -2447,7 +2462,7 @@ export function attachAutocomplete(field: HTMLInputElement | HTMLTextAreaElement
     const tone = options.tone();
     const { mode, set } = options.render();
     const found = [
-      ...searchCustom(custom, term).slice(0, 2).map((c) => ({ text: '', image: c.image, label: c.label, code: customCode(c.name, data), base: null as string | null, detail: (): SelectDetail => ({ emoji: customCode(c.name, data), hexcode: null, name: c.label, shortcode: c.name, custom: true }) })),
+      ...searchCustom(custom, term).slice(0, 2).map((c) => ({ text: '', image: c.image, label: c.label, code: customCode(c.name, data), base: customRecentKey(c.name) as string | null, detail: (): SelectDetail => ({ emoji: customCode(c.name, data), hexcode: null, name: c.label, shortcode: c.name, custom: true }) })),
       ...search(emoji, term, limit).map((e) => {
         const hexcode = withTone(e, tone);
 
@@ -2592,7 +2607,7 @@ export function tabFace(section: PickerSection): Node {
     return document.createTextNode(first ? (first as PickerText).text.slice(0, 4) : section.label.slice(0, 2));
   }
 
-  return document.createTextNode(first && !section.custom ? charOf((first as PickerEmoji).pick ?? (first as PickerEmoji).hexcode) : '★');
+  return document.createTextNode(first && !section.custom && !('image' in first) ? charOf((first as PickerEmoji).pick ?? (first as PickerEmoji).hexcode) : '★');
 }
 
 // ---- the vanilla picker ------------------------------------------------------------------------------
@@ -3064,8 +3079,8 @@ export class Picker {
         strings: this.strings,
         rtl: () => this.rtl,
         onPick: (detail, base) => {
-          if (base && detail.hexcode && this.options.features.recents) {
-            this.store.set('recent', recordRecent(this.store.get('recent'), base, detail.hexcode, this.options.maxRecent));
+          if (base && this.options.features.recents) {
+            this.store.set('recent', recordRecent(this.store.get('recent'), base, detail.hexcode ?? base, this.options.maxRecent));
             this.recentStale = true;
           }
 
@@ -3310,6 +3325,7 @@ export class Picker {
       recent: features.recents ? readRecent(this.store.get('recent')) : [],
       recentOrder: this.options.recentOrder,
       strings: this.options.strings,
+      custom: features.custom,
     }).filter((section) => features.custom || !section.custom);
 
     return this.memo;
@@ -3640,7 +3656,7 @@ export class Picker {
         grid.append(row);
       }
 
-      row.append(section.text ? this.textCell(item as PickerText) : section.custom ? this.customCell(item as PickerCustom) : this.cell(item as PickerEmoji));
+      row.append(section.text ? this.textCell(item as PickerText) : 'image' in item ? this.customCell(item as PickerCustom) : this.cell(item as PickerEmoji));
     });
 
     const block = el('section', { class: `${PREFIX}-picker-section`, id: this.sectionId(section.slug), [`${ATTR}-section`]: section.slug });
@@ -3808,6 +3824,11 @@ export class Picker {
     } else if (name !== null) {
       const custom = (this.data?.custom ?? []).find((c) => c.name === name);
       detail = { emoji: customCode(name, this.data), hexcode: null, name: custom?.label ?? name, shortcode: name, custom: true };
+
+      if (this.options.features.recents) {
+        this.store.set('recent', recordRecent(this.store.get('recent'), customRecentKey(name), customRecentKey(name), this.options.maxRecent));
+        this.recentStale = true;
+      }
     } else {
       const hexcode = cell.getAttribute(`${ATTR}-hexcode`) ?? '';
 

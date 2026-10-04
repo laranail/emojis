@@ -5,6 +5,15 @@ All notable changes to `laranail/emojis` are documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/), and this project adheres to
 [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [Unreleased]
+
+### Fixed
+
+- **Custom emoji never reached Frequently used.** A custom pick was inserted but not recorded, so the section
+  held Unicode emoji only. Custom picks, from the grid or from autocomplete, are now remembered beside the
+  others (keyed `custom:<name>`, so they cannot collide with a hexcode) and drop out when the payload no
+  longer has them or custom emoji are switched off.
+
 ## [0.7.0] - 2026-10-04
 
 ### Added

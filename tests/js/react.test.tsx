@@ -444,6 +444,21 @@ describe('EmojiPicker (React) shortcuts, settings and autocomplete', () => {
   });
 });
 
+describe('EmojiPicker (React) custom recents', () => {
+  afterEach(cleanup);
+
+  it('shows a custom pick in Frequently used once the pointer leaves', async () => {
+    const store = memoryStore();
+    render(<Form store={store} />);
+    await ready();
+
+    fireEvent.click(screen.getByRole('gridcell', { name: 'Party parrot' }));
+    fireEvent.pointerLeave(document.querySelector('.laranail-emoji-picker')!);
+
+    await waitFor(() => expect(document.querySelector('section[data-laranail-emoji-section="recent"] [data-laranail-emoji-custom="partyparrot"]')).not.toBeNull());
+  });
+});
+
 describe('the React build', () => {
   it('writes relative imports with .js, so its declarations resolve under moduleResolution node16/nodenext', () => {
     const files = ['index.ts', 'EmojiPicker.tsx', 'useEmojiPicker.ts'];

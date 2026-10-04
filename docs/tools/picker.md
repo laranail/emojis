@@ -421,7 +421,7 @@ with provenance on every release tag once npm publishing is switched on for the 
 - The tone control is a radio group that the arrow keys move through, and a live region announces the
   number of results ("1 result", "12 results").
 - Frequently used does not redraw under the pointer: a pick shows there once the popover reopens or the
-  pointer leaves.
+  pointer leaves. It keeps custom emoji too, beside Unicode ones, for as long as the payload has them.
 - `forced-colors` and `prefers-reduced-motion` are respected, and logical properties mirror the layout on
   right-to-left pages.
 - On phones the popover becomes a bottom sheet with 44 px targets; an inline picker stays in the flow.
