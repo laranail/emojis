@@ -53,3 +53,26 @@ it('downloads every GitHub API source through the token helper', function (): vo
     expect(count($api))->toBeGreaterThanOrEqual(1)
         ->and($script)->toContain('GitHubAuth::curlArguments($source[\'url\'])');
 });
+
+it('refuses anything that is not an npm token before it reaches GitHub, and never echoes it', function (string $input): void {
+    if (PHP_OS_FAMILY === 'Windows' || ! is_executable('/bin/bash')) {
+        $this->markTestSkipped('npm-release is a bash tool for maintainers on macOS and Linux.');
+    }
+
+    $script = dirname(__DIR__, 2) . '/.dev/tools/npm-release';
+    $process = proc_open(['/bin/bash', $script, '--validate-only'], [0 => ['pipe', 'r'], 1 => ['pipe', 'w'], 2 => ['pipe', 'w']], $pipes);
+    fwrite($pipes[0], $input);
+    fclose($pipes[0]);
+    $output = stream_get_contents($pipes[1]) . stream_get_contents($pipes[2]);
+    $exit = proc_close($process);
+
+    // Refused on shape alone (exit 2), so no request was made, and only the length and line count are reported.
+    expect($exit)->toBe(2)
+        ->and($output)->toContain('that is not an npm token: ' . mb_strlen(trim($input)) . ' characters')
+        ->and($output)->not->toContain('SECRET');
+})->with([
+    'a copied page'     => [str_repeat("SECRET page text, not a token\n", 70)],
+    'a token ID'        => ['SECRET-0f8e2c1a-4b7d-4e2a-9c3b-1d2e3f4a5b6c'],
+    'a truncated token' => ['npm_SECRETabc'],
+    'two tokens'        => ["npm_SECRETabcdefghijklmnopqrstuvwxyz0123\nnpm_SECRETabcdefghijklmnopqrstuvwxyz0123"],
+]);

@@ -415,6 +415,21 @@ of the two known causes it hit. With the token, npm's trusted-publishing attempt
 publish, and so is provenance, which is signed with the same identity. Once npm fixes #9969, delete the secret
 and trusted publishing, with provenance, takes over again.
 
+One command sets the token and publishes every release npm does not have yet, oldest first, so `latest` ends
+on the newest. Copy the token npm shows after *Generate token* (one line, `npm_` and about 36 characters),
+then run it from a checkout, signed in to `gh` as a maintainer:
+
+```bash
+.dev/tools/npm-release
+```
+
+It refuses anything that is not token-shaped before it reaches GitHub, reporting only its length and line
+count, and asks npm who the token belongs to before setting the secret. Then it confirms GitHub recorded a
+new secret, starts one publish per version, waits for each run, and checks the version is on the registry
+before starting the next. `--dry-run` checks everything and changes nothing, `--keep-token` uses the secret
+already set, naming tags (`v0.6.0 v0.7.0`) publishes only those, and `pbpaste | .dev/tools/npm-release
+--validate-only` only checks a token. The token is never printed or passed on a command line.
+
 ## Accessibility
 
 - The trigger is a button with `aria-haspopup="dialog"` and `aria-expanded`; Escape closes the popover and

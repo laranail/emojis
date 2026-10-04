@@ -1,0 +1,134 @@
+#!/usr/bin/env bash
+# Publishes @laranail/emojis-picker for every release tag npm does not have yet, in version order, with an
+# NPM_TOKEN taken from the clipboard (or stdin). One command for what otherwise takes five and fails quietly:
+#
+#   .dev/tools/npm-release              token from the clipboard, publish every missing version
+#   .dev/tools/npm-release --keep-token use the NPM_TOKEN secret already set
+#   .dev/tools/npm-release v0.6.0       publish only the tags named
+#   .dev/tools/npm-release --dry-run    check everything, change nothing
+#   pbpaste | .dev/tools/npm-release --validate-only    check a token's shape and that npm accepts it
+#
+# Why a token at all: this repository issues GitHub's immutable OIDC subject, which npm's trusted publishing
+# does not accept yet (npm/cli#9969). See docs/tools/picker.md.
+#
+# The token is never printed, never put on a command line (curl reads the header from stdin, gh reads the
+# secret from stdin) and never written to disk. Only its length and line count are ever reported.
+
+set -euo pipefail
+
+REPO=laranail/emojis
+PACKAGE=@laranail/emojis-picker
+WORKFLOW=npm-publish.yml
+REGISTRY=https://registry.npmjs.org
+PACKAGE_URL="$REGISTRY/@laranail%2femojis-picker"
+
+keep_token=false dry_run=false validate_only=false
+tags=()
+for arg in "$@"; do
+  case "$arg" in
+    --keep-token) keep_token=true ;;
+    --dry-run) dry_run=true ;;
+    --validate-only) validate_only=true ;;
+    -h|--help) sed -n '2,15p' "$0" | sed 's/^# \{0,1\}//'; exit 0 ;;
+    v[0-9]*.[0-9]*.[0-9]*) tags+=("$arg") ;;
+    *) echo "npm-release: unknown argument '$arg' (see --help)" >&2; exit 64 ;;
+  esac
+done
+
+say() { printf '==> %s\n' "$*"; }
+die() { printf 'npm-release: %s\n' "$1" >&2; exit "${2:-1}"; }
+
+# Reads the candidate token from stdin when something is piped in, otherwise from the clipboard.
+read_token() {
+  if [ ! -t 0 ]; then cat; elif command -v pbpaste >/dev/null; then pbpaste; else die "no token: pipe it in, or run on macOS to read the clipboard" 2; fi
+}
+
+# A granular or automation token is one line: npm_ and about 36 letters and digits. Anything else (a token ID,
+# a copied page, a partial paste) is refused here, before it reaches GitHub, with its length and line count only.
+check_shape() {
+  local token=$1 lines
+  lines=$(printf '%s\n' "$token" | wc -l | tr -d ' ')
+  # grep matches line by line, so the line count is checked too: two tokens pasted together are not one.
+  if [ "$lines" -ne 1 ] || ! printf '%s' "$token" | grep -Eq '^npm_[A-Za-z0-9]{30,}$'; then
+    die "that is not an npm token: ${#token} characters on $lines line(s). Copy the token npm shows once after 'Generate token' (npm_ and about 36 characters), not the token's ID or the page." 2
+  fi
+}
+
+# Asks the registry who the token belongs to. The header goes through stdin so the token never appears in ps.
+whoami_token() {
+  local body
+  body=$(printf 'Authorization: Bearer %s\n' "$1" | curl -sS -H @- "$REGISTRY/-/whoami") || die "could not reach $REGISTRY" 3
+  printf '%s' "$body" | sed -n 's/.*"username" *: *"\([^"]*\)".*/\1/p'
+}
+
+if $validate_only; then
+  token=$(read_token | tr -d '\r' | sed -e 's/^[[:space:]]*//' -e 's/[[:space:]]*$//')
+  check_shape "$token"
+  user=$(whoami_token "$token")
+  [ -n "$user" ] || die "npm refused the token (expired, revoked, or not a publish token)" 2
+  say "token accepted by npm as: $user"
+  exit 0
+fi
+
+for tool in gh jq curl git; do command -v "$tool" >/dev/null || die "$tool is required"; done
+login=$(gh api user --jq .login) || die "gh is not signed in"
+# Dispatching a workflow and setting a secret need the personal login: the GitHub app answers 403 to both.
+[ "$login" = imanimanyara ] || die "gh is signed in as '$login'; switch to imanimanyara (gh auth switch -u imanimanyara)"
+[ "$(gh variable get NPM_PUBLISH -R "$REPO" 2>/dev/null || true)" = true ] || die "the repository variable NPM_PUBLISH is not 'true', so the workflow would skip the publish"
+
+# Every version npm already has, then every release tag it does not, oldest first, so 'latest' ends on the newest.
+# Pre-release versions (npm's 0.0.0-stage placeholder among them) never count as the newest release.
+published=$(curl -sS "$PACKAGE_URL" | jq -r '.versions // {} | keys[]') || die "could not read $PACKAGE from $REGISTRY" 3
+highest=$(printf '%s\n' "$published" | grep -E '^[0-9]+\.[0-9]+\.[0-9]+$' | sort -V | tail -1 || true)
+if [ ${#tags[@]} -eq 0 ]; then
+  while IFS= read -r t; do
+    v=${t#v}
+    printf '%s\n' "$published" | grep -qxF "$v" && continue
+    # Tags older than the newest published version predate the npm package or were superseded: name them to publish.
+    [ -n "$highest" ] && [ "$(printf '%s\n%s\n' "$highest" "$v" | sort -V | tail -1)" = "$highest" ] && continue
+    tags+=("$t")
+  done < <(git ls-remote --tags --refs "https://github.com/$REPO" 'v*' | sed 's#.*refs/tags/##' | grep -E '^v[0-9]+\.[0-9]+\.[0-9]+$' | sort -V)
+fi
+say "npm has: ${highest:-nothing}; to publish: ${tags[*]:-nothing}"
+[ ${#tags[@]} -gt 0 ] || exit 0
+
+if ! $keep_token; then
+  token=$(read_token | tr -d '\r' | sed -e 's/^[[:space:]]*//' -e 's/[[:space:]]*$//')
+  check_shape "$token"
+  user=$(whoami_token "$token")
+  [ -n "$user" ] || die "npm refused the token (expired, revoked, or not a publish token); the secret was not changed" 2
+  say "token accepted by npm as: $user"
+  if $dry_run; then
+    say "dry run: would set NPM_TOKEN on $REPO"
+  else
+    before=$(gh api "repos/$REPO/actions/secrets/NPM_TOKEN" --jq .updated_at 2>/dev/null || echo none)
+    printf '%s' "$token" | gh secret set NPM_TOKEN -R "$REPO" >/dev/null
+    after=$(gh api "repos/$REPO/actions/secrets/NPM_TOKEN" --jq .updated_at)
+    [ "$after" != "$before" ] || die "GitHub still reports NPM_TOKEN updated at $before: the secret did not change"
+    say "NPM_TOKEN updated at $after (was $before)"
+  fi
+  unset token
+fi
+
+for tag in "${tags[@]}"; do
+  version=${tag#v}
+  if $dry_run; then say "dry run: would publish $tag"; continue; fi
+  say "publishing $tag"
+  out=$(gh workflow run "$WORKFLOW" -R "$REPO" -f tag="$tag" 2>&1) || die "could not start the workflow: $out"
+  # gh prints the new run's URL; reading it avoids picking up someone else's run.
+  run=$(printf '%s\n' "$out" | grep -oE '/actions/runs/[0-9]+' | grep -oE '[0-9]+$' | head -1)
+  [ -n "$run" ] || die "gh did not report the run it started: $out"
+  say "run https://github.com/$REPO/actions/runs/$run"
+  if ! gh run watch "$run" -R "$REPO" --exit-status >/dev/null; then
+    gh run view "$run" -R "$REPO" --log-failed | grep -E 'error|warning' | cut -c1-240 | tail -20 >&2 || true
+    die "$tag did not publish; later tags were not started, so the versions stay in order"
+  fi
+  for _ in $(seq 1 12); do
+    [ "$(curl -sS "$PACKAGE_URL/$version" | jq -r '.version // empty' 2>/dev/null)" = "$version" ] && break
+    sleep 5
+  done
+  [ "$(curl -sS "$PACKAGE_URL/$version" | jq -r '.version // empty' 2>/dev/null)" = "$version" ] || die "the run passed but $PACKAGE@$version is not on the registry yet"
+  say "$PACKAGE@$version is on npm"
+done
+
+$dry_run || say "latest is now $(curl -sS "$PACKAGE_URL" | jq -r '.["dist-tags"].latest')"
