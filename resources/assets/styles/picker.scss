@@ -178,7 +178,7 @@ $sizes: (
   }
 }
 
-.#{$picker}-panel[data-placement^='bottom'] > .#{$picker}-arrow {
+:is(.#{$picker}-panel, .#{$picker}-tonemenu)[data-placement^='bottom'] > .#{$picker}-arrow {
   inset-block-end: 100%;
 
   &::before,
@@ -197,7 +197,7 @@ $sizes: (
   }
 }
 
-.#{$picker}-panel[data-placement^='top'] > .#{$picker}-arrow {
+:is(.#{$picker}-panel, .#{$picker}-tonemenu)[data-placement^='top'] > .#{$picker}-arrow {
   inset-block-start: 100%;
 
   &::before,
@@ -500,15 +500,85 @@ $sizes: (
 // The footer: the hovered emoji on the start side, the skin tones on the end side.
 .#{$picker}-footer {
   display: flex;
+  flex-wrap: wrap;
   align-items: center;
   justify-content: space-between;
-  gap: 0.5rem;
+  gap: 0.35rem 0.5rem;
   min-block-size: 2.25rem;
   padding-block-start: 0.4rem;
   border-block-start: 1px solid var(--_lep-border);
 
   &:empty {
     display: none;
+  }
+}
+
+// The image set switcher: a compact select between the preview and the tones.
+.#{$picker}-set {
+  flex: none;
+  max-inline-size: 7rem;
+  padding: 0.2rem 0.4rem;
+  border: 1px solid var(--_lep-border);
+  border-radius: 999px;
+  background: var(--_lep-bg);
+  color: inherit;
+  font: inherit;
+  font-size: 0.75rem;
+
+  &[hidden] {
+    display: none;
+  }
+}
+
+// An image drawn in a grid cell: the same size as a glyph would be.
+.#{$picker}-cell > .#{m.$block}-image {
+  inline-size: 72%;
+  block-size: auto;
+  aspect-ratio: 1;
+  margin: 0;
+}
+
+// The tone menu: a small card beside the emoji, in the top layer, with the picker's caret.
+.#{$picker}-tonemenu {
+  position: fixed;
+  inset: auto;
+  z-index: calc(var(--_lep-z) + 2);
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 0.25rem;
+  margin: 0;
+  padding: 0.4rem;
+  overflow: visible;
+  border: 1px solid var(--_lep-border);
+  border-radius: var(--_lep-radius);
+  background: var(--_lep-bg);
+  color: var(--_lep-fg);
+  box-shadow: var(--_lep-shadow);
+  animation: #{$picker}-in 120ms ease-out;
+
+  .#{$picker}-cell {
+    inline-size: var(--_lep-cell);
+    font-size: 1.4rem;
+  }
+}
+
+.#{$picker}-tonemenu-row {
+  display: flex;
+  gap: 0.125rem;
+}
+
+.#{$picker}-tonemenu-result {
+  inline-size: calc(var(--_lep-cell) * 1.4);
+  font-size: 2rem;
+
+  > .#{m.$block}-image {
+    inline-size: 85%;
+  }
+
+  &[disabled] {
+    opacity: 0.4;
+    cursor: not-allowed;
   }
 }
 
@@ -526,7 +596,8 @@ $sizes: (
 
 .#{$picker}-preview {
   display: flex;
-  flex: 1;
+  // Room for a name: below it, the switcher and tones wrap to their own row instead of squeezing it away.
+  flex: 1 1 9rem;
   align-items: center;
   gap: 0.5rem;
   min-inline-size: 0;

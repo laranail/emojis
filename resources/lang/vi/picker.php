@@ -20,6 +20,8 @@ return [
     'emoji'       => 'Biểu tượng cảm xúc',
     'kaomoji'     => 'Kaomoji',
     'symbols'     => 'Ký hiệu',
+    'style'       => 'Kiểu biểu tượng cảm xúc',
+    'native'      => 'Mặc định',
     'groups'      => [
         'smileys_and_emotion' => 'Mặt cười và cảm xúc',
         'people_and_body'     => 'Con người và cơ thể',

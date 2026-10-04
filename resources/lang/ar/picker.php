@@ -20,6 +20,8 @@ return [
     'emoji'       => 'رموز تعبيرية',
     'kaomoji'     => 'كاوموجي',
     'symbols'     => 'رموز',
+    'style'       => 'نمط الرموز التعبيرية',
+    'native'      => 'أصلي',
     'groups'      => [
         'smileys_and_emotion' => 'الوجوه والمشاعر',
         'people_and_body'     => 'الأشخاص والجسم',

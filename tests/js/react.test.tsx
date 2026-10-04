@@ -322,6 +322,49 @@ describe('EmojiPicker (React) phase 3', () => {
   });
 });
 
+describe('EmojiPicker (React) phase 4', () => {
+  beforeEach(() => localStorage.clear());
+  afterEach(cleanup);
+
+  const noto = { set: 'noto', licence: 'Apache-2.0', base: 'https://cdn.example/noto', rule: 'noto' as const, suffix: '.svg', missing: [] };
+
+  it('draws what the device cannot as images, switches sets, and opens the shared tone menu', async () => {
+    const source = new StaticSource({ ...payload(), images: noto, imageSets: [noto, { ...noto, set: 'openmoji', rule: 'openmoji' as const, base: 'https://cdn.example/openmoji' }] });
+    const store = memoryStore();
+
+    function Images() {
+      const ref = useRef<HTMLTextAreaElement>(null);
+
+      return (
+        <>
+          <textarea aria-label="message" ref={ref} />
+          <EmojiPicker source={source} target={ref} inline store={store} maxVersion="13.0" searchDelay={0} features={{ setSwitcher: true }} />
+        </>
+      );
+    }
+
+    render(<Images />);
+    await ready();
+
+    expect(screen.getByRole('gridcell', { name: 'melting face' }).querySelector('img')?.getAttribute('src')).toBe('https://cdn.example/noto/emoji_u1fae0.svg');
+    expect(screen.getByRole('gridcell', { name: 'grinning face' }).querySelector('img')).toBeNull();
+
+    fireEvent.error(screen.getByRole('gridcell', { name: 'melting face' }).querySelector('img')!);
+    expect(screen.getByRole('gridcell', { name: 'melting face' }).textContent).toBe('🫠');
+
+    fireEvent.change(screen.getByRole('combobox', { name: 'Emoji style' }), { target: { value: 'openmoji' } });
+    expect(store.get('set')).toBe('openmoji');
+    expect(screen.getByRole('gridcell', { name: 'grinning face' }).querySelector('img')?.getAttribute('src')).toBe('https://cdn.example/openmoji/1F600.svg');
+
+    fireEvent.contextMenu(screen.getByRole('gridcell', { name: 'waving hand' }));
+    const menu = document.querySelector('.laranail-emoji-picker-tonemenu')!;
+    fireEvent.click(menu.querySelector('[data-laranail-emoji-hexcode="1F44B-1F3FD"]')!);
+
+    expect((screen.getByLabelText('message') as HTMLTextAreaElement).value).toBe('👋🏽');
+    expect(document.querySelector('.laranail-emoji-picker-tonemenu')).toBeNull();
+  });
+});
+
 describe('the React build', () => {
   it('writes relative imports with .js, so its declarations resolve under moduleResolution node16/nodenext', () => {
     const files = ['index.ts', 'EmojiPicker.tsx', 'useEmojiPicker.ts'];

@@ -37,8 +37,10 @@ final readonly class PayloadBuilder
      *                                           one keeps its English CLDR name (the Core has no translator)
      * @param bool $kaomoji add the kaomoji, by group, for a picker's Kaomoji tab (about 2,100)
      * @param bool $symbols add the special characters, by group, for a Symbols tab (about 7,300)
+     * @param string|null $imageSet the image set a picker falls back to, or draws everything with; null for none
+     * @param list<string> $switchSets more image sets the user may switch to
      */
-    public function build(?string $locale = null, array $groupLabels = [], bool $kaomoji = false, bool $symbols = false): PickerPayload
+    public function build(?string $locale = null, array $groupLabels = [], bool $kaomoji = false, bool $symbols = false, ?string $imageSet = null, array $switchSets = []): PickerPayload
     {
         $policy = $this->emojis->options()->policy;
         $query = $this->emojis->query();
@@ -61,15 +63,33 @@ final readonly class PayloadBuilder
             ? array_map(static fn (CustomEmoji $c): array => ['name' => $c->name, 'label' => $c->label(), 'image' => $c->image->src, 'fallback' => $c->fallback], $this->emojis->customEmojis())
             : [];
 
+        $groups = array_values(array_filter($groups, static fn (array $g): bool => Group::from($g['slug']) !== Group::Component));
+        $hexcodes = [];
+
+        foreach ($groups as $group) {
+            foreach ($group['emoji'] as $entry) {
+                $hexcodes[] = $entry['hexcode'];
+                array_push($hexcodes, ...array_values($entry['skins']));
+            }
+        }
+
+        $images = new PickerImages($this->emojis);
+        $sets = array_values(array_filter(array_map(
+            static fn (string $name): ?array => $images->describe($name, $hexcodes),
+            array_values(array_unique(array_filter([$imageSet, ...$switchSets], static fn (?string $n): bool => is_string($n) && $n !== ''))),
+        )));
+
         return new PickerPayload(
             dataset: $this->emojis->datasetVersion(),
             locale: $this->emojis->locales()->resolve($locale),
-            groups: array_values(array_filter($groups, static fn (array $g): bool => Group::from($g['slug']) !== Group::Component)),
+            groups: $groups,
             custom: $custom,
             shortcodeOpen: $this->emojis->options()->shortcodeOpen,
             shortcodeClose: $this->emojis->options()->shortcodeClose,
             kaomoji: $kaomoji ? $this->kaomoji() : [],
             symbols: $symbols ? $this->symbols() : [],
+            images: $imageSet !== null ? ($sets[0] ?? null) : null,
+            imageSets: count($sets) > 1 ? $sets : [],
         );
     }
 

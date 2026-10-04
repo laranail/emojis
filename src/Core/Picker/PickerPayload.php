@@ -15,6 +15,8 @@ use JsonSerializable;
  * @phpstan-type PickerCustom array{name: string, label: string, image: string, fallback: string|null}
  * @phpstan-type PickerKaomojiGroup array{slug: string, label: string, items: list<array{text: string, name: string}>}
  * @phpstan-type PickerSymbolGroup array{slug: string, label: string, items: list<array{char: string, name: string}>}
+ *
+ * @phpstan-import-type PickerImageSet from PickerImages
  */
 final readonly class PickerPayload implements JsonSerializable
 {
@@ -23,6 +25,8 @@ final readonly class PickerPayload implements JsonSerializable
      * @param list<PickerCustom> $custom
      * @param list<PickerKaomojiGroup> $kaomoji
      * @param list<PickerSymbolGroup> $symbols
+     * @param PickerImageSet|null $images the set a picker draws images from, when it may
+     * @param list<PickerImageSet> $imageSets every set a user may switch between, the default first
      */
     public function __construct(
         public string $dataset,
@@ -33,6 +37,8 @@ final readonly class PickerPayload implements JsonSerializable
         public string $shortcodeClose = ':',
         public array $kaomoji = [],
         public array $symbols = [],
+        public ?array $images = null,
+        public array $imageSets = [],
     ) {}
 
     public function count(): int
@@ -47,7 +53,7 @@ final readonly class PickerPayload implements JsonSerializable
      * `kaomoji` and `symbols` appear only when they were built (a picker with those tabs switched on), so the
      * default payload carries neither.
      *
-     * @return array{dataset: string, locale: string, groups: list<PickerGroup>, custom: list<PickerCustom>, delimiters: array{0: string, 1: string}, kaomoji?: list<PickerKaomojiGroup>, symbols?: list<PickerSymbolGroup>}
+     * @return array{dataset: string, locale: string, groups: list<PickerGroup>, custom: list<PickerCustom>, delimiters: array{0: string, 1: string}, kaomoji?: list<PickerKaomojiGroup>, symbols?: list<PickerSymbolGroup>, images?: PickerImageSet, imageSets?: list<PickerImageSet>}
      */
     public function jsonSerialize(): array
     {
@@ -59,6 +65,14 @@ final readonly class PickerPayload implements JsonSerializable
 
         if ($this->symbols !== []) {
             $out['symbols'] = $this->symbols;
+        }
+
+        if ($this->images !== null) {
+            $out['images'] = $this->images;
+        }
+
+        if ($this->imageSets !== []) {
+            $out['imageSets'] = $this->imageSets;
         }
 
         return $out;

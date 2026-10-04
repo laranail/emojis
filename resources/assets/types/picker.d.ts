@@ -34,6 +34,10 @@ export interface PickerEmoji {
     base?: false;
     /** Set on a Frequently used entry: the exact form that was picked, which the cell shows whatever the tone. */
     pick?: string;
+    /** Set by capPayload when the device cannot draw the emoji itself: it is drawn as an image instead. */
+    draw?: 'image';
+    /** Set by capPayload: the tone keys whose forms the device cannot draw, drawn as images instead. */
+    imageSkins?: string[];
 }
 export interface PickerGroup {
     slug: string;
@@ -46,6 +50,23 @@ export interface PickerCustom {
     image: string;
     fallback: string | null;
 }
+/**
+ * How to draw emoji from one image set, as PayloadBuilder describes it: a rule-based set (twemoji, noto,
+ * openmoji, joypixels) as a base URL, a rule, a suffix and the hexcodes it lacks; any other as a path per
+ * hexcode below a base URL, or a full URL per hexcode.
+ */
+export interface PickerImageSet {
+    set: string;
+    licence: string;
+    base?: string;
+    rule?: 'twemoji' | 'noto' | 'openmoji' | 'joypixels';
+    suffix?: string;
+    missing?: string[];
+    paths?: Record<string, string>;
+    urls?: Record<string, string>;
+}
+/** How emoji are drawn: the device's own with images for what it cannot draw, only its own, or only images. */
+export type RenderMode = 'auto' | 'native' | 'image';
 /** A kaomoji or a special character: inserted as text, named for screen readers. */
 export interface PickerText {
     text: string;
@@ -68,6 +89,10 @@ export interface PickerFeatures {
     search: boolean;
     recents: boolean;
     skinTones: boolean;
+    /** A tone for each person in 🤝 and couples, and a one-off tone for any emoji, from a long press or right click. */
+    perPersonTones: boolean;
+    /** Let the user choose native emoji or one of the payload's image sets. Off unless switched on. */
+    setSwitcher: boolean;
     preview: boolean;
     categoryTabs: boolean;
     custom: boolean;
@@ -82,6 +107,10 @@ export interface PickerPayload {
     kaomoji?: PickerTextGroup[];
     /** Present when the Symbols tab is on. */
     symbols?: PickerTextGroup[];
+    /** The image set to fall back to (or draw everything with); absent when the picker draws native emoji only. */
+    images?: PickerImageSet;
+    /** Every set the user may switch between, the default first; present when the set switcher is on. */
+    imageSets?: PickerImageSet[];
     /** The configured shortcode delimiters a custom emoji is inserted with; [':', ':'] when absent. */
     delimiters?: [string, string];
 }
@@ -127,6 +156,9 @@ export interface PickerStrings {
     emoji?: string;
     kaomoji?: string;
     symbols?: string;
+    /** The set switcher's label, and its option for the device's own emoji. */
+    style?: string;
+    native?: string;
 }
 export interface PickerOptions {
     source?: PickerSource;
@@ -160,6 +192,8 @@ export interface PickerOptions {
     sheetBreakpoint?: number;
     /** Parts to switch off: { search: false, preview: false, … }. Everything is on by default. */
     features?: Partial<PickerFeatures>;
+    /** 'auto' (default): the device's emoji, images for what it cannot draw; 'native': its own only; 'image': all images. */
+    render?: RenderMode;
 }
 export interface PickerEvents {
     select: SelectDetail;
@@ -212,6 +246,7 @@ export interface ParsedOptions {
     arrow: boolean;
     sheetBreakpoint: number;
     features: PickerFeatures;
+    render: RenderMode;
 }
 /** Where a pick can be inserted: an input, a textarea, or a contenteditable element. */
 export type Insertable = HTMLInputElement | HTMLTextAreaElement | HTMLElement;
@@ -259,6 +294,20 @@ export declare function charOf(hexcode: string): string;
 export declare function withTone(item: PickerEmoji, tone: number): string;
 /** The text a custom emoji is inserted as: its name between the payload's shortcode delimiters. */
 export declare function customCode(name: string, data?: Pick<PickerPayload, 'delimiters'> | null): string;
+/**
+ * The filename rules of the rule-based sets, mirroring the server's Filenames class: Twemoji drops FE0F
+ * unless the sequence has a ZWJ, Noto always drops it and pads, OpenMoji keeps the hexcode (dropping a lone
+ * trailing FE0F), JoyPixels drops every FE0F. Pure, so the same emoji gets the same URL on both sides.
+ */
+export declare const IMAGE_RULES: Readonly<Record<NonNullable<PickerImageSet['rule']>, (hexcode: string) => string>>;
+/** The URL of an emoji's image in a set, or null when the set has none for it. */
+export declare function imageUrl(set: PickerImageSet | null | undefined, hexcode: string): string | null;
+/**
+ * Whether a cell draws an image rather than the device's glyph: always in 'image' mode, never in 'native',
+ * and in 'auto' only for what capPayload marked as beyond the device (a newer emoji, a newer toned form, a
+ * flag where the OS draws letters). Only when the set has the image; otherwise the glyph is kept.
+ */
+export declare function drawsImage(item: PickerEmoji, hexcode: string, mode: RenderMode, set: PickerImageSet | null | undefined): string | null;
 /** Compares two dotted Emoji versions ("15.1" > "15.0"). */
 export declare function byVersion(a: string, b: string): number;
 /**
@@ -274,6 +323,13 @@ export declare function byVersion(a: string, b: string): number;
  */
 export declare function detectMaxVersion(doc?: Pick<Document, 'createElement'> | undefined): string | null;
 /**
+ * Whether this browser draws flags (🇺🇸) as flags. Windows draws regional indicators as letters, in black, so
+ * a flag comes out in colour only where the OS has flag glyphs. Null when it cannot tell.
+ */
+export declare function detectFlags(doc?: Pick<Document, 'createElement'> | undefined): boolean | null;
+/** detectFlags() once per page, after web fonts have loaded. */
+export declare function detectFlagsOnce(): Promise<boolean | null>;
+/**
  * detectMaxVersion() once per page, after web fonts have loaded: a page whose emoji font is a web font
  * (Noto Color Emoji from Google Fonts) would otherwise be measured before the font arrives.
  */
@@ -282,8 +338,16 @@ export declare function detectMaxVersionOnce(): Promise<string | null>;
  * The payload without emoji newer than `cap` ('auto' asks the browser; null or '' keeps everything). Toned
  * forms are capped on their own version, since they can be newer than their base (🤝 is 3.0, its tones
  * 14.0): a capped tone is dropped from `skins`, and the emoji then falls back to its untoned form.
+ *
+ * With `fallback` (the payload's image set, in 'auto' or 'image' mode) nothing the set can draw is dropped:
+ * an emoji or toned form beyond the cap is kept and marked to be drawn as an image instead, so the whole
+ * catalogue stays reachable on an older device. `flags: false` (the OS has no flag glyphs, as on Windows)
+ * marks every flag the same way.
  */
-export declare function capPayload(data: PickerPayload, cap: string | null | undefined, detect?: () => string | null): PickerPayload;
+export declare function capPayload(data: PickerPayload, cap: string | null | undefined, detect?: () => string | null, fallback?: {
+    set?: PickerImageSet | null;
+    flags?: boolean | null;
+}): PickerPayload;
 /**
  * Ranks emoji for a search term: exact name, name prefix, shortcode, keyword prefix, anywhere. Every word
  * of the term must match somewhere.
@@ -355,6 +419,8 @@ export declare function rovingIndex(count: number, current: number, key: string,
 export declare function insertText(target: Insertable, text: string, caretKnown: boolean): boolean;
 /** Reads every data-laranail-emoji-* option on an element, typed. Unknown attributes are ignored. */
 export declare function parseOptions(element: Element): ParsedOptions;
+/** A render mode from an attribute or prop; anything unknown is 'auto'. */
+export declare function parseRender(value: unknown): RenderMode;
 /** A placement from an attribute or prop; anything unknown is 'auto'. */
 export declare function parsePlacement(value: unknown): Placement;
 /** Loads the payload from the package's API (`…/api/v1`) or straight from a `…/picker` URL. */
@@ -485,6 +551,40 @@ export declare class Popover {
     expand(): void;
 }
 /**
+ * The toned forms an emoji offers. One person: tone 0 (none) to 5. Two people (🤝, couples): a tone for each,
+ * 1 to 5, where the same tone on both is keyed by the one tone ("3") and different tones by the pair
+ * ("3-5"). `form()` answers the hexcode for a choice, or null when the payload does not offer it (the policy
+ * or the version cap removed it).
+ */
+export declare function toneForms(item: PickerEmoji): {
+    people: 0 | 1 | 2;
+    form: (first: number, second?: number) => string | null;
+};
+export interface ToneMenuOptions {
+    strings: PickerStrings;
+    /** The tone to start from (the picker's current one). */
+    tone: number;
+    mode: RenderMode;
+    set: PickerImageSet | null | undefined;
+    rtl?: boolean;
+    onPick: (hexcode: string) => void;
+    onClose?: () => void;
+}
+/**
+ * A small popover beside an emoji for choosing its tone for this one pick, as phones do on a long press:
+ * six toned forms for one person, or a tone for each person in 🤝 and couples with the result previewed.
+ * It is placed with computePosition() and carries the same caret as the picker. Arrow keys move, Enter or
+ * Space picks, Escape closes and returns focus to the emoji. Returns the function that closes it.
+ */
+export declare function openToneMenu(anchor: HTMLElement, container: HTMLElement, item: PickerEmoji, options: ToneMenuOptions): () => void;
+/**
+ * Opens the tone menu for an emoji cell on a right click, the context-menu key or Shift+F10, or a long press
+ * (half a second without moving), which is how phones offer tones. Delegated on the grid, so both pickers
+ * bind it once. `resolve` answers the emoji a cell shows, or null for one with no tones (then the browser's
+ * own context menu is left alone). Returns the function that unbinds it.
+ */
+export declare function bindToneMenu(body: HTMLElement, resolve: (cell: HTMLElement) => PickerEmoji | null, open: (cell: HTMLElement, item: PickerEmoji) => void): () => void;
+/**
  * What a category tab shows: the group's outline icon when there is one, else its first emoji, else a short
  * label (kaomoji and symbol groups). Built with createElementNS, so it stays CSP-safe.
  */
@@ -526,6 +626,12 @@ export declare class Picker {
     private searchTimer;
     private popover;
     private kind;
+    /** The payload as loaded, before the device's cap: what a change of image set re-caps from. */
+    private raw;
+    private support;
+    private closeToneMenu;
+    private switcher;
+    private readonly imageFailed;
     private stopSpy;
     constructor(element: HTMLElement, options?: PickerOptions);
     source(source: PickerSource): this;
@@ -560,6 +666,12 @@ export declare class Picker {
     close(focus?: 'trigger' | 'target' | 'none'): void;
     focusCell(cell: HTMLElement | null | undefined): void;
     private load;
+    /** The image set in use: the one chosen in the set switcher, else the payload's. Null when there is none. */
+    private get imageSet();
+    /** How cells draw: the option, unless the set switcher picked a set (then every emoji from it). */
+    private get renderMode();
+    /** The payload capped for this device, falling back to images where the mode allows. */
+    private capped;
     private reload;
     private refresh;
     /** Redraws Frequently used after picks made while the panel was open, now that nothing is under the pointer. */
@@ -579,6 +691,9 @@ export declare class Picker {
     private scheduleSearch;
     private render;
     private sections;
+    /** The image set switcher: native emoji, then each set the payload offers. Hidden when it offers none. */
+    private renderSwitcher;
+    private openToneMenu;
     /** The Emoji / Kaomoji / Symbols tabs, shown only when the payload carries more than emoji. */
     private renderKinds;
     private setKind;
@@ -601,6 +716,10 @@ export declare class Picker {
     private customCell;
     private onKey;
     private select;
+    /** Picks one form of an emoji (from its cell, or from the tone menu): recorded as recent, then delivered. */
+    private choose;
+    /** Inserts a pick, announces it, and closes the popover when it should. */
+    private deliver;
 }
 /**
  * Mounts a picker from its data-laranail-emoji-* attributes. Idempotent: a mounted element is left alone,

@@ -15,6 +15,10 @@ use Simtabi\Laranail\Emojis\Core\Contracts\ImageSet;
  *
  * Coverage comes from the dataset: an emoji whose file the set does not publish returns null rather than
  * a URL that 404s, and the renderer degrades it.
+ *
+ * `rule` names the filename rule when it is a pure function of the hexcode (twemoji, noto, openmoji,
+ * joypixels), so a browser can rebuild every URL from the base, the rule and the suffix — the picker
+ * payload then carries those three instead of a URL per emoji. Null when it is not (Fluent's folder names).
  */
 final readonly class CdnImageSet implements ImageSet
 {
@@ -25,7 +29,32 @@ final readonly class CdnImageSet implements ImageSet
         private Closure $filename,
         private int $coverageBit,
         private string $licence,
+        private ?string $rule = null,
+        private string $suffix = '',
     ) {}
+
+    public function baseUrl(): string
+    {
+        return rtrim($this->baseUrl, '/');
+    }
+
+    /** The named filename rule a browser can apply to a hexcode, or null when only the server can. */
+    public function rule(): ?string
+    {
+        return $this->rule;
+    }
+
+    /** What follows the rule's output in a filename: ".svg", ".png". */
+    public function suffix(): string
+    {
+        return $this->suffix;
+    }
+
+    /** Whether the set publishes an image for the emoji, by the dataset's coverage (true when not measured). */
+    public function covers(Emoji $emoji): bool
+    {
+        return $this->path($emoji) !== null;
+    }
 
     public function name(): string
     {

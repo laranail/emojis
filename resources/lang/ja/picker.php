@@ -20,6 +20,8 @@ return [
     'emoji'       => '絵文字',
     'kaomoji'     => '顔文字',
     'symbols'     => '記号',
+    'style'       => '絵文字のスタイル',
+    'native'      => '標準',
     'groups'      => [
         'smileys_and_emotion' => 'スマイリーと感情',
         'people_and_body'     => '人と体',

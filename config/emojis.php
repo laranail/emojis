@@ -83,14 +83,16 @@ return [
         // Parts of the picker that can be switched off, and the two extra content tabs that are off unless
         // asked for (each adds its characters to the payload: about 2,100 kaomoji, 7,300 symbols).
         'features' => [
-            'search'        => true,
-            'recents'       => true,
-            'skin_tones'    => true,
-            'preview'       => true,  // the hovered emoji, large, with its name and :shortcode:
-            'category_tabs' => true,
-            'custom'        => true,  // custom emoji, when the policy allows them
-            'kaomoji'       => false, // a Kaomoji tab: ¯\_(ツ)_/¯
-            'symbols'       => false, // a Symbols tab: arrows, currency, maths, punctuation, letters
+            'search'           => true,
+            'recents'          => true,
+            'skin_tones'       => true,
+            'per_person_tones' => true, // a tone for each person in 🤝 and couples, from a long press or right click
+            'preview'          => true,  // the hovered emoji, large, with its name and :shortcode:
+            'category_tabs'    => true,
+            'custom'           => true,  // custom emoji, when the policy allows them
+            'kaomoji'          => false, // a Kaomoji tab: ¯\_(ツ)_/¯
+            'symbols'          => false, // a Symbols tab: arrows, currency, maths, punctuation, letters
+            'set_switcher'     => false, // let the user switch between native emoji, Twemoji, Noto and OpenMoji
         ],
 
         'placement'        => 'auto', // auto | top | bottom | start | end, optionally -start / -end
@@ -108,5 +110,11 @@ return [
         // Where the payload comes from: inline (a JSON block in the page), api (GET /picker; needs the API
         // enabled), or auto (the API when it is enabled, inline otherwise).
         'delivery' => 'auto',
+
+        // How emoji are drawn: auto (the device's own emoji, and an image from image_set for any it cannot
+        // draw — newer emoji, flags on Windows), native (the device's own only; what it cannot draw is
+        // hidden), or image (every emoji from image_set).
+        'render'    => 'auto',
+        'image_set' => null, // null: images.set. Twemoji, Noto, OpenMoji and JoyPixels cost under 5 KB here.
     ],
 ];

@@ -20,6 +20,8 @@ return [
     'emoji'       => 'इमोजी',
     'kaomoji'     => 'काओमोजी',
     'symbols'     => 'प्रतीक',
+    'style'       => 'इमोजी शैली',
+    'native'      => 'नेटिव',
     'groups'      => [
         'smileys_and_emotion' => 'स्माइली और भावनाएँ',
         'people_and_body'     => 'लोग और शरीर',

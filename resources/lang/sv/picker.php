@@ -20,6 +20,8 @@ return [
     'emoji'       => 'Emoji',
     'kaomoji'     => 'Kaomoji',
     'symbols'     => 'Symboler',
+    'style'       => 'Emojistil',
+    'native'      => 'System',
     'groups'      => [
         'smileys_and_emotion' => 'Smileys och känslor',
         'people_and_body'     => 'Människor och kropp',

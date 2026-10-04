@@ -20,6 +20,8 @@ return [
     'emoji'       => 'Emoji',
     'kaomoji'     => 'Kaomoji',
     'symbols'     => 'Alama',
+    'style'       => 'Mtindo wa emoji',
+    'native'      => 'Asili',
     'groups'      => [
         'smileys_and_emotion' => 'Vikaragosi na hisia',
         'people_and_body'     => 'Watu na mwili',

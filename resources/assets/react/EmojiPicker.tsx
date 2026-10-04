@@ -4,11 +4,14 @@ import {
   Popover,
   TAB_ICONS,
   TONE_SWATCHES,
+  bindToneMenu,
   charOf,
   clampColumns,
   customCode,
+  drawsImage,
   gridTarget,
   insertText,
+  openToneMenu,
   parsePlacement,
   resultText,
   rovingIndex,
@@ -222,7 +225,15 @@ export function EmojiPicker({
   }, [open, inline, close]);
 
   const [preview, setPreview] = useState<Preview | null>(null);
+  const [failed, setFailed] = useState<ReadonlySet<string>>(() => new Set());
   const features = state.features;
+  /** An image to draw for this form, unless it failed to load (then the device's glyph). */
+  const imageOf = (item: PickerEmoji, hexcode: string): string | null => {
+    const url = drawsImage(item, hexcode, state.renderMode, state.imageSet);
+
+    return url && !failed.has(url) ? url : null;
+  };
+  const imageFailed = (url: string): void => setFailed((previous) => new Set(previous).add(url));
 
   const showPreview = (item: PickerItem): void => {
     if (!features.preview) return;
@@ -232,9 +243,48 @@ export function EmojiPicker({
     } else if ('image' in item) {
       setPreview({ glyph: '', image: item.image, name: item.label, code: customCode(item.name, state.data) });
     } else {
-      setPreview({ glyph: charOf(state.hexcodeOf(item)), image: null, name: item.name, code: item.shortcode ? customCode(item.shortcode, state.data) : null });
+      const hexcode = state.hexcodeOf(item);
+      setPreview({ glyph: charOf(hexcode), image: imageOf(item, hexcode), name: item.name, code: item.shortcode ? customCode(item.shortcode, state.data) : null });
     }
   };
+
+  // A right click, Shift+F10 or a long press on an emoji with tones opens the shared tone menu; a form
+  // chosen there is picked like any other, its exact tone recorded.
+  const latest = useRef({ state, pick: (_: PickerItem): void => {}, imageOf });
+  useEffect(() => {
+    if (!features.perPersonTones || !body.current) return;
+
+    let closeMenu: (() => void) | null = null;
+    const unbind = bindToneMenu(
+      body.current,
+      (cell) => {
+        const base = cell.getAttribute('data-laranail-emoji-base') ?? '';
+        const item = latest.current.state.sections.flatMap((section) => (section.custom || section.text ? [] : (section.items as PickerEmoji[]))).find((i) => i.hexcode === base);
+
+        return item && Object.keys(item.skins ?? {}).length > 0 ? item : null;
+      },
+      (cell, item) => {
+        closeMenu?.();
+        const { state: current } = latest.current;
+        closeMenu = openToneMenu(cell, root.current ?? cell, item, {
+          strings: current.strings,
+          tone: current.tone,
+          mode: current.renderMode,
+          set: current.imageSet,
+          rtl: rtl(),
+          onPick: (hexcode) => latest.current.pick({ ...item, pick: hexcode }),
+          onClose: () => {
+            closeMenu = null;
+          },
+        });
+      },
+    );
+
+    return () => {
+      closeMenu?.();
+      unbind();
+    };
+  }, [features.perPersonTones]);
 
   // The tab follows the scroll: whichever section is at the top of the body is the current one.
   const searching = state.resultCount !== null;
@@ -260,6 +310,8 @@ export function EmojiPicker({
       close(field ? 'target' : 'trigger');
     }
   };
+
+  latest.current = { state, pick, imageOf };
 
   const tabs = state.tabs;
   const selectedTab = tabs.some((t) => t.slug === activeTab) ? activeTab : (tabs[0]?.slug ?? null);
@@ -568,7 +620,13 @@ export function EmojiPicker({
                             onPointerOver={() => showPreview(item)}
                             onClick={() => pick(item)}
                           >
-                            {charOf(state.hexcodeOf(item))}
+                            {(() => {
+                              const hexcode = state.hexcodeOf(item);
+                              const url = imageOf(item, hexcode);
+
+                              // The cell is named; the image is decoration, and falls back to the glyph if it fails.
+                              return url ? <img src={url} alt="" className="laranail-emoji laranail-emoji-image" draggable={false} loading="lazy" decoding="async" onError={() => imageFailed(url)} /> : charOf(hexcode);
+                            })()}
                           </button>
                         ),
                       )}
@@ -593,6 +651,22 @@ export function EmojiPicker({
                 </>
               )}
             </div>
+          )}
+          {features.setSwitcher && (
+            <select
+              className={`${P}-set`}
+              aria-label={strings.style ?? DEFAULT_STRINGS.style}
+              hidden={state.imageSets.length === 0}
+              value={state.chosenSet}
+              onChange={(event) => state.setChosenSet(event.target.value)}
+            >
+              <option value="native">{strings.native ?? DEFAULT_STRINGS.native}</option>
+              {state.imageSets.map((set) => (
+                <option key={set.set} value={set.set}>
+                  {set.set.charAt(0).toUpperCase() + set.set.slice(1)}
+                </option>
+              ))}
+            </select>
           )}
         <div className={`${P}-tones`} role="radiogroup" aria-label={strings.tone} hidden={!features.skinTones}>
           {TONE_SWATCHES.map((hand, tone) => (

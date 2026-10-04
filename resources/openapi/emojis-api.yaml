@@ -63,6 +63,22 @@ components:
         slug: { type: string, examples: [smileys_and_emotion] }
         label: { type: string, description: 'Translated through the picker translations; English when the locale has none.' }
         emoji: { type: array, items: { $ref: '#/components/schemas/PickerEmoji' } }
+    PickerImageSet:
+      type: object
+      required: [set, licence]
+      description: >-
+        How to draw emoji from one image set. A rule-based set (twemoji, noto, openmoji, joypixels) gives base,
+        rule, suffix and the hexcodes it does not cover; the URL is base + "/" + rule(hexcode) + suffix. Any
+        other set gives each covered hexcode's path below base, or its full URL.
+      properties:
+        set: { type: string, examples: [twemoji] }
+        licence: { type: string }
+        base: { type: string }
+        rule: { type: string, enum: [twemoji, noto, openmoji, joypixels] }
+        suffix: { type: string, examples: ['.svg'] }
+        missing: { type: array, items: { type: string } }
+        paths: { type: object, additionalProperties: { type: string } }
+        urls: { type: object, additionalProperties: { type: string } }
     PickerPayload:
       type: object
       required: [dataset, locale, groups, custom, delimiters]
@@ -86,6 +102,21 @@ components:
           prefixItems: [{ type: string }, { type: string }]
           minItems: 2
           maxItems: 2
+        kaomoji:
+          type: array
+          description: 'Present when the Kaomoji tab is on: groups of { text, name }.'
+          items: { type: object, properties: { slug: { type: string }, label: { type: string }, items: { type: array, items: { type: object, properties: { text: { type: string }, name: { type: string } } } } } }
+        symbols:
+          type: array
+          description: 'Present when the Symbols tab is on: groups of { char, name }.'
+          items: { type: object, properties: { slug: { type: string }, label: { type: string }, items: { type: array, items: { type: object, properties: { char: { type: string }, name: { type: string } } } } } }
+        images:
+          description: 'Present unless the picker draws native emoji only: the set it falls back to, or draws everything with.'
+          $ref: '#/components/schemas/PickerImageSet'
+        imageSets:
+          type: array
+          description: 'Present when the set switcher is on: every set the user may choose, the default first.'
+          items: { $ref: '#/components/schemas/PickerImageSet' }
     Emoji:
       type: object
       properties:

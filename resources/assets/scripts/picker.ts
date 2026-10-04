@@ -36,6 +36,10 @@ export interface PickerEmoji {
   base?: false;
   /** Set on a Frequently used entry: the exact form that was picked, which the cell shows whatever the tone. */
   pick?: string;
+  /** Set by capPayload when the device cannot draw the emoji itself: it is drawn as an image instead. */
+  draw?: 'image';
+  /** Set by capPayload: the tone keys whose forms the device cannot draw, drawn as images instead. */
+  imageSkins?: string[];
 }
 
 export interface PickerGroup {
@@ -50,6 +54,25 @@ export interface PickerCustom {
   image: string;
   fallback: string | null;
 }
+
+/**
+ * How to draw emoji from one image set, as PayloadBuilder describes it: a rule-based set (twemoji, noto,
+ * openmoji, joypixels) as a base URL, a rule, a suffix and the hexcodes it lacks; any other as a path per
+ * hexcode below a base URL, or a full URL per hexcode.
+ */
+export interface PickerImageSet {
+  set: string;
+  licence: string;
+  base?: string;
+  rule?: 'twemoji' | 'noto' | 'openmoji' | 'joypixels';
+  suffix?: string;
+  missing?: string[];
+  paths?: Record<string, string>;
+  urls?: Record<string, string>;
+}
+
+/** How emoji are drawn: the device's own with images for what it cannot draw, only its own, or only images. */
+export type RenderMode = 'auto' | 'native' | 'image';
 
 /** A kaomoji or a special character: inserted as text, named for screen readers. */
 export interface PickerText {
@@ -72,6 +95,10 @@ export interface PickerFeatures {
   search: boolean;
   recents: boolean;
   skinTones: boolean;
+  /** A tone for each person in 🤝 and couples, and a one-off tone for any emoji, from a long press or right click. */
+  perPersonTones: boolean;
+  /** Let the user choose native emoji or one of the payload's image sets. Off unless switched on. */
+  setSwitcher: boolean;
   preview: boolean;
   categoryTabs: boolean;
   custom: boolean;
@@ -87,6 +114,10 @@ export interface PickerPayload {
   kaomoji?: PickerTextGroup[];
   /** Present when the Symbols tab is on. */
   symbols?: PickerTextGroup[];
+  /** The image set to fall back to (or draw everything with); absent when the picker draws native emoji only. */
+  images?: PickerImageSet;
+  /** Every set the user may switch between, the default first; present when the set switcher is on. */
+  imageSets?: PickerImageSet[];
   /** The configured shortcode delimiters a custom emoji is inserted with; [':', ':'] when absent. */
   delimiters?: [string, string];
 }
@@ -138,6 +169,9 @@ export interface PickerStrings {
   emoji?: string;
   kaomoji?: string;
   symbols?: string;
+  /** The set switcher's label, and its option for the device's own emoji. */
+  style?: string;
+  native?: string;
 }
 
 export interface PickerOptions {
@@ -172,6 +206,8 @@ export interface PickerOptions {
   sheetBreakpoint?: number;
   /** Parts to switch off: { search: false, preview: false, … }. Everything is on by default. */
   features?: Partial<PickerFeatures>;
+  /** 'auto' (default): the device's emoji, images for what it cannot draw; 'native': its own only; 'image': all images. */
+  render?: RenderMode;
 }
 
 export interface PickerEvents {
@@ -208,6 +244,7 @@ export interface ParsedOptions {
   arrow: boolean;
   sheetBreakpoint: number;
   features: PickerFeatures;
+  render: RenderMode;
 }
 
 /** Where a pick can be inserted: an input, a textarea, or a contenteditable element. */
@@ -243,10 +280,12 @@ export const DEFAULT_STRINGS: PickerStrings = {
   emoji: 'Emoji',
   kaomoji: 'Kaomoji',
   symbols: 'Symbols',
+  style: 'Emoji style',
+  native: 'Native',
 };
 
 /** Every feature on. */
-export const DEFAULT_FEATURES: PickerFeatures = { search: true, recents: true, skinTones: true, preview: true, categoryTabs: true, custom: true };
+export const DEFAULT_FEATURES: PickerFeatures = { search: true, recents: true, skinTones: true, perPersonTones: true, setSwitcher: false, preview: true, categoryTabs: true, custom: true };
 
 /** Features from anywhere (an attribute's JSON, a prop): only booleans count, everything else stays on. */
 export function readFeatures(value: unknown): PickerFeatures {
@@ -363,6 +402,73 @@ export function customCode(name: string, data?: Pick<PickerPayload, 'delimiters'
   return `${open}${name}${close}`;
 }
 
+const codepoints = (hexcode: string): number[] => hexcode.split('-').map((part) => parseInt(part, 16));
+const hex = (cp: number, pad = 0, upper = false): string => {
+  const text = cp.toString(16).padStart(pad, '0');
+
+  return upper ? text.toUpperCase() : text;
+};
+
+/**
+ * The filename rules of the rule-based sets, mirroring the server's Filenames class: Twemoji drops FE0F
+ * unless the sequence has a ZWJ, Noto always drops it and pads, OpenMoji keeps the hexcode (dropping a lone
+ * trailing FE0F), JoyPixels drops every FE0F. Pure, so the same emoji gets the same URL on both sides.
+ */
+export const IMAGE_RULES: Readonly<Record<NonNullable<PickerImageSet['rule']>, (hexcode: string) => string>> = {
+  twemoji: (hexcode) => {
+    const cps = codepoints(hexcode);
+
+    return (cps.includes(0x200d) ? cps : cps.filter((cp) => cp !== 0xfe0f)).map((cp) => hex(cp)).join('-');
+  },
+  noto: (hexcode) => `emoji_u${codepoints(hexcode).filter((cp) => cp !== 0xfe0f).map((cp) => hex(cp, 4)).join('_')}`,
+  openmoji: (hexcode) => {
+    const cps = codepoints(hexcode);
+
+    return cps.length === 2 && cps[1] === 0xfe0f ? hex(cps[0] ?? 0, 4, true) : hexcode;
+  },
+  joypixels: (hexcode) => codepoints(hexcode).filter((cp) => cp !== 0xfe0f).map((cp) => hex(cp)).join('-'),
+};
+
+/** The URL of an emoji's image in a set, or null when the set has none for it. */
+export function imageUrl(set: PickerImageSet | null | undefined, hexcode: string): string | null {
+  if (!set) {
+    return null;
+  }
+
+  if (set.urls) {
+    return set.urls[hexcode] ?? null;
+  }
+
+  if (set.paths) {
+    const path = set.paths[hexcode];
+
+    return path && set.base ? `${set.base}/${path}` : null;
+  }
+
+  const rule = set.rule ? IMAGE_RULES[set.rule] : undefined;
+
+  if (!rule || !set.base || (set.missing ?? []).includes(hexcode)) {
+    return null;
+  }
+
+  return `${set.base}/${rule(hexcode)}${set.suffix ?? ''}`;
+}
+
+/**
+ * Whether a cell draws an image rather than the device's glyph: always in 'image' mode, never in 'native',
+ * and in 'auto' only for what capPayload marked as beyond the device (a newer emoji, a newer toned form, a
+ * flag where the OS draws letters). Only when the set has the image; otherwise the glyph is kept.
+ */
+export function drawsImage(item: PickerEmoji, hexcode: string, mode: RenderMode, set: PickerImageSet | null | undefined): string | null {
+  if (mode === 'native' || !set) {
+    return null;
+  }
+
+  const beyond = hexcode === item.hexcode ? item.draw === 'image' : Object.entries(item.skins ?? {}).some(([key, value]) => value === hexcode && (item.imageSkins ?? []).includes(key));
+
+  return mode === 'image' || beyond ? imageUrl(set, hexcode) : null;
+}
+
 /** Compares two dotted Emoji versions ("15.1" > "15.0"). */
 export function byVersion(a: string, b: string): number {
   const [am = 0, an = 0] = String(a).split('.').map(Number);
@@ -442,6 +548,61 @@ export function detectMaxVersion(doc: Pick<Document, 'createElement'> | undefine
   return null;
 }
 
+/**
+ * Whether this browser draws flags (🇺🇸) as flags. Windows draws regional indicators as letters, in black, so
+ * a flag comes out in colour only where the OS has flag glyphs. Null when it cannot tell.
+ */
+export function detectFlags(doc: Pick<Document, 'createElement'> | undefined = globalThis.document): boolean | null {
+  const canvas = doc?.createElement?.('canvas') as HTMLCanvasElement | undefined;
+  const context = canvas?.getContext?.('2d', { willReadFrequently: true }) as CanvasRenderingContext2D | null | undefined;
+
+  if (!canvas || !context || typeof context.getImageData !== 'function') {
+    return null;
+  }
+
+  canvas.width = canvas.height = 48;
+  context.font = `24px 'Apple Color Emoji','Segoe UI Emoji','Noto Color Emoji','Twemoji Mozilla',sans-serif`;
+  context.textBaseline = 'top';
+  context.fillStyle = '#000';
+
+  const colour = (text: string): boolean => {
+    context.clearRect(0, 0, 48, 48);
+    context.fillText(text, 0, 0);
+    const data = context.getImageData(0, 0, 48, 48).data;
+
+    for (let i = 0; i + 3 < data.length; i += 4) {
+      const [r = 0, g = 0, b = 0, a = 0] = [data[i], data[i + 1], data[i + 2], data[i + 3]];
+
+      if (a > 0 && Math.max(Math.abs(r - g), Math.abs(g - b), Math.abs(r - b)) > 48) return true;
+    }
+
+    return false;
+  };
+
+  if (colour('')) {
+    return null;
+  }
+
+  return colour('\u{1F1FA}\u{1F1F8}') && context.measureText('\u{1F1FA}\u{1F1F8}').width < context.measureText('\u{1F600}').width * 1.5;
+}
+
+let flagsDetected: Promise<boolean | null> | null = null;
+
+/** detectFlags() once per page, after web fonts have loaded. */
+export function detectFlagsOnce(): Promise<boolean | null> {
+  flagsDetected ??= (async () => {
+    try {
+      await (globalThis.document as Document | undefined)?.fonts?.ready;
+    } catch {
+      // Measure now.
+    }
+
+    return detectFlags();
+  })();
+
+  return flagsDetected;
+}
+
 let detected: Promise<string | null> | null = null;
 
 /**
@@ -466,36 +627,68 @@ export function detectMaxVersionOnce(): Promise<string | null> {
  * The payload without emoji newer than `cap` ('auto' asks the browser; null or '' keeps everything). Toned
  * forms are capped on their own version, since they can be newer than their base (🤝 is 3.0, its tones
  * 14.0): a capped tone is dropped from `skins`, and the emoji then falls back to its untoned form.
+ *
+ * With `fallback` (the payload's image set, in 'auto' or 'image' mode) nothing the set can draw is dropped:
+ * an emoji or toned form beyond the cap is kept and marked to be drawn as an image instead, so the whole
+ * catalogue stays reachable on an older device. `flags: false` (the OS has no flag glyphs, as on Windows)
+ * marks every flag the same way.
  */
-export function capPayload(data: PickerPayload, cap: string | null | undefined, detect: () => string | null = detectMaxVersion): PickerPayload {
+export function capPayload(
+  data: PickerPayload,
+  cap: string | null | undefined,
+  detect: () => string | null = detectMaxVersion,
+  fallback: { set?: PickerImageSet | null; flags?: boolean | null } = {},
+): PickerPayload {
   const version = cap === 'auto' ? detect() : cap;
+  const set = fallback.set ?? null;
+  const noFlags = fallback.flags === false && set !== null;
 
-  if (!version) {
+  if (!version && !noFlags) {
     return data;
   }
 
-  const fits = (v: string): boolean => byVersion(v, version) <= 0;
-  const trim = (item: PickerEmoji): PickerEmoji => {
+  const fits = (v: string): boolean => !version || byVersion(v, version) <= 0;
+  const versionOf = (item: PickerEmoji, key: string): string => {
     const versions = item.skin_versions;
 
-    if (!versions || !item.skins) {
-      return item;
+    return !versions ? item.version : typeof versions === 'string' ? versions : (versions[key] ?? item.version);
+  };
+  const adjust = (item: PickerEmoji, group: string): PickerEmoji | null => {
+    const flag = noFlags && group === 'flags';
+    const drawn = fits(item.version) && !flag;
+    const baseImage = !drawn && imageUrl(set, item.hexcode) !== null;
+    const skins: Record<string, string> = {};
+    const imageSkins: string[] = [];
+
+    for (const [key, hexcode] of Object.entries(item.skins ?? {})) {
+      if (fits(versionOf(item, key))) {
+        skins[key] = hexcode;
+      } else if (imageUrl(set, hexcode) !== null) {
+        skins[key] = hexcode;
+        imageSkins.push(key);
+      }
     }
 
-    const skins = Object.fromEntries(Object.entries(item.skins).filter(([key]) => fits(typeof versions === 'string' ? versions : (versions[key] ?? item.version))));
+    if (!drawn && !baseImage && (item.base !== false || Object.keys(skins).length === 0)) {
+      return item.base === false && Object.keys(skins).length > 0 ? { ...item, skins } : null;
+    }
 
-    return { ...item, skins };
+    const out: PickerEmoji = { ...item, skins };
+
+    if (!drawn) out.draw = 'image';
+    if (imageSkins.length > 0) out.imageSkins = imageSkins;
+
+    return out.base === false && Object.keys(skins).length === 0 ? null : out;
   };
 
   return {
     ...data,
     groups: (data.groups ?? []).map((group) => ({
       ...group,
-      emoji: group.emoji.filter((item) => fits(item.version)).map(trim).filter((item) => item.base !== false || Object.keys(item.skins ?? {}).length > 0),
+      emoji: group.emoji.map((item) => adjust(item, group.slug)).filter((item): item is PickerEmoji => item !== null),
     })),
   };
 }
-
 /**
  * Ranks emoji for a search term: exact name, name prefix, shortcode, keyword prefix, anywhere. Every word
  * of the term must match somewhere.
@@ -916,10 +1109,16 @@ export function parseOptions(element: Element): ParsedOptions {
     arrow: data('arrow') !== 'false',
     sheetBreakpoint: Math.max(0, int('sheet-breakpoint', 640)),
     features: readFeatures(safeJson(data('features') ?? '{}', {})),
+    render: parseRender(data('render')),
   };
 }
 
 const PLACEMENTS = new Set(['auto', 'top', 'bottom', 'start', 'end', 'top-start', 'top-end', 'bottom-start', 'bottom-end', 'start-start', 'start-end', 'end-start', 'end-end']);
+
+/** A render mode from an attribute or prop; anything unknown is 'auto'. */
+export function parseRender(value: unknown): RenderMode {
+  return value === 'native' || value === 'image' ? value : 'auto';
+}
 
 /** A placement from an attribute or prop; anything unknown is 'auto'. */
 export function parsePlacement(value: unknown): Placement {
@@ -1471,6 +1670,306 @@ export class Popover {
   }
 }
 
+// ---- per-person tones ------------------------------------------------------------------------------------
+
+/**
+ * The toned forms an emoji offers. One person: tone 0 (none) to 5. Two people (🤝, couples): a tone for each,
+ * 1 to 5, where the same tone on both is keyed by the one tone ("3") and different tones by the pair
+ * ("3-5"). `form()` answers the hexcode for a choice, or null when the payload does not offer it (the policy
+ * or the version cap removed it).
+ */
+export function toneForms(item: PickerEmoji): { people: 0 | 1 | 2; form: (first: number, second?: number) => string | null } {
+  const skins = item.skins ?? {};
+  const keys = Object.keys(skins);
+  const people: 0 | 1 | 2 = keys.length === 0 ? 0 : keys.some((key) => key.includes('-')) ? 2 : 1;
+
+  return {
+    people,
+    form: (first, second) => {
+      if (people === 2) {
+        const b = second ?? first;
+
+        return first === b ? (skins[String(first)] ?? skins[`${first}-${first}`] ?? null) : (skins[`${first}-${b}`] ?? null);
+      }
+
+      return first === 0 ? (item.base === false ? null : item.hexcode) : (skins[String(first)] ?? null);
+    },
+  };
+}
+
+export interface ToneMenuOptions {
+  strings: PickerStrings;
+  /** The tone to start from (the picker's current one). */
+  tone: number;
+  mode: RenderMode;
+  set: PickerImageSet | null | undefined;
+  rtl?: boolean;
+  onPick: (hexcode: string) => void;
+  onClose?: () => void;
+}
+
+/**
+ * A small popover beside an emoji for choosing its tone for this one pick, as phones do on a long press:
+ * six toned forms for one person, or a tone for each person in 🤝 and couples with the result previewed.
+ * It is placed with computePosition() and carries the same caret as the picker. Arrow keys move, Enter or
+ * Space picks, Escape closes and returns focus to the emoji. Returns the function that closes it.
+ */
+export function openToneMenu(anchor: HTMLElement, container: HTMLElement, item: PickerEmoji, options: ToneMenuOptions): () => void {
+  const { strings: s } = options;
+  const { people, form } = toneForms(item);
+  const doc = anchor.ownerDocument;
+  const make = <K extends keyof HTMLElementTagNameMap>(tag: K, attributes: Record<string, string | boolean | null | undefined> = {}, text?: string): HTMLElementTagNameMap[K] => {
+    const node = doc.createElement(tag);
+
+    for (const [name, value] of Object.entries(attributes)) {
+      if (value !== null && value !== undefined && value !== false) node.setAttribute(name, value === true ? '' : String(value));
+    }
+
+    if (text !== undefined) node.textContent = text;
+
+    return node;
+  };
+  const face = (hexcode: string): Node => {
+    const url = drawsImage(item, hexcode, options.mode, options.set);
+
+    return url ? make('img', { src: url, alt: '', class: `${PREFIX} ${PREFIX}-image`, draggable: 'false' }) : doc.createTextNode(charOf(hexcode));
+  };
+
+  const menu = make('div', { class: `${PREFIX}-picker-tonemenu`, role: 'dialog', 'aria-label': `${s.tone}: ${item.name}` });
+  const arrow = make('div', { class: `${PREFIX}-picker-arrow`, 'aria-hidden': 'true' });
+  menu.append(arrow);
+
+  let close = (): void => {};
+
+  if (people === 2) {
+    const choice = [Math.max(1, options.tone), Math.max(1, options.tone)];
+    const result = make('button', { type: 'button', class: `${PREFIX}-picker-cell ${PREFIX}-picker-tonemenu-result`, 'aria-label': item.name });
+    const update = (): void => {
+      const hexcode = form(choice[0] ?? 1, choice[1] ?? 1);
+      result.replaceChildren(hexcode ? face(hexcode) : doc.createTextNode('—'));
+      result.disabled = hexcode === null;
+      result.dataset.hexcode = hexcode ?? '';
+    };
+
+    for (const person of [0, 1]) {
+      const row = make('div', { class: `${PREFIX}-picker-tones`, role: 'radiogroup', 'aria-label': `${s.tone} ${person + 1}` });
+
+      for (let tone = 1; tone <= 5; tone++) {
+        const radio = make('button', { type: 'button', role: 'radio', class: `${PREFIX}-picker-tone`, 'aria-checked': String(choice[person] === tone), tabindex: choice[person] === tone ? '0' : '-1', 'aria-label': s.tones[tone] ?? '', [`${ATTR}-tone`]: String(tone) }, TONE_SWATCHES[tone]);
+
+        radio.addEventListener('click', () => {
+          choice[person] = tone;
+
+          for (const other of row.querySelectorAll<HTMLElement>('[role="radio"]')) {
+            const on = other === radio;
+            other.setAttribute('aria-checked', String(on));
+            other.tabIndex = on ? 0 : -1;
+          }
+
+          update();
+        });
+        row.append(radio);
+      }
+
+      menu.append(row);
+    }
+
+    update();
+    result.addEventListener('click', () => {
+      if (result.dataset.hexcode) {
+        options.onPick(result.dataset.hexcode);
+        close();
+      }
+    });
+    menu.append(result);
+  } else {
+    const row = make('div', { class: `${PREFIX}-picker-tonemenu-row`, role: 'group', 'aria-label': s.tone });
+
+    for (let tone = 0; tone <= 5; tone++) {
+      const hexcode = form(tone);
+
+      if (hexcode === null) continue;
+
+      const button = make('button', { type: 'button', class: `${PREFIX}-picker-cell`, 'aria-label': `${item.name}, ${s.tones[tone] ?? ''}`, [`${ATTR}-hexcode`]: hexcode });
+      button.append(face(hexcode));
+      button.addEventListener('click', () => {
+        options.onPick(hexcode);
+        close();
+      });
+      row.append(button);
+    }
+
+    menu.append(row);
+  }
+
+  const focusables = (): HTMLElement[] => [...menu.querySelectorAll<HTMLElement>('button:not([disabled])')];
+  const onKey = (event: KeyboardEvent): void => {
+    if (event.key === 'Escape') {
+      event.preventDefault();
+      event.stopPropagation();
+      close();
+      anchor.focus();
+
+      return;
+    }
+
+    const all = focusables();
+    const index = all.indexOf(doc.activeElement as HTMLElement);
+    const next = rovingIndex(all.length, Math.max(0, index), event.key, options.rtl);
+
+    if (next !== null && event.key !== 'ArrowUp' && event.key !== 'ArrowDown') {
+      event.preventDefault();
+      all[next]?.focus();
+    } else if (event.key === 'ArrowUp' || event.key === 'ArrowDown') {
+      event.preventDefault();
+      all[(index + (event.key === 'ArrowDown' ? 5 : all.length - 5)) % all.length]?.focus();
+    }
+  };
+  const onOutside = (event: Event): void => {
+    if (!menu.contains(event.target as Node)) close();
+  };
+
+  menu.addEventListener('keydown', onKey);
+  container.append(menu);
+
+  const popover = menu as HTMLElement & { showPopover?: () => void; hidePopover?: () => void };
+
+  if (typeof popover.showPopover === 'function') {
+    menu.setAttribute('popover', 'manual');
+
+    try {
+      popover.showPopover();
+    } catch {
+      // Fixed in place instead.
+    }
+  }
+
+  const place = (): void => {
+    const view = doc.defaultView;
+    const at = anchor.getBoundingClientRect();
+    const viewport = view?.visualViewport;
+    const result = computePosition(
+      { x: at.left, y: at.top, width: at.width, height: at.height },
+      { width: menu.offsetWidth, height: menu.offsetHeight },
+      { x: viewport?.offsetLeft ?? 0, y: viewport?.offsetTop ?? 0, width: viewport?.width ?? view?.innerWidth ?? 0, height: viewport?.height ?? view?.innerHeight ?? 0 },
+      { placement: 'top', offset: 8, rtl: options.rtl },
+    );
+
+    menu.style.left = `${result.x}px`;
+    menu.style.top = `${result.y}px`;
+    menu.setAttribute('data-placement', `${result.side}-${result.align}`);
+    arrow.hidden = result.arrow === null;
+    arrow.style.left = result.side === 'top' || result.side === 'bottom' ? `${result.arrow ?? 0}px` : '';
+    arrow.style.top = result.side === 'left' || result.side === 'right' ? `${result.arrow ?? 0}px` : '';
+  };
+  const stop = autoUpdate(anchor, menu, place);
+  // Deferred, so the long press or right click that opened it does not close it.
+  const timer = setTimeout(() => doc.addEventListener('pointerdown', onOutside, true), 0);
+  let closed = false;
+
+  close = (): void => {
+    if (closed) return;
+    closed = true;
+    clearTimeout(timer);
+    stop();
+    doc.removeEventListener('pointerdown', onOutside, true);
+
+    try {
+      popover.hidePopover?.();
+    } catch {
+      // Already hidden.
+    }
+
+    menu.remove();
+    options.onClose?.();
+  };
+
+  (menu.querySelector<HTMLElement>('[role="radio"][tabindex="0"]') ?? focusables()[0])?.focus();
+
+  return close;
+}
+
+/**
+ * Opens the tone menu for an emoji cell on a right click, the context-menu key or Shift+F10, or a long press
+ * (half a second without moving), which is how phones offer tones. Delegated on the grid, so both pickers
+ * bind it once. `resolve` answers the emoji a cell shows, or null for one with no tones (then the browser's
+ * own context menu is left alone). Returns the function that unbinds it.
+ */
+export function bindToneMenu(body: HTMLElement, resolve: (cell: HTMLElement) => PickerEmoji | null, open: (cell: HTMLElement, item: PickerEmoji) => void): () => void {
+  let timer: ReturnType<typeof setTimeout> | null = null;
+  let start: { x: number; y: number } | null = null;
+  let fired = false;
+  const cellOf = (event: Event): HTMLElement | null => (event.target as Element | null)?.closest?.<HTMLElement>(`[${ATTR}-hexcode]`) ?? null;
+  const cancel = (): void => {
+    if (timer !== null) clearTimeout(timer);
+    timer = null;
+    start = null;
+  };
+  const tryOpen = (cell: HTMLElement | null, event: Event): boolean => {
+    const item = cell ? resolve(cell) : null;
+
+    if (!cell || !item) return false;
+
+    event.preventDefault();
+    open(cell, item);
+
+    return true;
+  };
+
+  const onContext = (event: MouseEvent): void => {
+    tryOpen(cellOf(event), event);
+  };
+  const onKey = (event: KeyboardEvent): void => {
+    if (event.key === 'ContextMenu' || (event.key === 'F10' && event.shiftKey)) {
+      tryOpen(cellOf(event), event);
+    }
+  };
+  const onDown = (event: PointerEvent): void => {
+    if (event.pointerType === 'mouse') return;
+
+    const cell = cellOf(event);
+
+    if (!cell || !resolve(cell)) return;
+
+    fired = false;
+    start = { x: event.clientX, y: event.clientY };
+    timer = setTimeout(() => {
+      timer = null;
+      fired = tryOpen(cell, event);
+    }, 500);
+  };
+  const onMove = (event: PointerEvent): void => {
+    if (start && Math.hypot(event.clientX - start.x, event.clientY - start.y) > 8) cancel();
+  };
+  // A long press that opened the menu must not also pick the emoji it was held on.
+  const onClick = (event: MouseEvent): void => {
+    if (fired) {
+      fired = false;
+      event.preventDefault();
+      event.stopImmediatePropagation();
+    }
+  };
+
+  body.addEventListener('contextmenu', onContext);
+  body.addEventListener('keydown', onKey);
+  body.addEventListener('pointerdown', onDown);
+  body.addEventListener('pointermove', onMove);
+  body.addEventListener('pointerup', cancel);
+  body.addEventListener('pointercancel', cancel);
+  body.addEventListener('click', onClick, true);
+
+  return () => {
+    cancel();
+    body.removeEventListener('contextmenu', onContext);
+    body.removeEventListener('keydown', onKey);
+    body.removeEventListener('pointerdown', onDown);
+    body.removeEventListener('pointermove', onMove);
+    body.removeEventListener('pointerup', cancel);
+    body.removeEventListener('pointercancel', cancel);
+    body.removeEventListener('click', onClick, true);
+  };
+}
+
 // ---- tabs ------------------------------------------------------------------------------------------------
 
 /**
@@ -1565,6 +2064,20 @@ export class Picker {
   private searchTimer: ReturnType<typeof setTimeout> | null = null;
   private popover: Popover | null = null;
   private kind: PickerKind = 'emoji';
+  /** The payload as loaded, before the device's cap: what a change of image set re-caps from. */
+  private raw: PickerPayload | null = null;
+  private support: { version: string | null; flags: boolean | null } = { version: null, flags: null };
+  private closeToneMenu: (() => void) | null = null;
+  private switcher: HTMLSelectElement | null = null;
+
+  private readonly imageFailed = (event: Event): void => {
+    const image = event.target as Element | null;
+    const cell = image instanceof HTMLImageElement ? image.closest<HTMLElement>(`[${ATTR}-hexcode]`) : null;
+
+    if (image && cell) {
+      image.replaceWith(charOf(cell.getAttribute(`${ATTR}-hexcode`) ?? ''));
+    }
+  };
   private stopSpy: (() => void) | null = null;
 
   constructor(element: HTMLElement, options: PickerOptions = {}) {
@@ -1588,9 +2101,11 @@ export class Picker {
       offset: 8,
       arrow: true,
       sheetBreakpoint: 640,
+      render: 'auto',
       ...options,
       features: readFeatures(options.features),
     } as ResolvedOptions;
+    this.options.render = parseRender(this.options.render);
     this.options.placement = parsePlacement(this.options.placement);
     this.options.tone = clampTone(this.options.tone);
     this.options.columns = clampColumns(this.options.columns);
@@ -1669,6 +2184,7 @@ export class Picker {
   }
 
   destroy(): void {
+    this.closeToneMenu?.();
     this.stopSpy?.();
     this.stopSpy = null;
     this.popover?.destroy();
@@ -1772,13 +2288,16 @@ export class Picker {
         return;
       }
 
-      const cap = this.options.maxVersion === 'auto' ? await detectMaxVersionOnce() : this.options.maxVersion;
+      const auto = this.options.maxVersion === 'auto';
+      const [version, flags] = await Promise.all([auto ? detectMaxVersionOnce() : Promise.resolve(this.options.maxVersion ?? null), payload.images ? detectFlagsOnce() : Promise.resolve(null)]);
 
       if (id !== this.loads) {
         return;
       }
 
-      this.data = capPayload(payload, cap);
+      this.raw = payload;
+      this.support = { version, flags };
+      this.data = this.capped();
       this.byHex = null;
       this.memo = null;
       this.status.textContent = '';
@@ -1792,6 +2311,32 @@ export class Picker {
       this.status.textContent = this.strings.failed;
       this.emit('error', { error });
     }
+  }
+
+  /** The image set in use: the one chosen in the set switcher, else the payload's. Null when there is none. */
+  private get imageSet(): PickerImageSet | null {
+    const chosen = this.options.features.setSwitcher ? this.store.get('set') : null;
+
+    if (chosen === 'native') {
+      return this.raw?.images ?? null;
+    }
+
+    return (this.raw?.imageSets ?? []).find((set) => set.set === chosen) ?? this.raw?.images ?? null;
+  }
+
+  /** How cells draw: the option, unless the set switcher picked a set (then every emoji from it). */
+  private get renderMode(): RenderMode {
+    const chosen = this.options.features.setSwitcher ? this.store.get('set') : null;
+
+    return typeof chosen === 'string' && chosen !== 'native' && (this.raw?.imageSets ?? []).some((set) => set.set === chosen) ? 'image' : this.options.render;
+  }
+
+  /** The payload capped for this device, falling back to images where the mode allows. */
+  private capped(): PickerPayload {
+    const raw = this.raw ?? { groups: [] };
+    const mode = this.renderMode;
+
+    return capPayload(raw, this.support.version, undefined, mode === 'native' ? {} : { set: this.imageSet, flags: this.support.flags });
   }
 
   private reload(): this {
@@ -1889,6 +2434,19 @@ export class Picker {
     const footer = el('div', { class: `${PREFIX}-picker-footer` });
 
     if (this.preview) footer.append(this.preview);
+
+    if (features.setSwitcher) {
+      this.switcher = el('select', { class: `${PREFIX}-picker-set`, 'aria-label': s.style ?? DEFAULT_STRINGS.style, hidden: true });
+      this.listen(this.switcher, 'change', () => {
+        this.store.set('set', this.switcher?.value ?? 'native');
+        this.data = this.capped();
+        this.memo = null;
+        this.byHex = null;
+        this.render();
+      });
+      footer.append(this.switcher);
+    }
+
     footer.append(this.tones);
 
     if (!features.skinTones) {
@@ -1951,6 +2509,18 @@ export class Picker {
       this.listen(this.body, 'pointerover', show);
       this.listen(this.body, 'focusin', show);
     }
+    // An image that fails to load (a set that lacks it after all, a blocked CDN) shows the device's glyph.
+    this.body.addEventListener('error', this.imageFailed, true);
+    this.cleanup.push(() => this.body.removeEventListener('error', this.imageFailed, true));
+
+    if (features.perPersonTones) {
+      this.cleanup.push(bindToneMenu(this.body, (cell) => {
+        const item = this.index().get(cell.getAttribute(`${ATTR}-base`) ?? '');
+
+        return item && Object.keys(item.skins ?? {}).length > 0 ? item : null;
+      }, (cell, item) => this.openToneMenu(cell, item)));
+    }
+
     this.listen(this.tones, 'click', (event) => {
       const radio = (event.target as Element | null)?.closest?.<HTMLElement>('[role="radio"]');
 
@@ -2033,6 +2603,7 @@ export class Picker {
   }
 
   private render(): void {
+    this.renderSwitcher();
     this.renderKinds();
     this.renderTabs();
     this.renderTones();
@@ -2057,6 +2628,35 @@ export class Picker {
     }).filter((section) => features.custom || !section.custom);
 
     return this.memo;
+  }
+
+  /** The image set switcher: native emoji, then each set the payload offers. Hidden when it offers none. */
+  private renderSwitcher(): void {
+    const sets = this.raw?.imageSets ?? [];
+
+    if (!this.switcher) return;
+
+    this.switcher.hidden = sets.length === 0;
+    const chosen = this.store.get('set');
+    const options = [el('option', { value: 'native' }, this.strings.native ?? DEFAULT_STRINGS.native), ...sets.map((set) => el('option', { value: set.set }, set.set.charAt(0).toUpperCase() + set.set.slice(1)))];
+
+    this.switcher.replaceChildren(...options);
+    this.switcher.value = typeof chosen === 'string' && sets.some((set) => set.set === chosen) ? chosen : 'native';
+  }
+
+  private openToneMenu(cell: HTMLElement, item: PickerEmoji): void {
+    this.closeToneMenu?.();
+    this.closeToneMenu = openToneMenu(cell, this.root ?? this.panel, item, {
+      strings: this.strings,
+      tone: this.options.tone,
+      mode: this.renderMode,
+      set: this.imageSet,
+      rtl: this.rtl,
+      onPick: (hexcode) => this.choose(item.hexcode, hexcode),
+      onClose: () => {
+        this.closeToneMenu = null;
+      },
+    });
   }
 
   /** The Emoji / Kaomoji / Symbols tabs, shown only when the payload carries more than emoji. */
@@ -2300,8 +2900,15 @@ export class Picker {
 
   private cell(item: PickerEmoji): HTMLButtonElement {
     const hexcode = item.pick ?? withTone(item, this.options.tone);
+    const url = drawsImage(item, hexcode, this.renderMode, this.imageSet);
+    const button = el('button', { type: 'button', role: 'gridcell', tabindex: '-1', class: `${PREFIX}-picker-cell`, title: item.name, 'aria-label': item.name, [`${ATTR}-hexcode`]: hexcode, [`${ATTR}-base`]: item.hexcode }, url ? undefined : charOf(hexcode));
 
-    return el('button', { type: 'button', role: 'gridcell', tabindex: '-1', class: `${PREFIX}-picker-cell`, title: item.name, 'aria-label': item.name, [`${ATTR}-hexcode`]: hexcode, [`${ATTR}-base`]: item.hexcode }, charOf(hexcode));
+    if (url) {
+      // The cell is named; the image is decoration. A failed image falls back to the glyph (see buildShell).
+      button.append(el('img', { src: url, alt: '', class: `${PREFIX} ${PREFIX}-image`, draggable: 'false', loading: 'lazy', decoding: 'async' }));
+    }
+
+    return button;
   }
 
   private textCell(item: PickerText): HTMLButtonElement {
@@ -2418,18 +3025,30 @@ export class Picker {
       detail = { emoji: customCode(name, this.data), hexcode: null, name: custom?.label ?? name, shortcode: name, custom: true };
     } else {
       const hexcode = cell.getAttribute(`${ATTR}-hexcode`) ?? '';
-      const base = cell.getAttribute(`${ATTR}-base`) ?? hexcode;
-      const item = this.index().get(base);
 
-      detail = { emoji: charOf(hexcode), hexcode, name: item?.name ?? '', shortcode: item?.shortcode ?? null, custom: false };
+      this.choose(cell.getAttribute(`${ATTR}-base`) ?? hexcode, hexcode);
 
-      if (this.options.features.recents) {
-        this.store.set('recent', recordRecent(this.store.get('recent'), base, hexcode, this.options.maxRecent));
-        // Redrawn once nothing is under the pointer, so a quick second click never lands on a moved cell.
-        this.recentStale = true;
-      }
+      return;
     }
 
+    this.deliver(detail);
+  }
+
+  /** Picks one form of an emoji (from its cell, or from the tone menu): recorded as recent, then delivered. */
+  private choose(base: string, hexcode: string): void {
+    const item = this.index().get(base);
+
+    if (this.options.features.recents) {
+      this.store.set('recent', recordRecent(this.store.get('recent'), base, hexcode, this.options.maxRecent));
+      // Redrawn once nothing is under the pointer, so a quick second click never lands on a moved cell.
+      this.recentStale = true;
+    }
+
+    this.deliver({ emoji: charOf(hexcode), hexcode, name: item?.name ?? '', shortcode: item?.shortcode ?? null, custom: false });
+  }
+
+  /** Inserts a pick, announces it, and closes the popover when it should. */
+  private deliver(detail: SelectDetail): void {
     const target = this.options.target;
 
     if (target) {

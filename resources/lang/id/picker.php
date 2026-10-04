@@ -20,6 +20,8 @@ return [
     'emoji'       => 'Emoji',
     'kaomoji'     => 'Kaomoji',
     'symbols'     => 'Simbol',
+    'style'       => 'Gaya emoji',
+    'native'      => 'Bawaan',
     'groups'      => [
         'smileys_and_emotion' => 'Smiley & Emosi',
         'people_and_body'     => 'Orang & Tubuh',

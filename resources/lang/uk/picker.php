@@ -20,6 +20,8 @@ return [
     'emoji'       => 'Емодзі',
     'kaomoji'     => 'Каомодзі',
     'symbols'     => 'Символи',
+    'style'       => 'Стиль емодзі',
+    'native'      => 'Системний',
     'groups'      => [
         'smileys_and_emotion' => 'Смайлики та емоції',
         'people_and_body'     => 'Люди та тіло',
