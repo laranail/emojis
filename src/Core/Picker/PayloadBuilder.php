@@ -6,7 +6,9 @@ namespace Simtabi\Laranail\Emojis\Core\Picker;
 
 use Simtabi\Laranail\Emojis\Core\Emoji;
 use Simtabi\Laranail\Emojis\Core\Emojis;
+use Simtabi\Laranail\Emojis\Core\Kaomoji;
 use Simtabi\Laranail\Emojis\Core\Enums\Group;
+use Simtabi\Laranail\Emojis\Core\Symbols\Symbol;
 use Simtabi\Laranail\Emojis\Core\Enums\EmojiVersion;
 use Simtabi\Laranail\Emojis\Core\Extension\CustomEmoji;
 
@@ -33,8 +35,10 @@ final readonly class PayloadBuilder
     /**
      * @param array<string, string> $groupLabels group slug => label in the payload's locale; a group without
      *                                           one keeps its English CLDR name (the Core has no translator)
+     * @param bool $kaomoji add the kaomoji, by group, for a picker's Kaomoji tab (about 2,100)
+     * @param bool $symbols add the special characters, by group, for a Symbols tab (about 7,300)
      */
-    public function build(?string $locale = null, array $groupLabels = []): PickerPayload
+    public function build(?string $locale = null, array $groupLabels = [], bool $kaomoji = false, bool $symbols = false): PickerPayload
     {
         $policy = $this->emojis->options()->policy;
         $query = $this->emojis->query();
@@ -64,7 +68,51 @@ final readonly class PayloadBuilder
             custom: $custom,
             shortcodeOpen: $this->emojis->options()->shortcodeOpen,
             shortcodeClose: $this->emojis->options()->shortcodeClose,
+            kaomoji: $kaomoji ? $this->kaomoji() : [],
+            symbols: $symbols ? $this->symbols() : [],
         );
+    }
+
+    /**
+     * The kaomoji by group, each with what a screen reader announces: its description, else its tags, else
+     * the text itself.
+     *
+     * @return list<array{slug: string, label: string, items: list<array{text: string, name: string}>}>
+     */
+    private function kaomoji(): array
+    {
+        $groups = [];
+
+        foreach ($this->emojis->kaomojiGroups() as $slug => $label) {
+            $items = array_map(static fn (Kaomoji $k): array => ['text' => $k->value, 'name' => $k->description !== '' ? $k->description : ($k->tags !== [] ? implode(', ', $k->tags) : $k->value)], $this->emojis->kaomoji($slug));
+
+            if ($items !== []) {
+                $groups[] = ['slug' => $slug, 'label' => $label, 'items' => $items];
+            }
+        }
+
+        return $groups;
+    }
+
+    /**
+     * The special characters by group, each with its Unicode name.
+     *
+     * @return list<array{slug: string, label: string, items: list<array{char: string, name: string}>}>
+     */
+    private function symbols(): array
+    {
+        $symbols = $this->emojis->symbols();
+        $groups = [];
+
+        foreach ($symbols->groups() as $slug) {
+            $items = array_map(static fn (Symbol $s): array => ['char' => $s->char, 'name' => $s->label()], $symbols->group($slug));
+
+            if ($items !== []) {
+                $groups[] = ['slug' => $slug, 'label' => ucfirst(str_replace('_', ' ', $slug)), 'items' => $items];
+            }
+        }
+
+        return $groups;
     }
 
     /**

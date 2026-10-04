@@ -1,6 +1,26 @@
 import { useCallback, useEffect, useId, useRef, useState, type CSSProperties, type KeyboardEvent, type RefObject } from 'react';
-import { Popover, TONE_SWATCHES, charOf, clampColumns, gridTarget, insertText, parsePlacement, resultText, rovingIndex, type Insertable, type Placement, type PickerCustom, type PickerEmoji, type SelectDetail } from '../scripts/picker.js';
-import { useEmojiPicker, type UseEmojiPickerOptions } from './useEmojiPicker.js';
+import {
+  DEFAULT_STRINGS,
+  Popover,
+  TAB_ICONS,
+  TONE_SWATCHES,
+  charOf,
+  clampColumns,
+  customCode,
+  gridTarget,
+  insertText,
+  parsePlacement,
+  resultText,
+  rovingIndex,
+  spySections,
+  type Insertable,
+  type Placement,
+  type PickerCustom,
+  type PickerEmoji,
+  type PickerSection,
+  type PickerText,
+} from '../scripts/picker.js';
+import { useEmojiPicker, type PickerItem, type UseEmojiPickerOptions } from './useEmojiPicker.js';
 
 export interface EmojiPickerProps extends UseEmojiPickerOptions {
   /** An input, a textarea or a contenteditable element to insert picks into, at its caret (or at the end until it has had focus). */
@@ -25,7 +45,35 @@ export interface EmojiPickerProps extends UseEmojiPickerOptions {
 }
 
 const P = 'laranail-emoji-picker';
-const keyOf = (item: PickerEmoji | PickerCustom): string => ('image' in item ? `custom:${item.name}` : item.hexcode);
+const keyOf = (item: PickerItem): string => ('image' in item ? `custom:${item.name}` : 'text' in item ? `text:${item.text}` : item.hexcode);
+
+/** A category tab's face: its outline icon (the same paths the vanilla picker draws), else a glyph or label. */
+function TabFace({ section }: { section: PickerSection }) {
+  const icon = TAB_ICONS[section.slug];
+
+  if (icon) {
+    return (
+      <svg viewBox="0 0 24 24" width="20" height="20" fill="none" stroke="currentColor" strokeWidth="1.75" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true" focusable="false">
+        {icon.map((d) => (
+          <path key={d} d={d} />
+        ))}
+      </svg>
+    );
+  }
+
+  const first = section.items[0];
+
+  if (section.text) return <>{first ? (first as PickerText).text.slice(0, 4) : section.label.slice(0, 2)}</>;
+
+  return <>{first && !section.custom ? charOf((first as PickerEmoji).pick ?? (first as PickerEmoji).hexcode) : '★'}</>;
+}
+
+interface Preview {
+  glyph: string;
+  image: string | null;
+  name: string;
+  code: string | null;
+}
 
 /**
  * The emoji picker as a React component: the same markup, classes and ARIA as the vanilla picker, so
@@ -173,7 +221,32 @@ export function EmojiPicker({
     return () => document.removeEventListener('pointerdown', onPointerDown);
   }, [open, inline, close]);
 
-  const pick = (item: PickerEmoji | PickerCustom): void => {
+  const [preview, setPreview] = useState<Preview | null>(null);
+  const features = state.features;
+
+  const showPreview = (item: PickerItem): void => {
+    if (!features.preview) return;
+
+    if ('text' in item) {
+      setPreview({ glyph: item.text, image: null, name: item.name, code: null });
+    } else if ('image' in item) {
+      setPreview({ glyph: '', image: item.image, name: item.label, code: customCode(item.name, state.data) });
+    } else {
+      setPreview({ glyph: charOf(state.hexcodeOf(item)), image: null, name: item.name, code: item.shortcode ? customCode(item.shortcode, state.data) : null });
+    }
+  };
+
+  // The tab follows the scroll: whichever section is at the top of the body is the current one.
+  const searching = state.resultCount !== null;
+  const sectionKey = state.sections.map((section) => section.slug).join(',');
+
+  useEffect(() => {
+    if (searching || !body.current) return;
+
+    return spySections(body.current, setActiveTab);
+  }, [searching, sectionKey]);
+
+  const pick = (item: PickerItem): void => {
     // Insert first, then report: an onSelect handler that reads the field sees the pick, as in the vanilla picker.
     const field = target?.current;
 
@@ -214,6 +287,19 @@ export function EmojiPicker({
 
     const tab = element.closest<HTMLElement>('[role="tab"]');
     const radio = element.closest<HTMLElement>('[role="radio"]');
+    const kindTab = tab?.closest('[data-laranail-emoji-kinds]') ? tab : null;
+
+    if (kindTab) {
+      const next = rovingIndex(state.kinds.length, state.kinds.indexOf(state.kind), event.key, rtl());
+
+      if (next !== null) {
+        event.preventDefault();
+        state.setKind(state.kinds[next] ?? 'emoji');
+        setActiveTab(null);
+      }
+
+      return;
+    }
 
     if (tab || radio) {
       const items = [...(tab?.parentElement ?? radio?.parentElement)!.querySelectorAll<HTMLElement>(tab ? '[role="tab"]' : '[role="radio"]')];
@@ -267,10 +353,10 @@ export function EmojiPicker({
   // One tab stop in the grid: the cell last focused, or the first cell.
   const visible = state.sections.filter((section) => section.items.length > 0);
   const firstKey = visible[0]?.items[0] ? keyOf(visible[0].items[0]) : null;
-  const allKeys = new Set(visible.flatMap((section) => (section.items as Array<PickerEmoji | PickerCustom>).map(keyOf)));
+  const allKeys = new Set(visible.flatMap((section) => (section.items as PickerItem[]).map(keyOf)));
   const stop = activeCell !== null && allKeys.has(activeCell) ? activeCell : firstKey;
   let stopUsed = false;
-  const tabIndexFor = (item: PickerEmoji | PickerCustom): number => {
+  const tabIndexFor = (item: PickerItem): number => {
     if (!stopUsed && keyOf(item) === stop) {
       stopUsed = true;
 
@@ -345,10 +431,33 @@ export function EmojiPicker({
           value={state.query}
           onChange={(event) => state.setQuery(event.target.value)}
           onFocus={() => popover.current?.expand()}
+          hidden={!features.search}
         />
-        <div className={`${P}-tabs`} role="tablist" aria-label={strings.open}>
+        {state.kinds.length > 1 ? (
+          <div className={`${P}-kinds`} role="tablist" aria-label={strings.open} data-laranail-emoji-kinds="">
+            {state.kinds.map((kind) => (
+              <button
+                key={kind}
+                type="button"
+                role="tab"
+                className={`${P}-kind`}
+                aria-selected={kind === state.kind}
+                tabIndex={kind === state.kind ? 0 : -1}
+                data-laranail-emoji-kind={kind}
+                onClick={() => {
+                  state.setKind(kind);
+                  setActiveTab(null);
+                }}
+              >
+                {strings[kind] ?? DEFAULT_STRINGS[kind] ?? kind}
+              </button>
+            ))}
+          </div>
+        ) : (
+          <div className={`${P}-kinds`} hidden />
+        )}
+        <div className={`${P}-tabs`} role="tablist" aria-label={strings.open} hidden={!features.categoryTabs}>
           {tabs.map((section) => {
-            const first = section.custom ? null : section.items[0];
             const selected = section.slug === selectedTab;
 
             return (
@@ -365,7 +474,7 @@ export function EmojiPicker({
                 data-laranail-emoji-section={section.slug}
                 onClick={() => showSection(section.slug)}
               >
-                {first ? charOf(first.pick ?? first.hexcode) : '★'}
+                <TabFace section={section} />
               </button>
             );
           })}
@@ -395,10 +504,12 @@ export function EmojiPicker({
           }}
         >
           {visible.map((section) => {
-            const rows: Array<Array<PickerEmoji | PickerCustom>> = [];
+            const rows: PickerItem[][] = [];
+            // Kaomoji are wide, so fewer of them fit a row.
+            const perRow = section.text && state.kind === 'kaomoji' ? Math.max(1, Math.round(columns / 4)) : columns;
 
-            (section.items as Array<PickerEmoji | PickerCustom>).forEach((item, index) => {
-              if (index % columns === 0) rows.push([]);
+            (section.items as PickerItem[]).forEach((item, index) => {
+              if (index % perRow === 0) rows.push([]);
               rows[rows.length - 1]?.push(item);
             });
 
@@ -407,12 +518,36 @@ export function EmojiPicker({
                 <div className={`${P}-heading`} id={`${id}-${section.slug}`}>
                   {section.label}
                 </div>
-                <div className={`${P}-grid`} role="grid" aria-labelledby={`${id}-${section.slug}`}>
+                <div
+                  className={section.text ? `${P}-grid ${P}-grid-text` : `${P}-grid`}
+                  role="grid"
+                  aria-labelledby={`${id}-${section.slug}`}
+                  style={section.text ? ({ [`--${P}-columns`]: String(perRow) } as CSSProperties) : undefined}
+                >
                   {rows.map((row, r) => (
                     <div key={r} role="row" className={`${P}-row`}>
                       {row.map((item) =>
-                        'image' in item ? (
-                          <button key={item.name} type="button" role="gridcell" tabIndex={tabIndexFor(item)} className={`${P}-cell`} title={item.label} aria-label={item.label} data-laranail-emoji-custom={item.name} onFocus={() => setActiveCell(keyOf(item))} onClick={() => pick(item)}>
+                        'text' in item ? (
+                          <button
+                            key={item.text}
+                            type="button"
+                            role="gridcell"
+                            tabIndex={tabIndexFor(item)}
+                            className={`${P}-cell ${P}-cell-text`}
+                            title={item.name}
+                            aria-label={item.name}
+                            data-laranail-emoji-text={item.text}
+                            onFocus={() => {
+                              setActiveCell(keyOf(item));
+                              showPreview(item);
+                            }}
+                            onPointerOver={() => showPreview(item)}
+                            onClick={() => pick(item)}
+                          >
+                            {item.text}
+                          </button>
+                        ) : 'image' in item ? (
+                          <button key={item.name} type="button" role="gridcell" tabIndex={tabIndexFor(item)} className={`${P}-cell`} title={item.label} aria-label={item.label} data-laranail-emoji-custom={item.name} onFocus={() => { setActiveCell(keyOf(item)); showPreview(item); }} onPointerOver={() => showPreview(item)} onClick={() => pick(item)}>
                             <img src={item.image} alt="" className="laranail-emoji laranail-emoji-image" draggable={false} loading="lazy" />
                           </button>
                         ) : (
@@ -426,7 +561,11 @@ export function EmojiPicker({
                             aria-label={item.name}
                             data-laranail-emoji-hexcode={state.hexcodeOf(item)}
                             data-laranail-emoji-base={item.hexcode}
-                            onFocus={() => setActiveCell(keyOf(item))}
+                            onFocus={() => {
+                              setActiveCell(keyOf(item));
+                              showPreview(item);
+                            }}
+                            onPointerOver={() => showPreview(item)}
                             onClick={() => pick(item)}
                           >
                             {charOf(state.hexcodeOf(item))}
@@ -440,7 +579,22 @@ export function EmojiPicker({
             );
           })}
         </div>
-        <div className={`${P}-tones`} role="radiogroup" aria-label={strings.tone}>
+        <div className={`${P}-footer`}>
+          {features.preview && (
+            // Decoration for sighted users: each cell already carries its name for assistive tech.
+            <div className={`${P}-preview`} aria-hidden="true">
+              {preview && (
+                <>
+                  <span className={`${P}-preview-glyph`}>{preview.image ? <img src={preview.image} alt="" className="laranail-emoji laranail-emoji-image" /> : preview.glyph}</span>
+                  <span className={`${P}-preview-text`}>
+                    <span className={`${P}-preview-name`}>{preview.name}</span>
+                    {preview.code && <span className={`${P}-preview-code`}>{preview.code}</span>}
+                  </span>
+                </>
+              )}
+            </div>
+          )}
+        <div className={`${P}-tones`} role="radiogroup" aria-label={strings.tone} hidden={!features.skinTones}>
           {TONE_SWATCHES.map((hand, tone) => (
             <button
               key={tone}
@@ -456,6 +610,7 @@ export function EmojiPicker({
               {hand}
             </button>
           ))}
+        </div>
         </div>
         <div className={`${P}-status`} role="status" aria-live="polite">
           {status}

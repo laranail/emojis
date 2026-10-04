@@ -13,12 +13,16 @@ use JsonSerializable;
  * @phpstan-type PickerEmoji array{emoji: string, hexcode: string, name: string, shortcode: string|null, keywords: list<string>, version: string, skins: array<array-key, string>, skin_versions?: string|array<array-key, string>, base?: false}
  * @phpstan-type PickerGroup array{slug: string, label: string, emoji: list<PickerEmoji>}
  * @phpstan-type PickerCustom array{name: string, label: string, image: string, fallback: string|null}
+ * @phpstan-type PickerKaomojiGroup array{slug: string, label: string, items: list<array{text: string, name: string}>}
+ * @phpstan-type PickerSymbolGroup array{slug: string, label: string, items: list<array{char: string, name: string}>}
  */
 final readonly class PickerPayload implements JsonSerializable
 {
     /**
      * @param list<PickerGroup> $groups
      * @param list<PickerCustom> $custom
+     * @param list<PickerKaomojiGroup> $kaomoji
+     * @param list<PickerSymbolGroup> $symbols
      */
     public function __construct(
         public string $dataset,
@@ -27,6 +31,8 @@ final readonly class PickerPayload implements JsonSerializable
         public array $custom,
         public string $shortcodeOpen = ':',
         public string $shortcodeClose = ':',
+        public array $kaomoji = [],
+        public array $symbols = [],
     ) {}
 
     public function count(): int
@@ -38,10 +44,23 @@ final readonly class PickerPayload implements JsonSerializable
      * `delimiters` are the configured shortcode delimiters, so a picker inserts a custom emoji as a code the
      * scanner reads back (":parrot:" by default, "{{parrot}}" when configured so).
      *
-     * @return array{dataset: string, locale: string, groups: list<PickerGroup>, custom: list<PickerCustom>, delimiters: array{0: string, 1: string}}
+     * `kaomoji` and `symbols` appear only when they were built (a picker with those tabs switched on), so the
+     * default payload carries neither.
+     *
+     * @return array{dataset: string, locale: string, groups: list<PickerGroup>, custom: list<PickerCustom>, delimiters: array{0: string, 1: string}, kaomoji?: list<PickerKaomojiGroup>, symbols?: list<PickerSymbolGroup>}
      */
     public function jsonSerialize(): array
     {
-        return ['dataset' => $this->dataset, 'locale' => $this->locale, 'groups' => $this->groups, 'custom' => $this->custom, 'delimiters' => [$this->shortcodeOpen, $this->shortcodeClose]];
+        $out = ['dataset' => $this->dataset, 'locale' => $this->locale, 'groups' => $this->groups, 'custom' => $this->custom, 'delimiters' => [$this->shortcodeOpen, $this->shortcodeClose]];
+
+        if ($this->kaomoji !== []) {
+            $out['kaomoji'] = $this->kaomoji;
+        }
+
+        if ($this->symbols !== []) {
+            $out['symbols'] = $this->symbols;
+        }
+
+        return $out;
     }
 }

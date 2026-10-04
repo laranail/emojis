@@ -17,6 +17,9 @@ return [
     'loading'     => 'Läser in emoji',
     'failed'      => 'Det gick inte att läsa in emoji',
     'no_script'   => 'Emojiväljaren kräver JavaScript. Du kan fortfarande skriva emoji direkt.',
+    'emoji'       => 'Emoji',
+    'kaomoji'     => 'Kaomoji',
+    'symbols'     => 'Symboler',
     'groups'      => [
         'smileys_and_emotion' => 'Smileys och känslor',
         'people_and_body'     => 'Människor och kropp',

@@ -17,6 +17,9 @@ return [
     'loading'     => 'Emojiler yükleniyor',
     'failed'      => 'Emojiler yüklenemedi',
     'no_script'   => 'Emoji seçici JavaScript gerektirir. Emojileri yine de doğrudan yazabilirsiniz.',
+    'emoji'       => 'Emoji',
+    'kaomoji'     => 'Kaomoji',
+    'symbols'     => 'Semboller',
     'groups'      => [
         'smileys_and_emotion' => 'Suratlar ve duygular',
         'people_and_body'     => 'İnsanlar ve vücut',

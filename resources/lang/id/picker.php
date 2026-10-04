@@ -17,6 +17,9 @@ return [
     'loading'     => 'Memuat emoji',
     'failed'      => 'Emoji tidak dapat dimuat',
     'no_script'   => 'Pemilih emoji memerlukan JavaScript. Anda tetap dapat mengetik emoji secara langsung.',
+    'emoji'       => 'Emoji',
+    'kaomoji'     => 'Kaomoji',
+    'symbols'     => 'Simbol',
     'groups'      => [
         'smileys_and_emotion' => 'Smiley & Emosi',
         'people_and_body'     => 'Orang & Tubuh',

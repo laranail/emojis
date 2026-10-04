@@ -28,8 +28,10 @@ use Simtabi\Laranail\Emojis\Console\SanitizeCommand;
 use Simtabi\Laranail\Emojis\Core\Enums\ImageSetName;
 use Simtabi\Laranail\Emojis\Core\Image\HttpsFetcher;
 use Simtabi\Laranail\Emojis\Laravel\View\PickerData;
+use Simtabi\Laranail\Emojis\Laravel\View\PickerConfig;
 use Simtabi\Laranail\Emojis\Core\Contracts\HtmlFactory;
 use Simtabi\Laranail\Emojis\Core\Picker\PayloadBuilder;
+use Simtabi\Laranail\Emojis\Laravel\Doctor\PickerCheck;
 use Simtabi\Laranail\Emojis\Core\Contracts\EmojisFluent;
 use Simtabi\Laranail\Emojis\Laravel\Doctor\DatasetCheck;
 use Simtabi\Laranail\Emojis\Laravel\View\PickerPayloads;
@@ -86,6 +88,7 @@ final class EmojisServiceProvider extends PackageServiceProvider
                 ImagesCommand::class,
             ])
             ->hasDoctorCheck(DatasetCheck::class)
+            ->hasDoctorCheck(PickerCheck::class)
             ->hasAboutSection('Emojis', fn (): array => $this->aboutSection());
     }
 
@@ -133,7 +136,9 @@ final class EmojisServiceProvider extends PackageServiceProvider
             $app->make(PayloadBuilder::class),
             $app->make('translator'),
             $app->bound('cache.store') ? $app->make('cache.store') : null,
+            $app->make(PickerConfig::class),
         ));
+        $this->app->singleton(PickerConfig::class, static fn (Application $app): PickerConfig => PickerConfig::fromConfig($app->make(ConfigRepository::class)));
     }
 
     #[Override]

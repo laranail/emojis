@@ -6,7 +6,7 @@ import { payload } from './fixture.mjs';
 globalThis.__laranailEmojiNoAutoInit = true;
 
 const module = await import('../../resources/assets/scripts/picker.ts');
-const { Picker, StaticSource, ApiSource, memoryStore, localStorageStore, fold, charOf, withTone, search, sortItems, recordRecent, orderRecent, parseOptions, autoInit, byVersion, detectMaxVersion, buildSections, searchSections, capPayload, insertText, indexPayload, customCode, mountElement, readRecent, clampTone, clampColumns, searchCustom, rovingIndex, computePosition, parsePlacement } = module;
+const { Picker, StaticSource, ApiSource, memoryStore, localStorageStore, fold, charOf, withTone, search, sortItems, recordRecent, orderRecent, parseOptions, autoInit, byVersion, detectMaxVersion, buildSections, searchSections, capPayload, insertText, indexPayload, customCode, mountElement, readRecent, clampTone, clampColumns, searchCustom, rovingIndex, computePosition, parsePlacement, readFeatures, kindsOf, textSections, searchText, spySections } = module;
 
 const root = resolve(import.meta.dirname, '../..');
 const flush = () => new Promise((r) => setTimeout(r, 0));
@@ -941,6 +941,124 @@ describe('positioning (phase 2)', () => {
     element.setAttribute('data-laranail-emoji-sheet-breakpoint', '0');
 
     expect(parseOptions(element)).toMatchObject({ placement: 'top-end', offset: 12, arrow: false, sheetBreakpoint: 0 });
+  });
+});
+
+describe('config, kinds and preview (phase 3)', () => {
+  const withText = () => ({
+    ...payload(),
+    kaomoji: [{ slug: 'shrugging', label: 'Shrugging', items: [{ text: '¯\\_(ツ)_/¯', name: 'shrug' }, { text: '(╯°□°)╯︵ ┻━┻', name: 'table flip' }] }],
+    symbols: [{ slug: 'arrows', label: 'Arrows', items: [{ char: '←', name: 'Leftwards arrow' }, { char: '→', name: 'Rightwards arrow' }] }],
+  });
+  const mountWith = async (data, options = {}) => {
+    document.body.replaceChildren();
+    const host = document.createElement('div');
+    const textarea = document.createElement('textarea');
+    document.body.append(host, textarea);
+    const picker = await Picker.create(host, { inline: true, store: memoryStore(), searchDelay: 0, ...options }).source(new StaticSource(data)).target(textarea).mount();
+
+    return { host, textarea, picker, cells: () => [...host.querySelectorAll('[role="gridcell"]')] };
+  };
+
+  it('reads features defensively: only booleans switch one off', () => {
+    expect(readFeatures({ search: false, preview: 'no', bogus: false })).toEqual({ search: false, recents: true, skinTones: true, preview: true, categoryTabs: true, custom: true });
+    expect(readFeatures(null).search).toBe(true);
+  });
+
+  it('hides the parts switched off, and records no recents when recents are off', async () => {
+    const store = memoryStore();
+    const { host, picker, cells } = await mount({ store, features: { search: false, categoryTabs: false, skinTones: false, preview: false, recents: false, custom: false } });
+
+    expect(picker.searchInput.hidden).toBe(true);
+    expect(host.querySelector('.laranail-emoji-picker-tabs').hidden).toBe(true);
+    expect(host.querySelector('.laranail-emoji-picker-tones').hidden).toBe(true);
+    expect(host.querySelector('.laranail-emoji-picker-preview')).toBeNull();
+    expect(host.querySelector('[data-laranail-emoji-custom]')).toBeNull();
+
+    cells()[0].click();
+    expect(store.get('recent')).toBeNull();
+  });
+
+  it('offers kaomoji and symbols in their own tabs when the payload carries them, and inserts them as text', async () => {
+    expect(kindsOf(payload())).toEqual(['emoji']);
+    expect(kindsOf(withText())).toEqual(['emoji', 'kaomoji', 'symbols']);
+    expect(textSections(withText(), 'symbols')[0].items[0]).toEqual({ text: '←', name: 'Leftwards arrow' });
+
+    const seen = [];
+    const { host, textarea, picker, cells } = await mountWith(withText());
+    picker.on('select', (d) => seen.push(d));
+    const kinds = () => [...host.querySelectorAll('.laranail-emoji-picker-kinds [role="tab"]')];
+
+    expect(kinds().map((k) => k.textContent)).toEqual(['Emoji', 'Kaomoji', 'Symbols']);
+
+    kinds()[1].click();
+    expect(kinds()[1].getAttribute('aria-selected')).toBe('true');
+    expect(cells().map((c) => c.textContent)).toEqual(['¯\\_(ツ)_/¯', '(╯°□°)╯︵ ┻━┻']);
+
+    cells()[0].click();
+    expect(textarea.value).toBe('¯\\_(ツ)_/¯');
+    expect(seen[0]).toMatchObject({ emoji: '¯\\_(ツ)_/¯', name: 'shrug', kind: 'kaomoji', hexcode: null });
+
+    picker.searchInput.value = 'flip';
+    picker.searchInput.dispatchEvent(new Event('input'));
+    expect(cells().map((c) => c.getAttribute('aria-label'))).toEqual(['table flip']);
+    expect(searchText(textSections(withText(), 'symbols')[0].items, 'right')).toHaveLength(1);
+  });
+
+  it('switches kinds with the arrow keys', async () => {
+    const { host, cells } = await mountWith(withText());
+    const kinds = () => [...host.querySelectorAll('.laranail-emoji-picker-kinds [role="tab"]')];
+
+    kinds()[0].focus();
+    kinds()[0].dispatchEvent(new KeyboardEvent('keydown', { key: 'End', bubbles: true }));
+
+    expect(document.activeElement.getAttribute('data-laranail-emoji-kind')).toBe('symbols');
+    expect(cells()[0].textContent).toBe('←');
+  });
+
+  it('draws category tabs as outline icons, and shows the hovered emoji in the preview with its shortcode', async () => {
+    const { host, cells } = await mount();
+
+    expect(host.querySelector('[role="tab"][data-laranail-emoji-section="smileys_and_emotion"] svg path')).not.toBeNull();
+
+    cells()[0].dispatchEvent(new Event('focusin', { bubbles: true }));
+    const preview = host.querySelector('.laranail-emoji-picker-preview');
+
+    expect(preview.getAttribute('aria-hidden')).toBe('true');
+    expect(preview.querySelector('.laranail-emoji-picker-preview-glyph').textContent).toBe('😀');
+    expect(preview.querySelector('.laranail-emoji-picker-preview-name').textContent).toBe('grinning face');
+    expect(preview.querySelector('.laranail-emoji-picker-preview-code').textContent).toBe(':grinning:');
+  });
+
+  it('marks the tab of the section scrolled to', async () => {
+    let fire;
+    const original = globalThis.IntersectionObserver;
+    globalThis.IntersectionObserver = class {
+      constructor(callback) { fire = callback; }
+      observe() {}
+      disconnect() {}
+    };
+
+    try {
+      const { host } = await mount();
+      const section = host.querySelector('section[data-laranail-emoji-section="people_and_body"]');
+
+      fire([{ target: section, isIntersecting: true }]);
+
+      expect(host.querySelector('[role="tab"][data-laranail-emoji-section="people_and_body"]').getAttribute('aria-selected')).toBe('true');
+      expect(host.querySelector('[role="tab"][data-laranail-emoji-section="smileys_and_emotion"]').getAttribute('aria-selected')).toBe('false');
+      expect(spySections(document.createElement('div'), () => {})).toBeTypeOf('function');
+    } finally {
+      globalThis.IntersectionObserver = original;
+    }
+  });
+
+  it('reads features from its attribute', () => {
+    const element = document.createElement('div');
+    element.setAttribute('data-laranail-emoji-features', '{"search":false}');
+
+    expect(parseOptions(element).features.search).toBe(false);
+    expect(parseOptions(element).features.preview).toBe(true);
   });
 });
 

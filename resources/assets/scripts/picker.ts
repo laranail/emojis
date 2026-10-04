@@ -51,12 +51,42 @@ export interface PickerCustom {
   fallback: string | null;
 }
 
+/** A kaomoji or a special character: inserted as text, named for screen readers. */
+export interface PickerText {
+  text: string;
+  name: string;
+}
+
+/** A group of kaomoji or symbols, as the payload carries them when those tabs are on. */
+export interface PickerTextGroup {
+  slug: string;
+  label: string;
+  items: Array<{ text?: string; char?: string; name: string }>;
+}
+
+/** What a picker shows: emoji (with custom ones), kaomoji, or special characters. */
+export type PickerKind = 'emoji' | 'kaomoji' | 'symbols';
+
+/** Parts of the picker that can be switched off; every one is on unless set to false. */
+export interface PickerFeatures {
+  search: boolean;
+  recents: boolean;
+  skinTones: boolean;
+  preview: boolean;
+  categoryTabs: boolean;
+  custom: boolean;
+}
+
 /** The payload GET /picker serves and PayloadBuilder builds. */
 export interface PickerPayload {
   dataset?: string;
   locale?: string;
   groups: PickerGroup[];
   custom?: PickerCustom[];
+  /** Present when the Kaomoji tab is on. */
+  kaomoji?: PickerTextGroup[];
+  /** Present when the Symbols tab is on. */
+  symbols?: PickerTextGroup[];
   /** The configured shortcode delimiters a custom emoji is inserted with; [':', ':'] when absent. */
   delimiters?: [string, string];
 }
@@ -77,6 +107,8 @@ export interface SelectDetail {
   name: string;
   shortcode: string | null;
   custom: boolean;
+  /** What was picked from: emoji (the default), kaomoji or symbols. */
+  kind?: PickerKind;
 }
 
 export interface RecentEntry {
@@ -102,6 +134,10 @@ export interface PickerStrings {
   open: string;
   loading: string;
   failed: string;
+  /** The content tabs, shown when the payload carries kaomoji or symbols. */
+  emoji?: string;
+  kaomoji?: string;
+  symbols?: string;
 }
 
 export interface PickerOptions {
@@ -134,6 +170,8 @@ export interface PickerOptions {
   arrow?: boolean;
   /** At or below this viewport width, in CSS px, the popover is a bottom sheet (default 640; 0 never). */
   sheetBreakpoint?: number;
+  /** Parts to switch off: { search: false, preview: false, … }. Everything is on by default. */
+  features?: Partial<PickerFeatures>;
 }
 
 export interface PickerEvents {
@@ -142,10 +180,11 @@ export interface PickerEvents {
   error: { error: unknown };
 }
 
-/** One rendered block: Frequently used, a Unicode group, or the custom emoji. */
+/** One rendered block: Frequently used, a Unicode group, the custom emoji, or a group of kaomoji or symbols. */
 export type PickerSection =
-  | { slug: string; label: string; custom?: false; items: PickerEmoji[] }
-  | { slug: string; label: string; custom: true; items: PickerCustom[] };
+  | { slug: string; label: string; custom?: false; text?: false; items: PickerEmoji[] }
+  | { slug: string; label: string; custom: true; text?: false; items: PickerCustom[] }
+  | { slug: string; label: string; custom?: false; text: true; items: PickerText[] };
 
 export interface ParsedOptions {
   target: string | null;
@@ -168,6 +207,7 @@ export interface ParsedOptions {
   offset: number;
   arrow: boolean;
   sheetBreakpoint: number;
+  features: PickerFeatures;
 }
 
 /** Where a pick can be inserted: an input, a textarea, or a contenteditable element. */
@@ -200,7 +240,90 @@ export const DEFAULT_STRINGS: PickerStrings = {
   open: 'Choose an emoji',
   loading: 'Loading emoji',
   failed: 'Emoji could not be loaded',
+  emoji: 'Emoji',
+  kaomoji: 'Kaomoji',
+  symbols: 'Symbols',
 };
+
+/** Every feature on. */
+export const DEFAULT_FEATURES: PickerFeatures = { search: true, recents: true, skinTones: true, preview: true, categoryTabs: true, custom: true };
+
+/** Features from anywhere (an attribute's JSON, a prop): only booleans count, everything else stays on. */
+export function readFeatures(value: unknown): PickerFeatures {
+  const given = typeof value === 'object' && value !== null ? (value as Record<string, unknown>) : {};
+
+  return Object.fromEntries(Object.entries(DEFAULT_FEATURES).map(([name, on]) => [name, typeof given[name] === 'boolean' ? given[name] : on])) as unknown as PickerFeatures;
+}
+
+/**
+ * Outline icons for the category tabs, as SVG path data on a 24×24 grid, drawn with currentColor so they
+ * follow the theme. Paths, not markup: both pickers build the <svg> themselves, so nothing is parsed.
+ */
+export const TAB_ICONS: Readonly<Record<string, readonly string[]>> = {
+  recent: ['M12 21a9 9 0 1 0 0-18 9 9 0 0 0 0 18Z', 'M12 7v5l3 2'],
+  smileys_and_emotion: ['M12 21a9 9 0 1 0 0-18 9 9 0 0 0 0 18Z', 'M8.5 14.5a4.5 4.5 0 0 0 7 0', 'M9 9.5h.01', 'M15 9.5h.01'],
+  people_and_body: ['M12 11a4 4 0 1 0 0-8 4 4 0 0 0 0 8Z', 'M4 21a8 8 0 0 1 16 0'],
+  animals_and_nature: ['M5 19c0-8 6-14 15-15-1 9-7 15-15 15Z', 'M5 19 13 11'],
+  food_and_drink: ['M4 9h13v5a6 6 0 0 1-6 6h-1a6 6 0 0 1-6-6V9Z', 'M17 11h1.5a2.5 2.5 0 0 1 0 5H17', 'M8 3v3', 'M12 3v3'],
+  travel_and_places: ['M5 17h14v-5l-2-5H7l-2 5v5Z', 'M5 12h14', 'M7.5 17v2', 'M16.5 17v2', 'M8 14.5h.01', 'M16 14.5h.01'],
+  activities: ['M12 21a9 9 0 1 0 0-18 9 9 0 0 0 0 18Z', 'M3.5 9.5C7 11 9 15 9.5 20.5', 'M20.5 14.5C17 13 15 9 14.5 3.5'],
+  objects: ['M9 18h6', 'M10 21h4', 'M12 3a6 6 0 0 0-3.5 10.9V15h7v-1.1A6 6 0 0 0 12 3Z'],
+  symbols: ['M12 20s-7-4.4-7-10a4 4 0 0 1 7-2.6A4 4 0 0 1 19 10c0 5.6-7 10-7 10Z'],
+  flags: ['M5 21V4', 'M5 4h11l-2 4 2 4H5'],
+  custom: ['M12 3.5l2.6 5.3 5.9.9-4.3 4.1 1 5.8L12 16.9l-5.2 2.7 1-5.8-4.3-4.1 5.9-.9L12 3.5Z'],
+};
+
+/** The groups of one kind as sections. Kaomoji and symbols are text, inserted as they are. */
+export function textSections(data: PickerPayload, kind: Exclude<PickerKind, 'emoji'>): Array<{ slug: string; label: string; text: true; items: PickerText[] }> {
+  return (data[kind] ?? []).map((group) => ({
+    slug: `${kind}-${group.slug}`,
+    label: group.label,
+    text: true as const,
+    items: group.items.map((item) => ({ text: item.text ?? item.char ?? '', name: item.name })).filter((item) => item.text !== ''),
+  }));
+}
+
+/** The kinds a payload can show, in tab order: emoji always, then kaomoji and symbols when it carries them. */
+export function kindsOf(data: PickerPayload | null): PickerKind[] {
+  return ['emoji', ...((['kaomoji', 'symbols'] as const).filter((kind) => (data?.[kind] ?? []).length > 0))];
+}
+
+/** Text items whose name or text matches every word of a term. */
+export function searchText(items: PickerText[], term: string, limit: number = Infinity): PickerText[] {
+  const words = fold(term).split(/\s+/).filter(Boolean);
+
+  return words.length === 0 ? [] : items.filter((item) => words.every((word) => `${fold(item.name)} ${item.text.toLowerCase()}`.includes(word))).slice(0, limit);
+}
+
+/**
+ * Marks the section scrolled to as the current tab: the topmost section still showing in the top third of
+ * the scrolling body. Returns the function that stops watching. Without IntersectionObserver it does nothing.
+ */
+export function spySections(body: HTMLElement, onActive: (slug: string) => void): () => void {
+  if (typeof IntersectionObserver === 'undefined') {
+    return () => {};
+  }
+
+  const visible = new Set<Element>();
+  const observer = new IntersectionObserver(
+    (entries) => {
+      for (const entry of entries) {
+        if (entry.isIntersecting) visible.add(entry.target);
+        else visible.delete(entry.target);
+      }
+
+      const top = [...body.querySelectorAll('section[data-laranail-emoji-section]')].find((section) => visible.has(section));
+      const slug = top?.getAttribute('data-laranail-emoji-section');
+
+      if (slug) onActive(slug);
+    },
+    { root: body, rootMargin: '0px 0px -66% 0px' },
+  );
+
+  body.querySelectorAll('section[data-laranail-emoji-section]').forEach((section) => observer.observe(section));
+
+  return () => observer.disconnect();
+}
 
 /** The hand shown for each tone choice, 0 (default) to 5. */
 export const TONE_SWATCHES: readonly string[] = ['✋', '✋🏻', '✋🏼', '✋🏽', '✋🏾', '✋🏿'];
@@ -559,7 +682,7 @@ export function buildSections(
 
 /** The search results over a list of sections: the emoji of every non-custom group, ranked. */
 export function searchSections(sections: PickerSection[], term: string, limit: number = Infinity): PickerEmoji[] {
-  return search(sections.filter((s): s is Extract<PickerSection, { custom?: false }> => !s.custom && s.slug !== 'recent').flatMap((s) => s.items), term, limit);
+  return search(sections.filter((s): s is Extract<PickerSection, { items: PickerEmoji[] }> => !s.custom && !s.text && s.slug !== 'recent').flatMap((s) => s.items as PickerEmoji[]), term, limit);
 }
 
 /** The most results a search draws; a one-letter term would otherwise draw nearly every emoji. */
@@ -570,6 +693,13 @@ export const MAX_RESULTS = 200;
  * pickers so a term finds the same things in each.
  */
 export function searchResults(sections: PickerSection[], term: string, strings: Pick<PickerStrings, 'search' | 'custom'>, limit: number = MAX_RESULTS): PickerSection[] {
+  // Kaomoji and symbols search their own names.
+  if (sections.some((s) => s.text)) {
+    const items = sections.flatMap((s) => (s.text ? s.items : []));
+
+    return [{ slug: 'search', label: strings.search, text: true, items: searchText(items, term, limit) }];
+  }
+
   const custom = sections.find((s): s is Extract<PickerSection, { custom: true }> => s.custom === true);
   const out: PickerSection[] = [{ slug: 'search', label: strings.search, items: searchSections(sections, term, limit) }];
   const customHits = custom ? searchCustom(custom.items, term) : [];
@@ -785,6 +915,7 @@ export function parseOptions(element: Element): ParsedOptions {
     offset: int('offset', 8),
     arrow: data('arrow') !== 'false',
     sheetBreakpoint: Math.max(0, int('sheet-breakpoint', 640)),
+    features: readFeatures(safeJson(data('features') ?? '{}', {})),
   };
 }
 
@@ -1340,6 +1471,40 @@ export class Popover {
   }
 }
 
+// ---- tabs ------------------------------------------------------------------------------------------------
+
+/**
+ * What a category tab shows: the group's outline icon when there is one, else its first emoji, else a short
+ * label (kaomoji and symbol groups). Built with createElementNS, so it stays CSP-safe.
+ */
+export function tabFace(section: PickerSection): Node {
+  const icon = TAB_ICONS[section.slug];
+
+  if (icon) {
+    const svg = document.createElementNS('http://www.w3.org/2000/svg', 'svg');
+
+    for (const [name, value] of Object.entries({ viewBox: '0 0 24 24', width: '20', height: '20', fill: 'none', stroke: 'currentColor', 'stroke-width': '1.75', 'stroke-linecap': 'round', 'stroke-linejoin': 'round', 'aria-hidden': 'true', focusable: 'false' })) {
+      svg.setAttribute(name, value);
+    }
+
+    for (const d of icon) {
+      const path = document.createElementNS('http://www.w3.org/2000/svg', 'path');
+      path.setAttribute('d', d);
+      svg.append(path);
+    }
+
+    return svg;
+  }
+
+  const first = section.items[0];
+
+  if (section.text) {
+    return document.createTextNode(first ? (first as PickerText).text.slice(0, 4) : section.label.slice(0, 2));
+  }
+
+  return document.createTextNode(first && !section.custom ? charOf((first as PickerEmoji).pick ?? (first as PickerEmoji).hexcode) : '★');
+}
+
 // ---- the vanilla picker ------------------------------------------------------------------------------
 
 const el = <K extends keyof HTMLElementTagNameMap>(tag: K, attributes: Record<string, string | boolean | null | undefined> = {}, text?: string): HTMLElementTagNameMap[K] => {
@@ -1358,7 +1523,7 @@ const el = <K extends keyof HTMLElementTagNameMap>(tag: K, attributes: Record<st
   return node;
 };
 
-type ResolvedOptions = Required<Omit<PickerOptions, 'source' | 'target' | 'store'>> & Pick<PickerOptions, 'source' | 'target' | 'store'>;
+type ResolvedOptions = Required<Omit<PickerOptions, 'source' | 'target' | 'store' | 'features'>> & Pick<PickerOptions, 'source' | 'target' | 'store'> & { features: PickerFeatures };
 type Handler<K extends keyof PickerEvents> = (detail: PickerEvents[K]) => void;
 
 export class Picker {
@@ -1382,6 +1547,8 @@ export class Picker {
   panel!: HTMLDivElement;
   searchInput!: HTMLInputElement;
   private tabs!: HTMLDivElement;
+  private kinds!: HTMLDivElement;
+  private preview: HTMLDivElement | null = null;
   private tones!: HTMLDivElement;
   private body!: HTMLDivElement;
   private status!: HTMLDivElement;
@@ -1397,6 +1564,8 @@ export class Picker {
   private abort: AbortController | null = null;
   private searchTimer: ReturnType<typeof setTimeout> | null = null;
   private popover: Popover | null = null;
+  private kind: PickerKind = 'emoji';
+  private stopSpy: (() => void) | null = null;
 
   constructor(element: HTMLElement, options: PickerOptions = {}) {
     this.element = element as Mountable;
@@ -1420,6 +1589,7 @@ export class Picker {
       arrow: true,
       sheetBreakpoint: 640,
       ...options,
+      features: readFeatures(options.features),
     } as ResolvedOptions;
     this.options.placement = parsePlacement(this.options.placement);
     this.options.tone = clampTone(this.options.tone);
@@ -1499,6 +1669,8 @@ export class Picker {
   }
 
   destroy(): void {
+    this.stopSpy?.();
+    this.stopSpy = null;
     this.popover?.destroy();
     this.popover = null;
     this.loads++;
@@ -1702,12 +1874,28 @@ export class Picker {
     // Inline, the picker is part of the page, not a dialog.
     this.panel = el('div', { class: `${PREFIX}-picker-panel`, id, role: inline ? 'group' : 'dialog', 'aria-label': s.open, hidden: !inline });
     this.searchInput = el('input', { type: 'search', class: `${PREFIX}-picker-search`, placeholder: s.search, 'aria-label': s.search, autocomplete: 'off', spellcheck: 'false' });
-    this.tabs = el('div', { class: `${PREFIX}-picker-tabs`, role: 'tablist', 'aria-label': s.open });
-    this.tones = el('div', { class: `${PREFIX}-picker-tones`, role: 'radiogroup', 'aria-label': s.tone });
+    const features = this.options.features;
+
+    this.kinds = el('div', { class: `${PREFIX}-picker-kinds`, 'aria-label': s.open, hidden: true });
+    this.tabs = el('div', { class: `${PREFIX}-picker-tabs`, role: 'tablist', 'aria-label': s.open, hidden: !features.categoryTabs });
+    this.tones = el('div', { class: `${PREFIX}-picker-tones`, role: 'radiogroup', 'aria-label': s.tone, hidden: !features.skinTones });
     this.body = el('div', { class: `${PREFIX}-picker-body` });
     this.status = el('div', { class: `${PREFIX}-picker-status`, role: 'status', 'aria-live': 'polite' }, s.loading);
+    this.searchInput.hidden = !features.search;
+    // The hovered or focused emoji, large, with its name and shortcode. Decoration for sighted users: each
+    // cell already carries its name for assistive tech, so this is hidden from it.
+    this.preview = features.preview ? el('div', { class: `${PREFIX}-picker-preview`, 'aria-hidden': 'true' }) : null;
 
-    this.panel.append(this.searchInput, this.tabs, this.body, this.tones, this.status);
+    const footer = el('div', { class: `${PREFIX}-picker-footer` });
+
+    if (this.preview) footer.append(this.preview);
+    footer.append(this.tones);
+
+    if (!features.skinTones) {
+      this.options.tone = 0;
+    }
+
+    this.panel.append(this.searchInput, this.kinds, this.tabs, this.body, footer, this.status);
 
     if (!inline && this.trigger) {
       // The caret, a backdrop and a drag handle for the phone sheet: decoration, hidden from assistive tech.
@@ -1737,7 +1925,7 @@ export class Picker {
     this.listen(this.panel, 'keydown', (event) => this.onKey(event));
     // One listener per container, not per button, so redrawing never stacks listeners.
     this.listen(this.body, 'click', (event) => {
-      const cell = (event.target as Element | null)?.closest?.<HTMLElement>(`[${ATTR}-hexcode], [${ATTR}-custom]`);
+      const cell = (event.target as Element | null)?.closest?.<HTMLElement>(`[${ATTR}-hexcode], [${ATTR}-custom], [${ATTR}-text]`);
 
       if (cell) {
         this.select(cell);
@@ -1750,6 +1938,19 @@ export class Picker {
         this.showSection(tab.getAttribute(`${ATTR}-section`) ?? '');
       }
     });
+    this.listen(this.kinds, 'click', (event) => {
+      const tab = (event.target as Element | null)?.closest?.<HTMLElement>('[role="tab"]');
+
+      if (tab) {
+        this.setKind(tab.getAttribute(`${ATTR}-kind`) as PickerKind);
+      }
+    });
+    if (this.preview) {
+      const show = (event: Event): void => this.showPreview((event.target as Element | null)?.closest?.<HTMLElement>('[role="gridcell"]') ?? null);
+
+      this.listen(this.body, 'pointerover', show);
+      this.listen(this.body, 'focusin', show);
+    }
     this.listen(this.tones, 'click', (event) => {
       const radio = (event.target as Element | null)?.closest?.<HTMLElement>('[role="radio"]');
 
@@ -1832,21 +2033,110 @@ export class Picker {
   }
 
   private render(): void {
+    this.renderKinds();
     this.renderTabs();
     this.renderTones();
     this.renderBody();
   }
 
   private sections(): PickerSection[] {
+    const features = this.options.features;
+
+    if (this.kind !== 'emoji') {
+      this.memo ??= textSections(this.data ?? { groups: [] }, this.kind);
+
+      return this.memo;
+    }
+
     this.memo ??= buildSections(this.data ?? { groups: [] }, {
       categories: this.options.categories,
       sort: this.options.sort,
-      recent: readRecent(this.store.get('recent')),
+      recent: features.recents ? readRecent(this.store.get('recent')) : [],
       recentOrder: this.options.recentOrder,
       strings: this.options.strings,
-    });
+    }).filter((section) => features.custom || !section.custom);
 
     return this.memo;
+  }
+
+  /** The Emoji / Kaomoji / Symbols tabs, shown only when the payload carries more than emoji. */
+  private renderKinds(): void {
+    const kinds = kindsOf(this.data);
+    const s = this.strings;
+
+    if (!kinds.includes(this.kind)) {
+      this.kind = 'emoji';
+    }
+
+    this.kinds.hidden = kinds.length < 2;
+
+    // With nothing but emoji there is nothing to choose between: no tabs, and no empty tablist to announce.
+    if (kinds.length < 2) {
+      this.kinds.removeAttribute('role');
+      this.kinds.replaceChildren();
+
+      return;
+    }
+
+    this.kinds.setAttribute('role', 'tablist');
+
+    this.kinds.replaceChildren(
+      ...kinds.map((kind) =>
+        el('button', {
+          type: 'button',
+          role: 'tab',
+          class: `${PREFIX}-picker-kind`,
+          'aria-selected': String(kind === this.kind),
+          tabindex: kind === this.kind ? '0' : '-1',
+          [`${ATTR}-kind`]: kind,
+        }, s[kind] ?? DEFAULT_STRINGS[kind] ?? kind),
+      ),
+    );
+  }
+
+  private setKind(kind: PickerKind): void {
+    if (kind === this.kind) {
+      return;
+    }
+
+    this.kind = kind;
+    this.memo = null;
+    this.activeTab = null;
+    this.query = '';
+    this.searchInput.value = '';
+    this.render();
+  }
+
+  /** The columns a kind's grid uses: kaomoji are wide, so fewer of them fit a row. */
+  private columnsFor(section: PickerSection): number {
+    return section.text && this.kind === 'kaomoji' ? Math.max(1, Math.round(this.options.columns / 4)) : this.options.columns;
+  }
+
+  private showPreview(cell: HTMLElement | null): void {
+    if (!this.preview || !cell) {
+      return;
+    }
+
+    const glyph = el('span', { class: `${PREFIX}-picker-preview-glyph` });
+    const image = cell.querySelector('img');
+    const base = cell.getAttribute(`${ATTR}-base`);
+    const custom = cell.getAttribute(`${ATTR}-custom`);
+    const shortcode = custom !== null ? customCode(custom, this.data) : base !== null ? this.index().get(base)?.shortcode : null;
+
+    if (image) {
+      glyph.append(el('img', { src: image.getAttribute('src') ?? '', alt: '', class: `${PREFIX} ${PREFIX}-image` }));
+    } else {
+      glyph.textContent = cell.textContent ?? '';
+    }
+
+    const words = el('span', { class: `${PREFIX}-picker-preview-text` });
+    words.append(el('span', { class: `${PREFIX}-picker-preview-name` }, cell.getAttribute('aria-label') ?? ''));
+
+    if (shortcode) {
+      words.append(el('span', { class: `${PREFIX}-picker-preview-code` }, custom !== null ? shortcode : customCode(shortcode, this.data)));
+    }
+
+    this.preview.replaceChildren(glyph, words);
   }
 
   private index(): Map<string, PickerEmoji> {
@@ -1867,10 +2157,8 @@ export class Picker {
     this.activeTab = active;
     this.tabs.replaceChildren(
       ...sections.map((section) => {
-        const first = section.custom ? null : section.items[0];
         const selected = section.slug === active;
-
-        return el('button', {
+        const tab = el('button', {
           type: 'button',
           role: 'tab',
           class: `${PREFIX}-picker-tab`,
@@ -1880,7 +2168,11 @@ export class Picker {
           'aria-controls': this.sectionId(section.slug),
           tabindex: selected ? '0' : '-1',
           [`${ATTR}-section`]: section.slug,
-        }, first ? charOf(first.pick ?? first.hexcode) : '★');
+        });
+
+        tab.append(tabFace(section));
+
+        return tab;
       }),
     );
   }
@@ -1893,6 +2185,17 @@ export class Picker {
       this.renderBody();
     }
 
+    this.markTab(slug);
+
+    const section = this.body.querySelector<HTMLElement>(`section[${ATTR}-section="${slug}"]`);
+
+    if (section) {
+      this.body.scrollTop = section.offsetTop - this.body.offsetTop;
+    }
+  }
+
+  /** Marks a category tab as the current one, keeping it in view in a tab bar that scrolls sideways. */
+  private markTab(slug: string): void {
     this.activeTab = slug;
 
     for (const tab of this.tabs.querySelectorAll<HTMLElement>('[role="tab"]')) {
@@ -1904,12 +2207,6 @@ export class Picker {
       if (selected && this.tabs.scrollWidth > this.tabs.clientWidth) {
         this.tabs.scrollLeft = tab.offsetLeft - this.tabs.offsetLeft - (this.tabs.clientWidth - tab.offsetWidth) / 2;
       }
-    }
-
-    const section = this.body.querySelector<HTMLElement>(`section[${ATTR}-section="${slug}"]`);
-
-    if (section) {
-      this.body.scrollTop = section.offsetTop - this.body.offsetTop;
     }
   }
 
@@ -1961,13 +2258,20 @@ export class Picker {
       const grid = el('div', { class: `${PREFIX}-picker-grid`, role: 'grid', 'aria-labelledby': heading.id });
       let row: HTMLDivElement | null = null;
 
+      const columns = this.columnsFor(section);
+
+      if (section.text) {
+        grid.classList.add(`${PREFIX}-picker-grid-text`);
+        grid.style.setProperty(`--${PREFIX}-picker-columns`, String(columns));
+      }
+
       section.items.forEach((item, index) => {
-        if (index % this.options.columns === 0 || row === null) {
+        if (index % columns === 0 || row === null) {
           row = el('div', { role: 'row', class: `${PREFIX}-picker-row` });
           grid.append(row);
         }
 
-        row.append(section.custom ? this.customCell(item as PickerCustom) : this.cell(item as PickerEmoji));
+        row.append(section.text ? this.textCell(item as PickerText) : section.custom ? this.customCell(item as PickerCustom) : this.cell(item as PickerEmoji));
         count++;
       });
 
@@ -1979,6 +2283,10 @@ export class Picker {
 
     this.body.replaceChildren(...nodes);
     this.status.textContent = term ? resultText(s, count) : '';
+
+    // The tab follows the scroll: whichever section is at the top of the body is the current one.
+    this.stopSpy?.();
+    this.stopSpy = term ? null : spySections(this.body, (slug) => this.markTab(slug));
 
     const first = this.body.querySelector<HTMLElement>('[role="gridcell"]');
 
@@ -1994,6 +2302,10 @@ export class Picker {
     const hexcode = item.pick ?? withTone(item, this.options.tone);
 
     return el('button', { type: 'button', role: 'gridcell', tabindex: '-1', class: `${PREFIX}-picker-cell`, title: item.name, 'aria-label': item.name, [`${ATTR}-hexcode`]: hexcode, [`${ATTR}-base`]: item.hexcode }, charOf(hexcode));
+  }
+
+  private textCell(item: PickerText): HTMLButtonElement {
+    return el('button', { type: 'button', role: 'gridcell', tabindex: '-1', class: `${PREFIX}-picker-cell ${PREFIX}-picker-cell-text`, title: item.name, 'aria-label': item.name, [`${ATTR}-text`]: item.text }, item.text);
   }
 
   private customCell(item: PickerCustom): HTMLButtonElement {
@@ -2024,6 +2336,19 @@ export class Picker {
 
     const tab = target?.closest?.<HTMLElement>('[role="tab"]');
     const radio = target?.closest?.<HTMLElement>('[role="radio"]');
+
+    if (tab && this.kinds.contains(tab)) {
+      const items = [...this.kinds.querySelectorAll<HTMLElement>('[role="tab"]')];
+      const next = rovingIndex(items.length, items.indexOf(tab), event.key, this.rtl);
+
+      if (next !== null) {
+        event.preventDefault();
+        this.setKind(items[next]?.getAttribute(`${ATTR}-kind`) as PickerKind);
+        this.kinds.querySelector<HTMLElement>('[aria-selected="true"]')?.focus();
+      }
+
+      return;
+    }
 
     if (tab || radio) {
       const items = [...(tab ? this.tabs : this.tones).querySelectorAll<HTMLElement>(tab ? '[role="tab"]' : '[role="radio"]')];
@@ -2083,9 +2408,12 @@ export class Picker {
 
   private select(cell: HTMLElement): void {
     const name = cell.getAttribute(`${ATTR}-custom`);
+    const text = cell.getAttribute(`${ATTR}-text`);
     let detail: SelectDetail;
 
-    if (name !== null) {
+    if (text !== null) {
+      detail = { emoji: text, hexcode: null, name: cell.getAttribute('aria-label') ?? text, shortcode: null, custom: false, kind: this.kind };
+    } else if (name !== null) {
       const custom = (this.data?.custom ?? []).find((c) => c.name === name);
       detail = { emoji: customCode(name, this.data), hexcode: null, name: custom?.label ?? name, shortcode: name, custom: true };
     } else {
@@ -2094,9 +2422,12 @@ export class Picker {
       const item = this.index().get(base);
 
       detail = { emoji: charOf(hexcode), hexcode, name: item?.name ?? '', shortcode: item?.shortcode ?? null, custom: false };
-      this.store.set('recent', recordRecent(this.store.get('recent'), base, hexcode, this.options.maxRecent));
-      // Redrawn once nothing is under the pointer, so a quick second click never lands on a moved cell.
-      this.recentStale = true;
+
+      if (this.options.features.recents) {
+        this.store.set('recent', recordRecent(this.store.get('recent'), base, hexcode, this.options.maxRecent));
+        // Redrawn once nothing is under the pointer, so a quick second click never lands on a moved cell.
+        this.recentStale = true;
+      }
     }
 
     const target = this.options.target;

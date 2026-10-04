@@ -17,6 +17,9 @@ return [
     'loading'     => 'Carregando emoji',
     'failed'      => 'Não foi possível carregar os emoji',
     'no_script'   => 'O seletor de emoji precisa de JavaScript. Você ainda pode digitar emoji diretamente.',
+    'emoji'       => 'Emoji',
+    'kaomoji'     => 'Kaomoji',
+    'symbols'     => 'Símbolos',
     'groups'      => [
         'smileys_and_emotion' => 'Carinhas e emoções',
         'people_and_body'     => 'Pessoas e corpo',

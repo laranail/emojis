@@ -18,6 +18,7 @@ $picker: '#{m.$block}-picker';
 // to the default. The picker never declares the public name itself, so a value set anywhere above it — the
 // host element, a wrapper, :root — reaches it by inheritance and wins, in light and dark alike.
 $light: (
+  accent: #0969da,
   bg: #fff,
   fg: #1f2328,
   muted: #59636e,
@@ -27,6 +28,7 @@ $light: (
   shadow: 0 8px 24px rgb(0 0 0 / 0.16),
 );
 $dark: (
+  accent: #4493f8,
   bg: #1f2328,
   fg: #f0f3f6,
   muted: #9198a1,
@@ -36,7 +38,7 @@ $dark: (
   shadow: 0 8px 24px rgb(0 0 0 / 0.5),
 );
 $sizes: (
-  radius: 12px,
+  radius: 14px,
   cell-radius: 8px,
   cell: 2.25rem,
   height: 22rem,
@@ -285,31 +287,115 @@ $sizes: (
 
 .#{$picker}-search {
   inline-size: 100%;
-  padding: 0.4rem 0.6rem;
+  padding: 0.45rem 0.7rem;
   border: 1px solid var(--_lep-border);
-  border-radius: var(--_lep-cell-radius);
-  background: transparent;
+  border-radius: 999px;
+  background: var(--_lep-hover);
   color: inherit;
   font: inherit;
   box-sizing: border-box;
+
+  &:focus {
+    background: transparent;
+    border-color: var(--_lep-accent);
+    outline: none;
+    box-shadow: 0 0 0 3px color-mix(in srgb, var(--_lep-accent) 22%, transparent);
+  }
+
+  &[hidden] {
+    display: none;
+  }
+}
+
+// Emoji / Kaomoji / Symbols: a segmented control, shown only when the payload carries more than emoji.
+.#{$picker}-kinds {
+  display: flex;
+  gap: 0.25rem;
+  padding: 0.2rem;
+  border-radius: 999px;
+  background: var(--_lep-hover);
+
+  &[hidden] {
+    display: none;
+  }
+}
+
+.#{$picker}-kind {
+  flex: 1;
+  padding: 0.3rem 0.6rem;
+  border: 0;
+  border-radius: 999px;
+  background: transparent;
+  color: var(--_lep-muted);
+  font: inherit;
+  font-size: 0.8rem;
+  font-weight: 600;
+  cursor: pointer;
+
+  &[aria-selected='true'] {
+    background: var(--_lep-bg);
+    color: var(--_lep-fg);
+    box-shadow: 0 1px 2px rgb(0 0 0 / 0.12);
+  }
+
+  &:focus-visible {
+    outline: 2px solid var(--_lep-focus);
+    outline-offset: 1px;
+  }
 }
 
 .#{$picker}-tabs,
 .#{$picker}-tones {
   display: flex;
   gap: 0.125rem;
+
+  &[hidden] {
+    display: none;
+  }
+}
+
+.#{$picker}-tabs {
+  padding-block-end: 0.35rem;
+  border-block-end: 1px solid var(--_lep-border);
+  overflow-x: auto;
+  scrollbar-width: none;
 }
 
 .#{$picker}-tab,
 .#{$picker}-tone {
-  inline-size: 1.75rem;
-  block-size: 1.75rem;
+  flex: none;
+  inline-size: 1.85rem;
+  block-size: 1.85rem;
   font-size: 1rem;
+}
+
+// Category tabs: outline icons in the muted colour, the current one in the accent colour on a soft pill.
+.#{$picker}-tab {
+  color: var(--_lep-muted);
+  white-space: nowrap;
+  transition: background-color 120ms ease, color 120ms ease;
+
+  &:hover {
+    color: var(--_lep-fg);
+  }
+
+  &[aria-selected='true'] {
+    background: color-mix(in srgb, var(--_lep-accent) 14%, transparent);
+    color: var(--_lep-accent);
+  }
+
+  svg {
+    display: block;
+  }
+}
+
+.#{$picker}-tone {
   opacity: 0.7;
 }
 
 .#{$picker}-tone[aria-checked='true'] {
   background: var(--_lep-hover);
+  box-shadow: inset 0 0 0 1.5px var(--_lep-accent);
   opacity: 1;
 }
 
@@ -317,6 +403,7 @@ $sizes: (
   flex: 1;
   overflow-y: auto;
   overscroll-behavior: contain;
+  scroll-behavior: smooth;
 }
 
 // Off-screen sections skip layout and paint until scrolled to: ~1,900 cells stay cheap.
@@ -328,11 +415,15 @@ $sizes: (
 .#{$picker}-heading {
   position: sticky;
   inset-block-start: 0;
-  padding: 0.25rem 0;
-  background: var(--_lep-bg);
+  z-index: 1;
+  padding: 0.4rem 0.15rem 0.25rem;
+  background: color-mix(in srgb, var(--_lep-bg) 88%, transparent);
+  backdrop-filter: blur(6px);
   color: var(--_lep-muted);
-  font-size: 0.75rem;
-  font-weight: 600;
+  font-size: 0.7rem;
+  font-weight: 700;
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
 }
 
 .#{$picker}-grid {
@@ -351,12 +442,40 @@ $sizes: (
   inline-size: min(var(--_lep-cell), calc(100cqi / var(--#{$picker}-columns, 8)));
   aspect-ratio: 1;
   font-size: min(1.4rem, calc(100cqi / var(--#{$picker}-columns, 8) * 0.6));
+  transition: transform 90ms ease, background-color 90ms ease;
+
+  &:hover {
+    transform: scale(1.12);
+  }
 
   .#{m.$block}-image {
     inline-size: min(var(--_lep-image-size), 70%);
     block-size: auto;
     aspect-ratio: 1;
     margin: 0;
+  }
+}
+
+// Kaomoji and symbols: text, so a cell takes the room its row gives it rather than a square.
+.#{$picker}-grid-text .#{$picker}-row {
+  grid-template-columns: repeat(var(--#{$picker}-columns, 8), minmax(0, 1fr));
+  justify-content: stretch;
+}
+
+.#{$picker}-cell-text {
+  inline-size: auto;
+  min-inline-size: 0;
+  aspect-ratio: auto;
+  min-block-size: var(--_lep-cell);
+  padding-inline: 0.25rem;
+  overflow: hidden;
+  font-family: inherit;
+  font-size: 0.9rem;
+  white-space: nowrap;
+  text-overflow: ellipsis;
+
+  &:hover {
+    transform: none;
   }
 }
 
@@ -372,6 +491,82 @@ $sizes: (
     outline: 2px solid var(--_lep-focus);
     outline-offset: -2px;
   }
+}
+
+.#{$picker}-tab[aria-selected='true']:hover {
+  background: color-mix(in srgb, var(--_lep-accent) 20%, transparent);
+}
+
+// The footer: the hovered emoji on the start side, the skin tones on the end side.
+.#{$picker}-footer {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 0.5rem;
+  min-block-size: 2.25rem;
+  padding-block-start: 0.4rem;
+  border-block-start: 1px solid var(--_lep-border);
+
+  &:empty {
+    display: none;
+  }
+}
+
+// In the footer the tones give the preview room: smaller swatches, no gaps.
+.#{$picker}-footer .#{$picker}-tones {
+  flex: none;
+  gap: 0;
+
+  .#{$picker}-tone {
+    inline-size: 1.5rem;
+    block-size: 1.5rem;
+    font-size: 0.85rem;
+  }
+}
+
+.#{$picker}-preview {
+  display: flex;
+  flex: 1;
+  align-items: center;
+  gap: 0.5rem;
+  min-inline-size: 0;
+}
+
+.#{$picker}-preview-glyph {
+  flex: none;
+  font-family: t.$font-stack;
+  font-size: 1.75rem;
+  line-height: 1;
+
+  .#{m.$block}-image {
+    inline-size: 1.75rem;
+    block-size: 1.75rem;
+    margin: 0;
+  }
+}
+
+.#{$picker}-preview-text {
+  display: flex;
+  flex-direction: column;
+  min-inline-size: 0;
+}
+
+.#{$picker}-preview-name,
+.#{$picker}-preview-code {
+  overflow: hidden;
+  white-space: nowrap;
+  text-overflow: ellipsis;
+}
+
+.#{$picker}-preview-name {
+  font-size: 0.8rem;
+  font-weight: 600;
+}
+
+.#{$picker}-preview-code {
+  color: var(--_lep-muted);
+  font-family: ui-monospace, SFMono-Regular, Menlo, monospace;
+  font-size: 0.72rem;
 }
 
 .#{$picker}-status {
@@ -475,6 +670,15 @@ $sizes: (
   .#{$picker}[data-sheet] .#{$picker}-panel {
     animation: none;
     transition: none;
+  }
+
+  .#{$picker}-cell,
+  .#{$picker}-tab {
+    transition: none;
+
+    &:hover {
+      transform: none;
+    }
   }
 }
 
