@@ -19,7 +19,7 @@ Add the laranail VCS repositories to your root `composer.json` (see
 [installation](docs/installation.md)), then:
 
 ```bash
-composer require laranail/emojis:^0.7
+composer require laranail/emojis:^0.8
 ```
 
 Blade and Livewire need nothing else: the built picker ships inside the Composer package. For the picker in
@@ -34,7 +34,7 @@ package, so add a GitHub token with `read:packages` to the project's `.npmrc`:
 ```
 
 ```bash
-npm install @laranail/emojis-picker@^0.7
+npm install @laranail/emojis-picker@^0.8
 ```
 
 See [installing from GitHub Packages](docs/tools/picker.md#installing-from-github-packages).
