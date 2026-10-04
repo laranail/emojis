@@ -147,6 +147,12 @@ it('names the current release line wherever a version line is written', function
         expect($constraints[1])->not->toBeEmpty($page)
             ->and(array_unique($constraints[1]))->toBe([$line], $page);
     }
+
+    // The npm package carries the Composer version, so its install line moves with the same release.
+    preg_match_all('/@laranail\/emojis-picker@\^([\d.]+)/', (string) file_get_contents("{$root}/README.md"), $npm);
+
+    expect($npm[1])->not->toBeEmpty()
+        ->and(array_unique($npm[1]))->toBe([$line]);
 });
 
 it('documents only custom emoji names that addCustom() accepts', function (): void {
