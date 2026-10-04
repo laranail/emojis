@@ -18,6 +18,10 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/),
   OIDC exchange first whenever the job can mint a token. The token branch now publishes without the OIDC
   variables, and without provenance, which needs them, until npm fixes #9969. The token check also reports
   npm's own error and the token's prefix and length (never its value) instead of stopping the job.
+- **Setting `NPM_TOKEN` failed quietly.** A copied page or a token ID was stored as the secret, and every
+  publish then failed with npm's output masked. `.dev/tools/npm-release` (maintainers only, not shipped) checks
+  the token's shape and asks npm who it belongs to before setting the secret, confirms GitHub recorded it,
+  then publishes every missing version in order and checks each on the registry.
 - **Custom emoji never reached Frequently used.** A custom pick was inserted but not recorded, so the section
   held Unicode emoji only. Custom picks, from the grid or from autocomplete, are now remembered beside the
   others (keyed `custom:<name>`, so they cannot collide with a hexcode) and drop out when the payload no

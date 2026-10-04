@@ -150,7 +150,7 @@ jobs:
           SUB: ${{ steps.identity.outputs.sub }}
         run: |
           if printf '%s' "$SUB" | grep -Eq '^repo:[^/]+@[0-9]+/[^:]+@[0-9]+:'; then
-            echo "::error::This repository issues GitHub's immutable OIDC subject ($SUB), which npm does not accept for publishing yet (https://github.com/npm/cli/issues/9969). Add a granular npm token with publish rights on @laranail/emojis-picker as the NPM_TOKEN repository secret; this workflow then publishes with it, with provenance. Delete the secret once npm fixes #9969."
+            echo "::error::This repository issues GitHub's immutable OIDC subject ($SUB), which npm does not accept for publishing yet (https://github.com/npm/cli/issues/9969). Add a granular npm token with publish rights on @laranail/emojis-picker as the NPM_TOKEN repository secret; this workflow then publishes with it (without provenance until npm fixes #9969, then delete the secret). Set it and publish every missing version with .dev/tools/npm-release."
           else
             echo "::error::npm refused the publish although the token exchange worked. On npmjs.com, open the package's trusted publisher and enable direct npm publish under Allowed actions (new publishers allow staged publishes only)."
           fi
