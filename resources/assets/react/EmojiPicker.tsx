@@ -1,7 +1,16 @@
 import { useCallback, useEffect, useId, useRef, useState, type CSSProperties, type KeyboardEvent, type RefObject } from 'react';
 import {
+  DEFAULT_SHORTCUT,
   DEFAULT_STRINGS,
   FIRST_PAINT_CELLS,
+  GEAR_ICON,
+  attachAutocomplete,
+  bindShortcut,
+  openSettingsMenu,
+  parseShortcut,
+  readRecent,
+  recordRecent,
+  shortcutList,
   Popover,
   TAB_ICONS,
   TONE_SWATCHES,
@@ -47,6 +56,8 @@ export interface EmojiPickerProps extends UseEmojiPickerOptions {
   sheetBreakpoint?: number;
   /** 'auto' (default) follows the OS or the page's theme; 'light' or 'dark' fixes it. */
   theme?: 'auto' | 'light' | 'dark';
+  /** The key combination that opens the picker from its field ("Mod+Shift+." by default); null for none. */
+  shortcut?: string | null;
   className?: string;
 }
 
@@ -99,6 +110,7 @@ export function EmojiPicker({
   arrow = true,
   sheetBreakpoint = 640,
   theme = 'auto',
+  shortcut = DEFAULT_SHORTCUT,
   className,
   ...options
 }: EmojiPickerProps) {
@@ -247,6 +259,96 @@ export function EmojiPicker({
   };
   const imageFailed = (url: string): void => setFailed((previous) => new Set(previous).add(url));
 
+  // The theme the user chose in settings, remembered with the rest of their picker state; a theme the page
+  // fixed (the prop) wins over it.
+  const { store } = state;
+  const [chosenTheme, setChosenTheme] = useState<'auto' | 'light' | 'dark'>('auto');
+  const gear = useRef<HTMLButtonElement>(null);
+  const closeSettings = useRef<(() => void) | null>(null);
+  const [settingsOpen, setSettingsOpen] = useState(false);
+  const themeInEffect: 'auto' | 'light' | 'dark' = theme === 'light' || theme === 'dark' ? theme : chosenTheme;
+
+  useEffect(() => {
+    const stored = features.settings ? store.get('theme') : null;
+
+    setChosenTheme(stored === 'light' || stored === 'dark' ? stored : 'auto');
+  }, [store, features.settings]);
+
+  const rememberTheme = (next: 'auto' | 'light' | 'dark'): void => {
+    store.set('theme', next);
+    setChosenTheme(next);
+  };
+
+  const openSettings = (focusShortcuts = false): void => {
+    if (!gear.current || !root.current) return;
+
+    closeSettings.current?.();
+    setSettingsOpen(true);
+    closeSettings.current = openSettingsMenu(gear.current, root.current, {
+      strings: state.strings,
+      theme: theme === 'auto' ? themeInEffect : null,
+      onTheme: rememberTheme,
+      recents: readRecent(store.get('recent')).length > 0,
+      onClearRecents: state.clearRecents,
+      shortcuts: shortcutList(state.strings, parseShortcut(shortcut)),
+      focusShortcuts,
+      rtl: rtl(),
+      onClose: () => {
+        closeSettings.current = null;
+        setSettingsOpen(false);
+      },
+    });
+  };
+
+  useEffect(() => () => closeSettings.current?.(), []);
+
+  // The field's shortcut opens the picker; with autocomplete on, typing ":smi" in it suggests emoji.
+  const opener = useRef<() => void>(() => {});
+  opener.current = (): void => {
+    if (inline) search.current?.focus();
+    else setOpen(true);
+  };
+
+  useEffect(() => {
+    const field = target?.current;
+
+    if (!field) return;
+
+    return bindShortcut(field, parseShortcut(shortcut), () => opener.current());
+  });
+
+  const autocompleteState = useRef({ state });
+  autocompleteState.current.state = state;
+
+  useEffect(() => {
+    const field = target?.current;
+
+    if (!features.autocomplete || !root.current || !(field instanceof HTMLInputElement || field instanceof HTMLTextAreaElement)) return;
+
+    return attachAutocomplete(field, {
+      container: root.current,
+      source: () => {
+        const current = autocompleteState.current.state;
+
+        return { emoji: (current.data?.groups ?? []).flatMap((group) => group.emoji), custom: current.features.custom ? (current.data?.custom ?? []) : [], data: current.data };
+      },
+      tone: () => autocompleteState.current.state.tone,
+      render: () => ({ mode: autocompleteState.current.state.renderMode, set: autocompleteState.current.state.imageSet }),
+      strings: state.strings,
+      rtl,
+      onPick: (detail, base) => {
+        const current = autocompleteState.current.state;
+
+        if (base && detail.hexcode && current.features.recents) {
+          current.store.set('recent', recordRecent(current.store.get('recent'), base, detail.hexcode, options.maxRecent ?? 36));
+        }
+
+        options.onSelect?.(detail);
+      },
+    });
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [features.autocomplete, target?.current]);
+
   const showPreview = (item: PickerItem): void => {
     if (!features.preview) return;
 
@@ -353,6 +455,34 @@ export function EmojiPicker({
     const tab = element.closest<HTMLElement>('[role="tab"]');
     const radio = element.closest<HTMLElement>('[role="radio"]');
     const kindTab = tab?.closest('[data-laranail-emoji-kinds]') ? tab : null;
+    const typing = element === search.current;
+
+    // Picker shortcuts: / to search, Alt+1–9 for a category, ? for the shortcut list. Not while typing.
+    if (!typing && event.key === '/' && !event.ctrlKey && !event.metaKey && !event.altKey) {
+      event.preventDefault();
+      search.current?.focus();
+
+      return;
+    }
+
+    if (event.altKey && !event.ctrlKey && !event.metaKey && /^Digit[1-9]$/.test(event.code)) {
+      const wanted = tabs[Number(event.code.slice(5)) - 1];
+
+      if (wanted) {
+        event.preventDefault();
+        showSection(wanted.slug);
+        root.current?.querySelector<HTMLElement>(`[role="tab"][data-laranail-emoji-section="${wanted.slug}"]`)?.focus();
+      }
+
+      return;
+    }
+
+    if (!typing && event.key === '?' && features.settings) {
+      event.preventDefault();
+      openSettings(true);
+
+      return;
+    }
 
     if (kindTab) {
       const next = rovingIndex(state.kinds.length, state.kinds.indexOf(state.kind), event.key, rtl());
@@ -485,7 +615,7 @@ export function EmojiPicker({
       ref={root}
       className={className ? `${P} ${className}` : P}
       style={style}
-      data-theme={theme === 'light' || theme === 'dark' ? theme : undefined}
+      data-theme={themeInEffect === 'auto' ? undefined : themeInEffect}
       onBlur={(event) => {
         const next = event.relatedTarget as Node | null;
 
@@ -708,6 +838,24 @@ export function EmojiPicker({
                 </>
               )}
             </div>
+          )}
+          {features.settings && (
+            <button
+              ref={gear}
+              type="button"
+              className={`${P}-gear`}
+              aria-label={strings.settings ?? DEFAULT_STRINGS.settings}
+              title={strings.settings ?? DEFAULT_STRINGS.settings}
+              aria-haspopup="dialog"
+              aria-expanded={settingsOpen}
+              onClick={() => (closeSettings.current ? closeSettings.current() : openSettings())}
+            >
+              <svg viewBox="0 0 24 24" width="20" height="20" fill="none" stroke="currentColor" strokeWidth="1.75" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true" focusable="false">
+                {GEAR_ICON.map((d) => (
+                  <path key={d} d={d} />
+                ))}
+              </svg>
+            </button>
           )}
           {features.setSwitcher && (
             <select

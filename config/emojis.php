@@ -93,6 +93,9 @@ return [
             'kaomoji'          => false, // a Kaomoji tab: ¯\_(ツ)_/¯
             'symbols'          => false, // a Symbols tab: arrows, currency, maths, punctuation, letters
             'set_switcher'     => false, // let the user switch between native emoji, Twemoji, Noto and OpenMoji
+            'settings'         => true,  // a gear with the theme, clearing recents and the keyboard shortcuts
+            'autocomplete'     => false, // suggest emoji as a :shortcode is typed in the field
+            'english_keywords' => false, // search English keywords too in other locales (adds to the payload)
         ],
 
         'placement'        => 'auto', // auto | top | bottom | start | end, optionally -start / -end
@@ -106,6 +109,7 @@ return [
         'close_on_select'  => true,
         'trigger'          => '🙂',
         'theme'            => 'auto', // auto (the OS, or a .dark / [data-theme] ancestor) | light | dark
+        'shortcut'         => 'Mod+Shift+.', // opens the picker from its field; Mod is ⌘ on Apple, Ctrl elsewhere; null for none
 
         // Where the payload comes from: inline (a JSON block in the page), api (GET /picker; needs the API
         // enabled), or auto (the API when it is enabled, inline otherwise).

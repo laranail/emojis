@@ -13,10 +13,16 @@ use Illuminate\Contracts\Config\Repository;
  */
 final readonly class PickerConfig
 {
-    public const array FEATURES = ['search', 'recents', 'skin_tones', 'per_person_tones', 'preview', 'category_tabs', 'custom', 'kaomoji', 'symbols', 'set_switcher'];
+    public const array FEATURES = ['search', 'recents', 'skin_tones', 'per_person_tones', 'preview', 'category_tabs', 'custom', 'kaomoji', 'symbols', 'set_switcher', 'autocomplete', 'settings', 'english_keywords'];
 
-    /** Off unless switched on: each adds to the payload. */
-    public const array OPT_IN = ['kaomoji', 'symbols', 'set_switcher'];
+    /** Off unless switched on: each adds to the payload or changes how a field behaves. */
+    public const array OPT_IN = ['kaomoji', 'symbols', 'set_switcher', 'autocomplete', 'english_keywords'];
+
+    /** Opt-in features the browser module has to be told about (the rest only shape the payload). */
+    public const array CLIENT_OPT_IN = ['set_switcher', 'autocomplete'];
+
+    /** The field shortcut that opens a picker, unless configured otherwise. Mirrors picker.ts DEFAULT_SHORTCUT. */
+    public const string DEFAULT_SHORTCUT = 'Mod+Shift+.';
 
     /** The image sets a user may switch between: the built-in ones whose URLs a browser can work out. */
     public const array SWITCHABLE = ['twemoji', 'noto', 'openmoji'];
@@ -40,6 +46,7 @@ final readonly class PickerConfig
         public string $delivery,
         public string $render = 'auto',
         public ?string $imageSet = null,
+        public ?string $shortcut = self::DEFAULT_SHORTCUT,
     ) {}
 
     public static function fromConfig(Repository $config): self
@@ -76,6 +83,8 @@ final readonly class PickerConfig
             delivery: $one('delivery', ['auto', 'inline', 'api'], 'auto'),
             render: $one('render', ['auto', 'native', 'image'], 'auto'),
             imageSet: is_string($picker['image_set'] ?? null) && $picker['image_set'] !== '' ? $picker['image_set'] : null,
+            // null or '' turns the shortcut off; a missing key keeps the default.
+            shortcut: array_key_exists('shortcut', $picker) ? (is_string($picker['shortcut']) && $picker['shortcut'] !== '' ? $picker['shortcut'] : null) : self::DEFAULT_SHORTCUT,
         );
     }
 

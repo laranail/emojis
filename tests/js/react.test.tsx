@@ -395,6 +395,55 @@ describe('EmojiPicker (React) theme and loading', () => {
   });
 });
 
+describe('EmojiPicker (React) shortcuts, settings and autocomplete', () => {
+  beforeEach(() => localStorage.clear());
+  afterEach(cleanup);
+
+  function Field(props: { autocomplete?: boolean; shortcut?: string | null; store?: ReturnType<typeof memoryStore> }) {
+    const ref = useRef<HTMLTextAreaElement>(null);
+    const source = useRef(new StaticSource(payload())).current;
+
+    return (
+      <>
+        <textarea aria-label="message" ref={ref} />
+        <EmojiPicker source={source} target={ref} store={props.store ?? memoryStore()} maxVersion={null} searchDelay={0} shortcut={props.shortcut} features={{ autocomplete: props.autocomplete ?? false }} />
+      </>
+    );
+  }
+
+  it('opens from the field with its shortcut, and keeps settings behind the gear', async () => {
+    const store = memoryStore();
+    render(<Field shortcut="Ctrl+E" store={store} />);
+    const field = screen.getByLabelText('message');
+
+    fireEvent.keyDown(field, { key: 'e', code: 'KeyE', ctrlKey: true });
+    await waitFor(() => expect(screen.getByRole('dialog', { hidden: true }).hidden).toBe(false));
+    await ready();
+
+    fireEvent.click(screen.getByRole('button', { name: 'Settings' }));
+    const menu = document.querySelector('.laranail-emoji-picker-settings')!;
+    fireEvent.click(menu.querySelector('[data-laranail-emoji-theme="dark"]')!);
+
+    await waitFor(() => expect(document.querySelector('.laranail-emoji-picker')?.getAttribute('data-theme')).toBe('dark'));
+    expect(store.get('theme')).toBe('dark');
+  });
+
+  it('suggests emoji as a shortcode is typed when autocomplete is on', async () => {
+    render(<Field autocomplete />);
+    const field = screen.getByLabelText('message') as HTMLTextAreaElement;
+    await waitFor(() => expect(document.querySelector('[role="status"]')?.textContent).toBe(''));
+
+    field.focus();
+    field.value = 'yo :gri';
+    field.setSelectionRange(7, 7);
+    fireEvent.input(field);
+
+    await waitFor(() => expect(document.querySelector('.laranail-emoji-picker-suggest [role="option"]')).not.toBeNull());
+    fireEvent.keyDown(field, { key: 'Enter' });
+    expect(field.value).toBe('yo 😀');
+  });
+});
+
 describe('the React build', () => {
   it('writes relative imports with .js, so its declarations resolve under moduleResolution node16/nodenext', () => {
     const files = ['index.ts', 'EmojiPicker.tsx', 'useEmojiPicker.ts'];

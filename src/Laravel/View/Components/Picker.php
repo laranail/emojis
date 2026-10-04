@@ -56,6 +56,8 @@ final class Picker extends Component
         public ?int $sheetBreakpoint = null,
         public ?string $theme = null,
         public ?string $render = null,
+        /** The field shortcut; '' turns it off. Null takes picker.shortcut. */
+        public ?string $shortcut = null,
         /** @var array<string, bool> feature name => on, over `picker.features` */
         public array $features = [],
     ) {}
@@ -117,7 +119,9 @@ final class Picker extends Component
                 'sheet-breakpoint' => $this->differs(max(0, $this->sheetBreakpoint ?? $c->sheetBreakpoint), 640),
                 'features'         => $this->featureAttribute(),
                 'render'           => $this->differs(in_array($this->render, ['auto', 'native', 'image'], true) ? $this->render : $c->render, 'auto'),
-                'strings'          => json_encode($this->payloads->strings($resolved), JSON_UNESCAPED_UNICODE | JSON_THROW_ON_ERROR),
+                // Written only when it differs from the module's default; '' tells it there is none.
+                'shortcut' => ($shortcut = $this->shortcut ?? $c->shortcut ?? '') === PickerConfig::DEFAULT_SHORTCUT ? null : $shortcut,
+                'strings'  => json_encode($this->payloads->strings($resolved), JSON_UNESCAPED_UNICODE | JSON_THROW_ON_ERROR),
             ]),
             ...($this->inline ? ['data-laranail-emoji-inline' => ''] : []),
             // A fixed theme marks the mount point, which the stylesheet reads as an ancestor.
@@ -151,16 +155,20 @@ final class Picker extends Component
     {
         $flags = [];
 
-        // The switcher is the one opt-in feature the module also needs to know about.
-        if (is_bool($this->features['set_switcher'] ?? null) ? $this->features['set_switcher'] : $this->config->enabled('set_switcher')) {
-            $flags['setSwitcher'] = true;
+        $name = static fn (string $feature): string => lcfirst(str_replace('_', '', ucwords($feature, '_')));
+
+        // The opt-in features the module also needs to know about.
+        foreach (PickerConfig::CLIENT_OPT_IN as $feature) {
+            if (is_bool($this->features[$feature] ?? null) ? $this->features[$feature] : $this->config->enabled($feature)) {
+                $flags[$name($feature)] = true;
+            }
         }
 
-        foreach (PickerConfig::FEATURES as $name) {
-            $on = is_bool($this->features[$name] ?? null) ? $this->features[$name] : $this->config->enabled($name);
+        foreach (PickerConfig::FEATURES as $feature) {
+            $on = is_bool($this->features[$feature] ?? null) ? $this->features[$feature] : $this->config->enabled($feature);
 
-            if (! $on && ! in_array($name, PickerConfig::OPT_IN, true)) {
-                $flags[lcfirst(str_replace('_', '', ucwords($name, '_')))] = false;
+            if (! $on && ! in_array($feature, PickerConfig::OPT_IN, true)) {
+                $flags[$name($feature)] = false;
             }
         }
 

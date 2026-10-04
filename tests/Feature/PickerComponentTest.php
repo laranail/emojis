@@ -368,3 +368,24 @@ it('warns when the picker falls back to an image set with no coverage data', fun
     expect($result->status)->toBe(DoctorStatus::Warn)
         ->and($result->message)->toContain('JoyPixels');
 });
+
+it('passes the shortcut and the client opt-in features, and carries emoticons and English keywords in the payload', function (): void {
+    $default = Blade::render('<x-laranail-emojis::picker />');
+
+    expect($default)->not->toContain('data-laranail-emoji-shortcut')
+        // A bare attribute, which the browser reads as '': no shortcut.
+        ->and(Blade::render('<x-laranail-emojis::picker shortcut="" />'))->toMatch('/data-laranail-emoji-shortcut[ >]/')
+        ->and(Blade::render('<x-laranail-emojis::picker shortcut="Ctrl+E" />'))->toContain('data-laranail-emoji-shortcut="Ctrl+E"');
+
+    $smile = collect(payloadIn($default)['groups'])->flatMap(static fn (array $g): array => $g['emoji'])->firstWhere('hexcode', '1F642');
+    expect($smile['emoticons'])->toContain(':)');
+
+    TestCase::$bootConfig = ['laranail.emojis.picker' => ['shortcut' => null, 'features' => ['autocomplete' => true, 'settings' => false, 'english_keywords' => true]]];
+    $this->refreshApplication();
+    $html = Blade::render('<x-laranail-emojis::picker locale="fr" />');
+    $grin = collect(payloadIn($html)['groups'])->flatMap(static fn (array $g): array => $g['emoji'])->firstWhere('hexcode', '1F600');
+
+    expect(html_entity_decode($html))->toContain('data-laranail-emoji-features="{"autocomplete":true,"settings":false}"')
+        ->and($html)->toMatch('/data-laranail-emoji-shortcut[ >]/')
+        ->and($grin['keywords_en'])->toContain('grin');
+});

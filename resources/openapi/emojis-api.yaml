@@ -56,6 +56,14 @@ components:
         base:
           description: Present, and false, when the policy refuses the emoji itself but permits some of its toned forms.
           const: false
+        emoticons:
+          type: array
+          description: 'Text emoticons that mean this emoji (":)" for 🙂), for search. Present only on emoji that have any.'
+          items: { type: string }
+        keywords_en:
+          type: array
+          description: 'The English keywords beside a non-English locale''s, when picker.features.english_keywords is on.'
+          items: { type: string }
     PickerGroup:
       type: object
       required: [slug, label, emoji]

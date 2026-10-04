@@ -217,7 +217,7 @@ $sizes: (
   }
 }
 
-:is(.#{$picker}-panel, .#{$picker}-tonemenu)[data-placement^='bottom'] > .#{$picker}-arrow {
+:is(.#{$picker}-panel, .#{$picker}-tonemenu, .#{$picker}-settings, .#{$picker}-suggest)[data-placement^='bottom'] > .#{$picker}-arrow {
   inset-block-end: 100%;
 
   &::before,
@@ -236,7 +236,7 @@ $sizes: (
   }
 }
 
-:is(.#{$picker}-panel, .#{$picker}-tonemenu)[data-placement^='top'] > .#{$picker}-arrow {
+:is(.#{$picker}-panel, .#{$picker}-tonemenu, .#{$picker}-settings, .#{$picker}-suggest)[data-placement^='top'] > .#{$picker}-arrow {
   inset-block-start: 100%;
 
   &::before,
@@ -619,6 +619,189 @@ $sizes: (
     opacity: 0.4;
     cursor: not-allowed;
   }
+}
+
+// The settings button, at the end of the footer.
+.#{$picker}-gear {
+  display: inline-flex;
+  flex: none;
+  align-items: center;
+  justify-content: center;
+  inline-size: 1.85rem;
+  block-size: 1.85rem;
+  border: 0;
+  border-radius: var(--_lep-cell-radius);
+  background: transparent;
+  color: var(--_lep-muted);
+  cursor: pointer;
+
+  &:hover,
+  &[aria-expanded='true'] {
+    background: var(--_lep-hover);
+    color: var(--_lep-fg);
+  }
+
+  &:focus-visible {
+    outline: 2px solid var(--_lep-focus);
+    outline-offset: -2px;
+  }
+}
+
+// The settings menu and the shortcode suggestions share the tone menu's card: top layer, caret, shadow.
+:is(.#{$picker}-settings, .#{$picker}-suggest) {
+  position: fixed;
+  inset: auto;
+  z-index: calc(var(--_lep-z) + 2);
+  margin: 0;
+  overflow: visible;
+  border: 1px solid var(--_lep-border);
+  border-radius: var(--_lep-radius);
+  background: var(--_lep-bg);
+  color: var(--_lep-fg);
+  box-shadow: var(--_lep-shadow);
+  font-size: 0.85rem;
+  animation: #{$picker}-in 120ms ease-out;
+}
+
+.#{$picker}-settings {
+  display: flex;
+  flex-direction: column;
+  gap: 0.45rem;
+  inline-size: 16rem;
+  padding: 0.75rem;
+
+  :focus-visible {
+    outline: 2px solid var(--_lep-focus);
+    outline-offset: 1px;
+  }
+}
+
+.#{$picker}-settings-label {
+  color: var(--_lep-muted);
+  font-size: 0.7rem;
+  font-weight: 700;
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+}
+
+.#{$picker}-settings-themes {
+  display: flex;
+  padding: 0.2rem;
+  border-radius: 999px;
+  background: var(--_lep-hover);
+}
+
+.#{$picker}-settings-theme {
+  flex: 1;
+  padding: 0.3rem 0.5rem;
+  border: 0;
+  border-radius: 999px;
+  background: transparent;
+  color: var(--_lep-muted);
+  font: inherit;
+  font-weight: 600;
+  cursor: pointer;
+
+  &[aria-checked='true'] {
+    background: var(--_lep-bg);
+    color: var(--_lep-fg);
+    box-shadow: 0 1px 2px rgb(0 0 0 / 0.12);
+  }
+}
+
+.#{$picker}-settings-clear {
+  padding: 0.4rem 0.6rem;
+  border: 1px solid var(--_lep-border);
+  border-radius: var(--_lep-cell-radius);
+  background: transparent;
+  color: inherit;
+  font: inherit;
+  text-align: start;
+  cursor: pointer;
+
+  &:hover:not([disabled]) {
+    background: var(--_lep-hover);
+  }
+
+  &[disabled] {
+    opacity: 0.5;
+    cursor: default;
+  }
+}
+
+.#{$picker}-shortcuts {
+  // The description keeps at least half the width; a long key list wraps under itself rather than squeezing it.
+  display: grid;
+  grid-template-columns: minmax(50%, 1fr) minmax(0, auto);
+  align-items: baseline;
+  gap: 0.35rem 0.75rem;
+  margin: 0;
+
+  dt {
+    color: var(--_lep-muted);
+  }
+
+  dd {
+    margin: 0;
+    min-inline-size: 0;
+    text-align: end;
+  }
+
+  kbd {
+    display: inline-block;
+    max-inline-size: 100%;
+    padding: 0.05rem 0.35rem;
+    border: 1px solid var(--_lep-border);
+    border-block-end-width: 2px;
+    border-radius: 4px;
+    font-family: ui-monospace, SFMono-Regular, Menlo, monospace;
+    font-size: 0.72rem;
+    line-height: 1.5;
+    overflow-wrap: anywhere;
+  }
+}
+
+// Shortcode suggestions beside the text caret.
+.#{$picker}-suggest {
+  display: flex;
+  flex-direction: column;
+  min-inline-size: 12rem;
+  max-inline-size: 20rem;
+  padding: 0.3rem;
+}
+
+.#{$picker}-suggestion {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  padding: 0.3rem 0.5rem;
+  border-radius: var(--_lep-cell-radius);
+  cursor: pointer;
+
+  &[aria-selected='true'] {
+    background: color-mix(in srgb, var(--_lep-accent) 14%, transparent);
+  }
+}
+
+.#{$picker}-suggestion-glyph {
+  font-family: t.$font-stack;
+  font-size: 1.25rem;
+  line-height: 1;
+
+  .#{m.$block}-image {
+    inline-size: 1.25rem;
+    block-size: 1.25rem;
+    margin: 0;
+  }
+}
+
+.#{$picker}-suggestion-name {
+  overflow: hidden;
+  color: var(--_lep-muted);
+  font-family: ui-monospace, SFMono-Regular, Menlo, monospace;
+  font-size: 0.8rem;
+  white-space: nowrap;
+  text-overflow: ellipsis;
 }
 
 // In the footer the tones give the preview room: smaller swatches, no gaps.

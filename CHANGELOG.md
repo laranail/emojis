@@ -9,6 +9,22 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/),
 
 ### Added
 
+- **Keyboard shortcuts.** A shortcut in the target field opens the picker (`Mod+Shift+.` by default, configurable
+  as `shortcut` / `picker.shortcut`, `null` to turn it off; matched by physical key so it holds on any
+  layout). In the picker, `/` focuses search, Alt+1–9 jumps to a category, and `?` opens the shortcut list.
+- **A settings menu** behind a gear in the footer (`picker.features.settings`): the theme (Auto, Light, Dark,
+  remembered per user), clearing Frequently used, and the keyboard shortcuts written for the user's
+  platform. Same top-layer card and caret as the tone menu.
+- **Shortcode autocomplete**, off by default (`picker.features.autocomplete`): typing `:hea` in the field lists
+  matching emoji beside the text caret; arrows move, Enter or Tab inserts, Esc dismisses, and the field carries
+  the ARIA combobox attributes while it is open.
+- **Emoticon search**: `:)` finds 🙂. The payload carries each emoji's emoticons (92 emoji, about 2.5 KB).
+- **English keywords in other locales' search**, off by default (`picker.features.english_keywords`, about
+  115 KB more payload).
+- `openAnchored()`, the tone menu's anchored-popover mechanics, is exported for the settings menu, the
+  suggestions and your own menus; also `parseShortcut()`, `matchesShortcut()`, `shortcutLabel()`,
+  `bindShortcut()`, `attachAutocomplete()`, `caretRect()` and `openSettingsMenu()`.
+
 - **Full light and dark mode.** The picker follows the OS, then the page's theme on any ancestor — `.dark` /
   `.light`, `[data-theme]`, and now Bootstrap 5.3's `[data-bs-theme]` — then its own `theme`, which JavaScript
   (`theme` option, `picker.theme()`) and React (`theme` prop) can now set too. The palette sets `color-scheme`,
