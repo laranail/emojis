@@ -10,7 +10,7 @@ use JsonSerializable;
  * Everything an emoji picker draws, for one locale: the emoji by group, then the custom ones. Built by
  * PayloadBuilder, which applies the emoji policy, so a picker never offers what the server would refuse.
  *
- * @phpstan-type PickerEmoji array{emoji: string, hexcode: string, name: string, shortcode: string|null, keywords: list<string>, version: string, skins: array<array-key, string>, skin_versions?: string|array<array-key, string>, base?: false}
+ * @phpstan-type PickerEmoji array{emoji: string, hexcode: string, name: string, shortcode: string|null, keywords: list<string>, version: string, skins: array<array-key, string>, skin_versions?: string|array<array-key, string>, base?: false, emoticons?: list<string>, keywords_en?: list<string>}
  * @phpstan-type PickerGroup array{slug: string, label: string, emoji: list<PickerEmoji>}
  * @phpstan-type PickerCustom array{name: string, label: string, image: string, fallback: string|null}
  * @phpstan-type PickerKaomojiGroup array{slug: string, label: string, items: list<array{text: string, name: string}>}

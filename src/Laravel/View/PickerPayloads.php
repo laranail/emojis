@@ -56,6 +56,7 @@ final class PickerPayloads
             symbols: $this->config->enabled('symbols'),
             imageSet: $this->imageSet(),
             switchSets: $this->config->enabled('set_switcher') ? PickerConfig::SWITCHABLE : [],
+            englishKeywords: $this->config->enabled('english_keywords'),
         ));
 
         try {
@@ -91,15 +92,28 @@ final class PickerPayloads
             'custom'     => $text('custom'),
             'tone'       => $text('tone'),
             // Six names or none: a short list would leave tone buttons without a label.
-            'tones'   => is_array($tones) && count($tones) === 6 && array_filter($tones, is_string(...)) === $tones ? array_values($tones) : null,
-            'open'    => $text('open'),
-            'loading' => $text('loading'),
-            'failed'  => $text('failed'),
-            'emoji'   => $text('emoji'),
-            'kaomoji' => $text('kaomoji'),
-            'symbols' => $text('symbols'),
-            'style'   => $text('style'),
-            'native'  => $text('native'),
+            'tones'        => is_array($tones) && count($tones) === 6 && array_filter($tones, is_string(...)) === $tones ? array_values($tones) : null,
+            'open'         => $text('open'),
+            'loading'      => $text('loading'),
+            'failed'       => $text('failed'),
+            'emoji'        => $text('emoji'),
+            'kaomoji'      => $text('kaomoji'),
+            'symbols'      => $text('symbols'),
+            'style'        => $text('style'),
+            'native'       => $text('native'),
+            'settings'     => $text('settings'),
+            'theme'        => $text('theme'),
+            'themeAuto'    => $text('theme_auto'),
+            'themeLight'   => $text('theme_light'),
+            'themeDark'    => $text('theme_dark'),
+            'clearRecents' => $text('clear_recents'),
+            'kbdShortcuts' => $text('kbd_shortcuts'),
+            'kbdOpen'      => $text('kbd_open'),
+            'kbdSearch'    => $text('kbd_search'),
+            'kbdCategory'  => $text('kbd_category'),
+            'kbdMove'      => $text('kbd_move'),
+            'kbdTone'      => $text('kbd_tone'),
+            'kbdClose'     => $text('kbd_close'),
         ], static fn (mixed $v): bool => $v !== null);
     }
 

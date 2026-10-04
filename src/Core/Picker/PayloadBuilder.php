@@ -39,8 +39,10 @@ final readonly class PayloadBuilder
      * @param bool $symbols add the special characters, by group, for a Symbols tab (about 7,300)
      * @param string|null $imageSet the image set a picker falls back to, or draws everything with; null for none
      * @param list<string> $switchSets more image sets the user may switch to
+     * @param bool $englishKeywords add each emoji's English keywords beside a non-English locale's, so a search
+     *                              in English finds it too
      */
-    public function build(?string $locale = null, array $groupLabels = [], bool $kaomoji = false, bool $symbols = false, ?string $imageSet = null, array $switchSets = []): PickerPayload
+    public function build(?string $locale = null, array $groupLabels = [], bool $kaomoji = false, bool $symbols = false, ?string $imageSet = null, array $switchSets = [], bool $englishKeywords = false): PickerPayload
     {
         $policy = $this->emojis->options()->policy;
         $query = $this->emojis->query();
@@ -56,7 +58,7 @@ final readonly class PayloadBuilder
             }
 
             $groups[$emoji->group->value] ??= ['slug' => $emoji->group->value, 'label' => $groupLabels[$emoji->group->value] ?? $emoji->group->label(), 'emoji' => []];
-            $groups[$emoji->group->value]['emoji'][] = $this->entry($emoji, $locale, $skins, $base);
+            $groups[$emoji->group->value]['emoji'][] = $this->entry($emoji, $locale, $skins, $base, $englishKeywords);
         }
 
         $custom = $policy->allowCustom
@@ -159,9 +161,9 @@ final readonly class PayloadBuilder
     /**
      * @param array<array-key, Emoji> $skins
      *
-     * @return array{emoji: string, hexcode: string, name: string, shortcode: string|null, keywords: list<string>, version: string, skins: array<array-key, string>, skin_versions?: string|array<array-key, string>, base?: false}
+     * @return array{emoji: string, hexcode: string, name: string, shortcode: string|null, keywords: list<string>, version: string, skins: array<array-key, string>, skin_versions?: string|array<array-key, string>, base?: false, emoticons?: list<string>, keywords_en?: list<string>}
      */
-    private function entry(Emoji $emoji, ?string $locale, array $skins, bool $base): array
+    private function entry(Emoji $emoji, ?string $locale, array $skins, bool $base, bool $englishKeywords = false): array
     {
         $entry = [
             'emoji'     => $emoji->char,
@@ -185,6 +187,17 @@ final readonly class PayloadBuilder
 
         if (! $base) {
             $entry['base'] = false;
+        }
+
+        // The emoticons that mean this emoji (":)" for 🙂), for search. Only about a hundred emoji have any.
+        $emoticons = $emoji->emoticons();
+
+        if ($emoticons !== []) {
+            $entry['emoticons'] = $emoticons;
+        }
+
+        if ($englishKeywords && $this->emojis->locales()->resolve($locale) !== 'en') {
+            $entry['keywords_en'] = $emoji->keywords('en');
         }
 
         return $entry;

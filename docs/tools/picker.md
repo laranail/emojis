@@ -250,11 +250,55 @@ a search takes about 0.4 ms.
 For the smallest pages, turn the API on so the payload is fetched and cached by the browser once rather than
 embedded in every page.
 
+## Keyboard shortcuts
+
+| Keys | Where | What it does |
+|---|---|---|
+| ⌘⇧. (Ctrl+Shift+. elsewhere) | in the target field | opens the picker (an inline one takes focus in its search) |
+| `/` | in the picker | focuses the search field |
+| Alt+1 – Alt+9 (⌥ on a Mac) | in the picker | jumps to that category tab |
+| ← ↑ → ↓, PgUp PgDn, Home End | in the grid | moves between emoji and sections |
+| Enter, Space | on an emoji | picks it |
+| Shift+F10, the context-menu key, right click, long press | on an emoji with tones | opens the tone menu |
+| `?` | in the picker | opens the settings on the shortcut list |
+| Esc | anywhere in the picker | closes the menu or the popover |
+
+Set the field shortcut with `shortcut` (Blade attribute, `data-laranail-emoji-shortcut`, JavaScript option,
+React prop, config `picker.shortcut`) as `Mod+Shift+.`, `Ctrl+Alt+E`, `Alt+;`… — `Mod` is ⌘ on Apple platforms
+and Ctrl elsewhere — and `null` or `''` to turn it off. It matches the physical key, so it works on any
+keyboard layout. `/` and `?` are left alone while the search field has focus, so they still type.
+
+## Settings
+
+The gear at the end of the footer opens a small menu with the picker's caret:
+
+- **Theme** — Auto, Light or Dark, remembered per `user-key`. Shown only while the page has not fixed a theme.
+- **Clear frequently used** — forgets every recent pick.
+- **Keyboard shortcuts** — the table above, with the keys written for the user's platform.
+
+Switch it off with `picker.features.settings` (or `:features="['settings' => false]"`).
+
+## Shortcode autocomplete
+
+With `picker.features.autocomplete` on, typing a shortcode in the target field suggests emoji beside the text
+caret, the way Slack and Discord do: `:hea` lists ❤️, 🙉, 💘… with the picker's caret pointing at the text.
+↑ and ↓ move, Enter or Tab inserts the emoji in place of the code (custom emoji as their code), and Esc
+dismisses until the next code. The field keeps focus, and carries `aria-autocomplete`, `aria-expanded`,
+`aria-controls` and `aria-activedescendant` while the list is open, so screen readers follow it. Picks are
+remembered in Frequently used and announced like any other. Inputs and textareas only. It is off by default
+because it changes what typing a colon does.
+
+```blade
+<x-laranail-emojis::picker target="#message" :features="['autocomplete' => true]" />
+```
+
 ## Searching
 
 The search matches names, shortcodes and keywords in the picker's locale, every word required, best match
-first. `:smile`, `:smile:` and `smile` are the same search; a pasted emoji finds itself, toned or not; custom
-emoji match by name and label. It waits for a pause in typing (80 ms, `searchDelay`) and draws at most 200
+first. `:smile`, `:smile:` and `smile` are the same search; a pasted emoji finds itself, toned or not; an
+emoticon finds the emoji it means (`:)` is 🙂, `<3` is ❤️); custom emoji match by name and label. With
+`picker.features.english_keywords` on, a picker in another language also matches English keywords — useful
+for multilingual teams, at about 115 KB more payload. It waits for a pause in typing (80 ms, `searchDelay`) and draws at most 200
 results.
 
 ## Livewire
@@ -337,7 +381,7 @@ export function Composer() {
 `<EmojiPicker>` takes the same options as the vanilla picker as props — `source`, `target` (a ref),
 `locale`, `tone`, `maxRecent`, `recentOrder`, `sort`, `categories`, `columns`, `maxVersion`, `inline`,
 `closeOnSelect`, `userKey`, `store`, `strings`, `searchDelay`, `trigger`, `placement`, `offset`, `arrow`,
-`sheetBreakpoint`, `features`, `render`, `theme` — and `onSelect`. It renders the
+`sheetBreakpoint`, `features`, `render`, `theme`, `shortcut` — and `onSelect`. It renders the
 same markup, classes and ARIA, so `picker.css` styles it and the keyboard behaviour is the same. The target
 may be a controlled `<textarea value={…} onChange={…}>`; the pick lands in its state. To draw your own UI, use
 the hook behind it:

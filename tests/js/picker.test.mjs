@@ -6,7 +6,7 @@ import { payload } from './fixture.mjs';
 globalThis.__laranailEmojiNoAutoInit = true;
 
 const module = await import('../../resources/assets/scripts/picker.ts');
-const { Picker, StaticSource, ApiSource, memoryStore, localStorageStore, fold, charOf, withTone, search, sortItems, recordRecent, orderRecent, parseOptions, autoInit, byVersion, detectMaxVersion, buildSections, searchSections, capPayload, insertText, indexPayload, customCode, mountElement, readRecent, clampTone, clampColumns, searchCustom, rovingIndex, computePosition, parsePlacement, readFeatures, kindsOf, textSections, searchText, spySections, imageUrl, drawsImage, toneForms, IMAGE_RULES } = module;
+const { Picker, StaticSource, ApiSource, memoryStore, localStorageStore, fold, charOf, withTone, search, sortItems, recordRecent, orderRecent, parseOptions, autoInit, byVersion, detectMaxVersion, buildSections, searchSections, capPayload, insertText, indexPayload, customCode, mountElement, readRecent, clampTone, clampColumns, searchCustom, rovingIndex, computePosition, parsePlacement, readFeatures, kindsOf, textSections, searchText, spySections, imageUrl, drawsImage, toneForms, IMAGE_RULES, parseShortcut, matchesShortcut, shortcutLabel, shortcutList, caretRect } = module;
 
 const root = resolve(import.meta.dirname, '../..');
 const flush = () => new Promise((r) => setTimeout(r, 0));
@@ -961,7 +961,7 @@ describe('config, kinds and preview (phase 3)', () => {
   };
 
   it('reads features defensively: only booleans switch one off', () => {
-    expect(readFeatures({ search: false, preview: 'no', bogus: false })).toEqual({ search: false, recents: true, skinTones: true, perPersonTones: true, setSwitcher: false, preview: true, categoryTabs: true, custom: true });
+    expect(readFeatures({ search: false, preview: 'no', bogus: false })).toEqual({ search: false, recents: true, skinTones: true, perPersonTones: true, setSwitcher: false, autocomplete: false, settings: true, preview: true, categoryTabs: true, custom: true });
     expect(readFeatures(null).search).toBe(true);
   });
 
@@ -1340,6 +1340,187 @@ describe('light and dark, and loading fast', () => {
     await idle();
 
     expect([...host.querySelectorAll('[role="gridcell"]')].every((c) => c.getAttribute('aria-label').startsWith('e2-14'))).toBe(true);
+  });
+});
+
+describe('shortcuts, settings and autocomplete', () => {
+  const key = (target, k, init = {}) => target.dispatchEvent(new KeyboardEvent('keydown', { key: k, bubbles: true, cancelable: true, ...init }));
+  const typeInto = (field, text) => {
+    field.focus();
+    field.value = text;
+    field.setSelectionRange(text.length, text.length);
+    field.dispatchEvent(new Event('input', { bubbles: true }));
+  };
+
+  it('parses, matches and writes shortcuts, Mod being ⌘ on Apple and Ctrl elsewhere', () => {
+    const open = parseShortcut('Mod+Shift+.');
+
+    expect(open).toMatchObject({ code: 'Period', mod: true, shift: true, alt: false });
+    expect(matchesShortcut({ code: 'Period', ctrlKey: true, metaKey: false, altKey: false, shiftKey: true }, open, false)).toBe(true);
+    expect(matchesShortcut({ code: 'Period', ctrlKey: false, metaKey: true, altKey: false, shiftKey: true }, open, true)).toBe(true);
+    expect(matchesShortcut({ code: 'Period', ctrlKey: true, metaKey: false, altKey: false, shiftKey: false }, open, false)).toBe(false);
+    expect(shortcutLabel(open, true)).toBe('⇧⌘.');
+    expect(shortcutLabel(open, false)).toBe('Ctrl+Shift+.');
+    expect(parseShortcut('Alt+E').code).toBe('KeyE');
+    expect([parseShortcut(''), parseShortcut(null), parseShortcut('Hyper+E'), parseShortcut('Mod+Ü')]).toEqual([null, null, null, null]);
+    expect(shortcutList({}, open, false).map(([, keys]) => keys)).toContain('Ctrl+Shift+.');
+  });
+
+  it('opens from its field with the shortcut, and takes focus in an inline picker', async () => {
+    const { picker, textarea } = await mount({ inline: false, shortcut: 'Ctrl+E' });
+
+    textarea.focus();
+    key(textarea, 'e', { code: 'KeyE', ctrlKey: true });
+    expect(picker.panel.hidden).toBe(false);
+
+    const inline = await mount({ shortcut: 'Ctrl+E' });
+    key(inline.textarea, 'e', { code: 'KeyE', ctrlKey: true });
+    expect(document.activeElement).toBe(inline.picker.searchInput);
+
+    const off = document.createElement('div');
+    off.setAttribute('data-laranail-emoji-shortcut', '');
+    expect(parseOptions(off).shortcut).toBeNull();
+    expect(parseOptions(document.createElement('div')).shortcut).toBe('Mod+Shift+.');
+  });
+
+  it('answers / for search, Alt+number for a category, and ? for the shortcut list', async () => {
+    const { picker, host, cells } = await mount();
+
+    picker.focusCell(cells()[0]);
+    key(cells()[0], '/');
+    expect(document.activeElement).toBe(picker.searchInput);
+
+    picker.focusCell(cells()[0]);
+    key(cells()[0], '2', { code: 'Digit2', altKey: true });
+    expect(document.activeElement.getAttribute('data-laranail-emoji-section')).toBe('people_and_body');
+    expect(document.activeElement.getAttribute('aria-selected')).toBe('true');
+
+    picker.focusCell(cells()[0]);
+    key(cells()[0], '?');
+    const menu = host.querySelector('.laranail-emoji-picker-settings');
+    expect(menu).not.toBeNull();
+    expect(document.activeElement.tagName).toBe('DL');
+
+    // Typing in the search field keeps / and ? as text.
+    picker.searchInput.focus();
+    expect(key(picker.searchInput, '/')).toBe(true);
+  });
+
+  it('keeps a settings menu behind the gear: theme, clearing recents, and the shortcuts', async () => {
+    const store = memoryStore();
+    const { host, cells } = await mount({ store });
+    const gear = host.querySelector('.laranail-emoji-picker-gear');
+    const root = host.querySelector('.laranail-emoji-picker');
+
+    cells()[0].click(); // a recent to clear
+    gear.click();
+    let menu = host.querySelector('.laranail-emoji-picker-settings');
+
+    expect(gear.getAttribute('aria-expanded')).toBe('true');
+    expect(menu.getAttribute('role')).toBe('dialog');
+    menu.querySelector('[data-laranail-emoji-theme="dark"]').click();
+    expect(root.getAttribute('data-theme')).toBe('dark');
+    expect(store.get('theme')).toBe('dark');
+
+    const clear = menu.querySelector('.laranail-emoji-picker-settings-clear');
+    expect(clear.disabled).toBe(false);
+    clear.click();
+    expect(readRecent(store.get('recent'))).toEqual([]);
+    expect(clear.disabled).toBe(true);
+    expect(menu.querySelectorAll('.laranail-emoji-picker-shortcuts kbd').length).toBeGreaterThanOrEqual(6);
+
+    key(menu, 'Escape');
+    expect(host.querySelector('.laranail-emoji-picker-settings')).toBeNull();
+    expect(document.activeElement).toBe(gear);
+    expect(gear.getAttribute('aria-expanded')).toBe('false');
+
+    // The remembered theme comes back on the next mount; a theme the page fixed hides the choice.
+    const again = await mount({ store });
+    expect(again.host.querySelector('.laranail-emoji-picker').getAttribute('data-theme')).toBe('dark');
+    const fixed = await mount({ store, theme: 'light' });
+    fixed.host.querySelector('.laranail-emoji-picker-gear').click();
+    menu = fixed.host.querySelector('.laranail-emoji-picker-settings');
+    expect(menu.querySelector('[role="radiogroup"]')).toBeNull();
+    expect(fixed.host.querySelector('.laranail-emoji-picker').getAttribute('data-theme')).toBe('light');
+  });
+
+  it('closes the settings and tone menus on a press outside them', async () => {
+    const { host } = await mount();
+
+    host.querySelector('.laranail-emoji-picker-gear').click();
+    host.querySelector('[aria-label="waving hand"]').dispatchEvent(new MouseEvent('contextmenu', { bubbles: true, cancelable: true }));
+    await new Promise((r) => setTimeout(r, 5)); // the dismiss listener is armed after the opening press
+    document.body.dispatchEvent(new Event('pointerdown', { bubbles: true }));
+
+    expect(host.querySelector('.laranail-emoji-picker-settings')).toBeNull();
+    expect(host.querySelector('.laranail-emoji-picker-tonemenu')).toBeNull();
+  });
+
+  it('leaves the gear out when settings are switched off', async () => {
+    const { host } = await mount({ features: { settings: false } });
+
+    expect(host.querySelector('.laranail-emoji-picker-gear')).toBeNull();
+  });
+
+  it('suggests nothing as a shortcode is typed unless autocomplete is on', async () => {
+    const { host, textarea } = await mount();
+
+    typeInto(textarea, 'hi :gri');
+    expect(host.querySelector('.laranail-emoji-picker-suggest')).toBeNull();
+  });
+
+  it('suggests emoji beside the caret as a shortcode is typed, and inserts the pick in place of the code', async () => {
+    const seen = [];
+    const store = memoryStore();
+    const { host, textarea, picker } = await mount({ store, features: { autocomplete: true } });
+    picker.on('select', (d) => seen.push(d));
+
+    typeInto(textarea, 'hi :gr');
+    const list = host.querySelector('.laranail-emoji-picker-suggest');
+    const options = () => [...list.querySelectorAll('[role="option"]')];
+
+    expect(list.getAttribute('role')).toBe('listbox');
+    expect(options()[0].getAttribute('aria-label')).toBe('grinning face');
+    expect(textarea.getAttribute('aria-expanded')).toBe('true');
+    expect(textarea.getAttribute('aria-controls')).toBe(list.id);
+    expect(textarea.getAttribute('aria-activedescendant')).toBe(options()[0].id);
+
+    key(textarea, 'Enter');
+
+    expect(textarea.value).toBe('hi 😀');
+    expect(host.querySelector('.laranail-emoji-picker-suggest')).toBeNull();
+    expect(textarea.hasAttribute('aria-expanded')).toBe(false);
+    expect(seen[0]).toMatchObject({ emoji: '😀', hexcode: '1F600' });
+    expect(readRecent(store.get('recent'))[0].base).toBe('1F600');
+  });
+
+  it('moves with the arrows, dismisses on Escape until the next code, and suggests custom emoji', async () => {
+    const { host, textarea } = await mount({ features: { autocomplete: true } });
+
+    typeInto(textarea, ':party');
+    expect(host.querySelector('[role="option"]').getAttribute('aria-label')).toBe('Party parrot');
+    key(textarea, 'Enter');
+    expect(textarea.value).toBe(':partyparrot:');
+
+    typeInto(textarea, 'x :wav');
+    key(textarea, 'Escape');
+    expect(host.querySelector('.laranail-emoji-picker-suggest')).toBeNull();
+    typeInto(textarea, 'x :wave');
+    expect(host.querySelector('.laranail-emoji-picker-suggest')).toBeNull(); // the same code stays dismissed
+    typeInto(textarea, 'x :wave :fus');
+    expect(host.querySelector('.laranail-emoji-picker-suggest')).not.toBeNull();
+    expect(caretRect(textarea)).toHaveProperty('height');
+  });
+
+  it('finds an emoji by its emoticon, and by English keywords where the payload carries them', () => {
+    const items = [
+      { emoji: '🙂', hexcode: '1F642', name: 'visage légèrement souriant', shortcode: 'slight_smile', keywords: ['visage'], version: '1.0', skins: {}, emoticons: [':)', ':-)'], keywords_en: ['happy', 'smile'] },
+      { emoji: '😀', hexcode: '1F600', name: 'visage rieur', shortcode: 'grinning', keywords: ['visage'], version: '1.0', skins: {} },
+    ];
+
+    expect(search(items, ':)').map((i) => i.hexcode)).toEqual(['1F642']);
+    expect(search(items, 'happy').map((i) => i.hexcode)).toEqual(['1F642']);
+    expect(search(items, ':grinning:').map((i) => i.hexcode)).toEqual(['1F600']);
   });
 });
 

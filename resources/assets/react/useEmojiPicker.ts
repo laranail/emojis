@@ -101,6 +101,10 @@ export interface EmojiPickerState {
    * does not move under the pointer; <EmojiPicker /> calls this when the popover opens or the pointer leaves.
    */
   commitRecents: () => void;
+  /** Forgets every recent pick, and shows Frequently used without them at once. */
+  clearRecents: () => void;
+  /** Where the picker keeps its state (tone, recents, the user's theme and image set). */
+  store: PickerStore;
 }
 
 /** Anything a cell can hold: an emoji, a custom emoji, or a kaomoji or symbol. */
@@ -274,6 +278,10 @@ export function useEmojiPicker(options: UseEmojiPickerOptions): EmojiPickerState
   );
 
   const commitRecents = useCallback(() => setRecent(readRecent(store.get('recent'))), [store]);
+  const clearRecents = useCallback(() => {
+    store.set('recent', []);
+    setRecent([]);
+  }, [store]);
 
   return {
     status,
@@ -300,5 +308,7 @@ export function useEmojiPicker(options: UseEmojiPickerOptions): EmojiPickerState
     detailOf,
     select,
     commitRecents,
+    clearRecents,
+    store,
   };
 }

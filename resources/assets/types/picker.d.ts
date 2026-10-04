@@ -34,6 +34,10 @@ export interface PickerEmoji {
     base?: false;
     /** Set on a Frequently used entry: the exact form that was picked, which the cell shows whatever the tone. */
     pick?: string;
+    /** Text emoticons that mean this emoji (":)" for 🙂), which search finds. */
+    emoticons?: string[];
+    /** The English keywords, sent beside a non-English locale's when picker.features.english_keywords is on. */
+    keywords_en?: string[];
     /** Set by capPayload when the device cannot draw the emoji itself: it is drawn as an image instead. */
     draw?: 'image';
     /** Set by capPayload: the tone keys whose forms the device cannot draw, drawn as images instead. */
@@ -93,6 +97,10 @@ export interface PickerFeatures {
     perPersonTones: boolean;
     /** Let the user choose native emoji or one of the payload's image sets. Off unless switched on. */
     setSwitcher: boolean;
+    /** Suggest emoji as a shortcode is typed in the field (":smi"). Off unless switched on. */
+    autocomplete: boolean;
+    /** A gear button with the theme, clearing recents and the keyboard shortcuts. */
+    settings: boolean;
     preview: boolean;
     categoryTabs: boolean;
     custom: boolean;
@@ -159,6 +167,20 @@ export interface PickerStrings {
     /** The set switcher's label, and its option for the device's own emoji. */
     style?: string;
     native?: string;
+    /** The settings menu: its button, the theme choice, clearing recents, and the shortcut list. */
+    settings?: string;
+    theme?: string;
+    themeAuto?: string;
+    themeLight?: string;
+    themeDark?: string;
+    clearRecents?: string;
+    kbdShortcuts?: string;
+    kbdOpen?: string;
+    kbdSearch?: string;
+    kbdCategory?: string;
+    kbdMove?: string;
+    kbdTone?: string;
+    kbdClose?: string;
 }
 export interface PickerOptions {
     source?: PickerSource;
@@ -196,6 +218,8 @@ export interface PickerOptions {
     render?: RenderMode;
     /** 'auto' (default) follows the OS or the page's theme; 'light' or 'dark' fixes it. */
     theme?: PickerTheme;
+    /** The key combination that opens the picker from its field ("Mod+Shift+." by default); null or '' for none. */
+    shortcut?: string | null;
 }
 /** The picker's colour scheme: the OS's or the page's, or fixed. */
 export type PickerTheme = 'auto' | 'light' | 'dark';
@@ -251,6 +275,8 @@ export interface ParsedOptions {
     sheetBreakpoint: number;
     features: PickerFeatures;
     render: RenderMode;
+    theme: PickerTheme;
+    shortcut: string | null;
 }
 /** Where a pick can be inserted: an input, a textarea, or a contenteditable element. */
 export type Insertable = HTMLInputElement | HTMLTextAreaElement | HTMLElement;
@@ -617,6 +643,99 @@ export declare function openToneMenu(anchor: HTMLElement, container: HTMLElement
  * own context menu is left alone). Returns the function that unbinds it.
  */
 export declare function bindToneMenu(body: HTMLElement, resolve: (cell: HTMLElement) => PickerEmoji | null, open: (cell: HTMLElement, item: PickerEmoji) => void): () => void;
+/** A parsed key combination: "Mod+Shift+." is ⌘⇧. on Apple platforms and Ctrl+Shift+. elsewhere. */
+export interface Shortcut {
+    /** The physical key, as KeyboardEvent.code ("Period", "KeyE", "Digit1"), so a layout's shifted symbol still matches. */
+    code: string;
+    label: string;
+    mod: boolean;
+    ctrl: boolean;
+    meta: boolean;
+    alt: boolean;
+    shift: boolean;
+}
+/** The field shortcut that opens a picker, unless configured otherwise. */
+export declare const DEFAULT_SHORTCUT = "Mod+Shift+.";
+/** Whether the platform's primary modifier is ⌘. */
+export declare function isApple(nav?: {
+    platform?: string;
+    userAgent?: string;
+} | undefined): boolean;
+/**
+ * Parses "Mod+Shift+.", "Ctrl+Alt+E", "Alt+1". Mod is ⌘ on Apple platforms and Ctrl elsewhere. Null for an
+ * empty or unreadable string, which turns the shortcut off.
+ */
+export declare function parseShortcut(text: string | null | undefined): Shortcut | null;
+/** Whether a key event is the shortcut, modifiers exactly. */
+export declare function matchesShortcut(event: Pick<KeyboardEvent, 'code' | 'ctrlKey' | 'metaKey' | 'altKey' | 'shiftKey'>, shortcut: Shortcut, apple?: boolean): boolean;
+/** How a shortcut is written for the user: ⌘⇧. on Apple platforms, Ctrl+Shift+. elsewhere. */
+export declare function shortcutLabel(shortcut: Shortcut, apple?: boolean): string;
+/** The keys a picker answers to, for the shortcut list in its settings: [what it does, the keys]. */
+export declare function shortcutList(strings: PickerStrings, open: Shortcut | null, apple?: boolean): Array<[string, string]>;
+/** Opens a picker when its shortcut is pressed in a field. Returns the function that unbinds it. */
+export declare function bindShortcut(field: EventTarget, shortcut: Shortcut | null, open: () => void): () => void;
+export interface SettingsMenuOptions {
+    strings: PickerStrings;
+    /** The theme in effect; the theme row is left out when the page fixed one (null). */
+    theme: PickerTheme | null;
+    onTheme: (theme: PickerTheme) => void;
+    /** Whether there are recents to clear (the button is disabled otherwise). */
+    recents: boolean;
+    onClearRecents: () => void;
+    shortcuts: Array<[string, string]>;
+    /** Open on the shortcut list (the ? key). */
+    focusShortcuts?: boolean;
+    rtl?: boolean;
+    onClose?: () => void;
+}
+/**
+ * The settings menu behind the picker's gear button: the theme (Auto, Light, Dark) when the page has not
+ * fixed one, clearing Frequently used, and the keyboard shortcuts. A dialog beside the button, with the
+ * picker's caret; Escape closes it and returns focus to the button.
+ */
+export declare function openSettingsMenu(anchor: HTMLElement, container: HTMLElement, options: SettingsMenuOptions): () => void;
+/**
+ * Where the text caret is in an input or a textarea, in viewport coordinates: the box a mirror of the field
+ * puts after the text before the caret. The mirror copies every style that moves text, so wrapping, padding
+ * and scrolling come out the same.
+ */
+export declare function caretRect(field: HTMLInputElement | HTMLTextAreaElement): Rect;
+export interface AutocompleteOptions {
+    /** Where the suggestion list lives in the DOM (the picker's root). */
+    container: HTMLElement;
+    /** The emoji and custom emoji to suggest from, as the picker has them now. */
+    source: () => {
+        emoji: PickerEmoji[];
+        custom: PickerCustom[];
+        data: PickerPayload | null;
+    };
+    /** How a suggestion is drawn and what it inserts: the picker's tone, render mode and image set. */
+    tone: () => number;
+    render: () => {
+        mode: RenderMode;
+        set: PickerImageSet | null;
+    };
+    strings: PickerStrings;
+    /** Letters after the colon before suggestions appear (default 2). */
+    min?: number;
+    /** Suggestions shown at most (default 8). */
+    limit?: number;
+    rtl?: () => boolean;
+    /** Called with what was inserted, after the field has it. */
+    onPick: (detail: SelectDetail, base: string | null) => void;
+}
+/**
+ * Suggests emoji as the user types a shortcode, the way Slack and Discord do: ":smi" in the field opens a list
+ * beside the text caret (with the picker's caret pointing at it). Arrow keys move, Enter or Tab inserts the
+ * emoji in place of the code, Escape dismisses until the next code. The field keeps focus throughout, and
+ * gets aria-autocomplete, aria-expanded, aria-controls and aria-activedescendant while the list is open.
+ * Inputs and textareas only. Returns the function that detaches it.
+ */
+export declare function attachAutocomplete(field: HTMLInputElement | HTMLTextAreaElement, options: AutocompleteOptions): () => void;
+/** The settings button's outline gear, on the same 24×24 grid as the tab icons. */
+export declare const GEAR_ICON: readonly string[];
+/** An outline icon from SVG path data, built with createElementNS so it stays CSP-safe. */
+export declare function icon(paths: readonly string[], size?: number): SVGSVGElement;
 /**
  * What a category tab shows: the group's outline icon when there is one, else its first emoji, else a short
  * label (kaomoji and symbol groups). Built with createElementNS, so it stays CSP-safe.
@@ -664,6 +783,8 @@ export declare class Picker {
     private support;
     private closeToneMenu;
     private switcher;
+    private gear;
+    private closeSettings;
     /** A popover's grid is built the first time it opens, not on page load. */
     private pendingRender;
     /** The sections still to draw in idle time, and which render they belong to. */
@@ -684,6 +805,11 @@ export declare class Picker {
     closeOnSelect(close?: boolean): this;
     /** Fixes the colour scheme ('light', 'dark'), or follows the OS and the page again ('auto'). */
     theme(theme: PickerTheme): this;
+    /**
+     * The theme in effect: one the page fixed (the option) wins; otherwise the one the user chose in the
+     * settings menu, remembered per user-key; otherwise 'auto'.
+     */
+    private get themeInEffect();
     private applyTheme;
     inline(inline?: boolean): this;
     target(target: string | Insertable | null): this;
@@ -737,6 +863,8 @@ export declare class Picker {
     private sections;
     /** The image set switcher: native emoji, then each set the payload offers. Hidden when it offers none. */
     private renderSwitcher;
+    /** The settings menu, beside the gear: theme, clearing recents, and the keyboard shortcuts. */
+    openSettings(focusShortcuts?: boolean): void;
     private openToneMenu;
     /** The Emoji / Kaomoji / Symbols tabs, shown only when the payload carries more than emoji. */
     private renderKinds;
@@ -770,6 +898,8 @@ export declare class Picker {
     private select;
     /** Picks one form of an emoji (from its cell, or from the tone menu): recorded as recent, then delivered. */
     private choose;
+    /** Tells listeners about a pick: the bubbling DOM event, then the on('select') handlers. */
+    private announce;
     /** Inserts a pick, announces it, and closes the popover when it should. */
     private deliver;
 }

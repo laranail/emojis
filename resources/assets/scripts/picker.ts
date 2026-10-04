@@ -36,6 +36,10 @@ export interface PickerEmoji {
   base?: false;
   /** Set on a Frequently used entry: the exact form that was picked, which the cell shows whatever the tone. */
   pick?: string;
+  /** Text emoticons that mean this emoji (":)" for 🙂), which search finds. */
+  emoticons?: string[];
+  /** The English keywords, sent beside a non-English locale's when picker.features.english_keywords is on. */
+  keywords_en?: string[];
   /** Set by capPayload when the device cannot draw the emoji itself: it is drawn as an image instead. */
   draw?: 'image';
   /** Set by capPayload: the tone keys whose forms the device cannot draw, drawn as images instead. */
@@ -99,6 +103,10 @@ export interface PickerFeatures {
   perPersonTones: boolean;
   /** Let the user choose native emoji or one of the payload's image sets. Off unless switched on. */
   setSwitcher: boolean;
+  /** Suggest emoji as a shortcode is typed in the field (":smi"). Off unless switched on. */
+  autocomplete: boolean;
+  /** A gear button with the theme, clearing recents and the keyboard shortcuts. */
+  settings: boolean;
   preview: boolean;
   categoryTabs: boolean;
   custom: boolean;
@@ -172,6 +180,20 @@ export interface PickerStrings {
   /** The set switcher's label, and its option for the device's own emoji. */
   style?: string;
   native?: string;
+  /** The settings menu: its button, the theme choice, clearing recents, and the shortcut list. */
+  settings?: string;
+  theme?: string;
+  themeAuto?: string;
+  themeLight?: string;
+  themeDark?: string;
+  clearRecents?: string;
+  kbdShortcuts?: string;
+  kbdOpen?: string;
+  kbdSearch?: string;
+  kbdCategory?: string;
+  kbdMove?: string;
+  kbdTone?: string;
+  kbdClose?: string;
 }
 
 export interface PickerOptions {
@@ -210,6 +232,8 @@ export interface PickerOptions {
   render?: RenderMode;
   /** 'auto' (default) follows the OS or the page's theme; 'light' or 'dark' fixes it. */
   theme?: PickerTheme;
+  /** The key combination that opens the picker from its field ("Mod+Shift+." by default); null or '' for none. */
+  shortcut?: string | null;
 }
 
 /** The picker's colour scheme: the OS's or the page's, or fixed. */
@@ -250,6 +274,8 @@ export interface ParsedOptions {
   sheetBreakpoint: number;
   features: PickerFeatures;
   render: RenderMode;
+  theme: PickerTheme;
+  shortcut: string | null;
 }
 
 /** Where a pick can be inserted: an input, a textarea, or a contenteditable element. */
@@ -287,10 +313,23 @@ export const DEFAULT_STRINGS: PickerStrings = {
   symbols: 'Symbols',
   style: 'Emoji style',
   native: 'Native',
+  settings: 'Settings',
+  theme: 'Theme',
+  themeAuto: 'Auto',
+  themeLight: 'Light',
+  themeDark: 'Dark',
+  clearRecents: 'Clear frequently used',
+  kbdShortcuts: 'Keyboard shortcuts',
+  kbdOpen: 'Open the picker from the field',
+  kbdSearch: 'Search',
+  kbdCategory: 'Jump to a category',
+  kbdMove: 'Move between emoji',
+  kbdTone: 'Skin tone for one emoji',
+  kbdClose: 'Close',
 };
 
 /** Every feature on. */
-export const DEFAULT_FEATURES: PickerFeatures = { search: true, recents: true, skinTones: true, perPersonTones: true, setSwitcher: false, preview: true, categoryTabs: true, custom: true };
+export const DEFAULT_FEATURES: PickerFeatures = { search: true, recents: true, skinTones: true, perPersonTones: true, setSwitcher: false, autocomplete: false, settings: true, preview: true, categoryTabs: true, custom: true };
 
 /** Features from anywhere (an attribute's JSON, a prop): only booleans count, everything else stays on. */
 export function readFeatures(value: unknown): PickerFeatures {
@@ -706,6 +745,14 @@ export function search(items: PickerEmoji[], term: string, limit: number = Infin
     return items.filter((item) => [item.hexcode, ...Object.values(item.skins ?? {})].some((hex) => bare(charOf(hex)) === glyph)).slice(0, limit);
   }
 
+  // An emoticon finds the emoji it stands for: ":)" is 🙂, "<3" is ❤️.
+  const typed = term.trim();
+  const byEmoticon = typed !== '' && !/^:?[\p{L}\p{N}_+-]+:?$/u.test(typed) ? items.filter((item) => (item.emoticons ?? []).includes(typed)) : [];
+
+  if (byEmoticon.length > 0) {
+    return byEmoticon.slice(0, limit);
+  }
+
   // ":smile", ":smile:" and "smile" are the same search.
   const words = fold(term).split(/\s+/).map((word) => word.replace(/^:+|:+$/g, '')).filter(Boolean);
 
@@ -750,7 +797,8 @@ function folded(item: PickerEmoji): { name: string; code: string; keywords: stri
     const name = fold(item.name);
     const code = fold(item.shortcode ?? '');
     const keywords = (item.keywords ?? []).map(fold);
-    entry = { name, code, keywords, haystack: `${name} ${code} ${keywords.join(' ')}` };
+    const english = (item.keywords_en ?? []).map(fold);
+    entry = { name, code, keywords, haystack: `${name} ${code} ${keywords.join(' ')} ${english.join(' ')}` };
     foldedCache.set(item, entry);
   }
 
@@ -1133,6 +1181,9 @@ export function parseOptions(element: Element): ParsedOptions {
     sheetBreakpoint: Math.max(0, int('sheet-breakpoint', 640)),
     features: readFeatures(safeJson(data('features') ?? '{}', {})),
     render: parseRender(data('render')),
+    // A theme the page fixed: the option, or Blade's data-theme on the mount point.
+    theme: ((t) => (t === 'light' || t === 'dark' ? t : 'auto'))(data('theme') ?? element.getAttribute('data-theme')),
+    shortcut: element.hasAttribute(`${ATTR}-shortcut`) ? data('shortcut') || null : DEFAULT_SHORTCUT,
   };
 }
 
@@ -2061,29 +2112,478 @@ export function bindToneMenu(body: HTMLElement, resolve: (cell: HTMLElement) => 
   };
 }
 
+// ---- keyboard shortcuts -------------------------------------------------------------------------------------
+
+/** A parsed key combination: "Mod+Shift+." is ⌘⇧. on Apple platforms and Ctrl+Shift+. elsewhere. */
+export interface Shortcut {
+  /** The physical key, as KeyboardEvent.code ("Period", "KeyE", "Digit1"), so a layout's shifted symbol still matches. */
+  code: string;
+  label: string;
+  mod: boolean;
+  ctrl: boolean;
+  meta: boolean;
+  alt: boolean;
+  shift: boolean;
+}
+
+/** The field shortcut that opens a picker, unless configured otherwise. */
+export const DEFAULT_SHORTCUT = 'Mod+Shift+.';
+
+const PUNCTUATION: Record<string, string> = { '.': 'Period', ',': 'Comma', ';': 'Semicolon', '/': 'Slash', "'": 'Quote', '[': 'BracketLeft', ']': 'BracketRight', '-': 'Minus', '=': 'Equal', '`': 'Backquote', '\\': 'Backslash' };
+
+/** Whether the platform's primary modifier is ⌘. */
+export function isApple(nav: { platform?: string; userAgent?: string } | undefined = globalThis.navigator): boolean {
+  return /Mac|iPhone|iPad|iPod/i.test(nav?.platform ?? nav?.userAgent ?? '');
+}
+
+/**
+ * Parses "Mod+Shift+.", "Ctrl+Alt+E", "Alt+1". Mod is ⌘ on Apple platforms and Ctrl elsewhere. Null for an
+ * empty or unreadable string, which turns the shortcut off.
+ */
+export function parseShortcut(text: string | null | undefined): Shortcut | null {
+  const parts = String(text ?? '').split('+').map((part) => part.trim()).filter(Boolean);
+  const key = parts.pop();
+
+  if (!key) {
+    return null;
+  }
+
+  const has = (name: string): boolean => parts.some((part) => part.toLowerCase() === name);
+  const code = /^[a-z]$/i.test(key) ? `Key${key.toUpperCase()}` : /^\d$/.test(key) ? `Digit${key}` : key.toLowerCase() === 'space' ? 'Space' : (PUNCTUATION[key] ?? null);
+
+  if (code === null || parts.some((part) => !['mod', 'ctrl', 'control', 'meta', 'cmd', 'alt', 'option', 'shift'].includes(part.toLowerCase()))) {
+    return null;
+  }
+
+  return { code, label: key.length === 1 ? key.toUpperCase() : key, mod: has('mod'), ctrl: has('ctrl') || has('control'), meta: has('meta') || has('cmd'), alt: has('alt') || has('option'), shift: has('shift') };
+}
+
+/** Whether a key event is the shortcut, modifiers exactly. */
+export function matchesShortcut(event: Pick<KeyboardEvent, 'code' | 'ctrlKey' | 'metaKey' | 'altKey' | 'shiftKey'>, shortcut: Shortcut, apple: boolean = isApple()): boolean {
+  const ctrl = shortcut.ctrl || (shortcut.mod && !apple);
+  const meta = shortcut.meta || (shortcut.mod && apple);
+
+  return event.code === shortcut.code && event.ctrlKey === ctrl && event.metaKey === meta && event.altKey === shortcut.alt && event.shiftKey === shortcut.shift;
+}
+
+/** How a shortcut is written for the user: ⌘⇧. on Apple platforms, Ctrl+Shift+. elsewhere. */
+export function shortcutLabel(shortcut: Shortcut, apple: boolean = isApple()): string {
+  if (apple) {
+    return `${shortcut.ctrl ? '⌃' : ''}${shortcut.alt ? '⌥' : ''}${shortcut.shift ? '⇧' : ''}${shortcut.meta || shortcut.mod ? '⌘' : ''}${shortcut.label}`;
+  }
+
+  return [shortcut.ctrl || shortcut.mod ? 'Ctrl' : '', shortcut.meta ? 'Win' : '', shortcut.alt ? 'Alt' : '', shortcut.shift ? 'Shift' : '', shortcut.label].filter(Boolean).join('+');
+}
+
+/** The keys a picker answers to, for the shortcut list in its settings: [what it does, the keys]. */
+export function shortcutList(strings: PickerStrings, open: Shortcut | null, apple: boolean = isApple()): Array<[string, string]> {
+  const s = { ...DEFAULT_STRINGS, ...strings };
+
+  return [
+    ...(open ? [[s.kbdOpen ?? '', shortcutLabel(open, apple)] as [string, string]] : []),
+    [s.kbdSearch ?? '', '/'],
+    [s.kbdCategory ?? '', apple ? '⌥1 – ⌥9' : 'Alt+1 – Alt+9'],
+    [s.kbdMove ?? '', '← ↑ → ↓ · PgUp PgDn · Home End'],
+    [s.kbdTone ?? '', apple ? '⇧F10 · ⌃-click' : 'Shift+F10'],
+    [s.kbdShortcuts ?? '', '?'],
+    [s.kbdClose ?? '', 'Esc'],
+  ];
+}
+
+/** Opens a picker when its shortcut is pressed in a field. Returns the function that unbinds it. */
+export function bindShortcut(field: EventTarget, shortcut: Shortcut | null, open: () => void): () => void {
+  if (!shortcut) {
+    return () => {};
+  }
+
+  const onKey = (event: Event): void => {
+    if (matchesShortcut(event as KeyboardEvent, shortcut)) {
+      event.preventDefault();
+      open();
+    }
+  };
+
+  field.addEventListener('keydown', onKey);
+
+  return () => field.removeEventListener('keydown', onKey);
+}
+
+// ---- the settings menu ------------------------------------------------------------------------------------
+
+export interface SettingsMenuOptions {
+  strings: PickerStrings;
+  /** The theme in effect; the theme row is left out when the page fixed one (null). */
+  theme: PickerTheme | null;
+  onTheme: (theme: PickerTheme) => void;
+  /** Whether there are recents to clear (the button is disabled otherwise). */
+  recents: boolean;
+  onClearRecents: () => void;
+  shortcuts: Array<[string, string]>;
+  /** Open on the shortcut list (the ? key). */
+  focusShortcuts?: boolean;
+  rtl?: boolean;
+  onClose?: () => void;
+}
+
+/**
+ * The settings menu behind the picker's gear button: the theme (Auto, Light, Dark) when the page has not
+ * fixed one, clearing Frequently used, and the keyboard shortcuts. A dialog beside the button, with the
+ * picker's caret; Escape closes it and returns focus to the button.
+ */
+export function openSettingsMenu(anchor: HTMLElement, container: HTMLElement, options: SettingsMenuOptions): () => void {
+  const s = { ...DEFAULT_STRINGS, ...options.strings };
+  const doc = anchor.ownerDocument;
+  const make = <K extends keyof HTMLElementTagNameMap>(tag: K, attributes: Record<string, string | boolean | null | undefined> = {}, text?: string): HTMLElementTagNameMap[K] => {
+    const node = doc.createElement(tag);
+
+    for (const [name, value] of Object.entries(attributes)) {
+      if (value !== null && value !== undefined && value !== false) node.setAttribute(name, value === true ? '' : String(value));
+    }
+
+    if (text !== undefined) node.textContent = text;
+
+    return node;
+  };
+  const menu = make('div', { class: `${PREFIX}-picker-settings`, role: 'dialog', 'aria-label': s.settings });
+  const arrow = make('div', { class: `${PREFIX}-picker-arrow`, 'aria-hidden': 'true' });
+  let close = (): void => {};
+
+  menu.append(arrow);
+
+  if (options.theme !== null) {
+    const label = make('div', { class: `${PREFIX}-picker-settings-label`, id: `${PREFIX}-settings-theme-${Math.random().toString(36).slice(2, 8)}` }, s.theme);
+    const group = make('div', { class: `${PREFIX}-picker-settings-themes`, role: 'radiogroup', 'aria-labelledby': label.id });
+    const choices: Array<[PickerTheme, string]> = [['auto', s.themeAuto ?? 'Auto'], ['light', s.themeLight ?? 'Light'], ['dark', s.themeDark ?? 'Dark']];
+
+    for (const [theme, text] of choices) {
+      const checked = theme === options.theme;
+      const radio = make('button', { type: 'button', role: 'radio', class: `${PREFIX}-picker-settings-theme`, 'aria-checked': String(checked), tabindex: checked ? '0' : '-1', [`${ATTR}-theme`]: theme }, text);
+
+      radio.addEventListener('click', () => {
+        for (const other of group.querySelectorAll<HTMLElement>('[role="radio"]')) {
+          const on = other === radio;
+          other.setAttribute('aria-checked', String(on));
+          other.tabIndex = on ? 0 : -1;
+        }
+
+        options.onTheme(theme);
+      });
+      group.append(radio);
+    }
+
+    group.addEventListener('keydown', (event) => {
+      const radios = [...group.querySelectorAll<HTMLElement>('[role="radio"]')];
+      const next = rovingIndex(radios.length, radios.indexOf(doc.activeElement as HTMLElement), event.key, options.rtl);
+
+      if (next !== null) {
+        event.preventDefault();
+        radios[next]?.focus();
+        radios[next]?.click();
+      }
+    });
+    menu.append(label, group);
+  }
+
+  const clear = make('button', { type: 'button', class: `${PREFIX}-picker-settings-clear`, disabled: !options.recents }, s.clearRecents);
+
+  clear.addEventListener('click', () => {
+    options.onClearRecents();
+    clear.disabled = true;
+  });
+  menu.append(clear);
+
+  const heading = make('div', { class: `${PREFIX}-picker-settings-label`, id: `${PREFIX}-settings-keys-${Math.random().toString(36).slice(2, 8)}` }, s.kbdShortcuts);
+  const list = make('dl', { class: `${PREFIX}-picker-shortcuts`, 'aria-labelledby': heading.id, tabindex: '-1' });
+
+  for (const [what, keys] of options.shortcuts) {
+    list.append(make('dt', {}, what));
+    const dd = make('dd');
+    dd.append(make('kbd', {}, keys));
+    list.append(dd);
+  }
+
+  menu.append(heading, list);
+  menu.addEventListener('keydown', (event) => {
+    if (event.key === 'Escape') {
+      event.preventDefault();
+      event.stopPropagation();
+      close();
+      anchor.focus();
+    }
+  });
+  close = openAnchored(menu, { anchor, container, arrow, placement: 'top-end', rtl: options.rtl, onClose: options.onClose });
+
+  const first = options.focusShortcuts ? list : (menu.querySelector<HTMLElement>('[role="radio"][tabindex="0"]') ?? clear);
+  first.focus();
+
+  return close;
+}
+
+// ---- :shortcode autocomplete ---------------------------------------------------------------------------------
+
+/**
+ * Where the text caret is in an input or a textarea, in viewport coordinates: the box a mirror of the field
+ * puts after the text before the caret. The mirror copies every style that moves text, so wrapping, padding
+ * and scrolling come out the same.
+ */
+export function caretRect(field: HTMLInputElement | HTMLTextAreaElement): Rect {
+  const doc = field.ownerDocument;
+  const view = doc.defaultView;
+  const box = field.getBoundingClientRect();
+  const style = view?.getComputedStyle(field);
+  const mirror = doc.createElement('div');
+  const marker = doc.createElement('span');
+  const position = field.selectionEnd ?? field.value.length;
+  const copy = ['boxSizing', 'width', 'height', 'overflowX', 'overflowY', 'borderTopWidth', 'borderRightWidth', 'borderBottomWidth', 'borderLeftWidth', 'paddingTop', 'paddingRight', 'paddingBottom', 'paddingLeft', 'fontStyle', 'fontVariant', 'fontWeight', 'fontStretch', 'fontSize', 'lineHeight', 'fontFamily', 'textAlign', 'textTransform', 'textIndent', 'letterSpacing', 'wordSpacing', 'tabSize', 'direction'] as const;
+
+  if (style) {
+    for (const property of copy) {
+      mirror.style[property] = style[property];
+    }
+  }
+
+  mirror.style.position = 'absolute';
+  mirror.style.visibility = 'hidden';
+  mirror.style.top = '0';
+  mirror.style.left = '-9999px';
+  mirror.style.whiteSpace = field instanceof HTMLTextAreaElement ? 'pre-wrap' : 'pre';
+  mirror.style.overflowWrap = 'break-word';
+  mirror.textContent = field.value.slice(0, position);
+  marker.textContent = field.value.slice(position) || '.';
+  mirror.append(marker);
+  doc.body.append(mirror);
+
+  const lineHeight = parseFloat(style?.lineHeight ?? '') || parseFloat(style?.fontSize ?? '') * 1.2 || 16;
+  const rect = {
+    x: box.left + marker.offsetLeft - field.scrollLeft,
+    y: box.top + marker.offsetTop - field.scrollTop,
+    width: 1,
+    height: lineHeight,
+  };
+
+  mirror.remove();
+
+  return rect;
+}
+
+export interface AutocompleteOptions {
+  /** Where the suggestion list lives in the DOM (the picker's root). */
+  container: HTMLElement;
+  /** The emoji and custom emoji to suggest from, as the picker has them now. */
+  source: () => { emoji: PickerEmoji[]; custom: PickerCustom[]; data: PickerPayload | null };
+  /** How a suggestion is drawn and what it inserts: the picker's tone, render mode and image set. */
+  tone: () => number;
+  render: () => { mode: RenderMode; set: PickerImageSet | null };
+  strings: PickerStrings;
+  /** Letters after the colon before suggestions appear (default 2). */
+  min?: number;
+  /** Suggestions shown at most (default 8). */
+  limit?: number;
+  rtl?: () => boolean;
+  /** Called with what was inserted, after the field has it. */
+  onPick: (detail: SelectDetail, base: string | null) => void;
+}
+
+/**
+ * Suggests emoji as the user types a shortcode, the way Slack and Discord do: ":smi" in the field opens a list
+ * beside the text caret (with the picker's caret pointing at it). Arrow keys move, Enter or Tab inserts the
+ * emoji in place of the code, Escape dismisses until the next code. The field keeps focus throughout, and
+ * gets aria-autocomplete, aria-expanded, aria-controls and aria-activedescendant while the list is open.
+ * Inputs and textareas only. Returns the function that detaches it.
+ */
+export function attachAutocomplete(field: HTMLInputElement | HTMLTextAreaElement, options: AutocompleteOptions): () => void {
+  const doc = field.ownerDocument;
+  const min = options.min ?? 2;
+  const limit = options.limit ?? 8;
+  const id = `${PREFIX}-suggest-${Math.random().toString(36).slice(2, 9)}`;
+  let close: (() => void) | null = null;
+  let list: HTMLElement | null = null;
+  let items: Array<{ detail: () => SelectDetail; base: string | null; node: HTMLElement }> = [];
+  let active = 0;
+  let range: [number, number] | null = null;
+  let dismissedAt: number | null = null;
+
+  const reset = (): void => {
+    close?.();
+    close = null;
+    list = null;
+    items = [];
+    range = null;
+
+    for (const name of ['aria-expanded', 'aria-controls', 'aria-activedescendant']) field.removeAttribute(name);
+  };
+  const highlight = (index: number): void => {
+    active = (index + items.length) % items.length;
+    items.forEach((item, i) => item.node.setAttribute('aria-selected', String(i === active)));
+    field.setAttribute('aria-activedescendant', items[active]?.node.id ?? '');
+  };
+  const pick = (index: number): void => {
+    const item = items[index];
+    const span = range;
+
+    if (!item || !span) return;
+
+    const detail = item.detail();
+    reset();
+    field.setSelectionRange(span[0], span[1]);
+    insertText(field, detail.emoji, true);
+    options.onPick(detail, item.base);
+  };
+
+  const update = (): void => {
+    const caret = field.selectionEnd ?? field.value.length;
+    const before = field.value.slice(0, caret);
+    const match = /(^|[\s([{])(:)([\p{L}\p{N}_+-]+)$/u.exec(before);
+
+    if (!match || (match[3] ?? '').length < min || dismissedAt === caret - (match[3] ?? '').length - 1) {
+      reset();
+
+      return;
+    }
+
+    const term = match[3] ?? '';
+    const start = caret - term.length - 1;
+    const { emoji, custom, data } = options.source();
+    const tone = options.tone();
+    const { mode, set } = options.render();
+    const found = [
+      ...searchCustom(custom, term).slice(0, 2).map((c) => ({ text: '', image: c.image, label: c.label, code: customCode(c.name, data), base: null as string | null, detail: (): SelectDetail => ({ emoji: customCode(c.name, data), hexcode: null, name: c.label, shortcode: c.name, custom: true }) })),
+      ...search(emoji, term, limit).map((e) => {
+        const hexcode = withTone(e, tone);
+
+        return { text: charOf(hexcode), image: drawsImage(e, hexcode, mode, set), label: e.name, code: e.shortcode ? customCode(e.shortcode, data) : '', base: e.hexcode as string | null, detail: (): SelectDetail => ({ emoji: charOf(hexcode), hexcode, name: e.name, shortcode: e.shortcode, custom: false }) };
+      }),
+    ].slice(0, limit);
+
+    if (found.length === 0) {
+      reset();
+
+      return;
+    }
+
+    range = [start, caret];
+
+    if (!list) {
+      list = doc.createElement('div');
+      list.className = `${PREFIX}-picker-suggest`;
+      list.id = id;
+      list.setAttribute('role', 'listbox');
+      list.setAttribute('aria-label', options.strings.search ?? DEFAULT_STRINGS.search);
+      const arrow = doc.createElement('div');
+      arrow.className = `${PREFIX}-picker-arrow`;
+      arrow.setAttribute('aria-hidden', 'true');
+      list.append(arrow);
+      // A press on a suggestion must not take focus from the field.
+      list.addEventListener('pointerdown', (event) => event.preventDefault());
+      close = openAnchored(list, { anchor: field, rect: () => caretRect(field), container: options.container, arrow, placement: 'bottom-start', rtl: options.rtl?.(), dismissOnOutside: true, onClose: () => { list = null; close = null; } });
+    }
+
+    for (const old of list.querySelectorAll('[role="option"]')) old.remove();
+    items = found.map((entry, index) => {
+      const node = doc.createElement('div');
+      node.id = `${id}-${index}`;
+      node.className = `${PREFIX}-picker-suggestion`;
+      node.setAttribute('role', 'option');
+      const glyph = doc.createElement('span');
+      glyph.className = `${PREFIX}-picker-suggestion-glyph`;
+
+      if (entry.image) {
+        const img = doc.createElement('img');
+        img.src = entry.image;
+        img.alt = '';
+        img.className = `${PREFIX} ${PREFIX}-image`;
+        glyph.append(img);
+      } else {
+        glyph.textContent = entry.text;
+      }
+
+      const name = doc.createElement('span');
+      name.className = `${PREFIX}-picker-suggestion-name`;
+      name.textContent = entry.code || entry.label;
+      node.setAttribute('aria-label', entry.label);
+      node.append(glyph, name);
+      node.addEventListener('click', () => pick(index));
+      list?.append(node);
+
+      return { detail: entry.detail, base: entry.base, node };
+    });
+
+    field.setAttribute('aria-autocomplete', 'list');
+    field.setAttribute('aria-expanded', 'true');
+    field.setAttribute('aria-controls', id);
+    highlight(0);
+  };
+
+  const onKey = (event: KeyboardEvent): void => {
+    if (!list || items.length === 0) return;
+
+    if (event.key === 'ArrowDown' || event.key === 'ArrowUp') {
+      event.preventDefault();
+      highlight(active + (event.key === 'ArrowDown' ? 1 : -1));
+    } else if (event.key === 'Enter' || event.key === 'Tab') {
+      event.preventDefault();
+      pick(active);
+    } else if (event.key === 'Escape') {
+      event.preventDefault();
+      event.stopPropagation();
+      dismissedAt = range?.[0] ?? null;
+      reset();
+    }
+  };
+  const onBlur = (): void => {
+    // Let a click on a suggestion land first.
+    setTimeout(() => {
+      if (doc.activeElement !== field) reset();
+    }, 120);
+  };
+
+  field.addEventListener('input', update);
+  field.addEventListener('keydown', onKey as EventListener);
+  field.addEventListener('blur', onBlur);
+
+  return () => {
+    reset();
+    field.removeAttribute('aria-autocomplete');
+    field.removeEventListener('input', update);
+    field.removeEventListener('keydown', onKey as EventListener);
+    field.removeEventListener('blur', onBlur);
+  };
+}
+
 // ---- tabs ------------------------------------------------------------------------------------------------
+
+/** The settings button's outline gear, on the same 24×24 grid as the tab icons. */
+export const GEAR_ICON: readonly string[] = [
+  'M12 15a3 3 0 1 0 0-6 3 3 0 0 0 0 6Z',
+  'M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 1 1-2.83 2.83l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 1 1-4 0v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 1 1-2.83-2.83l.06-.06A1.65 1.65 0 0 0 4.68 15a1.65 1.65 0 0 0-1.51-1H3a2 2 0 1 1 0-4h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 1 1 2.83-2.83l.06.06A1.65 1.65 0 0 0 9 4.68a1.65 1.65 0 0 0 1-1.51V3a2 2 0 1 1 4 0v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 1 1 2.83 2.83l-.06.06A1.65 1.65 0 0 0 19.4 9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 1 1 0 4h-.09a1.65 1.65 0 0 0-1.51 1Z',
+];
+
+/** An outline icon from SVG path data, built with createElementNS so it stays CSP-safe. */
+export function icon(paths: readonly string[], size = 20): SVGSVGElement {
+  const svg = document.createElementNS('http://www.w3.org/2000/svg', 'svg');
+
+  for (const [name, value] of Object.entries({ viewBox: '0 0 24 24', width: String(size), height: String(size), fill: 'none', stroke: 'currentColor', 'stroke-width': '1.75', 'stroke-linecap': 'round', 'stroke-linejoin': 'round', 'aria-hidden': 'true', focusable: 'false' })) {
+    svg.setAttribute(name, value);
+  }
+
+  for (const d of paths) {
+    const path = document.createElementNS('http://www.w3.org/2000/svg', 'path');
+    path.setAttribute('d', d);
+    svg.append(path);
+  }
+
+  return svg;
+}
 
 /**
  * What a category tab shows: the group's outline icon when there is one, else its first emoji, else a short
  * label (kaomoji and symbol groups). Built with createElementNS, so it stays CSP-safe.
  */
 export function tabFace(section: PickerSection): Node {
-  const icon = TAB_ICONS[section.slug];
+  const paths = TAB_ICONS[section.slug];
 
-  if (icon) {
-    const svg = document.createElementNS('http://www.w3.org/2000/svg', 'svg');
-
-    for (const [name, value] of Object.entries({ viewBox: '0 0 24 24', width: '20', height: '20', fill: 'none', stroke: 'currentColor', 'stroke-width': '1.75', 'stroke-linecap': 'round', 'stroke-linejoin': 'round', 'aria-hidden': 'true', focusable: 'false' })) {
-      svg.setAttribute(name, value);
-    }
-
-    for (const d of icon) {
-      const path = document.createElementNS('http://www.w3.org/2000/svg', 'path');
-      path.setAttribute('d', d);
-      svg.append(path);
-    }
-
-    return svg;
+  if (paths) {
+    return icon(paths);
   }
 
   const first = section.items[0];
@@ -2160,6 +2660,8 @@ export class Picker {
   private support: { version: string | null; flags: boolean | null } = { version: null, flags: null };
   private closeToneMenu: (() => void) | null = null;
   private switcher: HTMLSelectElement | null = null;
+  private gear: HTMLButtonElement | null = null;
+  private closeSettings: (() => void) | null = null;
   /** A popover's grid is built the first time it opens, not on page load. */
   private pendingRender = false;
   /** The sections still to draw in idle time, and which render they belong to. */
@@ -2200,6 +2702,7 @@ export class Picker {
       sheetBreakpoint: 640,
       render: 'auto',
       theme: 'auto',
+      shortcut: DEFAULT_SHORTCUT,
       ...options,
       features: readFeatures(options.features),
     } as ResolvedOptions;
@@ -2233,11 +2736,27 @@ export class Picker {
     return this;
   }
 
+  /**
+   * The theme in effect: one the page fixed (the option) wins; otherwise the one the user chose in the
+   * settings menu, remembered per user-key; otherwise 'auto'.
+   */
+  private get themeInEffect(): PickerTheme {
+    if (this.options.theme !== 'auto') {
+      return this.options.theme;
+    }
+
+    const chosen = this.options.features.settings ? this.store.get('theme') : null;
+
+    return chosen === 'light' || chosen === 'dark' ? chosen : 'auto';
+  }
+
   private applyTheme(): void {
-    if (this.options.theme === 'auto') {
+    const theme = this.themeInEffect;
+
+    if (theme === 'auto') {
       this.root?.removeAttribute('data-theme');
     } else {
-      this.root?.setAttribute('data-theme', this.options.theme);
+      this.root?.setAttribute('data-theme', theme);
     }
   }
   inline(inline = true): this { this.options.inline = inline; return this; }
@@ -2298,6 +2817,7 @@ export class Picker {
   }
 
   destroy(): void {
+    this.closeSettings?.();
     this.closeToneMenu?.();
     this.stopSpy?.();
     this.stopSpy = null;
@@ -2525,6 +3045,34 @@ export class Picker {
       this.caretKnown = true;
     }, this.targetCleanup);
     this.caretKnown = document.activeElement === target;
+
+    // The field's shortcut opens the picker (an inline one takes focus in its search instead).
+    this.targetCleanup.push(bindShortcut(target, parseShortcut(this.options.shortcut), () => {
+      if (this.options.inline) {
+        this.searchInput.focus();
+      } else {
+        this.open();
+      }
+    }));
+
+    if (this.options.features.autocomplete && (target instanceof HTMLInputElement || target instanceof HTMLTextAreaElement)) {
+      this.targetCleanup.push(attachAutocomplete(target, {
+        container: this.root ?? this.panel,
+        source: () => ({ emoji: (this.data?.groups ?? []).flatMap((group) => group.emoji), custom: this.options.features.custom ? (this.data?.custom ?? []) : [], data: this.data }),
+        tone: () => this.options.tone,
+        render: () => ({ mode: this.renderMode, set: this.imageSet }),
+        strings: this.strings,
+        rtl: () => this.rtl,
+        onPick: (detail, base) => {
+          if (base && detail.hexcode && this.options.features.recents) {
+            this.store.set('recent', recordRecent(this.store.get('recent'), base, detail.hexcode, this.options.maxRecent));
+            this.recentStale = true;
+          }
+
+          this.announce(detail);
+        },
+      }));
+    }
   }
 
   private get rtl(): boolean {
@@ -2578,6 +3126,13 @@ export class Picker {
     }
 
     footer.append(this.tones);
+
+    if (features.settings) {
+      this.gear = el('button', { type: 'button', class: `${PREFIX}-picker-gear`, 'aria-label': s.settings ?? DEFAULT_STRINGS.settings, title: s.settings ?? DEFAULT_STRINGS.settings, 'aria-haspopup': 'dialog', 'aria-expanded': 'false' });
+      this.gear.append(icon(GEAR_ICON));
+      this.listen(this.gear, 'click', () => (this.closeSettings ? this.closeSettings() : this.openSettings()));
+      footer.append(this.gear);
+    }
 
     if (!features.skinTones) {
       this.options.tone = 0;
@@ -2772,6 +3327,35 @@ export class Picker {
 
     this.switcher.replaceChildren(...options);
     this.switcher.value = typeof chosen === 'string' && sets.some((set) => set.set === chosen) ? chosen : 'native';
+  }
+
+  /** The settings menu, beside the gear: theme, clearing recents, and the keyboard shortcuts. */
+  openSettings(focusShortcuts = false): void {
+    if (!this.gear) return;
+
+    this.closeSettings?.();
+    this.gear.setAttribute('aria-expanded', 'true');
+    this.closeSettings = openSettingsMenu(this.gear, this.root ?? this.panel, {
+      strings: this.strings,
+      theme: this.options.theme === 'auto' ? this.themeInEffect : null,
+      onTheme: (theme) => {
+        this.store.set('theme', theme);
+        this.applyTheme();
+      },
+      recents: readRecent(this.store.get('recent')).length > 0,
+      onClearRecents: () => {
+        this.store.set('recent', []);
+        this.memo = null;
+        this.renderWhenShown();
+      },
+      shortcuts: shortcutList(this.strings, parseShortcut(this.options.shortcut)),
+      focusShortcuts,
+      rtl: this.rtl,
+      onClose: () => {
+        this.closeSettings = null;
+        this.gear?.setAttribute('aria-expanded', 'false');
+      },
+    });
   }
 
   private openToneMenu(cell: HTMLElement, item: PickerEmoji): void {
@@ -3109,6 +3693,36 @@ export class Picker {
       return;
     }
 
+    // Picker shortcuts: / to search, Alt+1–9 for a category, ? for the shortcut list. Not while typing.
+    const typing = target === this.searchInput;
+
+    if (!typing && event.key === '/' && !event.ctrlKey && !event.metaKey && !event.altKey) {
+      event.preventDefault();
+      this.searchInput.focus();
+
+      return;
+    }
+
+    if (event.altKey && !event.ctrlKey && !event.metaKey && /^Digit[1-9]$/.test(event.code)) {
+      const tabs = [...this.tabs.querySelectorAll<HTMLElement>('[role="tab"]')];
+      const wanted = tabs[Number(event.code.slice(5)) - 1];
+
+      if (wanted) {
+        event.preventDefault();
+        this.showSection(wanted.getAttribute(`${ATTR}-section`) ?? '');
+        wanted.focus();
+      }
+
+      return;
+    }
+
+    if (!typing && event.key === '?' && this.gear) {
+      event.preventDefault();
+      this.openSettings(true);
+
+      return;
+    }
+
     const tab = target?.closest?.<HTMLElement>('[role="tab"]');
     const radio = target?.closest?.<HTMLElement>('[role="radio"]');
 
@@ -3218,6 +3832,12 @@ export class Picker {
     this.deliver({ emoji: charOf(hexcode), hexcode, name: item?.name ?? '', shortcode: item?.shortcode ?? null, custom: false });
   }
 
+  /** Tells listeners about a pick: the bubbling DOM event, then the on('select') handlers. */
+  private announce(detail: SelectDetail): void {
+    this.element.dispatchEvent(new CustomEvent(EVENT, { detail, bubbles: true }));
+    this.emit('select', detail);
+  }
+
   /** Inserts a pick, announces it, and closes the popover when it should. */
   private deliver(detail: SelectDetail): void {
     const target = this.options.target;
@@ -3226,8 +3846,7 @@ export class Picker {
       insertText(target, detail.emoji, this.caretKnown);
     }
 
-    this.element.dispatchEvent(new CustomEvent(EVENT, { detail, bubbles: true }));
-    this.emit('select', detail);
+    this.announce(detail);
 
     if (this.options.closeOnSelect && !this.options.inline) {
       this.close(target ? 'target' : 'trigger');
