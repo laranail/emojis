@@ -22,7 +22,9 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/),
   and publishes to GitHub Packages (`npm.pkg.github.com`) with the run's own `GITHUB_TOKEN`. `.dev/tools/npm-release`
   tries npm first and, when npm will not take a token or refuses a version, publishes that version and every later
   one there instead, in order; `--github` and `--npm` pick one. Installing from GitHub Packages needs an `.npmrc`
-  scope line and a token with `read:packages` (see `docs/tools/picker.md`).
+  scope line and a token with `read:packages` (see `docs/tools/picker.md`). A re-run for a version GitHub
+  Packages already has reports it instead of failing, and `npm-release` confirms each upload from npm's own line
+  in the run's log, so it needs no `read:packages` scope on the maintainer's `gh` login.
 - **Setting `NPM_TOKEN` failed quietly.** A copied page or a token ID was stored as the secret, and every
   publish then failed with npm's output masked. `.dev/tools/npm-release` (maintainers only, not shipped) checks
   the token's shape and asks npm who it belongs to before setting the secret, confirms GitHub recorded it,
