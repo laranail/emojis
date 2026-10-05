@@ -1621,6 +1621,19 @@ describe('custom emoji in Frequently used', () => {
 });
 
 describe('the build', () => {
+  it("gives the shortcut keys their own colours, and the menus a raised surface their caret shares", () => {
+    const css = readFileSync(resolve(root, 'public/assets/css/picker.css'), 'utf8');
+    const kbd = css.match(/\.laranail-emoji-picker-shortcuts kbd\{([^}]*)\}/);
+
+    // A host's kbd background under the picker's own text colour made the keys unreadable.
+    expect(kbd).not.toBeNull();
+    expect(kbd[1]).toMatch(/background:/);
+    expect(kbd[1]).toMatch(/color:var\(--_lep-fg\)/);
+    // The in-panel menus fill their caret with their raised surface, not the panel's colour they sit on.
+    expect(css).toMatch(/--_lep-arrow-fill:var\(--_lep-raised\)/);
+    expect(css).toMatch(/border-block-(?:end|start)-color:var\(--_lep-arrow-fill,var\(--_lep-bg\)\)/);
+  });
+
   it("keeps a host page's own section styles out of the grid", () => {
     // The sections are <section> elements; a host's `section { padding: … }` pushed the last column out of view.
     const css = readFileSync(resolve(root, 'public/assets/css/picker.css'), 'utf8');
