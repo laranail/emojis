@@ -26,6 +26,14 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/),
 - **Kaomoji category tabs showed unreadable fragments** (the first four characters of a kaomoji). They show the
   group's name as a word pill; symbol groups still show their first symbol. One helper, `tabText()`, serves both
   adapters.
+- **The menus that open from inside the panel, and their carets, vanished into it.** The tone menu, the settings
+  menu and the shortcode suggestions sat in the panel's own colour over the panel, so in dark mode their caret
+  was a stray hairline. They use a raised surface now (`--laranail-emoji-picker-raised`: white in light mode, one
+  step lighter than the panel in dark), their caret is filled with it, and the controls inside them are tinted
+  from the text colour so they read on either surface.
+- **A host page's `kbd` style made the shortcut keys unreadable.** On a light page with the picker in dark mode
+  the keys took the page's light chip under the picker's light text. The picker now sets their background and
+  colour itself.
 - **The settings menu was too narrow**: descriptions wrapped and the key lists stacked into blocks. It is 20rem
   (capped by the screen), rows are centred, and each key group is its own chip.
 - **Eleven category tabs overflowed an eight-column panel**, hiding the last ones. Icon tabs now share the bar's

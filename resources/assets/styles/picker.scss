@@ -26,6 +26,7 @@ $light: (
   hover: #eef1f4,
   focus: #0969da,
   shadow: 0 8px 24px rgb(0 0 0 / 0.16),
+  raised: #fff,
 );
 $dark: (
   accent: #4493f8,
@@ -36,6 +37,10 @@ $dark: (
   hover: #2a313c,
   focus: #4493f8,
   shadow: 0 8px 24px rgb(0 0 0 / 0.5),
+  // The menus that open from inside the panel (tones, settings, suggestions) sit, caret and all, over the panel
+  // itself. In the panel's own colour they and their caret vanished into it; one step lighter, they read as
+  // raised above it.
+  raised: #262c36,
 );
 $sizes: (
   radius: 14px,
@@ -217,6 +222,11 @@ $sizes: (
   }
 }
 
+// A menu's caret is filled in the menu's raised colour, the panel's in the panel's.
+:is(.#{$picker}-tonemenu, .#{$picker}-settings, .#{$picker}-suggest) > .#{$picker}-arrow {
+  --_lep-arrow-fill: var(--_lep-raised);
+}
+
 :is(.#{$picker}-panel, .#{$picker}-tonemenu, .#{$picker}-settings, .#{$picker}-suggest)[data-placement^='bottom'] > .#{$picker}-arrow {
   inset-block-end: 100%;
 
@@ -232,7 +242,7 @@ $sizes: (
 
   &::after {
     inset-block-end: -1px;
-    border-block-end-color: var(--_lep-bg);
+    border-block-end-color: var(--_lep-arrow-fill, var(--_lep-bg));
   }
 }
 
@@ -251,7 +261,7 @@ $sizes: (
 
   &::after {
     inset-block-start: -1px;
-    border-block-start-color: var(--_lep-bg);
+    border-block-start-color: var(--_lep-arrow-fill, var(--_lep-bg));
   }
 }
 
@@ -628,7 +638,7 @@ $sizes: (
   overflow: visible;
   border: 1px solid var(--_lep-border);
   border-radius: var(--_lep-radius);
-  background: var(--_lep-bg);
+  background: var(--_lep-raised);
   color: var(--_lep-fg);
   box-shadow: var(--_lep-shadow);
   animation: #{$picker}-in 120ms ease-out;
@@ -693,7 +703,7 @@ $sizes: (
   overflow: visible;
   border: 1px solid var(--_lep-border);
   border-radius: var(--_lep-radius);
-  background: var(--_lep-bg);
+  background: var(--_lep-raised);
   color: var(--_lep-fg);
   box-shadow: var(--_lep-shadow);
   font-size: 0.85rem;
@@ -726,7 +736,8 @@ $sizes: (
   display: flex;
   padding: 0.2rem;
   border-radius: 999px;
-  background: var(--_lep-hover);
+  // A tint of the text colour rather than --hover, so it stays visible on the raised surface in either theme.
+  background: color-mix(in srgb, var(--_lep-fg) 8%, transparent);
 }
 
 .#{$picker}-settings-theme {
@@ -741,9 +752,9 @@ $sizes: (
   cursor: pointer;
 
   &[aria-checked='true'] {
-    background: var(--_lep-bg);
+    background: var(--_lep-raised);
     color: var(--_lep-fg);
-    box-shadow: 0 1px 2px rgb(0 0 0 / 0.12);
+    box-shadow: 0 1px 2px rgb(0 0 0 / 0.12), 0 0 0 1px var(--_lep-border);
   }
 }
 
@@ -758,7 +769,7 @@ $sizes: (
   cursor: pointer;
 
   &:hover:not([disabled]) {
-    background: var(--_lep-hover);
+    background: color-mix(in srgb, var(--_lep-fg) 8%, transparent);
   }
 
   &[disabled] {
@@ -792,6 +803,11 @@ $sizes: (
     display: inline-block;
     max-inline-size: 100%;
     white-space: nowrap;
+    // The picker's own colours: a host's kbd background (a light chip on a page in light mode) under the picker's
+    // light text in dark mode made the keys unreadable.
+    background: color-mix(in srgb, var(--_lep-fg) 6%, transparent);
+    color: var(--_lep-fg);
+    box-shadow: none;
     padding: 0.05rem 0.35rem;
     border: 1px solid var(--_lep-border);
     border-block-end-width: 2px;

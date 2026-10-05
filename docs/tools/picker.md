@@ -515,6 +515,7 @@ them without declaring them, so they can be set on the picker, on its mount poin
 | `--laranail-emoji-picker-hover` | `#eef1f4` / `#2a313c` |
 | `--laranail-emoji-picker-focus` | `#0969da` / `#4493f8` |
 | `--laranail-emoji-picker-shadow` | a soft drop shadow |
+| `--laranail-emoji-picker-raised` | `#fff` / `#262c36` (the tone menu, the settings menu and the suggestions, which open over the panel) |
 | `--laranail-emoji-picker-radius` | `14px` |
 | `--laranail-emoji-picker-cell-radius` | `8px` |
 | `--laranail-emoji-picker-cell` | `2.25rem` (`2.75rem` on phones) |
