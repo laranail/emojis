@@ -7,6 +7,16 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/),
 
 ## [Unreleased]
 
+### Fixed
+
+- **In a short window the popover's grid could shrink to nothing.** Squeezed into the space beside its trigger,
+  the panel could go down to 160px, and search, the content tabs, the category bar and the footer take about
+  210px of that. It now stops at 340px (`MIN_PANEL_HEIGHT`), which keeps the section header and about three
+  rows, and the shift step keeps the taller panel on screen. React shares the same `Popover`.
+- **A host page's own `section` styles reached the grid.** The picker's sections are `<section>` elements, so a
+  rule like `section { padding: 18px }` pushed the last column out of view. The picker now resets their margin,
+  padding, border and background.
+
 ### Changed
 
 - **`npm-release` finds the publish workflow and the package itself**, so the same file works in every repository

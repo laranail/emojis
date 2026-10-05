@@ -447,6 +447,12 @@ $sizes: (
 
 // Off-screen sections skip layout and paint until scrolled to: ~1,900 cells stay cheap.
 .#{$picker}-section {
+  // The sections are <section> elements, so a host's own `section { padding: … }` reaches them and pushes the
+  // last column out of a grid sized to the panel. The class outranks a bare element selector.
+  margin: 0;
+  padding: 0;
+  border: 0;
+  background: none;
   content-visibility: auto;
   contain-intrinsic-size: auto 10rem;
 }

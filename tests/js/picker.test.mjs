@@ -863,6 +863,36 @@ describe('positioning (phase 2)', () => {
     expect(computePosition(trigger(100, -200), panel, viewport).hidden).toBe(true);
   });
 
+  it('never shrinks the popover below two rows of emoji in a short viewport', async () => {
+    HTMLElement.prototype.showPopover = () => {};
+    HTMLElement.prototype.hidePopover = () => {};
+    const height = Object.getOwnPropertyDescriptor(window, 'innerHeight');
+    Object.defineProperty(window, 'innerHeight', { configurable: true, value: 420 });
+
+    const { picker } = await mount({ inline: false });
+    const rect = (left, top, width, height) => () => ({ left, top, width, height, x: left, y: top, right: left + width, bottom: top + height });
+    // About 190px above the trigger and 190px below it: less than either side needs.
+    picker.trigger.getBoundingClientRect = rect(100, 195, 30, 30);
+    Object.defineProperty(picker.panel, 'offsetWidth', { configurable: true, get: () => 300 });
+    Object.defineProperty(picker.panel, 'offsetHeight', { configurable: true, get: () => 416 });
+
+    picker.open();
+
+    expect(module.MIN_PANEL_HEIGHT).toBeGreaterThanOrEqual(300);
+    expect(picker.panel.style.maxBlockSize).toBe(`${module.MIN_PANEL_HEIGHT}px`);
+    picker.close();
+
+    // With room to spare, the panel keeps its own height: the floor only ever raises the limit.
+    Object.defineProperty(window, 'innerHeight', { configurable: true, value: 1200 });
+    picker.open();
+    expect(parseInt(picker.panel.style.maxBlockSize, 10)).toBeGreaterThan(module.MIN_PANEL_HEIGHT);
+    picker.close();
+
+    if (height) Object.defineProperty(window, 'innerHeight', height);
+    delete HTMLElement.prototype.showPopover;
+    delete HTMLElement.prototype.hidePopover;
+  });
+
   it('accepts only known placements', () => {
     expect([parsePlacement('top-end'), parsePlacement('nope'), parsePlacement(null)]).toEqual(['top-end', 'auto', 'auto']);
   });
@@ -1550,6 +1580,17 @@ describe('custom emoji in Frequently used', () => {
 });
 
 describe('the build', () => {
+  it("keeps a host page's own section styles out of the grid", () => {
+    // The sections are <section> elements; a host's `section { padding: … }` pushed the last column out of view.
+    const css = readFileSync(resolve(root, 'public/assets/css/picker.css'), 'utf8');
+    const rule = css.match(/\.laranail-emoji-picker-section\{([^}]*)\}/);
+
+    expect(rule).not.toBeNull();
+    for (const reset of ['margin:0', 'padding:0', 'border:0']) {
+      expect(rule[1]).toContain(reset);
+    }
+  });
+
   it('reads its public theme tokens without declaring them, so a value set above the picker wins', () => {
     const css = readFileSync(resolve(root, 'public/assets/css/picker.css'), 'utf8');
     const declared = [...css.matchAll(/(?:^|[;{])\s*(--laranail-emoji-picker-[a-z-]+)\s*:/g)].map((m) => m[1]);
