@@ -101,7 +101,11 @@ describe('EmojiPicker (React)', () => {
     render(<Form store={store} />);
     await ready();
 
+    // The first press opens the row of six; the second chooses, and closes it.
+    fireEvent.click(screen.getAllByRole('radio')[0]);
+    expect(document.querySelector('.laranail-emoji-picker-tones')?.hasAttribute('data-open')).toBe(true);
     fireEvent.click(screen.getAllByRole('radio')[3]);
+    expect(document.querySelector('.laranail-emoji-picker-tones')?.hasAttribute('data-open')).toBe(false);
     expect(screen.getByLabelText('waving hand').textContent).toBe('👋🏽');
     expect(screen.getByLabelText('handshake').textContent).toBe('🤝🏽');
     expect(store.get('tone')).toBe(3);

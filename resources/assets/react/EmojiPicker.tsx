@@ -127,6 +127,12 @@ export function EmojiPicker({
     if (open) setOpened(true);
   }, [open]);
   const [activeCell, setActiveCell] = useState<string | null>(null);
+  // The footer shows only the chosen tone until the first press opens the row of six.
+  const [tonesOpen, setTonesOpen] = useState(false);
+  const tonesRow = useRef<HTMLDivElement | null>(null);
+  const focusChosenTone = (): void => {
+    requestAnimationFrame(() => tonesRow.current?.querySelector<HTMLElement>('[aria-checked="true"]')?.focus({ preventScroll: true }));
+  };
   const [activeTab, setActiveTab] = useState<string | null>(null);
   const root = useRef<HTMLDivElement>(null);
   const body = useRef<HTMLDivElement>(null);
@@ -440,6 +446,15 @@ export function EmojiPicker({
   const onKeyDown = (event: KeyboardEvent<HTMLDivElement>): void => {
     const element = event.target as Element;
 
+    if (event.key === 'Escape' && tonesOpen) {
+      event.preventDefault();
+      event.stopPropagation();
+      setTonesOpen(false);
+      focusChosenTone();
+
+      return;
+    }
+
     if (event.key === 'Escape') {
       // Only a popover that actually closes takes the key; otherwise it reaches the page.
       if (!inline && open) {
@@ -493,6 +508,11 @@ export function EmojiPicker({
       }
 
       return;
+    }
+
+    // An arrow key on the closed tone row opens it first, so the tone it moves to is visible.
+    if (radio && tonesRow.current?.contains(radio) && !tonesOpen && rovingIndex(6, 0, event.key, rtl()) !== null) {
+      setTonesOpen(true);
     }
 
     if (tab || radio) {
@@ -872,7 +892,17 @@ export function EmojiPicker({
               ))}
             </select>
           )}
-        <div className={`${P}-tones`} role="radiogroup" aria-label={strings.tone} hidden={!features.skinTones}>
+        <div
+          ref={tonesRow}
+          className={`${P}-tones`}
+          role="radiogroup"
+          aria-label={strings.tone}
+          hidden={!features.skinTones}
+          data-open={tonesOpen ? '' : undefined}
+          onBlur={(event) => {
+            if (!event.currentTarget.contains(event.relatedTarget as Node | null)) setTonesOpen(false);
+          }}
+        >
           {TONE_SWATCHES.map((hand, tone) => (
             <button
               key={tone}
@@ -883,7 +913,17 @@ export function EmojiPicker({
               aria-label={strings.tones[tone]}
               tabIndex={tone === state.tone ? 0 : -1}
               data-laranail-emoji-tone={tone}
-              onClick={() => state.setTone(tone)}
+              onClick={() => {
+                if (!tonesOpen) {
+                  setTonesOpen(true);
+                  focusChosenTone();
+
+                  return;
+                }
+
+                state.setTone(tone);
+                setTonesOpen(false);
+              }}
             >
               {hand}
             </button>
