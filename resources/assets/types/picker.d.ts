@@ -521,6 +521,12 @@ export interface PositionOptions {
     /** How close the arrow may come to the floating box's corners, so it never sits on the rounding (default 14). */
     arrowPadding?: number;
     rtl?: boolean;
+    /**
+     * The least height the floating box is drawn at above or below the reference, however little room that side
+     * has (default 0). Taller than the room, it is kept inside the viewport instead, over the reference, and
+     * gets no arrow, since one would point into the box itself.
+     */
+    minSize?: number;
 }
 export interface Position {
     /** Top-left corner of the floating box, in viewport coordinates. */
@@ -757,8 +763,17 @@ export declare const GEAR_ICON: readonly string[];
 /** An outline icon from SVG path data, built with createElementNS so it stays CSP-safe. */
 export declare function icon(paths: readonly string[], size?: number): SVGSVGElement;
 /**
- * What a category tab shows: the group's outline icon when there is one, else its first emoji, else a short
- * label (kaomoji and symbol groups). Built with createElementNS, so it stays CSP-safe.
+ * What a category tab without an outline icon shows, for both adapters. A symbol group shows its first symbol,
+ * which reads as an icon. A kaomoji is several characters wide, and the first four of one (the old face) were
+ * an unreadable fragment, so a kaomoji group shows its name instead, as a word pill (`label: true`).
+ */
+export declare function tabText(section: PickerSection): {
+    text: string;
+    label: boolean;
+};
+/**
+ * What a category tab shows: the group's outline icon when there is one, else tabText(). Built with
+ * createElementNS and createTextNode, so it stays CSP-safe.
  */
 export declare function tabFace(section: PickerSection): Node;
 type ResolvedOptions = Required<Omit<PickerOptions, 'source' | 'target' | 'store' | 'features'>> & Pick<PickerOptions, 'source' | 'target' | 'store'> & {

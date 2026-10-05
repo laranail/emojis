@@ -519,7 +519,7 @@ them without declaring them, so they can be set on the picker, on its mount poin
 | `--laranail-emoji-picker-cell-radius` | `8px` |
 | `--laranail-emoji-picker-cell` | `2.25rem` (`2.75rem` on phones) |
 | `--laranail-emoji-picker-width` | columns × cell + padding |
-| `--laranail-emoji-picker-height` | `22rem` |
+| `--laranail-emoji-picker-height` | `26rem` |
 | `--laranail-emoji-picker-z` | `50` |
 | `--laranail-emoji-picker-image-size` | `1.5rem` (custom emoji images) |
 | `--laranail-emoji-picker-arrow-width` | `1rem` |

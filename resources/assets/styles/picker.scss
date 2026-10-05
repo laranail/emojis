@@ -41,7 +41,7 @@ $sizes: (
   radius: 14px,
   cell-radius: 8px,
   cell: 2.25rem,
-  height: 22rem,
+  height: 26rem,
   z: 50,
   image-size: 1.5rem,
   arrow-width: 1rem,
@@ -311,10 +311,20 @@ $sizes: (
   display: none;
 }
 
+// The mount point the Blade component and autoInit() fill is the element a host's grid or flex layout sees, so it
+// too must be allowed to shrink below the picker's own width. :where() keeps it overridable.
+:where([data-laranail-emoji-picker]) {
+  min-inline-size: 0;
+  max-inline-size: 100%;
+}
+
 // The inline picker sits in the flow instead of floating, never wider than its container.
 .#{$picker}:not(:has(.#{$picker}-trigger)) {
   display: block;
   max-inline-size: 100%;
+  // As a grid or flex item its automatic minimum is its content's width, which beat max-inline-size and pushed a
+  // nine-column picker past a phone's edge; at zero the cells shrink with it instead.
+  min-inline-size: 0;
 
   .#{$picker}-panel {
     position: static;
@@ -400,6 +410,16 @@ $sizes: (
   scrollbar-width: none;
 }
 
+// Icon tabs share the bar's width rather than taking a fixed 1.85rem each: Frequently used, Custom and nine
+// groups are eleven tabs, which overflowed an eight-column panel and hid the last ones off the edge. They stay
+// square between 1.5rem (the smallest comfortable target) and the cell size; word pills keep their own width.
+.#{$picker}-tabs > .#{$picker}-tab:not(:has(> .#{$picker}-tab-label)) {
+  flex: 1 1 0;
+  inline-size: auto;
+  min-inline-size: 1.5rem;
+  max-inline-size: var(--_lep-cell);
+}
+
 .#{$picker}-tab,
 .#{$picker}-tone {
   flex: none;
@@ -426,6 +446,17 @@ $sizes: (
   svg {
     display: block;
   }
+}
+
+// A kaomoji group's tab: its name, as a word pill the width of the word.
+.#{$picker}-tab:has(> .#{$picker}-tab-label) {
+  inline-size: auto;
+  padding-inline: 0.55rem;
+}
+
+.#{$picker}-tab-label {
+  font-size: 0.75rem;
+  font-weight: 600;
 }
 
 .#{$picker}-tone {
@@ -462,8 +493,8 @@ $sizes: (
   inset-block-start: 0;
   z-index: 1;
   padding: 0.4rem 0.15rem 0.25rem;
-  background: color-mix(in srgb, var(--_lep-bg) 88%, transparent);
-  backdrop-filter: blur(6px);
+  // Opaque: a translucent header let the rows scrolling under it show through the label.
+  background: var(--_lep-bg);
   color: var(--_lep-muted);
   font-size: 0.7rem;
   font-weight: 700;
@@ -673,7 +704,8 @@ $sizes: (
   display: flex;
   flex-direction: column;
   gap: 0.45rem;
-  inline-size: 16rem;
+  // 16rem wrapped most descriptions onto two lines and the longer key lists into stacked blocks.
+  inline-size: min(20rem, calc(100vw - 2rem));
   padding: 0.75rem;
 
   :focus-visible {
@@ -739,7 +771,7 @@ $sizes: (
   // The description keeps at least half the width; a long key list wraps under itself rather than squeezing it.
   display: grid;
   grid-template-columns: minmax(50%, 1fr) minmax(0, auto);
-  align-items: baseline;
+  align-items: center;
   gap: 0.35rem 0.75rem;
   margin: 0;
 
@@ -748,14 +780,18 @@ $sizes: (
   }
 
   dd {
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: flex-end;
+    gap: 0.2rem;
     margin: 0;
     min-inline-size: 0;
-    text-align: end;
   }
 
   kbd {
     display: inline-block;
     max-inline-size: 100%;
+    white-space: nowrap;
     padding: 0.05rem 0.35rem;
     border: 1px solid var(--_lep-border);
     border-block-end-width: 2px;
@@ -824,8 +860,10 @@ $sizes: (
 
 .#{$picker}-preview {
   display: flex;
-  // Room for a name: below it, the switcher and tones wrap to their own row instead of squeezing it away.
-  flex: 1 1 9rem;
+  // The tones and the settings button keep their row and the preview takes what is left, ellipsis and all. A
+  // 9rem basis did not fit beside them in a default-width panel: the button wrapped onto a row of its own and
+  // took a row from the grid.
+  flex: 1 1 0;
   align-items: center;
   gap: 0.5rem;
   min-inline-size: 0;
@@ -878,6 +916,17 @@ $sizes: (
   }
 }
 
+// A result count is already on screen in the results heading: the status keeps announcing it, unseen.
+.#{$picker}-status-results {
+  position: absolute;
+  inline-size: 1px;
+  block-size: 1px;
+  min-block-size: 0;
+  overflow: hidden;
+  clip-path: inset(50%);
+  white-space: nowrap;
+}
+
 // Phones: below the sheet breakpoint (640px by default; the script decides and sets data-sheet) the popover
 // is a bottom sheet over a backdrop, with a drag handle, 44px targets, the safe area kept clear and the
 // on-screen keyboard (--_lep-keyboard, from the visual viewport) never covering it. An inline picker stays
@@ -917,6 +966,9 @@ $sizes: (
   .#{$picker}-handle {
     display: block;
     align-self: center;
+    // The padding is the touch area and the clipped background the bar; under border-box sizing the padding
+    // swallowed the 0.3rem and the bar drew nothing.
+    box-sizing: content-box;
     inline-size: 2.5rem;
     block-size: 0.3rem;
     margin-block: -0.25rem 0.25rem;
@@ -943,6 +995,7 @@ $sizes: (
   .#{$picker}-tab,
   .#{$picker}-tone {
     inline-size: 2.75rem;
+    max-inline-size: none;
     block-size: 2.75rem;
   }
 }

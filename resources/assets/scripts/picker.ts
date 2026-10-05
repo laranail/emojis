@@ -1415,6 +1415,12 @@ export interface PositionOptions {
   /** How close the arrow may come to the floating box's corners, so it never sits on the rounding (default 14). */
   arrowPadding?: number;
   rtl?: boolean;
+  /**
+   * The least height the floating box is drawn at above or below the reference, however little room that side
+   * has (default 0). Taller than the room, it is kept inside the viewport instead, over the reference, and
+   * gets no arrow, since one would point into the box itself.
+   */
+  minSize?: number;
 }
 
 export interface Position {
@@ -1468,7 +1474,7 @@ export function computePosition(reference: Rect, floating: { width: number; heig
   }
 
   const vertical = side === 'top' || side === 'bottom';
-  const size = vertical ? Math.min(floating.height, Math.max(0, space[side])) : floating.height;
+  const size = vertical ? Math.min(floating.height, Math.max(options.minSize ?? 0, space[side], 0)) : floating.height;
   const width = vertical ? floating.width : Math.min(floating.width, Math.max(0, space[side]));
 
   // Main axis.
@@ -1481,6 +1487,8 @@ export function computePosition(reference: Rect, floating: { width: number; heig
     const endEdge = rtl ? reference.x : reference.x + reference.width - width;
     x = align === 'start' ? startEdge : align === 'end' ? endEdge : reference.x + reference.width / 2 - width / 2;
     x = Math.min(Math.max(x, viewport.x + padding), viewport.x + viewport.width - padding - width);
+    // Main axis too: a box held to minSize can be taller than its side's room, and must not leave the screen.
+    y = Math.min(Math.max(y, viewport.y + padding), viewport.y + viewport.height - padding - size);
   } else {
     y = align === 'start' ? reference.y : align === 'end' ? reference.y + reference.height - size : reference.y + reference.height / 2 - size / 2;
     y = Math.min(Math.max(y, viewport.y + padding), viewport.y + viewport.height - padding - size);
@@ -1489,7 +1497,12 @@ export function computePosition(reference: Rect, floating: { width: number; heig
   // The arrow points at the reference's centre, never into the floating box's rounded corners.
   const along = vertical ? reference.x + reference.width / 2 - x : reference.y + reference.height / 2 - y;
   const length = vertical ? width : size;
-  const arrow = length >= arrowPadding * 2 && along >= arrowPadding && along <= length - arrowPadding ? along : length >= arrowPadding * 2 ? Math.min(Math.max(along, arrowPadding), length - arrowPadding) : null;
+  const covers = vertical && y < reference.y + reference.height && y + size > reference.y;
+  const arrow =
+    covers ? null
+    : length >= arrowPadding * 2 && along >= arrowPadding && along <= length - arrowPadding ? along
+    : length >= arrowPadding * 2 ? Math.min(Math.max(along, arrowPadding), length - arrowPadding)
+    : null;
 
   const hidden =
     reference.y + reference.height < viewport.y || reference.y > viewport.y + viewport.height || reference.x + reference.width < viewport.x || reference.x > viewport.x + viewport.width;
@@ -1650,7 +1663,7 @@ export class Popover {
       { x: trigger.left, y: trigger.top, width: trigger.width, height: trigger.height },
       { width: own.width, height: own.height },
       { x: viewport?.offsetLeft ?? 0, y: viewport?.offsetTop ?? 0, width: viewport?.width ?? view.innerWidth, height: viewport?.height ?? view.innerHeight },
-      { placement: this.options.placement, offset: (this.options.offset ?? 8) + (showArrow ? 0 : -4), rtl },
+      { placement: this.options.placement, offset: (this.options.offset ?? 8) + (showArrow ? 0 : -4), rtl, minSize: MIN_PANEL_HEIGHT },
     );
 
     this.panel.style.left = `${result.x}px`;
@@ -2321,7 +2334,9 @@ export function openSettingsMenu(anchor: HTMLElement, container: HTMLElement, op
   for (const [what, keys] of options.shortcuts) {
     list.append(make('dt', {}, what));
     const dd = make('dd');
-    dd.append(make('kbd', {}, keys));
+    // "← ↑ → ↓ · PgUp PgDn · Home End" is three alternatives: one chip each, so they wrap between chips, not
+    // through one.
+    dd.append(...keys.split(' · ').map((part) => make('kbd', {}, part)));
     list.append(dd);
   }
 
@@ -2599,8 +2614,25 @@ export function icon(paths: readonly string[], size = 20): SVGSVGElement {
 }
 
 /**
- * What a category tab shows: the group's outline icon when there is one, else its first emoji, else a short
- * label (kaomoji and symbol groups). Built with createElementNS, so it stays CSP-safe.
+ * What a category tab without an outline icon shows, for both adapters. A symbol group shows its first symbol,
+ * which reads as an icon. A kaomoji is several characters wide, and the first four of one (the old face) were
+ * an unreadable fragment, so a kaomoji group shows its name instead, as a word pill (`label: true`).
+ */
+export function tabText(section: PickerSection): { text: string; label: boolean } {
+  const first = section.items[0];
+
+  if (section.text) {
+    const glyph = first ? (first as PickerText).text : '';
+
+    return [...glyph].length <= 2 && glyph !== '' ? { text: glyph, label: false } : { text: section.label, label: true };
+  }
+
+  return { text: first && !section.custom && !('image' in first) ? charOf((first as PickerEmoji).pick ?? (first as PickerEmoji).hexcode) : '★', label: false };
+}
+
+/**
+ * What a category tab shows: the group's outline icon when there is one, else tabText(). Built with
+ * createElementNS and createTextNode, so it stays CSP-safe.
  */
 export function tabFace(section: PickerSection): Node {
   const paths = TAB_ICONS[section.slug];
@@ -2609,13 +2641,17 @@ export function tabFace(section: PickerSection): Node {
     return icon(paths);
   }
 
-  const first = section.items[0];
+  const face = tabText(section);
 
-  if (section.text) {
-    return document.createTextNode(first ? (first as PickerText).text.slice(0, 4) : section.label.slice(0, 2));
+  if (face.label) {
+    const span = document.createElement('span');
+    span.className = `${PREFIX}-picker-tab-label`;
+    span.textContent = face.text;
+
+    return span;
   }
 
-  return document.createTextNode(first && !section.custom && !('image' in first) ? charOf((first as PickerEmoji).pick ?? (first as PickerEmoji).hexcode) : '★');
+  return document.createTextNode(face.text);
 }
 
 // ---- the vanilla picker ------------------------------------------------------------------------------
@@ -3603,6 +3639,8 @@ export class Picker {
 
     this.body.replaceChildren(...nodes);
     this.status.textContent = term ? resultText(s, drawn) : '';
+    // The count is on screen in the results heading; the status line keeps announcing it, unseen.
+    this.status.classList.toggle(`${PREFIX}-picker-status-results`, term !== '');
     this.rest = sections;
     this.stopSpy?.();
     this.stopSpy = null;
@@ -3648,7 +3686,7 @@ export class Picker {
   }
 
   private buildSection(section: PickerSection): HTMLElement {
-    const heading = el('div', { class: `${PREFIX}-picker-heading`, id: `${this.panel.id}-${section.slug}` }, section.label);
+    const heading = el('div', { class: `${PREFIX}-picker-heading`, id: `${this.panel.id}-${section.slug}` }, section.slug === 'search' ? resultText(this.strings, section.items.length) : section.label);
     const grid = el('div', { class: `${PREFIX}-picker-grid`, role: 'grid', 'aria-labelledby': heading.id });
     const columns = this.columnsFor(section);
     let row: HTMLDivElement | null = null;
