@@ -518,7 +518,11 @@ export interface PositionOptions {
     offset?: number;
     /** Space kept clear at the viewport's edges (default 8). */
     padding?: number;
-    /** How close the arrow may come to the floating box's corners, so it never sits on the rounding (default 14). */
+    /**
+     * How close the arrow's centre may come to the floating box's corners (default 22: the 14px corner radius plus
+     * half the 16px caret, so the caret never starts on the rounding). The box slides to keep this clearance when
+     * the reference's centre would fall inside it, so the caret still points at that centre.
+     */
     arrowPadding?: number;
     rtl?: boolean;
     /**
@@ -646,6 +650,11 @@ export interface AnchoredOptions {
     rtl?: boolean;
     /** Close on a pointer press outside the menu (default true). */
     dismissOnOutside?: boolean;
+    /**
+     * The least height the menu shrinks to when the side it opens on is short (default 160). Above it the menu
+     * is capped to the room it has, and a menu with more content scrolls inside rather than running off screen.
+     */
+    minSize?: number;
     onClose?: () => void;
 }
 /**

@@ -1412,7 +1412,11 @@ export interface PositionOptions {
   offset?: number;
   /** Space kept clear at the viewport's edges (default 8). */
   padding?: number;
-  /** How close the arrow may come to the floating box's corners, so it never sits on the rounding (default 14). */
+  /**
+   * How close the arrow's centre may come to the floating box's corners (default 22: the 14px corner radius plus
+   * half the 16px caret, so the caret never starts on the rounding). The box slides to keep this clearance when
+   * the reference's centre would fall inside it, so the caret still points at that centre.
+   */
   arrowPadding?: number;
   rtl?: boolean;
   /**
@@ -1450,7 +1454,7 @@ const OPPOSITE: Record<Side, Side> = { top: 'bottom', bottom: 'top', left: 'righ
 export function computePosition(reference: Rect, floating: { width: number; height: number }, viewport: Rect, options: PositionOptions = {}): Position {
   const offset = options.offset ?? 8;
   const padding = options.padding ?? 8;
-  const arrowPadding = options.arrowPadding ?? 14;
+  const arrowPadding = options.arrowPadding ?? 22;
   const rtl = options.rtl ?? false;
   const [main = 'auto', alignPart] = String(options.placement ?? 'auto').split('-') as [string, string | undefined];
   const logical = (side: string): Side => (side === 'start' ? (rtl ? 'right' : 'left') : side === 'end' ? (rtl ? 'left' : 'right') : (side as Side));
@@ -1487,10 +1491,18 @@ export function computePosition(reference: Rect, floating: { width: number; heig
     const endEdge = rtl ? reference.x : reference.x + reference.width - width;
     x = align === 'start' ? startEdge : align === 'end' ? endEdge : reference.x + reference.width / 2 - width / 2;
     x = Math.min(Math.max(x, viewport.x + padding), viewport.x + viewport.width - padding - width);
+    // Aligned to its reference's edge, a box puts the reference's centre near its own corner, where the caret
+    // would sit on the rounding: slide it just far enough to clear the corner, screen permitting.
+    const centre = reference.x + reference.width / 2;
+    x = centre - x < arrowPadding ? centre - arrowPadding : x + width - centre < arrowPadding ? centre + arrowPadding - width : x;
+    x = Math.min(Math.max(x, viewport.x + padding), viewport.x + viewport.width - padding - width);
     // Main axis too: a box held to minSize can be taller than its side's room, and must not leave the screen.
     y = Math.min(Math.max(y, viewport.y + padding), viewport.y + viewport.height - padding - size);
   } else {
     y = align === 'start' ? reference.y : align === 'end' ? reference.y + reference.height - size : reference.y + reference.height / 2 - size / 2;
+    y = Math.min(Math.max(y, viewport.y + padding), viewport.y + viewport.height - padding - size);
+    const centre = reference.y + reference.height / 2;
+    y = centre - y < arrowPadding ? centre - arrowPadding : y + size - centre < arrowPadding ? centre + arrowPadding - size : y;
     y = Math.min(Math.max(y, viewport.y + padding), viewport.y + viewport.height - padding - size);
   }
 
@@ -1858,6 +1870,11 @@ export interface AnchoredOptions {
   rtl?: boolean;
   /** Close on a pointer press outside the menu (default true). */
   dismissOnOutside?: boolean;
+  /**
+   * The least height the menu shrinks to when the side it opens on is short (default 160). Above it the menu
+   * is capped to the room it has, and a menu with more content scrolls inside rather than running off screen.
+   */
+  minSize?: number;
   onClose?: () => void;
 }
 
@@ -1897,15 +1914,22 @@ export function openAnchored(menu: HTMLElement, options: AnchoredOptions): () =>
       return { x: box.left, y: box.top, width: box.width, height: box.height };
     })();
     const viewport = view?.visualViewport;
+    // Measured at its natural height: a cap left from the last placement would make the menu look smaller.
+    menu.style.maxBlockSize = '';
+    const minSize = options.minSize ?? 160;
     const result = computePosition(
       at,
       { width: menu.offsetWidth, height: menu.offsetHeight },
       { x: viewport?.offsetLeft ?? 0, y: viewport?.offsetTop ?? 0, width: viewport?.width ?? view?.innerWidth ?? 0, height: viewport?.height ?? view?.innerHeight ?? 0 },
-      { placement: options.placement ?? 'top', offset: 8, rtl: options.rtl },
+      { placement: options.placement ?? 'top', offset: 8, rtl: options.rtl, minSize },
     );
 
     menu.style.left = `${result.x}px`;
     menu.style.top = `${result.y}px`;
+
+    if (result.side === 'top' || result.side === 'bottom') {
+      menu.style.maxBlockSize = `${Math.max(minSize, result.available)}px`;
+    }
     menu.setAttribute('data-placement', `${result.side}-${result.align}`);
 
     if (arrow) {
