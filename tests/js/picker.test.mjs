@@ -141,6 +141,28 @@ describe('version cap', () => {
     expect(cells().some((c) => c.getAttribute('aria-label') === 'melting face')).toBe(true);
   });
 
+  it('names a kaomoji tab by its group, and shows a symbol or an emoji as itself', () => {
+    expect(module.tabText({ slug: 'classic', label: 'Classic', text: true, items: [{ text: ':-)' }] })).toEqual({ text: 'Classic', label: true });
+    expect(module.tabText({ slug: 'arrows', label: 'Arrows', text: true, items: [{ text: '←' }] })).toEqual({ text: '←', label: false });
+    expect(module.tabText({ slug: 'smileys', label: 'Smileys', items: [{ hexcode: '1F600' }] })).toEqual({ text: '😀', label: false });
+  });
+
+  it('puts the result count in the results heading, and keeps the status line for screen readers', async () => {
+    const { picker, host } = await mount();
+    picker.searchInput.value = 'melt';
+    picker.searchInput.dispatchEvent(new Event('input'));
+
+    const heading = host.querySelector('.laranail-emoji-picker-heading');
+    const status = host.querySelector('.laranail-emoji-picker-status');
+    expect(heading.textContent).toBe(status.textContent);
+    expect(heading.textContent).toMatch(/result/);
+    expect(status.classList.contains('laranail-emoji-picker-status-results')).toBe(true);
+
+    picker.searchInput.value = '';
+    picker.searchInput.dispatchEvent(new Event('input'));
+    expect(status.classList.contains('laranail-emoji-picker-status-results')).toBe(false);
+  });
+
   it('hides emoji newer than an explicit cap, and searches only what is left', async () => {
     const { cells, picker } = await mount({ maxVersion: '13.0' });
 
@@ -880,17 +902,33 @@ describe('positioning (phase 2)', () => {
 
     expect(module.MIN_PANEL_HEIGHT).toBeGreaterThanOrEqual(300);
     expect(picker.panel.style.maxBlockSize).toBe(`${module.MIN_PANEL_HEIGHT}px`);
+    // Too tall for either side, it is shifted over its own trigger: no caret pointing into itself.
+    expect(picker.panel.querySelector('.laranail-emoji-picker-arrow').hidden).toBe(true);
+    // And kept on screen: 340px from 8px down ends inside the 420px viewport, not past its bottom edge.
+    expect(parseInt(picker.panel.style.top, 10) + module.MIN_PANEL_HEIGHT).toBeLessThanOrEqual(420 - 8);
     picker.close();
 
     // With room to spare, the panel keeps its own height: the floor only ever raises the limit.
     Object.defineProperty(window, 'innerHeight', { configurable: true, value: 1200 });
     picker.open();
     expect(parseInt(picker.panel.style.maxBlockSize, 10)).toBeGreaterThan(module.MIN_PANEL_HEIGHT);
+    expect(picker.panel.querySelector('.laranail-emoji-picker-arrow').hidden).toBe(false);
     picker.close();
 
     if (height) Object.defineProperty(window, 'innerHeight', height);
     delete HTMLElement.prototype.showPopover;
     delete HTMLElement.prototype.hidePopover;
+  });
+
+  it('holds a box to its minimum size on screen, over the reference, without an arrow', () => {
+    const short = { x: 0, y: 0, width: 800, height: 420 };
+    const result = computePosition(trigger(100, 195), { width: 300, height: 416 }, short, { minSize: 340 });
+
+    expect(result.y).toBeGreaterThanOrEqual(8);
+    expect(result.y + 340).toBeLessThanOrEqual(420 - 8);
+    expect(result.arrow).toBeNull();
+    // With room, minSize changes nothing and the arrow stays.
+    expect(computePosition(trigger(100, 100), { width: 300, height: 200 }, short, { minSize: 340 }).arrow).not.toBeNull();
   });
 
   it('accepts only known placements', () => {
@@ -1458,6 +1496,9 @@ describe('shortcuts, settings and autocomplete', () => {
     expect(readRecent(store.get('recent'))).toEqual([]);
     expect(clear.disabled).toBe(true);
     expect(menu.querySelectorAll('.laranail-emoji-picker-shortcuts kbd').length).toBeGreaterThanOrEqual(6);
+    // "← ↑ → ↓ · PgUp PgDn · Home End" is three chips, so a narrow menu wraps between them, not through one.
+    const move = [...menu.querySelectorAll('.laranail-emoji-picker-shortcuts dd')].find((dd) => dd.textContent.includes('PgUp'));
+    expect([...move.querySelectorAll('kbd')].map((k) => k.textContent)).toEqual(['← ↑ → ↓', 'PgUp PgDn', 'Home End']);
 
     key(menu, 'Escape');
     expect(host.querySelector('.laranail-emoji-picker-settings')).toBeNull();
@@ -1580,6 +1621,19 @@ describe('custom emoji in Frequently used', () => {
 });
 
 describe('the build', () => {
+  it("gives the shortcut keys their own colours, and the menus a raised surface their caret shares", () => {
+    const css = readFileSync(resolve(root, 'public/assets/css/picker.css'), 'utf8');
+    const kbd = css.match(/\.laranail-emoji-picker-shortcuts kbd\{([^}]*)\}/);
+
+    // A host's kbd background under the picker's own text colour made the keys unreadable.
+    expect(kbd).not.toBeNull();
+    expect(kbd[1]).toMatch(/background:/);
+    expect(kbd[1]).toMatch(/color:var\(--_lep-fg\)/);
+    // The in-panel menus fill their caret with their raised surface, not the panel's colour they sit on.
+    expect(css).toMatch(/--_lep-arrow-fill:var\(--_lep-raised\)/);
+    expect(css).toMatch(/border-block-(?:end|start)-color:var\(--_lep-arrow-fill,var\(--_lep-bg\)\)/);
+  });
+
   it("keeps a host page's own section styles out of the grid", () => {
     // The sections are <section> elements; a host's `section { padding: … }` pushed the last column out of view.
     const css = readFileSync(resolve(root, 'public/assets/css/picker.css'), 'utf8');

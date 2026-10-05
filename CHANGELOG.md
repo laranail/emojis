@@ -13,11 +13,43 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/),
   the panel could go down to 160px, and search, the content tabs, the category bar and the footer take about
   210px of that. It now stops at 340px (`MIN_PANEL_HEIGHT`), which keeps the section header and about three
   rows, and the shift step keeps the taller panel on screen. React shares the same `Popover`.
+- **A popover held to its minimum height could run off the screen.** Below a trigger near the bottom of a short
+  window it was positioned for the room it had, then drawn 340px tall past the viewport's edge. Positioning now
+  knows the minimum (`minSize`), keeps the panel inside the viewport on both axes, and drops the caret when the
+  panel covers its own trigger, where it would point into itself.
+- **The footer took a row from the grid.** The preview's 9rem basis left no room beside the tones and the settings
+  button, which wrapped onto a line of its own. The preview now takes what is left, with an ellipsis.
+- **The sticky section header was translucent**, so emoji scrolling under it showed through its label. It is
+  opaque now.
+- **A search showed its count twice and labelled the results "Search emoji".** The results heading shows the
+  count ("51 results"); the status line still announces it to screen readers but is no longer drawn.
+- **Kaomoji category tabs showed unreadable fragments** (the first four characters of a kaomoji). They show the
+  group's name as a word pill; symbol groups still show their first symbol. One helper, `tabText()`, serves both
+  adapters.
+- **The menus that open from inside the panel, and their carets, vanished into it.** The tone menu, the settings
+  menu and the shortcode suggestions sat in the panel's own colour over the panel, so in dark mode their caret
+  was a stray hairline. They use a raised surface now (`--laranail-emoji-picker-raised`: white in light mode, one
+  step lighter than the panel in dark), their caret is filled with it, and the controls inside them are tinted
+  from the text colour so they read on either surface.
+- **A host page's `kbd` style made the shortcut keys unreadable.** On a light page with the picker in dark mode
+  the keys took the page's light chip under the picker's light text. The picker now sets their background and
+  colour itself.
+- **The settings menu was too narrow**: descriptions wrapped and the key lists stacked into blocks. It is 20rem
+  (capped by the screen), rows are centred, and each key group is its own chip.
+- **Eleven category tabs overflowed an eight-column panel**, hiding the last ones. Icon tabs now share the bar's
+  width, between 1.5rem and the cell size; on a phone they keep their 44px targets and scroll.
+- **The phone sheet's drag handle drew nothing**: under border-box sizing its padding swallowed the bar. It is
+  content-box now.
+- **An inline picker could push a page past a phone's edge.** As a grid or flex item it, and the mount point
+  around it, kept the content's width as their minimum; both may shrink now, and the cells shrink with them.
 - **A host page's own `section` styles reached the grid.** The picker's sections are `<section>` elements, so a
   rule like `section { padding: 18px }` pushed the last column out of view. The picker now resets their margin,
   padding, border and background.
 
 ### Changed
+
+- **The panel is taller by default: 26rem, up from 22rem**, so the grid shows about five rows instead of three.
+  `--laranail-emoji-picker-height` sets it back.
 
 - **`npm-release` finds the publish workflow and the package itself**, so the same file works in every repository
   that publishes to npm: the first of `npm-publish.yml`, `release.yml` and `publish.yml` that takes a `registry`

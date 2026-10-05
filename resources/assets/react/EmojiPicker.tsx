@@ -13,6 +13,7 @@ import {
   shortcutList,
   Popover,
   TAB_ICONS,
+  tabText,
   TONE_SWATCHES,
   bindToneMenu,
   charOf,
@@ -78,11 +79,9 @@ function TabFace({ section }: { section: PickerSection }) {
     );
   }
 
-  const first = section.items[0];
+  const face = tabText(section);
 
-  if (section.text) return <>{first ? (first as PickerText).text.slice(0, 4) : section.label.slice(0, 2)}</>;
-
-  return <>{first && !section.custom && !('image' in first) ? charOf((first as PickerEmoji).pick ?? (first as PickerEmoji).hexcode) : '★'}</>;
+  return face.label ? <span className={`${P}-tab-label`}>{face.text}</span> : <>{face.text}</>;
 }
 
 interface Preview {
@@ -755,7 +754,7 @@ export function EmojiPicker({
             return (
               <section key={section.slug} id={sectionId(section.slug)} className={`${P}-section`} data-laranail-emoji-section={section.slug}>
                 <div className={`${P}-heading`} id={`${id}-${section.slug}`}>
-                  {section.label}
+                  {section.slug === 'search' ? resultText(strings, section.items.length) : section.label}
                 </div>
                 <div
                   className={section.text ? `${P}-grid ${P}-grid-text` : `${P}-grid`}
@@ -891,7 +890,7 @@ export function EmojiPicker({
           ))}
         </div>
         </div>
-        <div className={`${P}-status`} role="status" aria-live="polite">
+        <div className={state.resultCount === null || state.status !== 'ready' ? `${P}-status` : `${P}-status ${P}-status-results`} role="status" aria-live="polite">
           {status}
         </div>
       </div>
