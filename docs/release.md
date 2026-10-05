@@ -9,12 +9,12 @@ The package cuts a new tag for every release (`v0.1.1`, `v0.1.2`, `v0.2.0`, …)
 is a line consumers must opt into, and the install command names the current one:
 
 ```bash
-composer require laranail/emojis:^0.7
+composer require laranail/emojis:^0.8
 ```
 
 Three places name the current line, and they must agree: the newest version in `CHANGELOG.md`, the
-`dev-main` branch alias in `composer.json` (`0.7.x-dev`), and the install commands in `README.md` and
-`docs/installation.md`, the README's `npm install @laranail/emojis-picker@^0.7` among them. `tests/Unit/DocumentationTest.php` fails when they drift. They did once: after
+`dev-main` branch alias in `composer.json` (`0.8.x-dev`), and the install commands in `README.md` and
+`docs/installation.md`, the README's `npm install @laranail/emojis-picker@^0.8` among them. `tests/Unit/DocumentationTest.php` fails when they drift. They did once: after
 `v0.2.0` the alias still said `0.1.x-dev` and the docs still said `^0.1`, so anyone following them installed
 `v0.1.2`, and the weekly release-currency check compared `v0.1.2` against `main`.
 
