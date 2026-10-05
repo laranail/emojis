@@ -574,6 +574,13 @@ export interface PopoverOptions {
  * expand), the page's scroll locked, and the sheet kept above the on-screen keyboard through the visual
  * viewport. Framework-free: the vanilla picker drives it from open() and close(), React from an effect.
  */
+/**
+ * The least block size the popover shrinks to when the viewport is short. Search, the content tabs, the category
+ * bar and the footer take about 210px, so this keeps the section header and about three rows of emoji; the old
+ * 160px floor left no grid at all. A panel this tall may not fit the space beside the trigger, and the shift step
+ * keeps it on screen. It only ever raises the limit, and the default panel (22rem) is taller.
+ */
+export declare const MIN_PANEL_HEIGHT = 340;
 export declare class Popover {
     private readonly root;
     private readonly trigger;
