@@ -26,6 +26,16 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/),
 - **Kaomoji category tabs showed unreadable fragments** (the first four characters of a kaomoji). They show the
   group's name as a word pill; symbol groups still show their first symbol. One helper, `tabText()`, serves both
   adapters.
+- **A menu taller than the room beside its anchor was pushed away from it.** The settings menu, opened from a
+  popover in a short window, was placed for the room it had but drawn at full height, so it slid off its gear
+  and its caret pointed at nothing. Menus are now capped to that room (with a 160px floor, `minSize`), and the
+  settings menu's shortcut list scrolls inside it, so the menu stays beside its anchor and the caret outside its
+  box is not clipped.
+- **Carets sat on the rounded corners.** They were kept 14px from the edge, but the corners have a 14px radius
+  and the caret is 16px wide. They are kept 22px in now, and a popover or menu aligned to its anchor's edge
+  slides just far enough that its caret still points at the anchor's centre.
+- **The phone sheet showed two rows of emoji.** It is 70% of the screen height now, up to 30rem, from 55% up to
+  28rem.
 - **The menus that open from inside the panel, and their carets, vanished into it.** The tone menu, the settings
   menu and the shortcode suggestions sat in the panel's own colour over the panel, so in dark mode their caret
   was a stray hairline. They use a raised surface now (`--laranail-emoji-picker-raised`: white in light mode, one

@@ -836,8 +836,11 @@ describe('positioning (phase 2)', () => {
   it('opens below, aligned to the trigger\'s start, with the caret on the trigger\'s centre', () => {
     const p = computePosition(trigger(100, 100), panel, viewport);
 
-    expect([p.side, p.align, p.x, p.y]).toEqual(['bottom', 'start', 100, 144]);
-    expect(p.arrow).toBe(18); // the trigger's centre, 18px in from the panel's left
+    // Aligned to the trigger's start, its centre would be 18px in, on the rounded corner: the panel slides 4px
+    // so the caret sits 22px in, still on the centre.
+    expect([p.side, p.align, p.x, p.y]).toEqual(['bottom', 'start', 96, 144]);
+    expect(p.arrow).toBe(22);
+    expect(p.x + p.arrow).toBe(100 + 18);
     expect(p.hidden).toBe(false);
   });
 
@@ -874,9 +877,10 @@ describe('positioning (phase 2)', () => {
     expect(computePosition(trigger(400, 400), panel, viewport, { placement: 'top' }).align).toBe('center');
     expect(computePosition(trigger(400, 400), panel, viewport, { placement: 'start' }).side).toBe('left');
     expect(computePosition(trigger(400, 400), panel, viewport, { placement: 'start', rtl: true }).side).toBe('right');
-    expect(computePosition(trigger(400, 400), panel, viewport, { placement: 'bottom-end' }).x).toBe(400 + 36 - 300);
+    // End-aligned, plus the 4px slide that keeps the caret off the rounded corner.
+    expect(computePosition(trigger(400, 400), panel, viewport, { placement: 'bottom-end' }).x).toBe(400 + 36 - 300 + 4);
     // In RTL, "start" alignment hangs from the trigger's right edge.
-    expect(computePosition(trigger(400, 400), panel, viewport, { placement: 'bottom-start', rtl: true }).x).toBe(400 + 36 - 300);
+    expect(computePosition(trigger(400, 400), panel, viewport, { placement: 'bottom-start', rtl: true }).x).toBe(400 + 36 - 300 + 4);
     // Start with no room on the left flips to the right.
     expect(computePosition(trigger(20, 400), panel, viewport, { placement: 'start' }).side).toBe('right');
   });
@@ -931,6 +935,36 @@ describe('positioning (phase 2)', () => {
     expect(computePosition(trigger(100, 100), { width: 300, height: 200 }, short, { minSize: 340 }).arrow).not.toBeNull();
   });
 
+  it('caps a menu to the room beside its anchor, and keeps it and its caret on screen', () => {
+    const height = Object.getOwnPropertyDescriptor(window, 'innerHeight');
+    Object.defineProperty(window, 'innerHeight', { configurable: true, value: 400 });
+    const anchor = document.createElement('button');
+    anchor.getBoundingClientRect = () => ({ left: 700, top: 300, width: 30, height: 30, x: 700, y: 300, right: 730, bottom: 330 });
+    const menu = document.createElement('div');
+    const arrow = document.createElement('span');
+    menu.append(arrow);
+    Object.defineProperty(menu, 'offsetWidth', { configurable: true, get: () => 320 });
+    Object.defineProperty(menu, 'offsetHeight', { configurable: true, get: () => 420 });
+    document.body.append(anchor);
+
+    const close = module.openAnchored(menu, { anchor, container: document.body, arrow, placement: 'top-end' });
+
+    // 300px above the anchor, less the 8px gap and 8px edge: the menu is held to 284px and starts on screen.
+    expect(menu.style.maxBlockSize).toBe('284px');
+    expect(parseInt(menu.style.top, 10)).toBe(8);
+    // The caret points at the anchor's centre and clears the corner: 22px or more in from the menu's edge.
+    const left = parseInt(menu.style.left, 10);
+    const caret = parseInt(arrow.style.left, 10);
+    expect(left + caret).toBe(715);
+    expect(caret).toBeGreaterThanOrEqual(22);
+    expect(320 - caret).toBeGreaterThanOrEqual(22);
+    expect(arrow.hidden).toBe(false);
+
+    close();
+    anchor.remove();
+    if (height) Object.defineProperty(window, 'innerHeight', height);
+  });
+
   it('accepts only known placements', () => {
     expect([parsePlacement('top-end'), parsePlacement('nope'), parsePlacement(null)]).toEqual(['top-end', 'auto', 'auto']);
   });
@@ -952,8 +986,9 @@ describe('positioning (phase 2)', () => {
     picker.open();
 
     expect(picker.panel.getAttribute('popover')).toBe('manual');
-    expect([picker.panel.style.left, picker.panel.style.top]).toEqual(['100px', '144px']);
-    expect(host.querySelector('.laranail-emoji-picker-arrow').style.left).toBe('18px');
+    // Slid 4px so the caret clears the rounded corner while pointing at the trigger's centre (100 + 18).
+    expect([picker.panel.style.left, picker.panel.style.top]).toEqual(['96px', '144px']);
+    expect(host.querySelector('.laranail-emoji-picker-arrow').style.left).toBe('22px');
 
     // At the right edge it shifts left by its laid-out width (300), not its scaled one (288).
     picker.trigger.getBoundingClientRect = rect(window.innerWidth - 30, 100, 24, 24);

@@ -778,8 +778,19 @@ $sizes: (
   }
 }
 
+// Capped to the room beside its anchor, the menu keeps its theme row and button, and the shortcut list scrolls.
+// The list scrolls rather than the menu, so the caret outside the menu's box is not clipped.
+.#{$picker}-settings > :not(.#{$picker}-shortcuts, .#{$picker}-arrow) {
+  flex: none;
+}
+
 .#{$picker}-shortcuts {
   // The description keeps at least half the width; a long key list wraps under itself rather than squeezing it.
+  flex: 0 1 auto;
+  min-block-size: 0;
+  overflow-y: auto;
+  overscroll-behavior: contain;
+  scrollbar-width: thin;
   display: grid;
   grid-template-columns: minmax(50%, 1fr) minmax(0, auto);
   align-items: center;
@@ -965,7 +976,8 @@ $sizes: (
     z-index: calc(var(--_lep-z) + 1);
     inline-size: 100%;
     max-inline-size: none;
-    block-size: min(55dvh, 28rem);
+    // 55dvh left two rows on a small phone once the 44px targets were in; 70dvh keeps about four.
+    block-size: min(70dvh, 30rem);
     padding-block-end: calc(0.75rem + env(safe-area-inset-bottom, 0px));
     border-radius: var(--_lep-radius) var(--_lep-radius) 0 0;
     border-block-end: 0;
