@@ -178,9 +178,10 @@ $sizes: (
     display: none;
   }
 
+  // Inside its own border: outside it, any ancestor that clips overflow (a card, a scroll box) cut the ring off.
   &:focus-visible {
     outline: 2px solid var(--_lep-focus);
-    outline-offset: 2px;
+    outline-offset: -2px;
   }
 
   // Opens from the caret, so it grows out of the trigger.
@@ -473,10 +474,30 @@ $sizes: (
   opacity: 0.7;
 }
 
+// The chosen tone: filled, not ringed. An accent ring read as a focus ring that never went away.
 .#{$picker}-tone[aria-checked='true'] {
   background: var(--_lep-hover);
-  box-shadow: inset 0 0 0 1.5px var(--_lep-accent);
   opacity: 1;
+}
+
+// The footer shows only the chosen tone, outlined as a button, so the preview keeps room for a name; open, the
+// row of six takes the preview's place until a choice, Escape or leaving it closes it.
+.#{$picker}-footer > .#{$picker}-tones:not([data-open]) > .#{$picker}-tone {
+  &:not([aria-checked='true']) {
+    display: none;
+  }
+
+  &[aria-checked='true'] {
+    box-shadow: inset 0 0 0 1px var(--_lep-border);
+  }
+}
+
+.#{$picker}-footer:has(> .#{$picker}-tones[data-open]) > .#{$picker}-preview {
+  display: none;
+}
+
+.#{$picker}-footer > .#{$picker}-tones[data-open] {
+  margin-inline-start: auto;
 }
 
 .#{$picker}-body {
@@ -590,7 +611,10 @@ $sizes: (
   align-items: center;
   justify-content: space-between;
   gap: 0.35rem 0.5rem;
-  min-block-size: 2.25rem;
+  // The preview's height (a 1.75rem glyph beside two lines), whether it shows or not: the footer kept changing
+  // height as the preview appeared and the tone row opened, and the grid above it jumped each time.
+  // Border-box: the preview's 2.4rem, plus the padding and the border above it.
+  min-block-size: calc(2.4rem + 0.4rem + 1px);
   padding-block-start: 0.4rem;
   border-block-start: 1px solid var(--_lep-border);
 
@@ -1025,6 +1049,16 @@ $sizes: (
     inline-size: 2.75rem;
     max-inline-size: none;
     block-size: 2.75rem;
+  }
+
+  // Ten icon tabs at 44px each overflowed a phone's 336px bar, hiding the last ones with no sign they were
+  // there. They share the bar instead: 44px tall, at least 30px wide (over the 24px target minimum), and the
+  // bar still scrolls when more tabs than that fit (custom emoji, word pills).
+  .#{$picker}-tabs > .#{$picker}-tab:not(:has(> .#{$picker}-tab-label)) {
+    flex: 1 1 0;
+    inline-size: auto;
+    min-inline-size: 1.875rem;
+    max-inline-size: 2.75rem;
   }
 }
 

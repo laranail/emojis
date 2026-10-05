@@ -924,6 +924,8 @@ export declare class Picker {
     /** Marks a category tab as the current one, keeping it in view in a tab bar that scrolls sideways. */
     private markTab;
     private renderTones;
+    /** Opens or closes the footer's tone row, keeping focus on the chosen tone. */
+    private openTones;
     /** Applies a tone, updating the radios in place so the one the user is on keeps focus. */
     private setTone;
     /**

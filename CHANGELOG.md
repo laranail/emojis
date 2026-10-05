@@ -26,6 +26,17 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/),
 - **Kaomoji category tabs showed unreadable fragments** (the first four characters of a kaomoji). They show the
   group's name as a word pill; symbol groups still show their first symbol. One helper, `tabText()`, serves both
   adapters.
+- **The preview's name was cut to a few letters.** Six tone swatches beside it left the name "face wi…". The
+  footer now shows only the chosen tone, as a button; pressing it (or an arrow key on it) opens the row of six
+  in the preview's place, and a choice, Escape or moving away closes it. Escape closes the row, not the picker.
+  The same in both adapters.
+- **The chosen tone looked focused all the time.** Its accent ring read as a focus ring; it is filled instead.
+- **The footer changed height** as the preview appeared and the tone row opened, so the grid above it jumped.
+  It keeps the preview's height throughout.
+- **The panel's focus ring could be clipped.** It sat 2px outside the panel, where a card or scroll box around
+  the picker cut it off; it is drawn just inside the border now.
+- **On a phone the last category tabs were off the edge of the sheet**, ten 44px tabs in a 336px bar with
+  nothing to show more were there. Icon tabs share the bar (at least 30px wide, 44px tall).
 - **A menu taller than the room beside its anchor was pushed away from it.** The settings menu, opened from a
   popover in a short window, was placed for the room it had but drawn at full height, so it slid off its gear
   and its caret pointed at nothing. Menus are now capped to that room (with a 160px floor, `minSize`), and the

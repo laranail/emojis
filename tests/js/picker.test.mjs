@@ -369,13 +369,37 @@ describe('Picker', () => {
     const { host, picker, cells } = await mount();
     const radios = [...host.querySelectorAll('[role="radio"]')];
 
+    const row = host.querySelector('.laranail-emoji-picker-tones');
+
     expect(radios).toHaveLength(6);
+    // Closed, the footer shows only the chosen tone: the first press opens the row and changes nothing.
+    expect(row.hasAttribute('data-open')).toBe(false);
+    radios[0].click();
+    expect(row.hasAttribute('data-open')).toBe(true);
+    expect(picker.store.get('tone') ?? null).toBeNull();
     radios[3].click();
+    expect(row.hasAttribute('data-open')).toBe(false);
 
     expect(cells().find((c) => c.getAttribute('aria-label') === 'waving hand').textContent).toBe('👋🏽');
     expect(cells().find((c) => c.getAttribute('aria-label') === 'handshake').textContent).toBe('🤝🏽');
     expect(picker.store.get('tone')).toBe(3);
     expect(host.querySelector('[role="radio"][aria-checked="true"]').getAttribute('aria-label')).toBe('Medium');
+  });
+
+  it('opens the tone row on an arrow key and closes it on Escape without closing the picker', async () => {
+    const { host, picker } = await mount({ inline: false });
+    picker.open();
+    const row = host.querySelector('.laranail-emoji-picker-tones');
+    const chosen = row.querySelector('[aria-checked="true"]');
+
+    chosen.dispatchEvent(new KeyboardEvent('keydown', { key: 'ArrowRight', bubbles: true }));
+    expect(row.hasAttribute('data-open')).toBe(true);
+    expect(picker.store.get('tone')).toBe(1);
+
+    document.activeElement.dispatchEvent(new KeyboardEvent('keydown', { key: 'Escape', bubbles: true }));
+    expect(row.hasAttribute('data-open')).toBe(false);
+    expect(picker.panel.hidden).toBe(false);
+    picker.close();
   });
 
   it('moves focus with the arrow keys, Home and End, and selects with Enter', async () => {

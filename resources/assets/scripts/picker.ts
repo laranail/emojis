@@ -3289,11 +3289,25 @@ export class Picker {
       }, (cell, item) => this.openToneMenu(cell, item)));
     }
 
+    // The footer shows only the chosen tone, so the preview has room for a name; the first press opens the
+    // row of six, a choice (or Escape, or leaving it) closes it again.
     this.listen(this.tones, 'click', (event) => {
       const radio = (event.target as Element | null)?.closest?.<HTMLElement>('[role="radio"]');
 
-      if (radio) {
-        this.setTone(Number(radio.getAttribute(`${ATTR}-tone`)));
+      if (!radio) return;
+
+      if (!this.tones.hasAttribute('data-open')) {
+        this.openTones(true);
+
+        return;
+      }
+
+      this.setTone(Number(radio.getAttribute(`${ATTR}-tone`)));
+      this.openTones(false);
+    });
+    this.listen(this.tones, 'focusout', (event) => {
+      if (!this.tones.contains((event as FocusEvent).relatedTarget as Node | null)) {
+        this.openTones(false);
       }
     });
 
@@ -3627,6 +3641,14 @@ export class Picker {
     );
   }
 
+  /** Opens or closes the footer's tone row, keeping focus on the chosen tone. */
+  private openTones(open: boolean): void {
+    if (this.tones.hasAttribute('data-open') === open) return;
+
+    this.tones.toggleAttribute('data-open', open);
+    this.tones.querySelector<HTMLElement>('[aria-checked="true"]')?.focus({ preventScroll: true });
+  }
+
   /** Applies a tone, updating the radios in place so the one the user is on keeps focus. */
   private setTone(tone: number): void {
     this.options.tone = clampTone(tone);
@@ -3767,6 +3789,14 @@ export class Picker {
   private onKey(event: KeyboardEvent): void {
     const target = event.target as Element | null;
 
+    if (event.key === 'Escape' && this.tones.hasAttribute('data-open')) {
+      event.preventDefault();
+      event.stopPropagation();
+      this.openTones(false);
+
+      return;
+    }
+
     if (event.key === 'Escape') {
       // Only a popover that actually closes takes the key; otherwise it reaches the page (a <dialog> around
       // an inline picker still closes on Escape).
@@ -3823,6 +3853,11 @@ export class Picker {
       }
 
       return;
+    }
+
+    // An arrow key on the closed tone row opens it first, so the tone it moves to is visible.
+    if (radio && this.tones.contains(radio) && !this.tones.hasAttribute('data-open') && rovingIndex(6, 0, event.key, this.rtl) !== null) {
+      this.openTones(true);
     }
 
     if (tab || radio) {
