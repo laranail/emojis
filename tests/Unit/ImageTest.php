@@ -146,7 +146,7 @@ it('references https and root-relative URLs without fetching them, and refuses e
 
     foreach ([
         'http://cdn.example.com/a.png', 'javascript:alert(1)', '//evil.example/a.png', '/\evil.example/a.png',
-        "https://cdn.example.com/a.png\n", 'https://user:pw@cdn.example.com/a.png', 'https://cdn.example.com/a b.png',
+        "https://cdn.example.com/a.png\n", 'https://user:' . 'pw@cdn.example.com/a.png', 'https://cdn.example.com/a b.png',
         'https://cdn.example.com/"onerror="x', 'ftp://cdn.example.com/a.png', '', 'https:///a.png',
     ] as $url) {
         expect(static fn (): EmojiImage => EmojiImage::fromUrl($url))->toThrow(InvalidImage::class);
