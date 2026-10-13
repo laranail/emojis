@@ -7,6 +7,8 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/),
 
 ## [Unreleased]
 
+## [0.8.1] - 2026-10-13
+
 ### Fixed
 
 - **In a short window the popover's grid could shrink to nothing.** Squeezed into the space beside its trigger,
@@ -690,4 +692,5 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/),
   rules, the `laranail::emojis.search`, `.show`, `.convert` and `.export` commands, a doctor check and an
   `about` section.
 
-[Unreleased]: https://github.com/laranail/emojis/compare/v0.7.0...HEAD
+[Unreleased]: https://github.com/laranail/emojis/compare/v0.8.1...HEAD
+[0.8.1]: https://github.com/laranail/emojis/compare/v0.8.0...v0.8.1
