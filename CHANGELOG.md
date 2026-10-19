@@ -7,6 +7,10 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/),
 
 ## [Unreleased]
 
+### Changed
+
+- A guard now keeps literal credentials out of the tests, and every credential the tests generate is named with a single-word purpose, so secret scanning has nothing to report. `laranail/package-tools` in `require` is now `^0.1.10`, the first release with the purpose check.
+
 ## [0.8.1] - 2026-10-13
 
 ### Fixed
