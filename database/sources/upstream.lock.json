@@ -205,51 +205,51 @@
             "sha256": "b49d0e9f8ead51ca8b7df6fec89cc3ae6809198b4b9d43c74216da0118f23f5b"
         },
         "emojibase-data": {
-            "url": "https://cdn.jsdelivr.net/npm/emojibase-data@17.0.0/en/data.json",
+            "url": "https://cdn.jsdelivr.net/npm/emojibase-data@18.0.0/en/data.json",
             "path": "emojibase/data.json",
-            "version": "17.0.0",
+            "version": "18.0.0",
             "licence": "MIT",
-            "sha256": "ed014f1049bd370c5794f815850156196ac382850f51c3e9f6a9e83553fb3f01"
+            "sha256": "f8c561877ac08c3a33c96d1c02fd064b1dfbe24ddce8b6fd243ecb346ce96913"
         },
         "emojibase-github": {
-            "url": "https://cdn.jsdelivr.net/npm/emojibase-data@17.0.0/en/shortcodes/github.json",
+            "url": "https://cdn.jsdelivr.net/npm/emojibase-data@18.0.0/en/shortcodes/github.json",
             "path": "emojibase/sc-github.json",
-            "version": "17.0.0",
+            "version": "18.0.0",
             "licence": "MIT",
             "sha256": "d6bb7101e7bab1e52b30f4b3562da2319b484a6266352a1119f0d1ba52db23db"
         },
         "emojibase-emojibase": {
-            "url": "https://cdn.jsdelivr.net/npm/emojibase-data@17.0.0/en/shortcodes/emojibase.json",
+            "url": "https://cdn.jsdelivr.net/npm/emojibase-data@18.0.0/en/shortcodes/emojibase.json",
             "path": "emojibase/sc-emojibase.json",
-            "version": "17.0.0",
+            "version": "18.0.0",
             "licence": "MIT",
-            "sha256": "db3d41edf2f190bcb81bf171a51b1f889af774eed5dc24d21ad8dfcb998b40d3"
+            "sha256": "15d9dd86e5008624b629a4355fe5657d92d0032cf13dc04a327ddda5be2210c1"
         },
         "emojibase-slack": {
-            "url": "https://cdn.jsdelivr.net/npm/emojibase-data@17.0.0/en/shortcodes/iamcal.json",
+            "url": "https://cdn.jsdelivr.net/npm/emojibase-data@18.0.0/en/shortcodes/iamcal.json",
             "path": "emojibase/sc-iamcal.json",
-            "version": "17.0.0",
+            "version": "18.0.0",
             "licence": "MIT",
-            "sha256": "b1952bd90cb8580224434eaf8f1911265d23a78c7ed36f39f8590c90847443eb"
+            "sha256": "15936541759b97092e1dc8d37f043ebec0a93105745a2c4ed7268f1388b72fb7"
         },
         "emojibase-joypixels": {
-            "url": "https://cdn.jsdelivr.net/npm/emojibase-data@17.0.0/en/shortcodes/joypixels.json",
+            "url": "https://cdn.jsdelivr.net/npm/emojibase-data@18.0.0/en/shortcodes/joypixels.json",
             "path": "emojibase/sc-joypixels.json",
-            "version": "17.0.0",
+            "version": "18.0.0",
             "licence": "MIT",
-            "sha256": "71c0608ffb9715b0bcd7dcc5001218fee07ddbd95635e328a392b9cc07a70ab8"
+            "sha256": "6888250608f0296bed71bb29b6c67937838c9251c6fafff6ce6cfafa17c687dc"
         },
         "emojibase-cldr": {
-            "url": "https://cdn.jsdelivr.net/npm/emojibase-data@17.0.0/en/shortcodes/cldr.json",
+            "url": "https://cdn.jsdelivr.net/npm/emojibase-data@18.0.0/en/shortcodes/cldr.json",
             "path": "emojibase/sc-cldr.json",
-            "version": "17.0.0",
+            "version": "18.0.0",
             "licence": "MIT",
-            "sha256": "62577c7290e5335b9c80ef5d598eef8b743d4505a7d222e865b9df04ade4d564"
+            "sha256": "20220ef911f5ec4009d5e979317d7a69c940150ff73efd206558021db31e5dac"
         },
         "emojibase-license": {
-            "url": "https://cdn.jsdelivr.net/npm/emojibase-data@17.0.0/LICENSE",
+            "url": "https://cdn.jsdelivr.net/npm/emojibase-data@18.0.0/LICENSE",
             "path": "emojibase/LICENSE",
-            "version": "17.0.0",
+            "version": "18.0.0",
             "licence": "MIT",
             "sha256": "5c4e1582dcae9429a5d00ec0a64185c3a711f9757b2308fdf275d90b120f6149"
         },

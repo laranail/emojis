@@ -9,7 +9,7 @@ declare(strict_types=1);
  * (space-separated, primary first) and aliases (|-separated). 'map' is the emoji each tag is written for:
  * every tag's primary, plus curated extras.
  *
- * Sources: Unicode Emoji 18.0 (2026-04-30) · CLDR 48.2.0 · emojibase-data 17.0.0 · gemoji fadaeaf1f1a9 · googlefonts/emoji-metadata 173b9b26e8fc
+ * Sources: Unicode Emoji 18.0 (2026-04-30) · CLDR 48.2.0 · emojibase-data 18.0.0 · gemoji fadaeaf1f1a9 · googlefonts/emoji-metadata 173b9b26e8fc
  * Licences: docs/licences.md
  */
 return [

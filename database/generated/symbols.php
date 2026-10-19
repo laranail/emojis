@@ -9,7 +9,7 @@ declare(strict_types=1);
  * 'blocks') and shortest WHATWG named entity, keyed by code point. 'groups' lists each group's characters,
  * space-separated, in code point order ('popular' is curated).
  *
- * Sources: Unicode Emoji 18.0 (2026-04-30) · CLDR 48.2.0 · emojibase-data 17.0.0 · gemoji fadaeaf1f1a9 · googlefonts/emoji-metadata 173b9b26e8fc
+ * Sources: Unicode Emoji 18.0 (2026-04-30) · CLDR 48.2.0 · emojibase-data 18.0.0 · gemoji fadaeaf1f1a9 · googlefonts/emoji-metadata 173b9b26e8fc
  * Licences: docs/licences.md
  */
 return [
