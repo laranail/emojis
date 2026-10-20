@@ -7,6 +7,8 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/),
 
 ## [Unreleased]
 
+## [0.8.2] - 2026-10-20
+
 ### Changed
 
 - A guard now keeps literal credentials out of the tests, and every credential the tests generate is named with a single-word purpose, so secret scanning has nothing to report. `laranail/package-tools` in `require` is now `^0.1.10`, the first release with the purpose check.
@@ -696,5 +698,6 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/),
   rules, the `laranail::emojis.search`, `.show`, `.convert` and `.export` commands, a doctor check and an
   `about` section.
 
-[Unreleased]: https://github.com/laranail/emojis/compare/v0.8.1...HEAD
+[Unreleased]: https://github.com/laranail/emojis/compare/v0.8.2...HEAD
+[0.8.2]: https://github.com/laranail/emojis/compare/v0.8.1...v0.8.2
 [0.8.1]: https://github.com/laranail/emojis/compare/v0.8.0...v0.8.1
