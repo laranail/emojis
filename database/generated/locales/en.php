@@ -7,7 +7,7 @@ declare(strict_types=1);
  *
  * CLDR annotations for en: names (non-en only; en uses emoji-test names) and keywords.
  *
- * Sources: Unicode Emoji 18.0 (2026-04-30) · CLDR 48.2.0 · emojibase-data 18.0.0 · gemoji fadaeaf1f1a9 · googlefonts/emoji-metadata 173b9b26e8fc
+ * Sources: Unicode Emoji 18.0 (2026-04-30) · CLDR 49.0.0 · emojibase-data 18.0.0 · gemoji fadaeaf1f1a9 · googlefonts/emoji-metadata 173b9b26e8fc
  * Licences: docs/licences.md
  */
 return [
@@ -25,6 +25,7 @@ return [
         '1F642'                                      => 'face | happy | slightly | smile | smiling',
         '1F643'                                      => 'face | hehe | smile | upside-down',
         '1FAE0'                                      => 'disappear | dissolve | embarrassed | face | haha | heat | hot | liquid | lol | melt | melting | sarcasm | sarcastic',
+        '1FAEB'                                      => 'breaking | crumbling | masking | resilience | reveal | tension | transformation',
         '1F609'                                      => 'face | flirt | heartbreaker | sexy | slide | tease | wink | winking | winks',
         '1F60A'                                      => 'blush | eye | eyes | face | glad | satisfied | smile | smiling',
         '1F607'                                      => 'angel | angelic | angels | blessed | face | fairy | fairytale | fantasy | halo | happy | innocent | peaceful | smile | smiling | spirit | tale',
@@ -154,7 +155,7 @@ return [
         '1F49E'                                      => '143 | adorbs | anniversary | emotion | heart | hearts | revolving',
         '1F495'                                      => '143 | anniversary | date | dating | emotion | heart | hearts | ily | kisses | love | loving | two | xoxo',
         '1F49F'                                      => '143 | decoration | emotion | heart | hearth | purple | white',
-        '2763-FE0F'                                  => 'exclamation | heart | heavy | mark | punctuation',
+        '2763-FE0F'                                  => 'bang | exclamation | heart | heavy | mark | punctuation',
         '1F494'                                      => 'break | broken | crushed | emotion | heart | heartbroken | lonely | sad',
         '2764-FE0F-200D-1F525'                       => 'burn | fire | heart | love | lust | sacred',
         '2764-FE0F-200D-1FA79'                       => 'healthier | heart | improving | mending | recovering | recuperating | well',
@@ -213,6 +214,8 @@ return [
         '1FAF5'                                      => 'at | finger | hand | index | pointing | poke | viewer | you',
         '1F44D'                                      => '+1 | good | hand | like | thumb | up | yes',
         '1F44E'                                      => '-1 | bad | dislike | down | good | hand | no | nope | thumb | thumbs',
+        '1FAF9'                                      => 'grip | left | neutral | point | that | this',
+        '1FAFA'                                      => 'grip | neutral | point | right | that | this',
         '270A'                                       => 'clenched | fist | hand | punch | raised | solidarity',
         '1F44A'                                      => 'absolutely | agree | boom | bro | bruh | bump | clenched | correct | fist | hand | knuckle | oncoming | pound | punch | rock | ttyl',
         '1F91B'                                      => 'fist | left-facing | leftwards',
@@ -698,6 +701,7 @@ return [
         '1F9AA'                                      => 'diving | pearl',
         '1F40C'                                      => 'animal | escargot | garden | nature | slug',
         '1F98B'                                      => 'insect | pretty',
+        '1FACC'                                      => 'caterpillar | change | fragile | hope | insect | metamorphosis | migration | transformation',
         '1F41B'                                      => 'animal | garden | insect',
         '1F41C'                                      => 'animal | garden | insect',
         '1F41D'                                      => 'animal | bee | bumblebee | honey | insect | nature | spring',
@@ -769,6 +773,7 @@ return [
         '1F336-FE0F'                                 => 'hot | pepper',
         '1FAD1'                                      => 'bell | capsicum | food | pepper | vegetable',
         '1F952'                                      => 'food | pickle | vegetable',
+        '1FADD'                                      => 'brine | condiment | cucumber | ferment | gherkin | relish | trouble',
         '1F96C'                                      => 'bok | burgers | cabbage | choy | green | kale | leafy | lettuce | salad',
         '1F966'                                      => 'cabbage | wild',
         '1F9C4'                                      => 'flavoring',
@@ -984,6 +989,7 @@ return [
         '1F6A6'                                      => 'drove | intersection | light | signal | stop | stoplight | traffic | vertical',
         '1F6D1'                                      => 'octagonal | sign | stop',
         '1F6A7'                                      => 'barrier',
+        '1F6D9'                                      => 'beacon | enlightenment | guidance | hope | light | maritime | navigation | sea | signal',
         2693                                         => 'ship | tool',
         '1F6DF'                                      => 'buoy | float | life | lifesaver | preserver | rescue | ring | safety | save | saver | swim',
         '26F5'                                       => 'boat | resort | sailing | sea | yacht',
@@ -1083,6 +1089,7 @@ return [
         '2603-FE0F'                                  => 'cold | man | snow',
         '26C4'                                       => 'cold | man | snow | snowman',
         '2604-FE0F'                                  => 'space',
+        '1FA8B'                                      => 'apocalypse | falling | fireball | gravity | rock | space | star',
         '1F525'                                      => 'af | burn | flame | hot | lit | litaf | tool',
         '1F4A7'                                      => 'cold | comic | drop | nature | sad | sweat | tear | water | weather',
         '1F30A'                                      => 'nature | ocean | surf | surfer | surfing | water | wave',
@@ -1329,6 +1336,7 @@ return [
         '1F58A-FE0F'                                 => 'ballpoint',
         '1F58C-FE0F'                                 => 'painting',
         '1F4DD'                                      => 'communication | media | notes | pencil',
+        '1FA8C'                                      => 'correction | delete | drawing | erase | error | mistake | remove | rub | undo | writing',
         '1F4BC'                                      => 'office',
         '1F4C1'                                      => 'file | folder',
         '1F4C2'                                      => 'file | folder | open',
@@ -1357,6 +1365,7 @@ return [
         '1F510'                                      => 'bike | closed | key | lock | locked | secure',
         '1F511'                                      => 'keys | lock | major | password | unlock',
         '1F5DD-FE0F'                                 => 'clue | key | lock | old',
+        '1FA8D'                                      => 'catch | collect | mesh | trap',
         '1F528'                                      => 'home | improvement | repairs | tool',
         '1FA93'                                      => 'ax | chop | hatchet | split | wood',
         '26CF-FE0F'                                  => 'hammer | mining | tool',
@@ -1543,8 +1552,8 @@ return [
         '2049-FE0F'                                  => '! | !? | ? | exclamation | interrobang | mark | punctuation | question',
         2753                                         => '? | mark | punctuation | question | red',
         2754                                         => '? | mark | outlined | punctuation | question | white',
-        2755                                         => '! | exclamation | mark | outlined | punctuation | white',
-        2757                                         => '! | exclamation | mark | punctuation | red',
+        2755                                         => '! | bang | exclamation | mark | outlined | punctuation | white',
+        2757                                         => '! | bang | exclamation | mark | punctuation | red',
         '3030-FE0F'                                  => 'dash | punctuation | wavy',
         '1F4B1'                                      => 'bank | currency | exchange | money',
         '1F4B2'                                      => 'billion | cash | charge | currency | dollar | heavy | million | money | pay | sign',
