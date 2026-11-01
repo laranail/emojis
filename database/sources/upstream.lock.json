@@ -30,179 +30,179 @@
             "sha256": "e7a93b009565cfce55919a381437ac4db883e9da2126fa28b91d12732bc53d96"
         },
         "cldr-en": {
-            "url": "https://cdn.jsdelivr.net/npm/cldr-annotations-full@48.2.0/annotations/en/annotations.json",
+            "url": "https://cdn.jsdelivr.net/npm/cldr-annotations-full@49.0.0/annotations/en/annotations.json",
             "path": "cldr/en.json",
-            "version": "48.2.0",
+            "version": "49.0.0",
             "licence": "Unicode-3.0",
-            "sha256": "f22083cb86dffb63a643d5bacb5d9899f82d2fa5d388ad4f3aed72184acef505"
+            "sha256": "6b6b6e0e5f211bc31cf3fa39f385d80dea6cd19ee19bbc6db9071fce3ae5d360"
         },
         "cldr-ar": {
-            "url": "https://cdn.jsdelivr.net/npm/cldr-annotations-full@48.2.0/annotations/ar/annotations.json",
+            "url": "https://cdn.jsdelivr.net/npm/cldr-annotations-full@49.0.0/annotations/ar/annotations.json",
             "path": "cldr/ar.json",
-            "version": "48.2.0",
+            "version": "49.0.0",
             "licence": "Unicode-3.0",
-            "sha256": "bd722b651c4461e0b3e48a886bb4bac2db970f8567029c5442ce82b6f07e8346"
+            "sha256": "f6f32e3b3352162e435fa1e26141d2508990fef17ac74d9fa120feaa9b6957ff"
         },
         "cldr-bn": {
-            "url": "https://cdn.jsdelivr.net/npm/cldr-annotations-full@48.2.0/annotations/bn/annotations.json",
+            "url": "https://cdn.jsdelivr.net/npm/cldr-annotations-full@49.0.0/annotations/bn/annotations.json",
             "path": "cldr/bn.json",
-            "version": "48.2.0",
+            "version": "49.0.0",
             "licence": "Unicode-3.0",
-            "sha256": "6a31c21977729f545f0d181605a6a761484120d60579b97176b92f008213d91d"
+            "sha256": "d38939b13c69f0903223640774328b38b2bf95f8a473b9c4d7814da965794c0e"
         },
         "cldr-de": {
-            "url": "https://cdn.jsdelivr.net/npm/cldr-annotations-full@48.2.0/annotations/de/annotations.json",
+            "url": "https://cdn.jsdelivr.net/npm/cldr-annotations-full@49.0.0/annotations/de/annotations.json",
             "path": "cldr/de.json",
-            "version": "48.2.0",
+            "version": "49.0.0",
             "licence": "Unicode-3.0",
-            "sha256": "bfd22f5226d874843a28b6efec01db7e47dfae4ed802eceab8b416550f09e3c2"
+            "sha256": "4cf155867afb33b66b935edaac882e316c9c96a675e9c4a39af35c07f382d87c"
         },
         "cldr-es": {
-            "url": "https://cdn.jsdelivr.net/npm/cldr-annotations-full@48.2.0/annotations/es/annotations.json",
+            "url": "https://cdn.jsdelivr.net/npm/cldr-annotations-full@49.0.0/annotations/es/annotations.json",
             "path": "cldr/es.json",
-            "version": "48.2.0",
+            "version": "49.0.0",
             "licence": "Unicode-3.0",
-            "sha256": "339cdf9ae5fe6d3250d3c53b95ff6d8a4dae96c7c0d279756ee7a73c43c84b56"
+            "sha256": "f4149459f74207b235e673f62f5671c06ac97ae53f2c1d100e1eae40e54c5306"
         },
         "cldr-fa": {
-            "url": "https://cdn.jsdelivr.net/npm/cldr-annotations-full@48.2.0/annotations/fa/annotations.json",
+            "url": "https://cdn.jsdelivr.net/npm/cldr-annotations-full@49.0.0/annotations/fa/annotations.json",
             "path": "cldr/fa.json",
-            "version": "48.2.0",
+            "version": "49.0.0",
             "licence": "Unicode-3.0",
-            "sha256": "e79925c38e6e32150856cfbabba229a1f0f656a0a07b029999a4c6d2886b6400"
+            "sha256": "8cfef030b2e3520ee875f21ccc33d56d8fa8c567a2888670971039b02c11840e"
         },
         "cldr-fr": {
-            "url": "https://cdn.jsdelivr.net/npm/cldr-annotations-full@48.2.0/annotations/fr/annotations.json",
+            "url": "https://cdn.jsdelivr.net/npm/cldr-annotations-full@49.0.0/annotations/fr/annotations.json",
             "path": "cldr/fr.json",
-            "version": "48.2.0",
+            "version": "49.0.0",
             "licence": "Unicode-3.0",
-            "sha256": "33da052f74782791989e6226d60871c846799e077a5a7fb4e87ecfa7ca385733"
+            "sha256": "8448e38ec2e5a377dbaa0b9a552b46cb1d1674c972208836ab5ab52311600f1d"
         },
         "cldr-hi": {
-            "url": "https://cdn.jsdelivr.net/npm/cldr-annotations-full@48.2.0/annotations/hi/annotations.json",
+            "url": "https://cdn.jsdelivr.net/npm/cldr-annotations-full@49.0.0/annotations/hi/annotations.json",
             "path": "cldr/hi.json",
-            "version": "48.2.0",
+            "version": "49.0.0",
             "licence": "Unicode-3.0",
-            "sha256": "ffca03eeb25ca34f7b9e14e0d35a02c2c5081b35297736f969be94aaa5c2fb37"
+            "sha256": "e37cf546f11e70793d22f7c23d6f31c4581150b613630815ec7c3944f2d54f27"
         },
         "cldr-id": {
-            "url": "https://cdn.jsdelivr.net/npm/cldr-annotations-full@48.2.0/annotations/id/annotations.json",
+            "url": "https://cdn.jsdelivr.net/npm/cldr-annotations-full@49.0.0/annotations/id/annotations.json",
             "path": "cldr/id.json",
-            "version": "48.2.0",
+            "version": "49.0.0",
             "licence": "Unicode-3.0",
-            "sha256": "05012824e827cdb81337f6e77cdbc1f6ff09ca5dd9111b5f62dcd49c28146449"
+            "sha256": "58bc0c773be9c051012d9d62c7ba21668dfdc1c2cf91f565b5abe1bdb199ef97"
         },
         "cldr-it": {
-            "url": "https://cdn.jsdelivr.net/npm/cldr-annotations-full@48.2.0/annotations/it/annotations.json",
+            "url": "https://cdn.jsdelivr.net/npm/cldr-annotations-full@49.0.0/annotations/it/annotations.json",
             "path": "cldr/it.json",
-            "version": "48.2.0",
+            "version": "49.0.0",
             "licence": "Unicode-3.0",
-            "sha256": "ec8e0b6339a10de3d5a2297fa6db84239b363cc305504552c64abe4eead67ac6"
+            "sha256": "4333f166919774b795429eab5c747ef020837f9e635b83eed1cab35aac8f6d9c"
         },
         "cldr-ja": {
-            "url": "https://cdn.jsdelivr.net/npm/cldr-annotations-full@48.2.0/annotations/ja/annotations.json",
+            "url": "https://cdn.jsdelivr.net/npm/cldr-annotations-full@49.0.0/annotations/ja/annotations.json",
             "path": "cldr/ja.json",
-            "version": "48.2.0",
+            "version": "49.0.0",
             "licence": "Unicode-3.0",
-            "sha256": "737ce4bea3d52d904f7744eb7653ea55100c99232255609a913f69a5a8c3d6c1"
+            "sha256": "e42dacabf2eee0aab36c168c995efeaf8add896f8940c5ee86a809d85c2816e7"
         },
         "cldr-ko": {
-            "url": "https://cdn.jsdelivr.net/npm/cldr-annotations-full@48.2.0/annotations/ko/annotations.json",
+            "url": "https://cdn.jsdelivr.net/npm/cldr-annotations-full@49.0.0/annotations/ko/annotations.json",
             "path": "cldr/ko.json",
-            "version": "48.2.0",
+            "version": "49.0.0",
             "licence": "Unicode-3.0",
-            "sha256": "197be7720f3cc64126fee01bad5fdb668e51de5674ce5ce5ada0bd5028f3417e"
+            "sha256": "a5c9ee589b657a0252a4d951bbe2df6d2b8e95a8a24e12a152629ce055f7b5fa"
         },
         "cldr-nl": {
-            "url": "https://cdn.jsdelivr.net/npm/cldr-annotations-full@48.2.0/annotations/nl/annotations.json",
+            "url": "https://cdn.jsdelivr.net/npm/cldr-annotations-full@49.0.0/annotations/nl/annotations.json",
             "path": "cldr/nl.json",
-            "version": "48.2.0",
+            "version": "49.0.0",
             "licence": "Unicode-3.0",
-            "sha256": "d86882905773fb28f9e808ac4818041c5a89888b36a0f95dd33ce63939943118"
+            "sha256": "08d9d7678d3d411b8da584f49593f07ca040e31d835754202268f10c30beef9b"
         },
         "cldr-pl": {
-            "url": "https://cdn.jsdelivr.net/npm/cldr-annotations-full@48.2.0/annotations/pl/annotations.json",
+            "url": "https://cdn.jsdelivr.net/npm/cldr-annotations-full@49.0.0/annotations/pl/annotations.json",
             "path": "cldr/pl.json",
-            "version": "48.2.0",
+            "version": "49.0.0",
             "licence": "Unicode-3.0",
-            "sha256": "81420256d40acb05a9a512cdde5c67bafa6a373df51c93a83f02ecc200cba6fa"
+            "sha256": "e087a47a215f4aef65bdb3b6cb7bc3a3b195323a8b653650fb6812f9c0c6fe34"
         },
         "cldr-pt": {
-            "url": "https://cdn.jsdelivr.net/npm/cldr-annotations-full@48.2.0/annotations/pt/annotations.json",
+            "url": "https://cdn.jsdelivr.net/npm/cldr-annotations-full@49.0.0/annotations/pt/annotations.json",
             "path": "cldr/pt.json",
-            "version": "48.2.0",
+            "version": "49.0.0",
             "licence": "Unicode-3.0",
-            "sha256": "ebaa8e177bdafd49afe17e126274215565a420c53823f7082733b672a02c06cb"
+            "sha256": "a64a01f9906ec754487d4d903caa6fb62ee9613047a1c8cfd1c82a0216f0df5e"
         },
         "cldr-ru": {
-            "url": "https://cdn.jsdelivr.net/npm/cldr-annotations-full@48.2.0/annotations/ru/annotations.json",
+            "url": "https://cdn.jsdelivr.net/npm/cldr-annotations-full@49.0.0/annotations/ru/annotations.json",
             "path": "cldr/ru.json",
-            "version": "48.2.0",
+            "version": "49.0.0",
             "licence": "Unicode-3.0",
-            "sha256": "c483d312051dbea379bcd2ac6dec6f2712572c0c9a5d073031f4702b030e99a9"
+            "sha256": "21120cb44093843460276e571d1671a322f2bd2399cceaab4531d362ad75f62a"
         },
         "cldr-sv": {
-            "url": "https://cdn.jsdelivr.net/npm/cldr-annotations-full@48.2.0/annotations/sv/annotations.json",
+            "url": "https://cdn.jsdelivr.net/npm/cldr-annotations-full@49.0.0/annotations/sv/annotations.json",
             "path": "cldr/sv.json",
-            "version": "48.2.0",
+            "version": "49.0.0",
             "licence": "Unicode-3.0",
-            "sha256": "ed4734f62f1baa38e2dfc7c67fe7be9df9a0bfc18141bedb45bf50c441368520"
+            "sha256": "15bda553e4817f499574668557393c0c5eca4b64aebef546d0a4f3a5ef0498e0"
         },
         "cldr-sw": {
-            "url": "https://cdn.jsdelivr.net/npm/cldr-annotations-full@48.2.0/annotations/sw/annotations.json",
+            "url": "https://cdn.jsdelivr.net/npm/cldr-annotations-full@49.0.0/annotations/sw/annotations.json",
             "path": "cldr/sw.json",
-            "version": "48.2.0",
+            "version": "49.0.0",
             "licence": "Unicode-3.0",
-            "sha256": "2894fa8e5e6954103fc305b68a4351de987f9bae6350b5fa0085b0ea904d8f5a"
+            "sha256": "1ae86f13d15a7a439b6aaa9f250b1ff23458c274274124674f09071f8b76cb0a"
         },
         "cldr-th": {
-            "url": "https://cdn.jsdelivr.net/npm/cldr-annotations-full@48.2.0/annotations/th/annotations.json",
+            "url": "https://cdn.jsdelivr.net/npm/cldr-annotations-full@49.0.0/annotations/th/annotations.json",
             "path": "cldr/th.json",
-            "version": "48.2.0",
+            "version": "49.0.0",
             "licence": "Unicode-3.0",
-            "sha256": "fcc6301f8b0935921ecc3f6c8fe14873d5caadc433df2130d5657356d046c389"
+            "sha256": "f0c655eb5bfcebb8c110aafa153a16ae4a57702346a0bdf3e98c826358aedd44"
         },
         "cldr-tr": {
-            "url": "https://cdn.jsdelivr.net/npm/cldr-annotations-full@48.2.0/annotations/tr/annotations.json",
+            "url": "https://cdn.jsdelivr.net/npm/cldr-annotations-full@49.0.0/annotations/tr/annotations.json",
             "path": "cldr/tr.json",
-            "version": "48.2.0",
+            "version": "49.0.0",
             "licence": "Unicode-3.0",
-            "sha256": "203f92597ad0dbffde89083cb760c1585843e52f488c0c7866406f2ef6e881cc"
+            "sha256": "fb0e681274bfc627e8008935034618e362ec832e15b70bed1c095d89951de03f"
         },
         "cldr-uk": {
-            "url": "https://cdn.jsdelivr.net/npm/cldr-annotations-full@48.2.0/annotations/uk/annotations.json",
+            "url": "https://cdn.jsdelivr.net/npm/cldr-annotations-full@49.0.0/annotations/uk/annotations.json",
             "path": "cldr/uk.json",
-            "version": "48.2.0",
+            "version": "49.0.0",
             "licence": "Unicode-3.0",
-            "sha256": "b53eafa79658a4c8178e1aee7c066d1b5ad6997629465edfa92ef3552402816a"
+            "sha256": "33a612c15a1a715511817c56d6c1319ebffd60e62d25d4a158eacfb769bbdff6"
         },
         "cldr-vi": {
-            "url": "https://cdn.jsdelivr.net/npm/cldr-annotations-full@48.2.0/annotations/vi/annotations.json",
+            "url": "https://cdn.jsdelivr.net/npm/cldr-annotations-full@49.0.0/annotations/vi/annotations.json",
             "path": "cldr/vi.json",
-            "version": "48.2.0",
+            "version": "49.0.0",
             "licence": "Unicode-3.0",
-            "sha256": "a0a8d4c3d6fc52d843e0d69051fb025a27bce6aee2b3eade5a1488b6dd9adffd"
+            "sha256": "76881dfc7dce10be23076ce502f5303ca07c4b146804206301152dae52c6ae19"
         },
         "cldr-zh": {
-            "url": "https://cdn.jsdelivr.net/npm/cldr-annotations-full@48.2.0/annotations/zh/annotations.json",
+            "url": "https://cdn.jsdelivr.net/npm/cldr-annotations-full@49.0.0/annotations/zh/annotations.json",
             "path": "cldr/zh.json",
-            "version": "48.2.0",
+            "version": "49.0.0",
             "licence": "Unicode-3.0",
-            "sha256": "8d2dfe9bf41894bd17c9c1a1906a31bf0ccc06204bf4b77c2ab2b0d8f79a5fdf"
+            "sha256": "7d49968f977021fefe6ceea2613e0313de5ea416d8f3c0a8fe3032c9b7f2ebfb"
         },
         "cldr-zh-Hant": {
-            "url": "https://cdn.jsdelivr.net/npm/cldr-annotations-full@48.2.0/annotations/zh-Hant/annotations.json",
+            "url": "https://cdn.jsdelivr.net/npm/cldr-annotations-full@49.0.0/annotations/zh-Hant/annotations.json",
             "path": "cldr/zh-Hant.json",
-            "version": "48.2.0",
+            "version": "49.0.0",
             "licence": "Unicode-3.0",
-            "sha256": "59158786a4a0b0937a7f3a370cbe5bc79ae7f3a6155edd55914dceadf0f0a35f"
+            "sha256": "38d8fc6cf4589cb55d24b0aa8becea2023ab83f3836b4c7a94ec8cacc66123e5"
         },
         "cldr-license": {
-            "url": "https://cdn.jsdelivr.net/npm/cldr-annotations-full@48.2.0/LICENSE",
+            "url": "https://cdn.jsdelivr.net/npm/cldr-annotations-full@49.0.0/LICENSE",
             "path": "cldr/LICENSE",
-            "version": "48.2.0",
+            "version": "49.0.0",
             "licence": "Unicode-3.0",
-            "sha256": "b49d0e9f8ead51ca8b7df6fec89cc3ae6809198b4b9d43c74216da0118f23f5b"
+            "sha256": "65eb33419e22a297550a811b5b535f5e532f9a7e0114b516c0ea18afd53c3804"
         },
         "emojibase-data": {
             "url": "https://cdn.jsdelivr.net/npm/emojibase-data@18.0.0/en/data.json",
@@ -331,172 +331,172 @@
             "sha256": "ee9953a79bf2132b59b1342b217f1c377b3d03d9e7713006f6c3b89eb159f1db"
         },
         "cldr-derived-en": {
-            "url": "https://cdn.jsdelivr.net/npm/cldr-annotations-derived-full@48.2.0/annotationsDerived/en/annotations.json",
+            "url": "https://cdn.jsdelivr.net/npm/cldr-annotations-derived-full@49.0.0/annotationsDerived/en/annotations.json",
             "path": "cldr/derived/en.json",
-            "version": "48.2.0",
+            "version": "49.0.0",
             "licence": "Unicode-3.0",
-            "sha256": "15c9457afa703a32dcc78d54626418a91e820fe0ddd67b7d491c4c4d9f5846ab"
+            "sha256": "7aad034f689cb6553f8d7366bfee8c4ea2818c7776907bc5118aab575223dea3"
         },
         "cldr-derived-ar": {
-            "url": "https://cdn.jsdelivr.net/npm/cldr-annotations-derived-full@48.2.0/annotationsDerived/ar/annotations.json",
+            "url": "https://cdn.jsdelivr.net/npm/cldr-annotations-derived-full@49.0.0/annotationsDerived/ar/annotations.json",
             "path": "cldr/derived/ar.json",
-            "version": "48.2.0",
+            "version": "49.0.0",
             "licence": "Unicode-3.0",
-            "sha256": "e4fa6c26d663647de5316f921a666062cc44702b333049a15b6b775d5f1933c4"
+            "sha256": "ad850428f8356046994c12736de6228aa9af742a54037e174ba9df82da9fd874"
         },
         "cldr-derived-bn": {
-            "url": "https://cdn.jsdelivr.net/npm/cldr-annotations-derived-full@48.2.0/annotationsDerived/bn/annotations.json",
+            "url": "https://cdn.jsdelivr.net/npm/cldr-annotations-derived-full@49.0.0/annotationsDerived/bn/annotations.json",
             "path": "cldr/derived/bn.json",
-            "version": "48.2.0",
+            "version": "49.0.0",
             "licence": "Unicode-3.0",
-            "sha256": "209d8a530f69c0f3d5cfb5516e81611a150a4f6d6f3ec9030792ac29a2c7c287"
+            "sha256": "cebd380ded7477ae91d63f71609bafbce29e16bc0f1e857d93377354de071060"
         },
         "cldr-derived-de": {
-            "url": "https://cdn.jsdelivr.net/npm/cldr-annotations-derived-full@48.2.0/annotationsDerived/de/annotations.json",
+            "url": "https://cdn.jsdelivr.net/npm/cldr-annotations-derived-full@49.0.0/annotationsDerived/de/annotations.json",
             "path": "cldr/derived/de.json",
-            "version": "48.2.0",
+            "version": "49.0.0",
             "licence": "Unicode-3.0",
-            "sha256": "486a878923ef6d8303fd9b8f4472486c60575cb64a811a7dbef451bf064c4496"
+            "sha256": "f16e90bd7b197dbfa40ffc42ca284e01e4e614bd4f1c7874b67e244056699fb7"
         },
         "cldr-derived-es": {
-            "url": "https://cdn.jsdelivr.net/npm/cldr-annotations-derived-full@48.2.0/annotationsDerived/es/annotations.json",
+            "url": "https://cdn.jsdelivr.net/npm/cldr-annotations-derived-full@49.0.0/annotationsDerived/es/annotations.json",
             "path": "cldr/derived/es.json",
-            "version": "48.2.0",
+            "version": "49.0.0",
             "licence": "Unicode-3.0",
-            "sha256": "f9f43c327c5b76dbd337496738c0f5c526ee1c803dd683d60100b5fce85ab79e"
+            "sha256": "d504c1a0db44fd17431b61bc4bcf07cf26ff1159d7d9fff9b7164736016bffd7"
         },
         "cldr-derived-fa": {
-            "url": "https://cdn.jsdelivr.net/npm/cldr-annotations-derived-full@48.2.0/annotationsDerived/fa/annotations.json",
+            "url": "https://cdn.jsdelivr.net/npm/cldr-annotations-derived-full@49.0.0/annotationsDerived/fa/annotations.json",
             "path": "cldr/derived/fa.json",
-            "version": "48.2.0",
+            "version": "49.0.0",
             "licence": "Unicode-3.0",
-            "sha256": "a00f3af370371c551ca8cd24e401212ae0e3377958f189f876eec4abeac6ce82"
+            "sha256": "ad40f2b510406917ebb7558f12856e438f6270e365477d14bedf2494b2a43ec3"
         },
         "cldr-derived-fr": {
-            "url": "https://cdn.jsdelivr.net/npm/cldr-annotations-derived-full@48.2.0/annotationsDerived/fr/annotations.json",
+            "url": "https://cdn.jsdelivr.net/npm/cldr-annotations-derived-full@49.0.0/annotationsDerived/fr/annotations.json",
             "path": "cldr/derived/fr.json",
-            "version": "48.2.0",
+            "version": "49.0.0",
             "licence": "Unicode-3.0",
-            "sha256": "012bb08af81a2ea0686e8fe069388f02dbd025d62b02d7423067c452b37e8855"
+            "sha256": "3d059cc0b6fd6b9f47f600b5e55e1c2940a42eafc554f346e1e23362bfb7a9b5"
         },
         "cldr-derived-hi": {
-            "url": "https://cdn.jsdelivr.net/npm/cldr-annotations-derived-full@48.2.0/annotationsDerived/hi/annotations.json",
+            "url": "https://cdn.jsdelivr.net/npm/cldr-annotations-derived-full@49.0.0/annotationsDerived/hi/annotations.json",
             "path": "cldr/derived/hi.json",
-            "version": "48.2.0",
+            "version": "49.0.0",
             "licence": "Unicode-3.0",
-            "sha256": "5fc6b2c76c15a8db26c7a090c0f05c9ddc1e0e301a466f9c567385a7cb7020cc"
+            "sha256": "afcb1c5a44096476c2c15ee84393bbcce0289ac00704e98ad052fe42e9ddaec4"
         },
         "cldr-derived-id": {
-            "url": "https://cdn.jsdelivr.net/npm/cldr-annotations-derived-full@48.2.0/annotationsDerived/id/annotations.json",
+            "url": "https://cdn.jsdelivr.net/npm/cldr-annotations-derived-full@49.0.0/annotationsDerived/id/annotations.json",
             "path": "cldr/derived/id.json",
-            "version": "48.2.0",
+            "version": "49.0.0",
             "licence": "Unicode-3.0",
-            "sha256": "4fc73d3ce7351bee6be5f320744c32d81d58f7526b8a79c1bc5e0ef69e415f55"
+            "sha256": "0c52d9347a191e813c3d40a900b249d5cf85c8c0d7de2ece85ec999ceb21a5ae"
         },
         "cldr-derived-it": {
-            "url": "https://cdn.jsdelivr.net/npm/cldr-annotations-derived-full@48.2.0/annotationsDerived/it/annotations.json",
+            "url": "https://cdn.jsdelivr.net/npm/cldr-annotations-derived-full@49.0.0/annotationsDerived/it/annotations.json",
             "path": "cldr/derived/it.json",
-            "version": "48.2.0",
+            "version": "49.0.0",
             "licence": "Unicode-3.0",
-            "sha256": "0957417d36590b3f48956fa4e992b5c68c6f9b23e13c2e6feb26323488edd610"
+            "sha256": "bc8b97801f15c486e0306373999ce1a82c210aab119d4ba0ff4f84c2a0c8a45d"
         },
         "cldr-derived-ja": {
-            "url": "https://cdn.jsdelivr.net/npm/cldr-annotations-derived-full@48.2.0/annotationsDerived/ja/annotations.json",
+            "url": "https://cdn.jsdelivr.net/npm/cldr-annotations-derived-full@49.0.0/annotationsDerived/ja/annotations.json",
             "path": "cldr/derived/ja.json",
-            "version": "48.2.0",
+            "version": "49.0.0",
             "licence": "Unicode-3.0",
-            "sha256": "6c5496486b89d57cb6f9f0701c8052d44c23b08703d796e5e45c1d65f3902edf"
+            "sha256": "3d83cf7e4093f7fe77055dc21b1a3a65cd8f48a0249127552d58d3b058dbe4cd"
         },
         "cldr-derived-ko": {
-            "url": "https://cdn.jsdelivr.net/npm/cldr-annotations-derived-full@48.2.0/annotationsDerived/ko/annotations.json",
+            "url": "https://cdn.jsdelivr.net/npm/cldr-annotations-derived-full@49.0.0/annotationsDerived/ko/annotations.json",
             "path": "cldr/derived/ko.json",
-            "version": "48.2.0",
+            "version": "49.0.0",
             "licence": "Unicode-3.0",
-            "sha256": "69e006aaa9f0ea4568e061b0018a0f11898e19f77606e85b111b95555299f52f"
+            "sha256": "8e70f4aa18defa6c7124f6329f61b530bdc0a027bc969bb69bd0cbd1082df24e"
         },
         "cldr-derived-nl": {
-            "url": "https://cdn.jsdelivr.net/npm/cldr-annotations-derived-full@48.2.0/annotationsDerived/nl/annotations.json",
+            "url": "https://cdn.jsdelivr.net/npm/cldr-annotations-derived-full@49.0.0/annotationsDerived/nl/annotations.json",
             "path": "cldr/derived/nl.json",
-            "version": "48.2.0",
+            "version": "49.0.0",
             "licence": "Unicode-3.0",
-            "sha256": "ce2a92668829f6ebba8b8e6b31650e03facebcc6354d5df84d03604a94a28468"
+            "sha256": "901dcd965e94a154b56f6465adc4b35e428d8cead2f65e96b4652c69a4da8fe3"
         },
         "cldr-derived-pl": {
-            "url": "https://cdn.jsdelivr.net/npm/cldr-annotations-derived-full@48.2.0/annotationsDerived/pl/annotations.json",
+            "url": "https://cdn.jsdelivr.net/npm/cldr-annotations-derived-full@49.0.0/annotationsDerived/pl/annotations.json",
             "path": "cldr/derived/pl.json",
-            "version": "48.2.0",
+            "version": "49.0.0",
             "licence": "Unicode-3.0",
-            "sha256": "489db8825f8a02737595a94b0b0e6a165acbc3705f6207a4fe0aa064a645362d"
+            "sha256": "cd1c3c889035a775dc02f3f19925a207dfc339f3125443e2ec8e73ecf7e0c384"
         },
         "cldr-derived-pt": {
-            "url": "https://cdn.jsdelivr.net/npm/cldr-annotations-derived-full@48.2.0/annotationsDerived/pt/annotations.json",
+            "url": "https://cdn.jsdelivr.net/npm/cldr-annotations-derived-full@49.0.0/annotationsDerived/pt/annotations.json",
             "path": "cldr/derived/pt.json",
-            "version": "48.2.0",
+            "version": "49.0.0",
             "licence": "Unicode-3.0",
-            "sha256": "23423f141587e22c8ee07a78f8cca45a59f11fca1cc5269f63dece4b02d4b8b6"
+            "sha256": "61e65e2bde4519835701c58382d8ca531216ad4fa1d8bc3804577a5d9f4a01f1"
         },
         "cldr-derived-ru": {
-            "url": "https://cdn.jsdelivr.net/npm/cldr-annotations-derived-full@48.2.0/annotationsDerived/ru/annotations.json",
+            "url": "https://cdn.jsdelivr.net/npm/cldr-annotations-derived-full@49.0.0/annotationsDerived/ru/annotations.json",
             "path": "cldr/derived/ru.json",
-            "version": "48.2.0",
+            "version": "49.0.0",
             "licence": "Unicode-3.0",
-            "sha256": "c7106a9d14b485636620972d147232ec2e45e0d779422ed208dabad8fa186782"
+            "sha256": "8635ba86d806f938a9948b4cf3bc4a6013eeb95d6b54f108519aed37bca97db5"
         },
         "cldr-derived-sv": {
-            "url": "https://cdn.jsdelivr.net/npm/cldr-annotations-derived-full@48.2.0/annotationsDerived/sv/annotations.json",
+            "url": "https://cdn.jsdelivr.net/npm/cldr-annotations-derived-full@49.0.0/annotationsDerived/sv/annotations.json",
             "path": "cldr/derived/sv.json",
-            "version": "48.2.0",
+            "version": "49.0.0",
             "licence": "Unicode-3.0",
-            "sha256": "28babdb682780c0c062a0500f554cf96977c061ace4738e0d8ff974cdbbde4ea"
+            "sha256": "ab6d10933d19a4d1e646f5672bbd1e887bda55ed682c87c60cef3a99bfbd3dbb"
         },
         "cldr-derived-sw": {
-            "url": "https://cdn.jsdelivr.net/npm/cldr-annotations-derived-full@48.2.0/annotationsDerived/sw/annotations.json",
+            "url": "https://cdn.jsdelivr.net/npm/cldr-annotations-derived-full@49.0.0/annotationsDerived/sw/annotations.json",
             "path": "cldr/derived/sw.json",
-            "version": "48.2.0",
+            "version": "49.0.0",
             "licence": "Unicode-3.0",
-            "sha256": "8e765ccb8262a3be34600e2acf69125a60f99f7406f9e6dfae530cd8d61e3567"
+            "sha256": "f65f97975ad9fd52e4c88bd0330a7eadf48aee1422f635b2cc0084af782d5b39"
         },
         "cldr-derived-th": {
-            "url": "https://cdn.jsdelivr.net/npm/cldr-annotations-derived-full@48.2.0/annotationsDerived/th/annotations.json",
+            "url": "https://cdn.jsdelivr.net/npm/cldr-annotations-derived-full@49.0.0/annotationsDerived/th/annotations.json",
             "path": "cldr/derived/th.json",
-            "version": "48.2.0",
+            "version": "49.0.0",
             "licence": "Unicode-3.0",
-            "sha256": "11e23db9b3605763c637a6fc0ec76c466a48dafde2347bcdb52ed646706e505c"
+            "sha256": "fc8e85c3ba7ebb59dfe18d062f254154b06944b57a8477dfae3b96f0e5cb49da"
         },
         "cldr-derived-tr": {
-            "url": "https://cdn.jsdelivr.net/npm/cldr-annotations-derived-full@48.2.0/annotationsDerived/tr/annotations.json",
+            "url": "https://cdn.jsdelivr.net/npm/cldr-annotations-derived-full@49.0.0/annotationsDerived/tr/annotations.json",
             "path": "cldr/derived/tr.json",
-            "version": "48.2.0",
+            "version": "49.0.0",
             "licence": "Unicode-3.0",
-            "sha256": "3fdd3797f361e8c41a9e088db3ac9ca25a7da7209ba858249c949a889695a6ca"
+            "sha256": "60b5191d713f9a69274490c0f9b0ce4752d20da778e797ad573df8617af92e4a"
         },
         "cldr-derived-uk": {
-            "url": "https://cdn.jsdelivr.net/npm/cldr-annotations-derived-full@48.2.0/annotationsDerived/uk/annotations.json",
+            "url": "https://cdn.jsdelivr.net/npm/cldr-annotations-derived-full@49.0.0/annotationsDerived/uk/annotations.json",
             "path": "cldr/derived/uk.json",
-            "version": "48.2.0",
+            "version": "49.0.0",
             "licence": "Unicode-3.0",
-            "sha256": "bfb49f5bbd4e3021fc0c602d13ef232670f724767b4fcd5fc34d287a78f11347"
+            "sha256": "cec5079822deb3b64dac82d351df331a10b98dae141f8039417d811a51107b76"
         },
         "cldr-derived-vi": {
-            "url": "https://cdn.jsdelivr.net/npm/cldr-annotations-derived-full@48.2.0/annotationsDerived/vi/annotations.json",
+            "url": "https://cdn.jsdelivr.net/npm/cldr-annotations-derived-full@49.0.0/annotationsDerived/vi/annotations.json",
             "path": "cldr/derived/vi.json",
-            "version": "48.2.0",
+            "version": "49.0.0",
             "licence": "Unicode-3.0",
-            "sha256": "2af5588927fb68bb01aedd28aa2947aa77d31374a53bd008844d426b6ba2f062"
+            "sha256": "d28796666cdd7e977b2b9dca44337589ec9945538a811da3e415564b7c291e96"
         },
         "cldr-derived-zh": {
-            "url": "https://cdn.jsdelivr.net/npm/cldr-annotations-derived-full@48.2.0/annotationsDerived/zh/annotations.json",
+            "url": "https://cdn.jsdelivr.net/npm/cldr-annotations-derived-full@49.0.0/annotationsDerived/zh/annotations.json",
             "path": "cldr/derived/zh.json",
-            "version": "48.2.0",
+            "version": "49.0.0",
             "licence": "Unicode-3.0",
-            "sha256": "1ff96249af6fc69067f2dfabc26b450786a93d8048f2764ecfad53fd64953f92"
+            "sha256": "1b86f6dd0b295e64efddaf6028151b6c5c95616b8c98c15f5727cff2b2429d48"
         },
         "cldr-derived-zh-Hant": {
-            "url": "https://cdn.jsdelivr.net/npm/cldr-annotations-derived-full@48.2.0/annotationsDerived/zh-Hant/annotations.json",
+            "url": "https://cdn.jsdelivr.net/npm/cldr-annotations-derived-full@49.0.0/annotationsDerived/zh-Hant/annotations.json",
             "path": "cldr/derived/zh-Hant.json",
-            "version": "48.2.0",
+            "version": "49.0.0",
             "licence": "Unicode-3.0",
-            "sha256": "d7c618f1ac87131cf60e6e736899145e5e1cc152aa3a7015c07b6ec09ceac28e"
+            "sha256": "57c0deca0cd81c4551c0724c586539a6d6f5c8dfcc61f4d798197ffc868a9551"
         },
         "emoji-sources": {
             "url": "https://www.unicode.org/Public/18.0.0/ucd/EmojiSources.txt",
