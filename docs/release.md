@@ -12,9 +12,13 @@ composer require laranail/emojis:^0.1
 ```
 
 Three places name the live line and must agree: the newest `## [X.Y.Z]` section in `CHANGELOG.md`,
-the `dev-main` branch alias in `composer.json` (`0.1.x-dev`), and the install commands in
-`README.md` and `docs/installation.md`, the README's `npm install @laranail/emojis-picker@^0.1`
-among them. `tests/Unit/DocumentationTest.php` fails when they drift.
+the `dev-main` branch alias in `composer.json` (`0.1.x-dev`), and the `composer require` commands in
+`README.md` and `docs/installation.md`. `tests/Unit/DocumentationTest.php` fails when they drift.
+
+**The README's `npm install @laranail/emojis-picker` constraint is not one of them**, and must not be
+made to track this line — it reads `^0.8`. That package versions independently, for the reason under
+*What the moving tag costs* below, and `DocumentationTest` asserts the constraint is well formed and
+*not* following the Composer line, rather than asserting it matches.
 
 The 13 tags cut between 2026-09-26 and 2026-10-20 (`v0.1.0` through `v0.8.2`) were withdrawn when
 the package returned to this model. Their entries are kept in `CHANGELOG.md` under
