@@ -40,6 +40,24 @@ requires every tag to be an ancestor of `main` and the branch-alias line to have
 which a freshly moved `v0.1.0` satisfies — but it will never tell you a move is due. Treat a
 "release due" warning on this repository as "move the tag".
 
+**The JavaScript package cannot follow the moving tag, and does not try to.** GitHub Packages holds
+`@laranail/emojis-picker` up to 0.8.2 and a published version there is immutable, so publishing `0.1.0`
+from a moving tag would freeze the package at whatever the first push contained — every later move would
+find the version already present and skip it. It also cannot take the `latest` tag while 0.8.2 is
+published: a tag push failed with *"Cannot implicitly apply the \"latest\" tag because previously
+published version 0.8.2 is higher than the new version 0.1.0"*. So `npm-publish.yml` is
+`workflow_dispatch` only, the README's npm constraint is `^0.8` rather than `^0.1`, and a JavaScript
+release is its own decision with its own increasing version:
+
+```bash
+gh workflow run npm-publish.yml --repo laranail/emojis -f tag=<tag> -f registry=github
+```
+
+Check what a registry actually holds before assuming a version is free. `repo.packagist.org` and
+`registry.npmjs.org` both answer 404 for this package, and generalising from that missed GitHub Packages
+entirely; `/orgs/{org}/packages` needs `read:packages`, which the CLI app token does not carry, so the
+answer comes from `npm view <pkg>@<version> --registry https://npm.pkg.github.com` with a token.
+
 **This repository has no tag ruleset**, which is what makes a move possible at all; the family
 standard otherwise asks for one blocking deletion and update of `v*`. The two cannot both hold.
 

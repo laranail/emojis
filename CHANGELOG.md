@@ -12,8 +12,14 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/),
 The package is back on the family's single moving `v0.1.0`: one tag, re-pointed at `main` on each
 change, which consumers on `^0.1` pick up on their next `composer update`. The 13 tags cut between
 2026-09-26 and 2026-10-20 are withdrawn; their entries are kept below, because the work shipped even
-though the version numbers did not survive. Nothing was published to Packagist or npm under any of
-them, so no cache holds a version this contradicts.
+though the version numbers did not survive.
+
+Corrected: an earlier wording here said nothing was published under any of those versions, so no cache
+could hold a version this contradicts. That was measured against Packagist (404) and registry.npmjs.org
+(404) and wrongly generalised. **GitHub Packages holds `@laranail/emojis-picker` up to 0.8.2**, immutably,
+and a registry version cannot follow a tag that moves — so the JavaScript package now versions
+independently of this one and is released by hand. The Composer package is unaffected: nothing resolves
+`laranail/emojis` from a registry.
 
 This section describes the code the tag currently points at, and is rewritten whenever the tag moves.
 
