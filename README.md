@@ -34,8 +34,13 @@ package, so add a GitHub token with `read:packages` to the project's `.npmrc`:
 ```
 
 ```bash
-npm install @laranail/emojis-picker@^0.1
+npm install @laranail/emojis-picker@^0.8
 ```
+
+**The JavaScript package versions independently of the Composer package**, which is why that constraint is
+not `^0.1`. Registry versions are immutable, so a package cannot follow a tag that moves: `0.8.2` is the
+newest published build, and the Composer package's moving `v0.1.0` does not publish a JavaScript version at
+all. The picker's code is the same in both.
 
 See [installing from GitHub Packages](docs/tools/picker.md#installing-from-github-packages).
 

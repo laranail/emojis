@@ -298,3 +298,41 @@ it('builds the release notes for the moving tag without swallowing the withdrawn
         // Non-vacuity: the withdrawn tags are still in the file, demoted rather than deleted.
         ->and($demoted)->toBe(13);
 });
+
+it('never publishes the JavaScript package from a tag, because registry versions are immutable', function (): void {
+    $root = dirname(__DIR__, 2);
+    $workflow = (string) file_get_contents($root . '/.github/workflows/npm-publish.yml');
+    $readme = (string) file_get_contents($root . '/README.md');
+
+    // The Composer tag moves. A registry version does not, so publishing from the tag would freeze the package
+    // at its first push and cannot take `latest` while a higher version is published -- a tag push failed on
+    // exactly that. Only the dispatch may publish.
+    // `on:`'s children and the `jobs:` keys share the same indentation, so walk the block from the `on:` line
+    // to the next line in column zero rather than matching on indentation alone.
+    $triggers = [];
+    $inOn = false;
+
+    foreach (explode("\n", $workflow) as $line) {
+        if (rtrim($line) === 'on:') {
+            $inOn = true;
+
+            continue;
+        }
+
+        if ($inOn && $line !== '' && ! str_starts_with($line, ' ')) {
+            break;
+        }
+
+        if ($inOn && preg_match('/^  (\w+):/', $line, $m)) {
+            $triggers[] = $m[1];
+        }
+    }
+
+    expect($triggers)->toBe(['workflow_dispatch'])
+        ->and($workflow)->not->toContain("tags:\n")
+        // release.yml still fires on the tag: the Composer release is unaffected, and that must stay true.
+        ->and((string) file_get_contents($root . '/.github/workflows/release.yml'))->toContain('tags:')
+        // The README names a constraint the registry can actually resolve, which is not the Composer line.
+        ->and($readme)->toContain('@laranail/emojis-picker@^0.8')
+        ->and($readme)->not->toContain('@laranail/emojis-picker@^0.1');
+});

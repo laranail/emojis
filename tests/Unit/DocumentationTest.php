@@ -148,11 +148,17 @@ it('names the current release line wherever a version line is written', function
             ->and(array_unique($constraints[1]))->toBe([$line], $page);
     }
 
-    // The npm package carries the Composer version, so its install line moves with the same release.
+    // The npm package no longer carries the Composer version: a registry version is immutable and cannot
+    // follow a moving tag, so the two lines are independent (README says so, .github/workflows/npm-publish.yml
+    // explains why). Assert the constraint is present, resolvable-looking and NOT silently tracking $line,
+    // and that the README still tells the reader the lines differ -- dropping that sentence is the drift.
     preg_match_all('/@laranail\/emojis-picker@\^([\d.]+)/', (string) file_get_contents("{$root}/README.md"), $npm);
 
     expect($npm[1])->not->toBeEmpty()
-        ->and(array_unique($npm[1]))->toBe([$line]);
+        ->and(array_unique($npm[1]))->toHaveCount(1)
+        ->and($npm[1][0])->toMatch('/^\d+\.\d+$/')
+        ->and((string) file_get_contents("{$root}/README.md"))
+        ->toContain('versions independently of the Composer package');
 });
 
 it('documents only custom emoji names that addCustom() accepts', function (): void {

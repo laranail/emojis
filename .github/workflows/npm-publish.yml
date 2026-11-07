@@ -15,10 +15,12 @@ name: Publish to npm
 # GitHub Packages always requires authentication to install, even for a public package (see docs/tools/picker.md).
 # A tag push publishes to the registry the repository variable PUBLISH_REGISTRY names (npm when unset).
 
+# Dispatch only, deliberately. The Composer package is on a single moving `v0.1.0`, and a registry version is
+# immutable: publishing 0.1.0 from that tag would freeze the JavaScript package at whatever that first push
+# contained, because every later move would find the version already there and skip. It also cannot take the
+# `latest` tag while 0.8.2 is published, so a tag push failed outright. A JavaScript release is therefore its
+# own decision, with its own increasing version: `gh workflow run npm-publish.yml -f tag=<tag>`.
 on:
-  push:
-    tags:
-      - 'v*.*.*'
   workflow_dispatch:
     inputs:
       tag:
