@@ -303,9 +303,9 @@
             "sha256": "c88784409eba046725f00d69c47cd71691998b4edf7d35b48e8f8668e1faaa4e"
         },
         "noto-listing": {
-            "url": "https://api.github.com/repos/googlefonts/noto-emoji/git/trees/e20cbc2bbec1926686be9f9bee7d1d2cfa1fea0e:2D/svg",
+            "url": "https://api.github.com/repos/googlefonts/noto-emoji/git/trees/99701e07d3d1fe1bdbcdb14964547f0fd592966f:2D/svg",
             "path": "images/noto-tree.json",
-            "version": "e20cbc2bbec1926686be9f9bee7d1d2cfa1fea0e",
+            "version": "99701e07d3d1fe1bdbcdb14964547f0fd592966f",
             "licence": "listing only",
             "sha256": "91da947a307ddb31b75474e3adf8a9a5612f0e2c34a73c034f8691569d8361ca"
         },

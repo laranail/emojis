@@ -19,7 +19,7 @@ return [
     ],
     'versions' => [
         'twemoji'  => '17.0.3',
-        'noto'     => 'e20cbc2bbec1926686be9f9bee7d1d2cfa1fea0e',
+        'noto'     => '99701e07d3d1fe1bdbcdb14964547f0fd592966f',
         'openmoji' => '17.0.0',
         'fluent'   => '1ffb34c752ecf5d402f04cfb4b392c77f57c54bc',
     ],
