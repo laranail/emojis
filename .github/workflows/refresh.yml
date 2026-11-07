@@ -79,7 +79,12 @@ jobs:
           title: Refresh upstream emoji data
           body-path: build/refresh-report.md
           labels: dependencies
+          # Everything the refresh regenerates, or the pull request carries a tree its own CI then fails on:
+          # database/** and docs/licences.md from build-dataset.php, src/Core/Enums/** from generate-enums.php,
+          # docs/tools/* from the three doc generators (a new Unicode group adds a page, so the whole tree),
+          # and tests/js/fixtures/** for the picker fixture above.
           add-paths: |
             database/**
-            docs/licences.md
+            docs/**
             src/Core/Enums/**
+            tests/js/fixtures/**

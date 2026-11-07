@@ -254,6 +254,11 @@ if ($sets !== []) {
 // Everything built from the dataset, the docs included, so the sync-check gate below sees it current.
 $run("{$php} " . escapeshellarg(ROOT . '/.dev/tools/regenerate.php'));
 
+// The picker fixture the Vitest suite compares the browser's own URL rules against pins each image set's
+// base URL, so any image-set move makes it stale and the `composer test` gate fails on it. It is written by
+// its own test rather than by a generator, so regenerate.php does not reach it.
+$run('LARANAIL_EMOJIS_WRITE_FIXTURES=1 ' . escapeshellarg(ROOT . '/vendor/bin/pest') . ' --no-coverage ' . escapeshellarg(ROOT . '/tests/Unit/PickerImagesTest.php'));
+
 exec("{$php} " . escapeshellarg(ROOT . '/.dev/tools/cross-check.php') . ' 2>&1', $crossCheck, $crossStatus);
 $report[] = "\n## Cross-check\n\n" . implode("\n", $crossCheck);
 
