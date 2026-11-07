@@ -11,7 +11,7 @@ declare(strict_types=1);
  * Licences: docs/licences.md
  */
 return [
-    'version' => 'e20cbc2bbec1926686be9f9bee7d1d2cfa1fea0e',
+    'version' => '99701e07d3d1fe1bdbcdb14964547f0fd592966f',
     'hashes'  => [
         '0023-FE0F-20E3'                                         => 'b30bc7e2b55e0b0d64b0ca82c04269a2',
         '002A-FE0F-20E3'                                         => '07b0cb937fdba5586ccab84aa9e624a0',
