@@ -79,6 +79,10 @@ standard otherwise asks for one blocking deletion and update of `v*`. The two ca
    git -C <checkout> push --force origin v0.1.0
    ```
 
+   Where `git push --force` is unavailable — an agent session's permissions deny it — the equivalent is
+   `git push origin --delete v0.1.0 && git push origin v0.1.0`. It reaches the same end state, but
+   the tag is briefly absent, and that has a consequence of its own: step 7.
+
 5. Verify on the remote, not locally — and dereference, because an annotated tag's ref SHA is the
    tag object, never a commit:
 
@@ -88,6 +92,24 @@ standard otherwise asks for one blocking deletion and update of `v*`. The two ca
 
 6. The tag push re-runs `release.yml` against a release that already exists, so it must stay
    idempotent: view-then-edit, never `gh release create`, and re-upload assets with `--clobber`.
+
+7. **Check the release is still published.** Deleting the remote tag reverts its GitHub release to
+   a *draft*. Measured 2026-11-07: a release published at 17:58:19Z came back `isDraft: true` after
+   a delete-then-push of `v0.1.0`, while the tag itself was correct and the repository was clean.
+   A `--force` push never leaves the tag absent and was not observed to do this; the two routes in
+   step 4 are not equivalent here.
+
+   It heals itself, because the tag push re-runs `release.yml` and `softprops/action-gh-release`
+   updates the release in place — republishing it and rebuilding the body from the `## [0.1.0]`
+   section. That only holds while `release.yml` keeps its `push: tags` trigger, which is why
+   `ToolingTest` asserts it, and only if the run succeeds. **A failed run leaves a correct tag and
+   an invisible release**, and nothing else reports that state: the tag resolves, `composer`
+   installs, and `verify-tag-currency.sh` passes, because none of them reads the release. So read
+   it:
+
+   ```bash
+   gh release view v0.1.0 --repo laranail/emojis --json isDraft,targetCommitish,publishedAt
+   ```
 
 ## Moving to a new Unicode or CLDR version
 
