@@ -4,29 +4,72 @@ How `laranail/emojis` is versioned and released, and how the dataset moves to a 
 
 ## Versioning
 
-The package cuts a new tag for every release (`v0.1.1`, `v0.1.2`, `v0.2.0`, …) and never moves one. Before
-1.0 a caret constraint stops at the minor version: `^0.2` means `>=0.2.0 <0.3.0`. So each new minor version
-is a line consumers must opt into, and the install command names the current one:
+The package carries **one tag, `v0.1.0`, and moves it** on each change, which is the laranail
+family's pre-1.0 model. Consumers require `^0.1`:
 
 ```bash
-composer require laranail/emojis:^0.8
+composer require laranail/emojis:^0.1
 ```
 
-Three places name the current line, and they must agree: the newest version in `CHANGELOG.md`, the
-`dev-main` branch alias in `composer.json` (`0.8.x-dev`), and the install commands in `README.md` and
-`docs/installation.md`, the README's `npm install @laranail/emojis-picker@^0.8` among them. `tests/Unit/DocumentationTest.php` fails when they drift. They did once: after
-`v0.2.0` the alias still said `0.1.x-dev` and the docs still said `^0.1`, so anyone following them installed
-`v0.1.2`, and the weekly release-currency check compared `v0.1.2` against `main`.
+Three places name the live line and must agree: the newest `## [X.Y.Z]` section in `CHANGELOG.md`,
+the `dev-main` branch alias in `composer.json` (`0.1.x-dev`), and the install commands in
+`README.md` and `docs/installation.md`, the README's `npm install @laranail/emojis-picker@^0.1`
+among them. `tests/Unit/DocumentationTest.php` fails when they drift.
+
+The 13 tags cut between 2026-09-26 and 2026-10-20 (`v0.1.0` through `v0.8.2`) were withdrawn when
+the package returned to this model. Their entries are kept in `CHANGELOG.md` under
+`## [Internal history] (not published)`, relabelled rather than deleted.
+
+### What the moving tag costs, and what to tell consumers
+
+**A moved tag does not reach a consumer who has already fetched it.** Composer caches the dist
+archive per package *reference*, and the reference is the tag name, which never changes — so
+`composer update` reports success, resolves `v0.1.0`, and unpacks the archive it cached the first
+time. Verified across the family on 2026-08-30: a clean install resolved eight laranail packages at
+`v0.1.0` and contained none of a day's pushed work, and `composer clear-cache` then produced the
+current code from the same tag. So:
+
+- Tell consumers to run `composer clear-cache` after a tag move. Checking the remote tag is not
+  enough — verify the files under `vendor/`, in a cache you have cleared.
+- Reading the tag's commit on GitHub proves nothing about what a consumer receives.
+
+**The org-wide release-currency check is built on the opposite model.** `laranail/.github`'s
+reusable `hygiene.yml` runs `laranail/package-tools`' `verify-tag-currency.sh`, whose header reads
+"Release tags are immutable … nothing it prints suggests moving a tag". It still passes here — it
+requires every tag to be an ancestor of `main` and the branch-alias line to have a tag, both of
+which a freshly moved `v0.1.0` satisfies — but it will never tell you a move is due. Treat a
+"release due" warning on this repository as "move the tag".
+
+**This repository has no tag ruleset**, which is what makes a move possible at all; the family
+standard otherwise asks for one blocking deletion and update of `v*`. The two cannot both hold.
 
 ## Releasing
 
-1. Land the changes on `main` through pull requests; CI must be green.
-2. Open a `release/vX.Y.Z` pull request with one `Release X.Y.Z` commit: rename `## [Unreleased]` in
-   `CHANGELOG.md` to `## [X.Y.Z] - <date>`. For a new minor version, also move the branch alias and the
-   install commands to the new line.
-3. After it merges, tag the merge commit, `git tag vX.Y.Z && git push origin vX.Y.Z`. The tag-driven
-   `release.yml` refuses a tag while `[Unreleased]` still has entries, builds the release notes from the
-   version's section (and fails if there is none), and attaches a CycloneDX SBOM.
+1. Land the change on `main` through a pull request; CI must be green.
+2. Rewrite the `## [0.1.0]` section in `CHANGELOG.md` so it describes the code the tag will point
+   at, and move anything under `## [Unreleased]` into it. `release.yml` refuses a tag while
+   `[Unreleased]` still has entries, and builds the release notes from the version's own section.
+3. **Land the branch first, then move the tag.** The branch ruleset requires a pull request while
+   tags are unprotected, so `git push --force origin v0.1.0` succeeds even when a direct push to
+   `main` is refused — which is how a tag ends up on a commit that is on no branch. Composer's VCS
+   driver reads tags, not reachability, and would offer that orphan as newest.
+4. Move the tag onto the merge commit:
+
+   ```bash
+   git -C <checkout> fetch origin main:main
+   git -C <checkout> tag -f v0.1.0 main
+   git -C <checkout> push --force origin v0.1.0
+   ```
+
+5. Verify on the remote, not locally — and dereference, because an annotated tag's ref SHA is the
+   tag object, never a commit:
+
+   ```bash
+   git ls-remote origin 'refs/tags/v0.1.0^{}'   # falls back to refs/tags/v0.1.0 if lightweight
+   ```
+
+6. The tag push re-runs `release.yml` against a release that already exists, so it must stay
+   idempotent: view-then-edit, never `gh release create`, and re-upload assets with `--clobber`.
 
 ## Moving to a new Unicode or CLDR version
 

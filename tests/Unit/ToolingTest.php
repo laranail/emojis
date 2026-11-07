@@ -249,3 +249,52 @@ it('takes the registry as its first argument and refuses anything it does not kn
     expect($run('gihtub'))->toBe([64, "npm-release: unknown argument 'gihtub' (see --help)\n"])
         ->and($run('--registry=pypi')[0])->toBe(64);
 });
+
+it('builds the release notes for the moving tag without swallowing the withdrawn history', function (): void {
+    $root = dirname(__DIR__, 2);
+    $changelog = (string) file_get_contents($root . '/CHANGELOG.md');
+    $workflow = (string) file_get_contents($root . '/.github/workflows/release.yml');
+
+    // release.yml ends a section at the next line starting "## [". Assert the delimiter it really uses,
+    // so a change there fails here rather than at the next tag push.
+    expect($workflow)->toContain('f && /^## \[/ { exit }');
+
+    /** @return list<string> the lines release.yml would take for this heading */
+    $section = static function (string $heading) use ($changelog): array {
+        $lines = explode("\n", $changelog);
+        $taken = [];
+        $in = false;
+
+        foreach ($lines as $line) {
+            if (str_starts_with($line, $heading)) {
+                $in = true;
+
+                continue;
+            }
+
+            if ($in && str_starts_with($line, '## [')) {
+                break;
+            }
+
+            if ($in) {
+                $taken[] = $line;
+            }
+        }
+
+        return $taken;
+    };
+
+    $notes = implode("\n", $section('## [0.1.0]'));
+    $unreleased = trim(implode("\n", $section('## [Unreleased]')));
+    $demoted = preg_match_all('/^### \[0\.\d+\.\d+\] - /m', $changelog);
+
+    // The heading that ends the notes keeps its bracket on purpose: without it the extractor runs on and
+    // every withdrawn section ships as the release notes for v0.1.0.
+    expect($changelog)->toContain("\n## [Internal history] (not published)\n")
+        ->and(trim($notes))->not->toBe('', 'release.yml refuses a tag whose section is empty')
+        ->and($notes)->not->toContain('### [0.8.2]')
+        ->and($notes)->not->toContain('### [0.1.0]')
+        ->and($unreleased)->toBe('', 'release.yml refuses a tag while [Unreleased] has entries')
+        // Non-vacuity: the withdrawn tags are still in the file, demoted rather than deleted.
+        ->and($demoted)->toBe(13);
+});
