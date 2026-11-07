@@ -16,8 +16,12 @@ declare(strict_types=1);
  * upstream changed content under an unchanged name and the refresh stops rather than pinning it.
  *
  * When an image set moves, every image of it is downloaded (hash-checked by content, not trusted), its
- * margins are re-measured (.dev/tools/measure, needs Node) and its hashes recorded. Then the dataset and enums
- * are regenerated and .dev/tools/cross-check.php compares the catalogue with the published lists.
+ * margins are re-measured (.dev/tools/measure, needs Node) and its hashes recorded. That takes two builds of
+ * the dataset, because each image URL carries its set's pinned version: the first build is what points the
+ * downloads at the new artwork, and it runs with --remeasuring so the moved sets' crops and hashes — still
+ * measured from the old artwork — are left out instead of failing the build. The second build takes the fresh
+ * measurements under the usual version check. Then the dataset and enums are regenerated and
+ * .dev/tools/cross-check.php compares the catalogue with the published lists.
  *
  * Network access is limited to the hosts in HOSTS, over https, without redirects. A summary for the pull
  * request body is written to build/refresh-report.md.
@@ -201,11 +205,21 @@ $run = static function (string $command) use ($fail): void {
     $status === 0 || $fail("step failed: {$command}");
 };
 
-$run("{$php} " . escapeshellarg(ROOT . '/.dev/tools/build-dataset.php'));
-
 // An image set that moved: fetch every file (checked below by measuring and hashing what arrived), then
 // re-measure margins and re-record hashes, and rebuild so crops and hashes match the new version.
 $sets = array_values(array_filter(array_column($changes, 3)));
+
+/** @param list<string> $remeasuring sets whose committed crops and hashes this build leaves out */
+$buildDataset = static function (array $remeasuring = []) use ($run, $php): void {
+    $run("{$php} " . escapeshellarg(ROOT . '/.dev/tools/build-dataset.php') . ($remeasuring === [] ? '' : ' ' . escapeshellarg('--remeasuring=' . implode(',', $remeasuring))));
+};
+
+// image-urls.php reads the URLs out of the built dataset, and every URL carries its set's pinned version
+// (src/Core/Render/ImageSets.php), so a moved set cannot be measured until a build has recorded the new
+// version — while that same build is the one that would refuse the committed measurements for still being at
+// the old version. Hence --remeasuring here: the moved sets sit this build out, and the build after the
+// re-measure includes them with the check enforced. Without a moved set this is the plain build it always was.
+$buildDataset($sets);
 
 if ($sets !== []) {
     $run("{$php} " . escapeshellarg(ROOT . '/.dev/tools/measure/image-urls.php') . ' ' . implode(' ', array_map(escapeshellarg(...), $sets)));
@@ -234,7 +248,7 @@ if ($sets !== []) {
         $report[] = "- **{$set}** images re-downloaded, re-measured and re-hashed";
     }
 
-    $run("{$php} " . escapeshellarg(ROOT . '/.dev/tools/build-dataset.php'));
+    $buildDataset();
 }
 
 // Everything built from the dataset, the docs included, so the sync-check gate below sees it current.

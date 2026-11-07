@@ -27,6 +27,80 @@ it('lists every generator once, so regenerate and sync-check cannot drift apart'
     expect((string) file_get_contents("{$tools}/refresh.php"))->toContain('regenerate.php');
 });
 
+it('leaves a moved image set out of the build that precedes measuring it, and puts it back after', function (): void {
+    $script = (string) file_get_contents(dirname(__DIR__, 2) . '/.dev/tools/refresh.php');
+
+    // Every image URL carries its set's pinned version, so a moved set can only be measured from a build that
+    // already records the new version -- and that same build is the one that would otherwise refuse the
+    // committed measurements for still being a version behind. The order below is what keeps both true. Before
+    // it, the first build failed on exactly that, and the re-measure that would have settled it never ran: the
+    // weekly refresh died the first time an image set moved, having never once exercised the branch before.
+    $decided = mb_strpos($script, '$sets = array_values(array_filter(array_column($changes, 3)));');
+    $first = mb_strpos($script, '$buildDataset($sets);');
+    $measured = mb_strpos($script, 'measure-bounds.mjs');
+    $strict = mb_strpos($script, '$buildDataset();');
+
+    expect([$decided, $first, $measured, $strict])->not->toContain(false)
+        ->and($decided)->toBeLessThan($first)
+        ->and($first)->toBeLessThan($measured)
+        ->and($measured)->toBeLessThan($strict);
+
+    // One invocation behind one closure, so the two call sites cannot drift apart over which flag they pass.
+    expect(mb_substr_count($script, "/.dev/tools/build-dataset.php'"))->toBe(1)
+        ->and($script)->toContain('$buildDataset = static function (array $remeasuring = [])')
+        ->and($script)->toContain('--remeasuring=');
+});
+
+it('refuses an image set it does not know, before it reads a single source', function (): void {
+    // --check so this writes nothing: the names are read before any source is, so the verdict does not
+    // depend on the source cache either way, and the test cannot leave a half-built dataset behind.
+    $run = static function (string $arg): array {
+        $script = dirname(__DIR__, 2) . '/.dev/tools/build-dataset.php';
+        $process = proc_open([PHP_BINARY, $script, $arg, '--check'], [0 => ['pipe', 'r'], 1 => ['pipe', 'w'], 2 => ['pipe', 'w']], $pipes);
+        $output = stream_get_contents($pipes[1]) . stream_get_contents($pipes[2]);
+        fclose($pipes[0]);
+
+        return [proc_close($process), $output];
+    };
+
+    [$exit, $output] = $run('--remeasuring=not0');
+
+    // Named by the mistake, and refused before the sources are even looked at, so a typo in the weekly
+    // refresh cannot waive the check for nothing and leave the build to fail somewhere less legible.
+    expect($exit)->toBe(1)
+        ->and($output)->toContain('--remeasuring names an unknown image set: not0')
+        ->and($output)->toContain('known: twemoji, noto, openmoji, fluent');
+
+    // A set it does know gets past the name check; what happens after that depends on the source cache.
+    expect($run('--remeasuring=noto')[1])->not->toContain('unknown image set');
+});
+
+it('has every image set measured and hashed at the version the lock pins', function (): void {
+    $root = dirname(__DIR__, 2);
+    $lock = json_decode((string) file_get_contents($root . '/database/sources/upstream.lock.json'), true, flags: JSON_THROW_ON_ERROR)['sources'];
+    $sets = ['twemoji' => 'twemoji-listing', 'noto' => 'noto-listing', 'openmoji' => 'openmoji-data', 'fluent' => 'fluent-listing'];
+    $checked = 0;
+
+    foreach ($sets as $set => $lockId) {
+        foreach (['bounds', 'hashes'] as $kind) {
+            $file = "{$root}/database/sources/measured/{$kind}/{$set}.json";
+            expect($file)->toBeFile();
+            $measured = json_decode((string) file_get_contents($file), true, flags: JSON_THROW_ON_ERROR);
+
+            // build-dataset.php refuses a mismatch, and --remeasuring waives that for one build inside the
+            // weekly refresh. This is what says the waiver was temporary: a refresh that stopped between the
+            // two builds would leave a set pinned to one version and measured at another, and land here.
+            expect($measured['version'])->toBe($lock[$lockId]['version'], "{$kind}/{$set}.json is not at the pinned version");
+            $checked++;
+        }
+    }
+
+    // The sets above are the generator's own list; adding one there has to be reflected here.
+    expect($checked)->toBe(8)
+        ->and((string) file_get_contents($root . '/.dev/tools/build-dataset.php'))
+        ->toContain("const IMAGE_SETS = ['twemoji' => 'twemoji-listing', 'noto' => 'noto-listing', 'openmoji' => 'openmoji-data', 'fluent' => 'fluent-listing'];");
+});
+
 it('sends a GitHub token to the GitHub API only, so a download never leaks it', function (string $url, ?string $token, ?string $expected): void {
     require_once dirname(__DIR__, 2) . '/.dev/tools/lib/GitHubAuth.php';
 

@@ -13,6 +13,12 @@ declare(strict_types=1);
  *   php .dev/tools/build-dataset.php --fetch    download any missing source into build/cache/sources first
  *   php .dev/tools/build-dataset.php --lock     rewrite database/sources/upstream.lock.json from the cached files
  *                                          (maintainer action when bumping a source, never in CI)
+ *   php .dev/tools/build-dataset.php --remeasuring=noto,fluent
+ *                                          build without those sets' crops and hashes. Only refresh.php uses
+ *                                          it, for the build that exists to give image-urls.php the new
+ *                                          version's URLs while the committed measurements still describe the
+ *                                          previous one; the build after the re-measure takes no flag and
+ *                                          enforces the match as usual.
  *
  * Sources are cached under build/cache/sources (gitignored). When they are absent and --fetch is not
  * given, --check reports SKIP and exits 0, mirroring atlas: a contributor without the sources can still
@@ -45,6 +51,9 @@ const IMG_NOTO = 2;
 const IMG_OPENMOJI = 4;
 const IMG_FLUENT = 8;
 
+/** Each image set and the lock entry that pins it: the version its committed measurements must have been taken at. */
+const IMAGE_SETS = ['twemoji' => 'twemoji-listing', 'noto' => 'noto-listing', 'openmoji' => 'openmoji-data', 'fluent' => 'fluent-listing'];
+
 /** The locales shipped. en is always first; the rest are CLDR "modern" coverage locales chosen for reach. */
 const LOCALES = ['en', 'ar', 'bn', 'de', 'es', 'fa', 'fr', 'hi', 'id', 'it', 'ja', 'ko', 'nl', 'pl', 'pt', 'ru', 'sv', 'sw', 'th', 'tr', 'uk', 'vi', 'zh', 'zh-Hant'];
 
@@ -60,6 +69,20 @@ $fail = static function (string $message): never {
 
     exit(1);
 };
+
+// Sets refresh.php is about to re-measure: their committed crops and hashes still describe the previous
+// version's artwork, so this build leaves them out rather than emitting measurements of different images.
+// Validated here, not where they are read, so a mistyped set name fails before anything is downloaded.
+$remeasuring = [];
+
+foreach ($args as $arg) {
+    if (str_starts_with($arg, '--remeasuring=')) {
+        $remeasuring = array_values(array_filter(array_map(trim(...), explode(',', substr($arg, strlen('--remeasuring='))))));
+    }
+}
+
+$unknown = array_values(array_diff($remeasuring, array_keys(IMAGE_SETS)));
+$unknown === [] || $fail('--remeasuring names an unknown image set: ' . implode(', ', $unknown) . ' (known: ' . implode(', ', array_keys(IMAGE_SETS)) . ')');
 
 /** @var array<string, array{url: string, path: string, sha256: string}> $lock */
 $lock = json_decode((string) file_get_contents(LOCK), true, flags: JSON_THROW_ON_ERROR)['sources'];
@@ -925,12 +948,12 @@ unset($record);
 // ---------------------------------------------------------------------------------------------------
 
 $crops = [];
-$imageVersions = ['twemoji' => 'twemoji-listing', 'noto' => 'noto-listing', 'openmoji' => 'openmoji-data', 'fluent' => 'fluent-listing'];
 
-foreach ($imageVersions as $set => $lockId) {
+foreach (IMAGE_SETS as $set => $lockId) {
     $file = MEASURED . "/bounds/{$set}.json";
 
-    if (! is_file($file)) {
+    // A set being re-measured contributes no crops: the file on disk measured the previous version's images.
+    if (in_array($set, $remeasuring, true) || ! is_file($file)) {
         continue;
     }
 
@@ -967,10 +990,10 @@ foreach ($imageVersions as $set => $lockId) {
 
 $imageHashes = [];
 
-foreach ($imageVersions as $set => $lockId) {
+foreach (IMAGE_SETS as $set => $lockId) {
     $file = MEASURED . "/hashes/{$set}.json";
 
-    if (! is_file($file)) {
+    if (in_array($set, $remeasuring, true) || ! is_file($file)) {
         continue;
     }
 
@@ -1196,7 +1219,7 @@ $files = [
 ];
 
 foreach ($imageHashes as $set => $hashes) {
-    $files["image-hashes/{$set}.php"] = PhpEmitter::file(['version' => $lock[$imageVersions[$set]]['version'], 'hashes' => $hashes], $header("SHA-256 (first 128 bits) of each {$set} image at the pinned version, keyed by hexcode. Read only by the image installer."));
+    $files["image-hashes/{$set}.php"] = PhpEmitter::file(['version' => $lock[IMAGE_SETS[$set]]['version'], 'hashes' => $hashes], $header("SHA-256 (first 128 bits) of each {$set} image at the pinned version, keyed by hexcode. Read only by the image installer."));
 }
 
 foreach ($locales as $locale => $data) {
