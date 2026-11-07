@@ -7,13 +7,30 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/),
 
 ## [Unreleased]
 
-## [0.8.2] - 2026-10-20
+## [0.1.0] - 2026-11-07
+
+The package is back on the family's single moving `v0.1.0`: one tag, re-pointed at `main` on each
+change, which consumers on `^0.1` pick up on their next `composer update`. The 13 tags cut between
+2026-09-26 and 2026-10-20 are withdrawn; their entries are kept below, because the work shipped even
+though the version numbers did not survive. Nothing was published to Packagist or npm under any of
+them, so no cache holds a version this contradicts.
+
+This section describes the code the tag currently points at, and is rewritten whenever the tag moves.
+
+## [Internal history] (not published)
+
+Withdrawn tags, kept verbatim and demoted one level. The `0.1.0` dated 2026-09-26 below is a
+different commit from the moving `v0.1.0` above. The bracket in the heading is load-bearing:
+`release.yml` ends a version's release notes at the next `^## [`, so a heading without it would put
+all of this into the notes for `v0.1.0`.
+
+### [0.8.2] - 2026-10-20
 
 ### Changed
 
 - A guard now keeps literal credentials out of the tests, and every credential the tests generate is named with a single-word purpose, so secret scanning has nothing to report. `laranail/package-tools` in `require` is now `^0.1.10`, the first release with the purpose check.
 
-## [0.8.1] - 2026-10-13
+### [0.8.1] - 2026-10-13
 
 ### Fixed
 
@@ -85,7 +102,7 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/),
   input, and in a private workspace root the first workspace's package. It also honours any `vars.X == 'true'`
   gate the workflow declares, not only `NPM_PUBLISH`.
 
-## [0.8.0] - 2026-10-04
+### [0.8.0] - 2026-10-04
 
 ### Fixed
 
@@ -130,7 +147,7 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/),
   others (keyed `custom:<name>`, so they cannot collide with a hexcode) and drop out when the payload no
   longer has them or custom emoji are switched off.
 
-## [0.7.0] - 2026-10-04
+### [0.7.0] - 2026-10-04
 
 ### Added
 
@@ -164,7 +181,7 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/),
   catalogue, an inline picker's cold first paint went from 156 ms to about 60 ms, and a closed popover's mount
   from 6–12 ms to under a millisecond.
 
-## [0.6.0] - 2026-10-03
+### [0.6.0] - 2026-10-03
 
 ### Fixed
 
@@ -279,7 +296,7 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/),
 - New theme tokens: `--laranail-emoji-picker-shadow`, `-cell-radius`, `-z` and `-image-size`.
 - `./react` exports the pure helpers for a custom UI; the hook gains `detailOf()` and `commitRecents()`.
 
-## [0.5.1] - 2026-10-03
+### [0.5.1] - 2026-10-03
 
 ### Fixed
 
@@ -296,7 +313,7 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/),
   whether the token authenticates at all. `package.json`'s `repository.url` uses the `git+https` form npm
   expects.
 
-## [0.5.0] - 2026-10-02
+### [0.5.0] - 2026-10-02
 
 ### Added
 
@@ -318,7 +335,7 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/),
   from the source (`npm run types`) instead of written by hand, and `npm run typecheck` fails when the two
   differ.
 
-## [0.4.0] - 2026-10-02
+### [0.4.0] - 2026-10-02
 
 ### Added
 
@@ -429,7 +446,7 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/),
   the upgrade notes merged into one section with steps for 0.2 → 0.3 and 0.3 → 0.4, and two 0.2.0 entries
   that named `tools/` after it had moved to `.dev/tools/`.
 
-## [0.3.0] - 2026-10-02
+### [0.3.0] - 2026-10-02
 
 ### Added
 
@@ -515,7 +532,7 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/),
 - The Tests workflow runs on every pull request, Markdown-only ones included, because its checks are now
   required to merge into `main`; a required check that never reports would block a release PR forever.
 
-## [0.2.0] - 2026-09-28
+### [0.2.0] - 2026-09-28
 
 ### Added
 
@@ -594,7 +611,7 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/),
 - The console-output recipe shows styled output through the formatter, and the terminal page gains a
   *laranail/console* section describing how the two packages connect.
 
-## [0.1.2] - 2026-09-27
+### [0.1.2] - 2026-09-27
 
 ### Added
 
@@ -653,7 +670,7 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/),
   not cached, so each instance reports its own degradation). This package's suite needed more than 320 MB
   and ran out under the common 256 MB limit; it now fits in 192 MB.
 
-## [0.1.1] - 2026-09-26
+### [0.1.1] - 2026-09-26
 
 ### Added
 
@@ -662,7 +679,7 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/),
   every shortcode and for console's width measurement to recognise emoji newer than its own table.
   Requires laranail/console 0.1.2 or later, which ships the contract; an older console never loads the class.
 
-## [0.1.0] - 2026-09-26
+### [0.1.0] - 2026-09-26
 
 ### Added
 
@@ -699,5 +716,4 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/),
   `about` section.
 
 [Unreleased]: https://github.com/laranail/emojis/compare/v0.8.2...HEAD
-[0.8.2]: https://github.com/laranail/emojis/compare/v0.8.1...v0.8.2
-[0.8.1]: https://github.com/laranail/emojis/compare/v0.8.0...v0.8.1
+[0.1.0]: https://github.com/laranail/emojis/releases/tag/v0.1.0
