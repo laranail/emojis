@@ -103,13 +103,22 @@ standard otherwise asks for one blocking deletion and update of `v*`. The two ca
    A `--force` push never leaves the tag absent and was not observed to do this; the two routes in
    step 4 are not equivalent here.
 
-   It heals itself, because the tag push re-runs `release.yml` and `softprops/action-gh-release`
-   updates the release in place — republishing it and rebuilding the body from the `## [0.1.0]`
-   section. That only holds while `release.yml` keeps its `push: tags` trigger, which is why
-   `ToolingTest` asserts it, and only if the run succeeds. **A failed run leaves a correct tag and
-   an invisible release**, and nothing else reports that state: the tag resolves, `composer`
-   installs, and `verify-tag-currency.sh` passes, because none of them reads the release. So read
-   it:
+   It heals itself here, because the tag push re-runs `release.yml` and
+   `softprops/action-gh-release` updates the release in place — republishing it and rebuilding the
+   body from the `## [0.1.0]` section. That depends on three things, and the third is the one that
+   catches people: the trigger must still be `push: tags` (which is why `ToolingTest` asserts it),
+   the run must succeed, **and the step that updates the release must actually clear the draft
+   flag.** `softprops/action-gh-release` sets `draft: false` on every run, so it does. A hand-rolled
+   `gh release edit` does **not** — it leaves the flag as it found it.
+
+   **Measured 2026-11-08 across three repositories moving their tag the same way.** `laranail/emojis`
+   and `laranail/ai-compliance` both use the action and both republished on their own.
+   `laranail/validation-js` edits the release with `gh release edit --notes-file` and no
+   `--draft=false`: its run went **green** and its release stayed a draft, invisible, until it was
+   published by hand. So a failed run is not the only way to end up with a correct tag and no
+   release — **a successful one will do it too.** Nothing else reports that state either: the tag
+   resolves, `composer` installs, and `verify-tag-currency.sh` passes, because none of them reads
+   the release. So read it:
 
    ```bash
    gh release view v0.1.0 --repo laranail/emojis --json isDraft,targetCommitish,publishedAt
