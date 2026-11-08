@@ -12,9 +12,13 @@ composer require laranail/emojis:^0.1
 ```
 
 Three places name the live line and must agree: the newest `## [X.Y.Z]` section in `CHANGELOG.md`,
-the `dev-main` branch alias in `composer.json` (`0.1.x-dev`), and the install commands in
-`README.md` and `docs/installation.md`, the README's `npm install @laranail/emojis-picker@^0.1`
-among them. `tests/Unit/DocumentationTest.php` fails when they drift.
+the `dev-main` branch alias in `composer.json` (`0.1.x-dev`), and the `composer require` commands in
+`README.md` and `docs/installation.md`. `tests/Unit/DocumentationTest.php` fails when they drift.
+
+**The README's `npm install @laranail/emojis-picker` constraint is not one of them**, and must not be
+made to track this line — it reads `^0.8`. That package versions independently, for the reason under
+*What the moving tag costs* below, and `DocumentationTest` asserts the constraint is well formed and
+*not* following the Composer line, rather than asserting it matches.
 
 The 13 tags cut between 2026-09-26 and 2026-10-20 (`v0.1.0` through `v0.8.2`) were withdrawn when
 the package returned to this model. Their entries are kept in `CHANGELOG.md` under
@@ -79,6 +83,10 @@ standard otherwise asks for one blocking deletion and update of `v*`. The two ca
    git -C <checkout> push --force origin v0.1.0
    ```
 
+   Where `git push --force` is unavailable — an agent session's permissions deny it — the equivalent is
+   `git push origin --delete v0.1.0 && git push origin v0.1.0`. It reaches the same end state, but
+   the tag is briefly absent, and that has a consequence of its own: step 7.
+
 5. Verify on the remote, not locally — and dereference, because an annotated tag's ref SHA is the
    tag object, never a commit:
 
@@ -88,6 +96,40 @@ standard otherwise asks for one blocking deletion and update of `v*`. The two ca
 
 6. The tag push re-runs `release.yml` against a release that already exists, so it must stay
    idempotent: view-then-edit, never `gh release create`, and re-upload assets with `--clobber`.
+
+7. **Check the release is still published.** Deleting the remote tag reverts its GitHub release to
+   a *draft*. Measured 2026-11-07: a release published at 17:58:19Z came back `isDraft: true` after
+   a delete-then-push of `v0.1.0`, while the tag itself was correct and the repository was clean.
+   A `--force` push never leaves the tag absent and was not observed to do this; the two routes in
+   step 4 are not equivalent here.
+
+   It heals itself here, because the tag push re-runs `release.yml` and
+   `softprops/action-gh-release` updates the release in place — republishing it and rebuilding the
+   body from the `## [0.1.0]` section. That depends on three things, and the third is the one that
+   catches people: the trigger must still be `push: tags` (which is why `ToolingTest` asserts it),
+   the run must succeed, **and the step that updates the release must actually clear the draft
+   flag.** `softprops/action-gh-release` publishes an existing draft unless its
+   `draft` input is `true` — *"omit it to publish after upload"*, in its own words — so it does.
+   A hand-rolled `gh release edit` does **not**: it leaves the flag exactly as it found it.
+
+   **Measured 2026-11-08 across three repositories moving their tag the same way.** `laranail/emojis`
+   and `laranail/ai-compliance` both use the action and both republished on their own.
+   `laranail/validation-js` edited the release with `gh release edit --notes-file` and no
+   `--draft=false`: its run went **green** and its release stayed a draft, invisible, until it was
+   published by hand. So a failed run is not the only way to end up with a correct tag and no
+   release — **a successful one will do it too.** Nothing else reports that state either: the tag
+   resolves, `composer` installs, and `verify-tag-currency.sh` passes, because none of them reads
+   the release. So read it:
+
+   ```bash
+   gh release view v0.1.0 --repo laranail/emojis --json isDraft,targetCommitish,publishedAt
+   ```
+
+   It is fixed there ([validation-js#35](https://github.com/laranail/validation-js/pull/35)), which
+   leaves **four hand-rolled `gh release edit` call sites in the family still dropping the flag** —
+   measured the same day across the 286 workflow files in `laranail/packages`: `password-history` and
+   `password-tools` (`release.yml`), and `validation` (`release.yml` and `release-benchmark.yml`), all
+   three on the moving `v0.1.0`. A repository using `softprops/action-gh-release` has nothing to fix.
 
 ## Moving to a new Unicode or CLDR version
 
