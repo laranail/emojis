@@ -113,7 +113,7 @@ standard otherwise asks for one blocking deletion and update of `v*`. The two ca
 
    **Measured 2026-11-08 across three repositories moving their tag the same way.** `laranail/emojis`
    and `laranail/ai-compliance` both use the action and both republished on their own.
-   `laranail/validation-js` edits the release with `gh release edit --notes-file` and no
+   `laranail/validation-js` edited the release with `gh release edit --notes-file` and no
    `--draft=false`: its run went **green** and its release stayed a draft, invisible, until it was
    published by hand. So a failed run is not the only way to end up with a correct tag and no
    release — **a successful one will do it too.** Nothing else reports that state either: the tag
@@ -123,6 +123,12 @@ standard otherwise asks for one blocking deletion and update of `v*`. The two ca
    ```bash
    gh release view v0.1.0 --repo laranail/emojis --json isDraft,targetCommitish,publishedAt
    ```
+
+   It is fixed there ([validation-js#35](https://github.com/laranail/validation-js/pull/35)), which
+   leaves **four hand-rolled `gh release edit` call sites in the family still dropping the flag** —
+   measured the same day across the 286 workflow files in `laranail/packages`: `password-history` and
+   `password-tools` (`release.yml`), and `validation` (`release.yml` and `release-benchmark.yml`), all
+   three on the moving `v0.1.0`. A repository using `softprops/action-gh-release` has nothing to fix.
 
 ## Moving to a new Unicode or CLDR version
 
