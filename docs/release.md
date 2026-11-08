@@ -108,8 +108,9 @@ standard otherwise asks for one blocking deletion and update of `v*`. The two ca
    body from the `## [0.1.0]` section. That depends on three things, and the third is the one that
    catches people: the trigger must still be `push: tags` (which is why `ToolingTest` asserts it),
    the run must succeed, **and the step that updates the release must actually clear the draft
-   flag.** `softprops/action-gh-release` sets `draft: false` on every run, so it does. A hand-rolled
-   `gh release edit` does **not** — it leaves the flag as it found it.
+   flag.** `softprops/action-gh-release` publishes an existing draft unless its
+   `draft` input is `true` — *"omit it to publish after upload"*, in its own words — so it does.
+   A hand-rolled `gh release edit` does **not**: it leaves the flag exactly as it found it.
 
    **Measured 2026-11-08 across three repositories moving their tag the same way.** `laranail/emojis`
    and `laranail/ai-compliance` both use the action and both republished on their own.
