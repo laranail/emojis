@@ -6,12 +6,24 @@ info:
     Read-only JSON over the emoji catalogue, symbols, kaomoji, emoticons and status tags. Disabled by default;
     enable with laranail.emojis.api.enabled. Paths are relative to the configured prefix and version
     (default /laranail/emojis/api/v1). With laranail.emojis.api.cache_headers set (the default), responses
-    carry an ETag and answer 304 to If-None-Match.
+    carry an ETag and answer 304 to If-None-Match. With laranail.emojis.api.keys set, every request needs
+    Authorization: Bearer <key> and responses are private; laranail.emojis.api.allowed_origins lets listed
+    origins read it from a browser. Every response carries X-Content-Type-Options, a deny-all CSP and
+    Referrer-Policy: no-referrer.
   license:
     name: MIT
 servers:
   - url: /laranail/emojis/api/v1
+# Open unless the application configures API keys; then the bearer scheme applies to every operation.
+security:
+  - {}
+  - apiKey: []
 components:
+  securitySchemes:
+    apiKey:
+      type: http
+      scheme: bearer
+      description: One of the keys in laranail.emojis.api.keys (LARANAIL_EMOJIS_API_KEYS).
   parameters:
     locale:
       name: locale
@@ -26,6 +38,13 @@ components:
           schema: { type: object, properties: { message: { type: string } }, required: [message] }
     Invalid:
       description: A parameter is out of bounds. The message names the field, never the input.
+    Unauthorized:
+      description: API keys are configured and the request sent none, or a wrong one.
+      headers:
+        WWW-Authenticate: { schema: { type: string, const: Bearer } }
+      content:
+        application/json:
+          schema: { type: object, properties: { message: { type: string } }, required: [message] }
     Throttled:
       description: Too many requests from this client; retry after the Retry-After header's seconds.
   schemas:
