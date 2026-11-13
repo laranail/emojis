@@ -34,7 +34,7 @@ package, so add a GitHub token with `read:packages` to the project's `.npmrc`:
 ```
 
 ```bash
-npm install @laranail/emojis-picker@^0.8
+npm install @laranail/emojis-picker@^0.9
 ```
 
 **The JavaScript package versions independently of the Composer package**, which is why that constraint is

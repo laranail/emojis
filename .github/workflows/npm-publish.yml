@@ -19,13 +19,18 @@ name: Publish to npm
 # immutable: publishing 0.1.0 from that tag would freeze the JavaScript package at whatever that first push
 # contained, because every later move would find the version already there and skip. It also cannot take the
 # `latest` tag while 0.8.2 is published, so a tag push failed outright. A JavaScript release is therefore its
-# own decision, with its own increasing version: `gh workflow run npm-publish.yml -f tag=<tag>`.
+# own decision, with its own increasing version, built from the tag as it is now:
+# `gh workflow run npm-publish.yml -f tag=v0.1.0 -f version=0.9.0 -f registry=github`.
 on:
   workflow_dispatch:
     inputs:
       tag:
         description: 'An existing release tag to publish, e.g. v0.5.0'
         required: true
+      version:
+        description: 'The JavaScript version to publish, e.g. 0.9.0; empty takes it from the tag'
+        required: false
+        default: ''
       registry:
         description: 'npm (registry.npmjs.org) or github (GitHub Packages)'
         type: choice
@@ -33,7 +38,7 @@ on:
         default: npm
 
 concurrency:
-  group: ${{ github.workflow }}-${{ inputs.registry || vars.PUBLISH_REGISTRY || 'npm' }}-${{ inputs.tag || github.ref_name }}
+  group: ${{ github.workflow }}-${{ inputs.registry || vars.PUBLISH_REGISTRY || 'npm' }}-${{ inputs.version || inputs.tag || github.ref_name }}
   # Cancelling a half-finished publish can leave a version reserved with nothing behind it.
   cancel-in-progress: false
 
@@ -60,14 +65,23 @@ jobs:
         id: tag
         env:
           INPUT_TAG: ${{ inputs.tag }}
+          INPUT_VERSION: ${{ inputs.version }}
         run: |
           tag="${INPUT_TAG:-$GITHUB_REF_NAME}"
           if ! printf '%s' "$tag" | grep -Eq '^v[0-9]+\.[0-9]+\.[0-9]+(-[0-9A-Za-z.-]+)?$'; then
             echo "::error::'$tag' is not a release tag (vX.Y.Z)." >&2
             exit 1
           fi
+          # The JavaScript package versions on its own: the Composer package sits on a moving v0.1.0, and a
+          # registry version is immutable, so a JS release names its own increasing version and is built
+          # from whatever the tag points at now.
+          version="${INPUT_VERSION:-${tag#v}}"
+          if ! printf '%s' "$version" | grep -Eq '^[0-9]+\.[0-9]+\.[0-9]+(-[0-9A-Za-z.-]+)?$'; then
+            echo "::error::'$version' is not a version (X.Y.Z)." >&2
+            exit 1
+          fi
           echo "tag=$tag" >> "$GITHUB_OUTPUT"
-          echo "version=${tag#v}" >> "$GITHUB_OUTPUT"
+          echo "version=$version" >> "$GITHUB_OUTPUT"
 
       - uses: actions/checkout@v7
         with:

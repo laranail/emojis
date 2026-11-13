@@ -31,6 +31,10 @@ This section describes the code the tag currently points at, and is rewritten wh
   on, the gear opens the style row alone. The `.laranail-emoji-picker-set` class is no longer rendered.
 - Set names read as their projects write them: OpenMoji, not Openmoji.
 - On touch screens, the settings menu leaves out the keyboard shortcut list.
+- A hovered emoji no longer grows (a scaled glyph ran into its neighbours); pressing one tints it. The chosen
+  skin tone in the footer is as light as the gear beside it.
+- `npm-publish.yml` takes an optional `version`: the JavaScript package is published as its own increasing
+  version built from `v0.1.0`, so a JS release needs no Composer tag. The README asks for `^0.9`.
 
 ### Fixed
 
