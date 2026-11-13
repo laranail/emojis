@@ -35,6 +35,8 @@ This section describes the code the tag currently points at, and is rewritten wh
   skin tone in the footer is as light as the gear beside it.
 - `npm-publish.yml` takes an optional `version`: the JavaScript package is published as its own increasing
   version built from `v0.1.0`, so a JS release needs no Composer tag. The README asks for `^0.9`.
+- `npm-publish.yml` creates the pack directory before `npm pack`, which does not create it and failed the
+  first 0.9.0 publish with ENOENT.
 
 ### Fixed
 

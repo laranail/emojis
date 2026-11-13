@@ -337,5 +337,7 @@ it('never publishes the JavaScript package from a tag, because registry versions
         ->and($readme)->not->toContain('@laranail/emojis-picker@^0.1')
         // The JS version is its own input, checked for shape, so a release need not cut a Composer tag.
         ->and($workflow)->toContain("      version:\n")
-        ->and($workflow)->toContain('version="${INPUT_VERSION:-${tag#v}}"');
+        ->and($workflow)->toContain('version="${INPUT_VERSION:-${tag#v}}"')
+        // npm pack does not create its destination; a publish failed with ENOENT on exactly that (2026-11-13).
+        ->and(strpos($workflow, 'mkdir -p "$RUNNER_TEMP/pack"'))->toBeInt()->toBeLessThan((int) strpos($workflow, 'npm pack --pack-destination'));
 });

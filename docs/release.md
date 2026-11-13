@@ -63,8 +63,10 @@ Check what a registry actually holds before assuming a version is free. `repo.pa
 entirely; `/orgs/{org}/packages` needs `read:packages`, which the CLI app token does not carry, so the
 answer comes from `npm view <pkg>@<version> --registry https://npm.pkg.github.com` with a token.
 
-**This repository has no tag ruleset**, which is what makes a move possible at all; the family
-standard otherwise asks for one blocking deletion and update of `v*`. The two cannot both hold.
+**The repository carries the family's tag ruleset** ("release tags are final"), which refuses any update
+or deletion of `v*`, so `git push --force origin v0.1.0` is rejected with `GH013 … Cannot update this
+protected ref` (measured 2026-11-13). A move goes through `package-tools`' `reset-release-tags.py`, which
+lifts that ruleset for the one operation and restores it, so the protection holds the rest of the time.
 
 ## Releasing
 
@@ -76,17 +78,17 @@ standard otherwise asks for one blocking deletion and update of `v*`. The two ca
    tags are unprotected, so `git push --force origin v0.1.0` succeeds even when a direct push to
    `main` is refused — which is how a tag ends up on a commit that is on no branch. Composer's VCS
    driver reads tags, not reachability, and would offer that orphan as newest.
-4. Move the tag onto the merge commit:
+4. Move the tag onto the merge commit, from `~/Artisan/projects/opensource`, with the personal `gh`
+   login (it changes a ruleset). It is a dry run until `--apply --confirm`:
 
    ```bash
-   git -C <checkout> fetch origin main:main
-   git -C <checkout> tag -f v0.1.0 main
-   git -C <checkout> push --force origin v0.1.0
+   python3 laranail/packages/package-tools/scripts/reset-release-tags.py laranail/emojis --move v0.1.0 --to <merge-sha>
+   python3 laranail/packages/package-tools/scripts/reset-release-tags.py laranail/emojis --move v0.1.0 --to <merge-sha> --apply --confirm laranail/emojis
    ```
 
-   Where `git push --force` is unavailable — an agent session's permissions deny it — the equivalent is
-   `git push origin --delete v0.1.0 && git push origin v0.1.0`. It reaches the same end state, but
-   the tag is briefly absent, and that has a consequence of its own: step 7.
+   It disables the tag ruleset, updates the ref in place (the tag is never absent), and re-enables the
+   ruleset; check its last line reads `active`. A plain `git push --force` is refused by the ruleset, and a
+   delete-then-push both is refused and, where it is not, leaves the tag briefly absent: step 7.
 
 5. Verify on the remote, not locally — and dereference, because an annotated tag's ref SHA is the
    tag object, never a commit:

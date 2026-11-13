@@ -105,6 +105,8 @@ jobs:
           VERSION: ${{ steps.tag.outputs.version }}
         run: |
           npm version "$VERSION" --no-git-tag-version --allow-same-version
+          # npm pack does not create its destination: without this it fails with ENOENT.
+          mkdir -p "$RUNNER_TEMP/pack"
           npm pack --pack-destination "$RUNNER_TEMP/pack"
           mv "$RUNNER_TEMP"/pack/*.tgz "$RUNNER_TEMP/pack/package.tgz"
 
