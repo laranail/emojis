@@ -7,6 +7,7 @@ import {
   attachAutocomplete,
   bindShortcut,
   openSettingsMenu,
+  setChoices,
   parseShortcut,
   readRecent,
   recordRecent,
@@ -296,6 +297,10 @@ export function EmojiPicker({
       recents: readRecent(store.get('recent')).length > 0,
       onClearRecents: state.clearRecents,
       shortcuts: shortcutList(state.strings, parseShortcut(shortcut)),
+      sets: setChoices(state.imageSets, state.strings),
+      set: state.chosenSet,
+      onSet: state.setChosenSet,
+      styleOnly: !features.settings,
       focusShortcuts,
       rtl: rtl(),
       onClose: () => {
@@ -626,7 +631,7 @@ export function EmojiPicker({
     state.status === 'loading' ? strings.loading
     : state.status === 'error' ? strings.failed
     : state.resultCount === null ? ''
-    : resultText(strings, state.resultCount);
+    : resultText(strings, state.resultCount, state.resultsMore);
   const sectionId = (slug: string): string => `${id}-section-${slug}`;
 
   return (
@@ -774,7 +779,7 @@ export function EmojiPicker({
             return (
               <section key={section.slug} id={sectionId(section.slug)} className={`${P}-section`} data-laranail-emoji-section={section.slug}>
                 <div className={`${P}-heading`} id={`${id}-${section.slug}`}>
-                  {section.slug === 'search' ? resultText(strings, section.items.length) : section.label}
+                  {section.slug === 'search' ? resultText(strings, section.items.length, 'more' in section && section.more === true) : section.label}
                 </div>
                 <div
                   className={section.text ? `${P}-grid ${P}-grid-text` : `${P}-grid`}
@@ -858,7 +863,7 @@ export function EmojiPicker({
               )}
             </div>
           )}
-          {features.settings && (
+          {(features.settings || (features.setSwitcher && state.imageSets.length > 0)) && (
             <button
               ref={gear}
               type="button"
@@ -875,22 +880,6 @@ export function EmojiPicker({
                 ))}
               </svg>
             </button>
-          )}
-          {features.setSwitcher && (
-            <select
-              className={`${P}-set`}
-              aria-label={strings.style ?? DEFAULT_STRINGS.style}
-              hidden={state.imageSets.length === 0}
-              value={state.chosenSet}
-              onChange={(event) => state.setChosenSet(event.target.value)}
-            >
-              <option value="native">{strings.native ?? DEFAULT_STRINGS.native}</option>
-              {state.imageSets.map((set) => (
-                <option key={set.set} value={set.set}>
-                  {set.set.charAt(0).toUpperCase() + set.set.slice(1)}
-                </option>
-              ))}
-            </select>
           )}
         <div
           ref={tonesRow}

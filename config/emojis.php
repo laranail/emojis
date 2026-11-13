@@ -66,15 +66,18 @@ return [
     'policy' => [],
 
     // A read-only JSON API over the catalogue, for a picker or another service. Off by default, and off means
-    // the routes are never registered. Every endpoint is a GET. Put auth in `middleware` if the data is not
-    // public to you, and make cache_headers private then. The default prefix sits outside api/*, so
-    // Laravel's CORS defaults do not apply: add the prefix to config/cors.php paths to allow other origins.
+    // the routes are never registered. Every endpoint is a GET. For your own users' auth, put it in
+    // `middleware` and make cache_headers private. For another server, list API keys in `keys`: each request
+    // then sends `Authorization: Bearer <key>`, and responses turn private. `allowed_origins` lets other
+    // front ends read it from the browser (a list of origins, or '*'); none by default.
     'api' => [
-        'enabled'       => env('LARANAIL_EMOJIS_API', false),
-        'prefix'        => 'laranail/emojis/api',
-        'version'       => 'v1',
-        'middleware'    => ['api', 'throttle:120,1'],
-        'cache_headers' => 'public;max_age=3600;etag', // Laravel's cache.headers: ETag and 304; '' for none
+        'enabled'         => env('LARANAIL_EMOJIS_API', false),
+        'prefix'          => 'laranail/emojis/api',
+        'version'         => 'v1',
+        'middleware'      => ['api', 'throttle:120,1'],
+        'cache_headers'   => 'public;max_age=3600;etag', // Laravel's cache.headers: ETag and 304; '' for none
+        'keys'            => env('LARANAIL_EMOJIS_API_KEYS', ''),     // comma-separated; '' leaves the API open
+        'allowed_origins' => env('LARANAIL_EMOJIS_API_ORIGINS', ''),  // comma-separated origins, or '*'
     ],
 
     // The emoji picker (<x-laranail-emojis::picker />, the Livewire component, the /picker endpoint). Each

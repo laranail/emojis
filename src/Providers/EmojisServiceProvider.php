@@ -45,6 +45,7 @@ use Simtabi\Laranail\Emojis\Laravel\LaravelFailureReporter;
 use Simtabi\Laranail\Emojis\Laravel\View\Components\Styles;
 use Simtabi\Laranail\Package\Tools\Services\Boot\BootReport;
 use Simtabi\Laranail\Emojis\Core\Exceptions\ImageSetNotFound;
+use Simtabi\Laranail\Emojis\Laravel\Http\Middleware\GuardApi;
 use Illuminate\Contracts\Config\Repository as ConfigRepository;
 use Simtabi\Laranail\Emojis\Core\Extension\CustomEmojiRegistry;
 use Simtabi\Laranail\Emojis\Core\Extension\ConfiguredExtensions;
@@ -239,7 +240,7 @@ final class EmojisServiceProvider extends PackageServiceProvider
 
         Route::group([
             'prefix'     => trim($string('prefix', 'laranail/emojis/api'), '/') . '/' . trim($string('version', 'v1'), '/'),
-            'middleware' => [...$middleware, VaryByLocale::class, ...($cacheHeaders === '' ? [] : ['cache.headers:' . $cacheHeaders])],
+            'middleware' => [...$middleware, GuardApi::class, VaryByLocale::class, ...($cacheHeaders === '' ? [] : ['cache.headers:' . $cacheHeaders])],
         ], function (): void {
             $this->loadRoutesFrom(dirname(__DIR__, 2) . '/routes/api.php');
         });

@@ -6,6 +6,7 @@ use Illuminate\Routing\Route;
 use Symfony\Component\Yaml\Yaml;
 use Simtabi\Laranail\Emojis\Tests\TestCase;
 use Illuminate\Support\Facades\Route as Router;
+use Simtabi\Laranail\Package\Tools\Testing\TestCredentials;
 
 const API = '/laranail/emojis/api/v1';
 
@@ -189,4 +190,60 @@ it('serves the picker payload in the shape the OpenAPI file describes', function
         ->and(array_diff($required('PickerEmoji'), array_keys($first)))->toBe([])
         ->and(array_diff(array_keys($handshake), array_keys($schemas['PickerEmoji']['properties'])))->toBe([])
         ->and($spec['paths']['/picker']['get']['responses'])->toHaveKeys(['200', '422', '429']);
+});
+
+it('hardens every response, an error included, and allows no other origin by default', function (): void {
+    bootApi();
+
+    foreach ([API . '/emojis?limit=1', API . '/emojis/not-an-emoji-at-all'] as $url) {
+        $response = $this->getJson($url, ['Origin' => 'https://elsewhere.example']);
+
+        expect($response->headers->get('X-Content-Type-Options'))->toBe('nosniff')
+            ->and($response->headers->get('Content-Security-Policy'))->toBe("default-src 'none'; frame-ancestors 'none'")
+            ->and($response->headers->get('Referrer-Policy'))->toBe('no-referrer')
+            ->and($response->headers->has('Access-Control-Allow-Origin'))->toBeFalse();
+    }
+});
+
+it('lets the listed origins read it from the browser, and only those', function (): void {
+    bootApi(['laranail.emojis.api.allowed_origins' => 'https://app.example, https://admin.example/']);
+
+    $allowed = $this->getJson(API . '/tags', ['Origin' => 'https://admin.example']);
+    $other = $this->getJson(API . '/tags', ['Origin' => 'https://evil.example']);
+
+    expect($allowed->headers->get('Access-Control-Allow-Origin'))->toBe('https://admin.example')
+        ->and($allowed->headers->get('Access-Control-Expose-Headers'))->toBe('ETag')
+        ->and(implode(', ', $allowed->getVary()))->toContain('Origin')
+        ->and($allowed->headers->has('Access-Control-Allow-Credentials'))->toBeFalse()
+        ->and($other->headers->has('Access-Control-Allow-Origin'))->toBeFalse();
+
+    bootApi(['laranail.emojis.api.allowed_origins' => ['*']]);
+    expect($this->getJson(API . '/tags', ['Origin' => 'https://any.example'])->headers->get('Access-Control-Allow-Origin'))->toBe('*');
+});
+
+it('requires one of the configured API keys, and keeps keyed responses out of shared caches', function (): void {
+    $first = TestCredentials::secret('first');
+    $second = TestCredentials::secret('second');
+
+    expect($first)->not->toBe($second);
+    bootApi(['laranail.emojis.api.keys' => "{$first}, {$second}"]);
+
+    $this->getJson(API . '/tags')->assertUnauthorized()->assertHeader('WWW-Authenticate', 'Bearer')->assertJson(['message' => 'A valid API key is required.']);
+    $this->getJson(API . '/tags', ['Authorization' => 'Bearer ' . $first . 'x'])->assertUnauthorized();
+    $this->getJson(API . '/tags', ['Authorization' => 'Basic ' . base64_encode($first)])->assertUnauthorized();
+
+    $ok = $this->getJson(API . '/tags', ['Authorization' => 'Bearer ' . $second])->assertOk();
+
+    expect($ok->headers->getCacheControlDirective('private'))->toBeTrue()
+        ->and($ok->headers->hasCacheControlDirective('public'))->toBeFalse()
+        ->and(implode(', ', $ok->getVary()))->toContain('Authorization')
+        ->and($ok->headers->get('X-Content-Type-Options'))->toBe('nosniff');
+});
+
+it('leaves the API open and publicly cacheable while no key is configured', function (): void {
+    bootApi(['laranail.emojis.api.keys' => '']);
+
+    $response = $this->getJson(API . '/tags')->assertOk();
+
+    expect($response->headers->hasCacheControlDirective('public'))->toBeTrue();
 });

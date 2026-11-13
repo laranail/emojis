@@ -78,6 +78,15 @@ installs need no Node. After changing the source run `npm install && npm run bui
 The picker is TypeScript: after changing `resources/assets/scripts/picker.ts`, run `npm run types` too, and
 `npm test` and `npm run typecheck` (strict, and the generated declarations must match the source).
 
+To see every picker feature in a browser, build the showcase and serve it:
+
+```bash
+composer demo
+php -S 127.0.0.1:8765 -t .dev/demo
+```
+
+It renders the package's own components from the current build, so run `npm run build` first after a change.
+
 ## The scanner
 
 `src/Core/Text/Scanner.php` does not use PCRE Unicode emoji properties (`\p{Extended_Pictographic}` and

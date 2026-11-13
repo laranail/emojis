@@ -10,3 +10,6 @@ composer.lock
 /.dev/tools/measure/node_modules
 package-lock.json
 /dist
+
+# The picker showcase, built by `composer demo` (it embeds the ~1 MB payload).
+/.dev/demo/index.html

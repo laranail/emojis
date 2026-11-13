@@ -23,6 +23,43 @@ independently of this one and is released by hand. The Composer package is unaff
 
 This section describes the code the tag currently points at, and is rewritten whenever the tag moves.
 
+### Changed
+
+- The emoji style (Native, Twemoji, Noto, OpenMoji) is chosen in the picker's settings menu, as a row like
+  the theme's, instead of a native select in the footer. The select's popup opened away from the picker and
+  could not be styled; the footer now leaves the room to the preview. With `settings` off and `set_switcher`
+  on, the gear opens the style row alone. The `.laranail-emoji-picker-set` class is no longer rendered.
+- Set names read as their projects write them: OpenMoji, not Openmoji.
+- On touch screens, the settings menu leaves out the keyboard shortcut list.
+
+### Fixed
+
+- A search cut at its 200-result limit says "200+ results" instead of "200 results".
+- A picker with `render="image"` showed **Native** as the chosen style, and choosing Native did nothing.
+  It now shows its own set, and Native draws the device's emoji.
+- On a phone, kaomoji and symbol group tabs were squeezed into 44px squares and ran into each other.
+- Attribute names passed through `<x-laranail-emojis::picker>` that are not plain attribute names are
+  dropped, so one spread from user-keyed data cannot close the tag.
+
+### Security
+
+- `npm-publish.yml` installs and builds in a job with read-only permissions and publishes the packed tarball
+  from a second job that installs nothing, so a dependency's install script never runs beside the OIDC and
+  package-write permissions.
+- `release.yml` gives the repository-write token to the Composer install step only, and installs without
+  plugins or scripts.
+
+### Added
+
+- API keys for the HTTP API: list them in `api.keys` (`LARANAIL_EMOJIS_API_KEYS`) and every request needs
+  `Authorization: Bearer <key>`; keyed responses are private, so a shared cache never serves them without one.
+- `api.allowed_origins` (`LARANAIL_EMOJIS_API_ORIGINS`): front ends on other origins can read the API from a
+  browser without editing `config/cors.php`. None by default.
+- Every API response, errors included, carries `X-Content-Type-Options: nosniff`, a deny-all
+  `Content-Security-Policy` and `Referrer-Policy: no-referrer`. The OpenAPI contract declares the optional
+  bearer scheme and the 401.
+- A showcase page with every picker feature live: `composer demo`, then serve `.dev/demo`.
+
 ## [Internal history] (not published)
 
 Withdrawn tags, kept verbatim and demoted one level. The `0.1.0` dated 2026-09-26 below is a

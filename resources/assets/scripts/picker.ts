@@ -247,11 +247,12 @@ export interface PickerEvents {
 
 /** One rendered block: Frequently used, a Unicode group, the custom emoji, or a group of kaomoji or symbols. */
 export type PickerSection =
-  | { slug: string; label: string; custom?: false; text?: false; items: PickerEmoji[] }
+  /** `more`: a search section cut at its limit, so it holds the first of more matches. */
+  | { slug: string; label: string; custom?: false; text?: false; items: PickerEmoji[]; more?: boolean }
   /** Frequently used, when it holds custom emoji beside Unicode ones. */
   | { slug: string; label: string; custom?: false; text?: false; mixed: true; items: Array<PickerEmoji | PickerCustom> }
   | { slug: string; label: string; custom: true; text?: false; items: PickerCustom[] }
-  | { slug: string; label: string; custom?: false; text: true; items: PickerText[] };
+  | { slug: string; label: string; custom?: false; text: true; items: PickerText[]; more?: boolean };
 
 export interface ParsedOptions {
   target: string | null;
@@ -812,13 +813,13 @@ function bare(text: string): string {
   return text.replace(/\uFE0F|\uFE0E/g, '');
 }
 
-/** "No emoji found", "1 result", "12 results". */
-export function resultText(strings: Pick<PickerStrings, 'noResults' | 'results' | 'resultsOne'>, count: number): string {
+/** "No emoji found", "1 result", "12 results"; "200+ results" when the search stopped at its limit. */
+export function resultText(strings: Pick<PickerStrings, 'noResults' | 'results' | 'resultsOne'>, count: number, more = false): string {
   if (count === 0) {
     return strings.noResults;
   }
 
-  return (count === 1 && strings.resultsOne ? strings.resultsOne : strings.results).replace('{count}', String(count));
+  return (count === 1 && !more && strings.resultsOne ? strings.resultsOne : strings.results).replace('{count}', more ? `${count}+` : String(count));
 }
 
 /** The custom emoji whose name or label matches every word of a term, name prefix first. */
@@ -975,12 +976,15 @@ export function searchResults(sections: PickerSection[], term: string, strings: 
   // Kaomoji and symbols search their own names.
   if (sections.some((s) => s.text)) {
     const items = sections.flatMap((s) => (s.text ? s.items : []));
+    // One past the limit says whether there are more than it shows.
+    const hits = searchText(items, term, limit + 1);
 
-    return [{ slug: 'search', label: strings.search, text: true, items: searchText(items, term, limit) }];
+    return [{ slug: 'search', label: strings.search, text: true, items: hits.slice(0, limit), more: hits.length > limit }];
   }
 
   const custom = sections.find((s): s is Extract<PickerSection, { custom: true }> => s.custom === true);
-  const out: PickerSection[] = [{ slug: 'search', label: strings.search, items: searchSections(sections, term, limit) }];
+  const hits = searchSections(sections, term, limit + 1);
+  const out: PickerSection[] = [{ slug: 'search', label: strings.search, items: hits.slice(0, limit), more: hits.length > limit }];
   const customHits = custom ? searchCustom(custom.items, term) : [];
 
   if (customHits.length > 0) {
@@ -2279,10 +2283,48 @@ export interface SettingsMenuOptions {
   recents: boolean;
   onClearRecents: () => void;
   shortcuts: Array<[string, string]>;
+  /** The image sets to choose between, as [value, label], native first; the style row is left out when empty. */
+  sets?: Array<[string, string]>;
+  /** The set in effect ('native' for the device's own emoji). */
+  set?: string;
+  onSet?: (set: string) => void;
+  /** Only the style row: the page switched the settings off but kept the set switcher. */
+  styleOnly?: boolean;
   /** Open on the shortcut list (the ? key). */
   focusShortcuts?: boolean;
   rtl?: boolean;
   onClose?: () => void;
+}
+
+/**
+ * The emoji style in effect, from the user's stored choice: a set's name draws every emoji from that set;
+ * 'native' draws the device's own (and, as in auto, an image for what it cannot draw); nothing stored keeps
+ * the page's render option. `set` is the choice the settings menu shows as checked: a picker the page set to
+ * images shows its own set, not "Native".
+ */
+export function resolveStyle(stored: unknown, sets: PickerImageSet[], fallback: PickerImageSet | null, render: RenderMode): { set: string; mode: RenderMode } {
+  if (typeof stored === 'string' && stored !== 'native' && sets.some((set) => set.set === stored)) {
+    return { set: stored, mode: 'image' };
+  }
+
+  if (stored === 'native') {
+    return { set: 'native', mode: render === 'image' ? 'auto' : render };
+  }
+
+  return { set: render === 'image' && fallback && sets.some((set) => set.set === fallback.set) ? fallback.set : 'native', mode: render };
+}
+
+/** The names image sets go by: "OpenMoji", not "Openmoji". An unknown set is capitalised. */
+const SET_LABELS: Record<string, string> = { twemoji: 'Twemoji', noto: 'Noto', openmoji: 'OpenMoji', joypixels: 'JoyPixels', fluent: 'Fluent', blobmoji: 'Blobmoji' };
+
+/** A set's display name. */
+export function setLabel(set: string): string {
+  return SET_LABELS[set] ?? set.charAt(0).toUpperCase() + set.slice(1);
+}
+
+/** The style choices for the settings menu: the device's own emoji, then each set. Empty when there are none. */
+export function setChoices(sets: PickerImageSet[], strings: Pick<PickerStrings, 'native'>): Array<[string, string]> {
+  return sets.length === 0 ? [] : [['native', strings.native ?? DEFAULT_STRINGS.native ?? 'Native'], ...sets.map((set): [string, string] => [set.set, setLabel(set.set)])];
 }
 
 /**
@@ -2310,14 +2352,14 @@ export function openSettingsMenu(anchor: HTMLElement, container: HTMLElement, op
 
   menu.append(arrow);
 
-  if (options.theme !== null) {
-    const label = make('div', { class: `${PREFIX}-picker-settings-label`, id: `${PREFIX}-settings-theme-${Math.random().toString(36).slice(2, 8)}` }, s.theme);
-    const group = make('div', { class: `${PREFIX}-picker-settings-themes`, role: 'radiogroup', 'aria-labelledby': label.id });
-    const choices: Array<[PickerTheme, string]> = [['auto', s.themeAuto ?? 'Auto'], ['light', s.themeLight ?? 'Light'], ['dark', s.themeDark ?? 'Dark']];
+  // A row of radio buttons: Auto | Light | Dark, or Native | Twemoji | Noto. Arrow keys move and choose.
+  const radioRow = (name: string, title: string, choices: Array<[string, string]>, current: string, onPick: (value: string) => void): void => {
+    const label = make('div', { class: `${PREFIX}-picker-settings-label`, id: `${PREFIX}-settings-${name}-${Math.random().toString(36).slice(2, 8)}` }, title);
+    const group = make('div', { class: `${PREFIX}-picker-settings-themes ${PREFIX}-picker-settings-${name}s`, role: 'radiogroup', 'aria-labelledby': label.id });
 
-    for (const [theme, text] of choices) {
-      const checked = theme === options.theme;
-      const radio = make('button', { type: 'button', role: 'radio', class: `${PREFIX}-picker-settings-theme`, 'aria-checked': String(checked), tabindex: checked ? '0' : '-1', [`${ATTR}-theme`]: theme }, text);
+    for (const [value, text] of choices) {
+      const checked = value === current;
+      const radio = make('button', { type: 'button', role: 'radio', class: `${PREFIX}-picker-settings-theme ${PREFIX}-picker-settings-${name}`, 'aria-checked': String(checked), tabindex: checked ? '0' : '-1', [`${ATTR}-${name}`]: value }, text);
 
       radio.addEventListener('click', () => {
         for (const other of group.querySelectorAll<HTMLElement>('[role="radio"]')) {
@@ -2326,7 +2368,7 @@ export function openSettingsMenu(anchor: HTMLElement, container: HTMLElement, op
           other.tabIndex = on ? 0 : -1;
         }
 
-        options.onTheme(theme);
+        onPick(value);
       });
       group.append(radio);
     }
@@ -2342,6 +2384,16 @@ export function openSettingsMenu(anchor: HTMLElement, container: HTMLElement, op
       }
     });
     menu.append(label, group);
+  };
+
+  if (options.theme !== null && !options.styleOnly) {
+    const choices: Array<[PickerTheme, string]> = [['auto', s.themeAuto ?? 'Auto'], ['light', s.themeLight ?? 'Light'], ['dark', s.themeDark ?? 'Dark']];
+
+    radioRow('theme', s.theme ?? 'Theme', choices, options.theme, (value) => options.onTheme(value as PickerTheme));
+  }
+
+  if ((options.sets ?? []).length > 1) {
+    radioRow('set', s.style ?? DEFAULT_STRINGS.style ?? 'Style', options.sets ?? [], options.set ?? 'native', (value) => options.onSet?.(value));
   }
 
   const clear = make('button', { type: 'button', class: `${PREFIX}-picker-settings-clear`, disabled: !options.recents }, s.clearRecents);
@@ -2350,9 +2402,10 @@ export function openSettingsMenu(anchor: HTMLElement, container: HTMLElement, op
     options.onClearRecents();
     clear.disabled = true;
   });
-  menu.append(clear);
 
-  const heading = make('div', { class: `${PREFIX}-picker-settings-label`, id: `${PREFIX}-settings-keys-${Math.random().toString(36).slice(2, 8)}` }, s.kbdShortcuts);
+  if (!options.styleOnly) menu.append(clear);
+
+  const heading = make('div', { class: `${PREFIX}-picker-settings-label ${PREFIX}-picker-settings-keys`, id: `${PREFIX}-settings-keys-${Math.random().toString(36).slice(2, 8)}` }, s.kbdShortcuts);
   const list = make('dl', { class: `${PREFIX}-picker-shortcuts`, 'aria-labelledby': heading.id, tabindex: '-1' });
 
   for (const [what, keys] of options.shortcuts) {
@@ -2364,7 +2417,7 @@ export function openSettingsMenu(anchor: HTMLElement, container: HTMLElement, op
     list.append(dd);
   }
 
-  menu.append(heading, list);
+  if (!options.styleOnly) menu.append(heading, list);
   menu.addEventListener('keydown', (event) => {
     if (event.key === 'Escape') {
       event.preventDefault();
@@ -2375,7 +2428,7 @@ export function openSettingsMenu(anchor: HTMLElement, container: HTMLElement, op
   });
   close = openAnchored(menu, { anchor, container, arrow, placement: 'top-end', rtl: options.rtl, onClose: options.onClose });
 
-  const first = options.focusShortcuts ? list : (menu.querySelector<HTMLElement>('[role="radio"][tabindex="0"]') ?? clear);
+  const first = options.focusShortcuts && !options.styleOnly ? list : (menu.querySelector<HTMLElement>('[role="radio"][tabindex="0"]') ?? clear);
   first.focus();
 
   return close;
@@ -2742,7 +2795,6 @@ export class Picker {
   private raw: PickerPayload | null = null;
   private support: { version: string | null; flags: boolean | null } = { version: null, flags: null };
   private closeToneMenu: (() => void) | null = null;
-  private switcher: HTMLSelectElement | null = null;
   private gear: HTMLButtonElement | null = null;
   private closeSettings: (() => void) | null = null;
   /** A popover's grid is built the first time it opens, not on page load. */
@@ -3035,20 +3087,21 @@ export class Picker {
 
   /** The image set in use: the one chosen in the set switcher, else the payload's. Null when there is none. */
   private get imageSet(): PickerImageSet | null {
-    const chosen = this.options.features.setSwitcher ? this.store.get('set') : null;
+    const { set } = this.style();
 
-    if (chosen === 'native') {
-      return this.raw?.images ?? null;
-    }
-
-    return (this.raw?.imageSets ?? []).find((set) => set.set === chosen) ?? this.raw?.images ?? null;
+    return (this.raw?.imageSets ?? []).find((each) => each.set === set) ?? this.raw?.images ?? null;
   }
 
   /** How cells draw: the option, unless the set switcher picked a set (then every emoji from it). */
   private get renderMode(): RenderMode {
-    const chosen = this.options.features.setSwitcher ? this.store.get('set') : null;
+    return this.style().mode;
+  }
 
-    return typeof chosen === 'string' && chosen !== 'native' && (this.raw?.imageSets ?? []).some((set) => set.set === chosen) ? 'image' : this.options.render;
+  /** The style in effect: resolveStyle() over the stored choice, when the set switcher is on. */
+  private style(): { set: string; mode: RenderMode } {
+    const stored = this.options.features.setSwitcher ? this.store.get('set') : null;
+
+    return resolveStyle(stored, this.raw?.imageSets ?? [], this.raw?.images ?? null, this.options.render);
   }
 
   /** The payload capped for this device, falling back to images where the mode allows. */
@@ -3196,21 +3249,10 @@ export class Picker {
 
     if (this.preview) footer.append(this.preview);
 
-    if (features.setSwitcher) {
-      this.switcher = el('select', { class: `${PREFIX}-picker-set`, 'aria-label': s.style ?? DEFAULT_STRINGS.style, hidden: true });
-      this.listen(this.switcher, 'change', () => {
-        this.store.set('set', this.switcher?.value ?? 'native');
-        this.data = this.capped();
-        this.memo = null;
-        this.byHex = null;
-        this.render();
-      });
-      footer.append(this.switcher);
-    }
-
     footer.append(this.tones);
 
-    if (features.settings) {
+    // The gear holds the settings, and the emoji style when the set switcher is on (alone, if settings are off).
+    if (features.settings || features.setSwitcher) {
       this.gear = el('button', { type: 'button', class: `${PREFIX}-picker-gear`, 'aria-label': s.settings ?? DEFAULT_STRINGS.settings, title: s.settings ?? DEFAULT_STRINGS.settings, 'aria-haspopup': 'dialog', 'aria-expanded': 'false' });
       this.gear.append(icon(GEAR_ICON));
       this.listen(this.gear, 'click', () => (this.closeSettings ? this.closeSettings() : this.openSettings()));
@@ -3413,18 +3455,16 @@ export class Picker {
     return this.memo;
   }
 
-  /** The image set switcher: native emoji, then each set the payload offers. Hidden when it offers none. */
+  /** The set the user chose, when the payload still offers it; 'native' otherwise. */
+  private chosenSet(): string {
+    return this.style().set;
+  }
+
+  /** With settings off, the gear is there only for the set switcher, so it hides when there is no set. */
   private renderSwitcher(): void {
-    const sets = this.raw?.imageSets ?? [];
+    if (!this.gear || this.options.features.settings) return;
 
-    if (!this.switcher) return;
-
-    this.switcher.hidden = sets.length === 0;
-    const chosen = this.store.get('set');
-    const options = [el('option', { value: 'native' }, this.strings.native ?? DEFAULT_STRINGS.native), ...sets.map((set) => el('option', { value: set.set }, set.set.charAt(0).toUpperCase() + set.set.slice(1)))];
-
-    this.switcher.replaceChildren(...options);
-    this.switcher.value = typeof chosen === 'string' && sets.some((set) => set.set === chosen) ? chosen : 'native';
+    this.gear.hidden = !this.options.features.setSwitcher || (this.raw?.imageSets ?? []).length === 0;
   }
 
   /** The settings menu, beside the gear: theme, clearing recents, and the keyboard shortcuts. */
@@ -3447,6 +3487,16 @@ export class Picker {
         this.renderWhenShown();
       },
       shortcuts: shortcutList(this.strings, parseShortcut(this.options.shortcut)),
+      sets: this.options.features.setSwitcher ? setChoices(this.raw?.imageSets ?? [], this.strings) : [],
+      set: this.chosenSet(),
+      onSet: (set) => {
+        this.store.set('set', set);
+        this.data = this.capped();
+        this.memo = null;
+        this.byHex = null;
+        this.render();
+      },
+      styleOnly: !this.options.features.settings,
       focusShortcuts,
       rtl: this.rtl,
       onClose: () => {
@@ -3672,6 +3722,7 @@ export class Picker {
     const s = this.strings;
     const term = this.query.trim();
     const sections: PickerSection[] = (term ? searchResults(this.sections(), term, s) : this.sections()).filter((section) => section.items.length > 0);
+    const more = sections.some((section) => 'more' in section && section.more === true);
     const token = ++this.bodyToken;
     const nodes: HTMLElement[] = [];
     let drawn = 0;
@@ -3684,7 +3735,7 @@ export class Picker {
     }
 
     this.body.replaceChildren(...nodes);
-    this.status.textContent = term ? resultText(s, drawn) : '';
+    this.status.textContent = term ? resultText(s, drawn, more) : '';
     // The count is on screen in the results heading; the status line keeps announcing it, unseen.
     this.status.classList.toggle(`${PREFIX}-picker-status-results`, term !== '');
     this.rest = sections;
@@ -3732,7 +3783,7 @@ export class Picker {
   }
 
   private buildSection(section: PickerSection): HTMLElement {
-    const heading = el('div', { class: `${PREFIX}-picker-heading`, id: `${this.panel.id}-${section.slug}` }, section.slug === 'search' ? resultText(this.strings, section.items.length) : section.label);
+    const heading = el('div', { class: `${PREFIX}-picker-heading`, id: `${this.panel.id}-${section.slug}` }, section.slug === 'search' ? resultText(this.strings, section.items.length, 'more' in section && section.more === true) : section.label);
     const grid = el('div', { class: `${PREFIX}-picker-grid`, role: 'grid', 'aria-labelledby': heading.id });
     const columns = this.columnsFor(section);
     let row: HTMLDivElement | null = null;
@@ -3832,7 +3883,7 @@ export class Picker {
       return;
     }
 
-    if (!typing && event.key === '?' && this.gear) {
+    if (!typing && event.key === '?' && this.gear && this.options.features.settings) {
       event.preventDefault();
       this.openSettings(true);
 

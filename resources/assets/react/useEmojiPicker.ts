@@ -17,6 +17,7 @@ import {
   indexPayload,
   localStorageStore,
   readRecent,
+  resolveStyle,
   recordRecent,
   searchResults,
   withTone,
@@ -91,6 +92,8 @@ export interface EmojiPickerState {
   tabs: PickerSection[];
   /** The number of results while searching, else null. */
   resultCount: number | null;
+  /** The search stopped at its limit: there are more matches than it shows. */
+  resultsMore: boolean;
   /** The hexcode a cell shows for an emoji under the current tone (a recent shows the form it was picked in). */
   hexcodeOf: (item: PickerEmoji) => string;
   /** What picking an item would produce, without recording it: insert this, then call select(). */
@@ -129,7 +132,7 @@ export function useEmojiPicker(options: UseEmojiPickerOptions): EmojiPickerState
   const strings = useMemo(() => ({ ...DEFAULT_STRINGS, ...options.strings }), [options.strings]);
   const [raw, setRaw] = useState<PickerPayload | null>(null);
   const [support, setSupport] = useState<{ version: string | null; flags: boolean | null }>({ version: null, flags: null });
-  const [chosen, setChosen] = useState<string>('native');
+  const [chosen, setChosen] = useState<string | null>(null);
   const [status, setStatus] = useState<EmojiPickerState['status']>('loading');
   const [error, setError] = useState<unknown>(null);
   const [query, setQuery] = useState('');
@@ -150,7 +153,7 @@ export function useEmojiPicker(options: UseEmojiPickerOptions): EmojiPickerState
     setToneState(stored === null || stored === undefined ? clampTone(initialTone.current ?? 0) : clampTone(stored));
     setRecent(readRecent(store.get('recent')));
     const set = store.get('set');
-    setChosen(typeof set === 'string' ? set : 'native');
+    setChosen(typeof set === 'string' ? set : null);
   }, [store]);
 
   useEffect(() => {
@@ -199,9 +202,9 @@ export function useEmojiPicker(options: UseEmojiPickerOptions): EmojiPickerState
   const wanted = useMemo(() => (categoryKey === '' ? [] : categoryKey.split('\u0000')), [categoryKey]);
   const renderOption = parseRender(options.render);
   const imageSets = useMemo(() => (features.setSwitcher ? (raw?.imageSets ?? []) : []), [raw, features.setSwitcher]);
-  const picked = imageSets.find((set) => set.set === chosen) ?? null;
-  const imageSet = picked ?? raw?.images ?? null;
-  const renderMode: RenderMode = picked ? 'image' : renderOption;
+  const style = resolveStyle(chosen, imageSets, raw?.images ?? null, renderOption);
+  const imageSet = imageSets.find((set) => set.set === style.set) ?? raw?.images ?? null;
+  const renderMode: RenderMode = style.mode;
   // The payload capped for this device, falling back to images where the mode allows.
   const data = useMemo(
     () => (raw ? capPayload(raw, support.version, undefined, renderMode === 'native' ? {} : { set: imageSet, flags: support.flags }) : null),
@@ -299,7 +302,7 @@ export function useEmojiPicker(options: UseEmojiPickerOptions): EmojiPickerState
     renderMode,
     imageSet,
     imageSets,
-    chosenSet: picked ? chosen : 'native',
+    chosenSet: style.set,
     setChosenSet,
     kinds,
     kind: shown,
@@ -307,6 +310,7 @@ export function useEmojiPicker(options: UseEmojiPickerOptions): EmojiPickerState
     sections: results ?? base,
     tabs,
     resultCount: results ? results.reduce((sum, section) => sum + section.items.length, 0) : null,
+    resultsMore: results ? results.some((section) => 'more' in section && section.more === true) : false,
     hexcodeOf,
     detailOf,
     select,

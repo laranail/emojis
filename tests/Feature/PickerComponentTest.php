@@ -7,6 +7,7 @@ use Illuminate\Cache\ArrayStore;
 use Illuminate\Cache\Repository;
 use Illuminate\Support\Facades\Blade;
 use Simtabi\Laranail\Emojis\Core\Emojis;
+use Illuminate\View\ComponentAttributeBag;
 use Simtabi\Laranail\Emojis\Tests\TestCase;
 use Illuminate\Contracts\Translation\Translator;
 use Simtabi\Laranail\Emojis\Laravel\View\PickerConfig;
@@ -388,4 +389,18 @@ it('passes the shortcut and the client opt-in features, and carries emoticons an
     expect(html_entity_decode($html))->toContain('data-laranail-emoji-features="{"autocomplete":true,"settings":false}"')
         ->and($html)->toMatch('/data-laranail-emoji-shortcut[ >]/')
         ->and($grin['keywords_en'])->toContain('grin');
+});
+
+it('passes plain attributes through, and drops a name that could close the tag', function (): void {
+    $hostile = 'x><img src=x onerror=alert(1)';
+    $html = Blade::render('<x-laranail-emojis::picker target="#m" :attributes="$attrs" />', [
+        'attrs' => new ComponentAttributeBag(['class' => 'mine', 'x-on:click' => 'go', '@click' => 'go', 'data-id' => '7', $hostile => '1']),
+    ]);
+
+    expect($html)->toContain('class="mine"')
+        ->toContain('x-on:click="go"')
+        ->toContain('@click="go"')
+        ->toContain('data-id="7"')
+        ->not->toContain('<img src=x')
+        ->not->toContain('onerror');
 });

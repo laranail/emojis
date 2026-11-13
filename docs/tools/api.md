@@ -20,6 +20,8 @@ controllers, so `route:cache` keeps them.
 | `api.version` | `'v1'` | Appended to the prefix. |
 | `api.middleware` | `['api', 'throttle:120,1']` | Your stack. Put authentication here if the data is not public to you. |
 | `api.cache_headers` | `'public;max_age=3600;etag'` | Laravel's `cache.headers`: an ETag, and 304 for `If-None-Match`. Use `private;…` behind auth, or `''` for none. |
+| `api.keys` | `''` (`LARANAIL_EMOJIS_API_KEYS`) | Comma-separated API keys. When set, each request needs `Authorization: Bearer <key>`, and responses turn private. |
+| `api.allowed_origins` | `''` (`LARANAIL_EMOJIS_API_ORIGINS`) | Comma-separated origins (or `*`) that may read the API from a browser. |
 
 ## Endpoints
 
@@ -66,13 +68,39 @@ fails when a route is missing from it.
   Blade picker shares.
 - **Throttled per client IP** by default. Behind a proxy or load balancer, configure Laravel's
   `TrustProxies`, or every client shares the proxy's address and its limit.
-- **No cross-origin access by default.** The prefix sits outside `api/*`, so Laravel's CORS defaults do not
-  apply. To allow other origins, add the prefix to `config/cors.php`:
+- **API keys, for another server.** Set `LARANAIL_EMOJIS_API_KEYS` (comma-separated, so a key can be rotated
+  by adding the new one before removing the old). A request without a matching
+  `Authorization: Bearer <key>` is a 401 with `WWW-Authenticate: Bearer`. Keys are compared in constant
+  time. A keyed response is `Cache-Control: private` and `Vary: Authorization`, whatever `cache_headers`
+  says, so a shared cache never serves it to a caller without the key. Never put a key in a browser: for
+  your own signed-in users, put `auth:sanctum` (or your guard) in `api.middleware` instead.
+- **No cross-origin access by default.** List the front ends that may read it from a browser:
 
-  ```php
-  'paths' => ['api/*', 'laranail/emojis/api/*'],
-  'allowed_origins' => ['https://app.example.com'],
+  ```dotenv
+  LARANAIL_EMOJIS_API_ORIGINS=https://app.example.com,https://admin.example.com
   ```
+
+  A listed origin is echoed in `Access-Control-Allow-Origin` (with `Vary: Origin`), `*` allows any, and no
+  response allows credentials. Only simple GETs are served this way. A browser request with an
+  `Authorization` header needs a preflight, which Laravel's CORS middleware answers when the prefix is in
+  `config/cors.php` `paths`.
+- **Hardened headers.** Every response, errors included, carries `X-Content-Type-Options: nosniff`,
+  `Content-Security-Policy: default-src 'none'; frame-ancestors 'none'` and `Referrer-Policy: no-referrer`.
+
+## Use it from another app
+
+The npm package's picker reads the API directly, so a front end on another domain (a SPA, a static site,
+another framework) gets the same picker as a Blade page:
+
+```js
+import { Picker, ApiSource } from '@laranail/emojis-picker';
+import '@laranail/emojis-picker/styles.css';
+
+const source = new ApiSource('https://emojis.example.com/laranail/emojis/api/v1');
+await Picker.create(document.querySelector('#picker'), { target: '#message' }).source(source).mount();
+```
+
+Allow that front end's origin with `LARANAIL_EMOJIS_API_ORIGINS`.
 
 ---
 

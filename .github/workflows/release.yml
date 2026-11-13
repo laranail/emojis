@@ -14,9 +14,6 @@ concurrency:
 permissions:
   contents: write
 
-env:
-  COMPOSER_AUTH: '{"github-oauth":{"github.com":"${{ secrets.GITHUB_TOKEN }}"}}'
-
 jobs:
   release:
     name: Publish the GitHub release
@@ -33,7 +30,11 @@ jobs:
           coverage: none
 
       - name: Install runtime dependencies
-        run: composer install --no-dev --prefer-dist --no-interaction --no-progress
+        # The job's token can write the repository, so it reaches this one step only, and no dependency's
+        # plugin or script runs with it: the release needs the installed tree for the SBOM, nothing more.
+        env:
+          COMPOSER_AUTH: '{"github-oauth":{"github.com":"${{ secrets.GITHUB_TOKEN }}"}}'
+        run: composer install --no-dev --prefer-dist --no-interaction --no-progress --no-plugins --no-scripts
 
       - name: Generate an SBOM
         uses: anchore/sbom-action@66cbf4bc1f1c0d2edc94016e65bc221b6bb0ad6c # v0.24.3
