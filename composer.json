@@ -82,6 +82,7 @@
         }
     },
     "scripts": {
+        "demo": "@php .dev/demo/build.php",
         "test": "vendor/bin/pest --no-coverage --colors=always",
         "test-coverage": "vendor/bin/pest --coverage --colors=always",
         "lint": [
