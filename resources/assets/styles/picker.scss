@@ -487,8 +487,10 @@ $sizes: (
     display: none;
   }
 
+  // As light as the gear beside it: a ringed, filled button read as the footer's primary action.
   &[aria-checked='true'] {
-    box-shadow: inset 0 0 0 1px var(--_lep-border);
+    background: transparent;
+    box-shadow: none;
   }
 }
 
@@ -549,10 +551,12 @@ $sizes: (
   inline-size: min(var(--_lep-cell), calc(100cqi / var(--#{$picker}-columns, 8)));
   aspect-ratio: 1;
   font-size: min(1.4rem, calc(100cqi / var(--#{$picker}-columns, 8) * 0.6));
-  transition: transform 90ms ease, background-color 90ms ease;
+  transition: background-color 90ms ease;
 
-  &:hover {
-    transform: scale(1.12);
+  // The background marks the hovered cell; the glyph no longer grows, since a scaled glyph ran into its
+  // neighbours in a dense row.
+  &:active {
+    background: color-mix(in srgb, var(--_lep-accent) 18%, transparent);
   }
 
   .#{m.$block}-image {
