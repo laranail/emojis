@@ -16,7 +16,7 @@ the `dev-main` branch alias in `composer.json` (`0.1.x-dev`), and the `composer 
 `README.md` and `docs/installation.md`. `tests/Unit/DocumentationTest.php` fails when they drift.
 
 **The README's `npm install @laranail/emojis-picker` constraint is not one of them**, and must not be
-made to track this line — it reads `^0.8`. That package versions independently, for the reason under
+made to track this line — it reads `^0.9`. That package versions independently, for the reason under
 *What the moving tag costs* below, and `DocumentationTest` asserts the constraint is well formed and
 *not* following the Composer line, rather than asserting it matches.
 
@@ -50,11 +50,12 @@ from a moving tag would freeze the package at whatever the first push contained 
 find the version already present and skip it. It also cannot take the `latest` tag while 0.8.2 is
 published: a tag push failed with *"Cannot implicitly apply the \"latest\" tag because previously
 published version 0.8.2 is higher than the new version 0.1.0"*. So `npm-publish.yml` is
-`workflow_dispatch` only, the README's npm constraint is `^0.8` rather than `^0.1`, and a JavaScript
-release is its own decision with its own increasing version:
+`workflow_dispatch` only, the README's npm constraint is `^0.9` rather than `^0.1`, and a JavaScript
+release is its own decision with its own increasing version, built from whatever `v0.1.0` points at
+when it runs. `version` names it; without it the version is the tag's, which suits only a tag that never moves:
 
 ```bash
-gh workflow run npm-publish.yml --repo laranail/emojis -f tag=<tag> -f registry=github
+gh workflow run npm-publish.yml --repo laranail/emojis -f tag=v0.1.0 -f version=<next> -f registry=github
 ```
 
 Check what a registry actually holds before assuming a version is free. `repo.packagist.org` and

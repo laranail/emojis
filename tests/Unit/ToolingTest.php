@@ -333,6 +333,9 @@ it('never publishes the JavaScript package from a tag, because registry versions
         // release.yml still fires on the tag: the Composer release is unaffected, and that must stay true.
         ->and((string) file_get_contents($root . '/.github/workflows/release.yml'))->toContain('tags:')
         // The README names a constraint the registry can actually resolve, which is not the Composer line.
-        ->and($readme)->toContain('@laranail/emojis-picker@^0.8')
-        ->and($readme)->not->toContain('@laranail/emojis-picker@^0.1');
+        ->and($readme)->toContain('@laranail/emojis-picker@^0.9')
+        ->and($readme)->not->toContain('@laranail/emojis-picker@^0.1')
+        // The JS version is its own input, checked for shape, so a release need not cut a Composer tag.
+        ->and($workflow)->toContain("      version:\n")
+        ->and($workflow)->toContain('version="${INPUT_VERSION:-${tag#v}}"');
 });
