@@ -41,17 +41,19 @@ permissions:
   contents: read
 
 jobs:
-  publish:
-    name: Publish @laranail/emojis-picker to ${{ inputs.registry || vars.PUBLISH_REGISTRY || 'npm' }}
+  # Dependencies are installed, and their install scripts run, here: a job that can read the repository and
+  # nothing else. The publish job below holds the OIDC and package-write permissions and installs nothing, so
+  # a compromised dependency's postinstall never runs where it could mint a publish token.
+  build:
+    name: Build @laranail/emojis-picker
     if: vars.NPM_PUBLISH == 'true'
     runs-on: ubuntu-latest
     timeout-minutes: 15
     permissions:
       contents: read
-      id-token: write # trusted publishing, and provenance
-      packages: write # GitHub Packages, with the run's GITHUB_TOKEN
-    env:
-      TARGET: ${{ inputs.registry || vars.PUBLISH_REGISTRY || 'npm' }}
+    outputs:
+      tag: ${{ steps.tag.outputs.tag }}
+      version: ${{ steps.tag.outputs.version }}
 
     steps:
       - name: Resolve the tag
@@ -70,12 +72,11 @@ jobs:
       - uses: actions/checkout@v7
         with:
           ref: refs/tags/${{ steps.tag.outputs.tag }}
+          persist-credentials: false
 
       - uses: actions/setup-node@v7
         with:
           node-version: 24
-          registry-url: ${{ (inputs.registry || vars.PUBLISH_REGISTRY || 'npm') == 'github' && 'https://npm.pkg.github.com' || 'https://registry.npmjs.org' }}
-          scope: ${{ (inputs.registry || vars.PUBLISH_REGISTRY || 'npm') == 'github' && '@laranail' || '' }}
 
       - name: Build the React adapter and the declarations
         run: |
@@ -85,8 +86,46 @@ jobs:
           npm test
 
       # The npm version is the Composer version: one tag, two registries.
-      - name: Set the version
-        run: npm version "${{ steps.tag.outputs.version }}" --no-git-tag-version --allow-same-version
+      - name: Set the version and pack
+        env:
+          VERSION: ${{ steps.tag.outputs.version }}
+        run: |
+          npm version "$VERSION" --no-git-tag-version --allow-same-version
+          npm pack --pack-destination "$RUNNER_TEMP/pack"
+          mv "$RUNNER_TEMP"/pack/*.tgz "$RUNNER_TEMP/pack/package.tgz"
+
+      - uses: actions/upload-artifact@v7
+        with:
+          name: package
+          path: ${{ runner.temp }}/pack/package.tgz
+          if-no-files-found: error
+          retention-days: 1
+
+  publish:
+    name: Publish @laranail/emojis-picker to ${{ inputs.registry || vars.PUBLISH_REGISTRY || 'npm' }}
+    needs: build
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+    permissions:
+      contents: read
+      id-token: write # trusted publishing, and provenance
+      packages: write # GitHub Packages, with the run's GITHUB_TOKEN
+    env:
+      TARGET: ${{ inputs.registry || vars.PUBLISH_REGISTRY || 'npm' }}
+      VERSION: ${{ needs.build.outputs.version }}
+
+    steps:
+      # The tarball the build job packed; nothing is installed or built here.
+      - uses: actions/download-artifact@v8
+        with:
+          name: package
+          path: ${{ runner.temp }}/pack
+
+      - uses: actions/setup-node@v7
+        with:
+          node-version: 24
+          registry-url: ${{ (inputs.registry || vars.PUBLISH_REGISTRY || 'npm') == 'github' && 'https://npm.pkg.github.com' || 'https://registry.npmjs.org' }}
+          scope: ${{ (inputs.registry || vars.PUBLISH_REGISTRY || 'npm') == 'github' && '@laranail' || '' }}
 
       # With a token, say who it authenticates as before publishing, so a failure separates "the token does not
       # authenticate" from "it authenticates but cannot write to @laranail". Prints the account name only.
@@ -142,13 +181,13 @@ jobs:
         run: |
           if [ "$TARGET" = github ]; then
             # A version is published once; re-running for it reports it instead of failing on GitHub's 409.
-            version=$(node -p 'require("./package.json").version')
+            version="$VERSION"
             if NODE_AUTH_TOKEN="$GITHUB_TOKEN" npm view "@laranail/emojis-picker@$version" version --registry https://npm.pkg.github.com 2>/dev/null | grep -qxF "$version"; then
               echo "already on GitHub Packages: @laranail/emojis-picker@$version"
               exit 0
             fi
             # GitHub Packages signs no provenance, and its package inherits the repository's visibility.
-            NODE_AUTH_TOKEN="$GITHUB_TOKEN" npm publish --provenance=false --registry https://npm.pkg.github.com
+            NODE_AUTH_TOKEN="$GITHUB_TOKEN" npm publish "$RUNNER_TEMP/pack/package.tgz" --provenance=false --registry https://npm.pkg.github.com
           elif [ -n "$NPM_TOKEN" ]; then
             # npm tries trusted publishing first whenever the job can mint an OIDC token, even with a token
             # configured, and this repository's immutable OIDC subject makes that exchange end in a 403
@@ -156,9 +195,9 @@ jobs:
             # Provenance is signed with that same OIDC identity, so it goes too: package.json asks for it,
             # hence the explicit --provenance=false. Restore both once npm fixes #9969 and the secret is gone.
             env -u ACTIONS_ID_TOKEN_REQUEST_URL -u ACTIONS_ID_TOKEN_REQUEST_TOKEN \
-              NODE_AUTH_TOKEN="$NPM_TOKEN" npm publish --provenance=false --access public
+              NODE_AUTH_TOKEN="$NPM_TOKEN" npm publish "$RUNNER_TEMP/pack/package.tgz" --provenance=false --access public
           else
-            npm publish --provenance --access public
+            npm publish "$RUNNER_TEMP/pack/package.tgz" --provenance --access public
           fi
 
       # npm says why a trusted-publishing exchange failed only in its debug log, which the job does not keep.

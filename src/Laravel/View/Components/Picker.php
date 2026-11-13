@@ -31,6 +31,9 @@ use Simtabi\Laranail\Emojis\Laravel\View\PickerPayloads;
  */
 final class Picker extends Component
 {
+    /** What a passed-through attribute name may be: letters, digits and _ : . - (Alpine's x-on:click, @click). */
+    private const string ATTRIBUTE_NAME = '/^[A-Za-z_:@][\w:.@-]*$/';
+
     /** @param list<string> $categories */
     public function __construct(
         private readonly Emojis $emojis,
@@ -130,7 +133,9 @@ final class Picker extends Component
 
         // Passed-through attributes never override the picker's own data-laranail-emoji-* options.
         foreach ($extra->getAttributes() as $name => $value) {
-            if (! isset($attributes[$name]) && is_scalar($value) && $value !== false) {
+            // A name that is not a plain attribute name is dropped: names are written unescaped, so one spread
+            // from user-keyed data must not be able to close the tag.
+            if (! isset($attributes[$name]) && is_scalar($value) && $value !== false && preg_match(self::ATTRIBUTE_NAME, $name) === 1) {
                 $attributes[$name] = $value === true ? '' : (string) $value;
             }
         }
