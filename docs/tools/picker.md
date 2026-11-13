@@ -195,8 +195,11 @@ step). A set without such a rule (Fluent, or your own `ImageSet`) sends a path p
 name), and falls back to the glyph if it fails to load. Picking always inserts the Unicode text, never the
 image.
 
-With `picker.features.set_switcher` on, a select in the footer lets the user choose: **Native** (the device's
-emoji, with the fallback above), Twemoji, Noto or OpenMoji. The choice is remembered per `user-key`. Each set
+With `picker.features.set_switcher` on, an **Emoji style** row in the settings menu (the gear) lets the user
+choose: **Native** (the device's emoji, with the fallback above), Twemoji, Noto or OpenMoji. A picker with
+`render="image"` shows its own set as the choice until the user picks another. The choice is remembered per
+`user-key`. With `picker.features.settings` off, the gear stays for this row alone, and hides when the payload
+offers no set. Each set
 has its own licence, which the payload carries; Twemoji needs attribution (CC-BY 4.0) and OpenMoji
 attribution and share-alike (CC BY-SA 4.0) — see [attribution](images.md#attribution).
 
@@ -239,7 +242,8 @@ The picker is built to cost nothing until it is used:
 - **The payload is parsed once per page**, however many pickers read the same data block, and fetched once
   per URL and locale in API mode. On the server it is built once and cached.
 - **Search** keeps each emoji's folded text after the first search, so a keystroke costs well under a
-  millisecond; it waits for a pause in typing and draws at most 200 results.
+  millisecond; it waits for a pause in typing and draws at most 200 results; a
+  search that has more says so ("200+ results").
 - Off-screen sections skip layout and paint (`content-visibility`), and images are lazy-loaded and decoded
   off the main thread.
 

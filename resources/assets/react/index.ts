@@ -35,6 +35,8 @@ export {
   matchesShortcut,
   openAnchored,
   openSettingsMenu,
+  setChoices,
+  setLabel,
   parseShortcut,
   shortcutLabel,
   shortcutList,

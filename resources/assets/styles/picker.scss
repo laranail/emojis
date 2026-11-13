@@ -623,7 +623,9 @@ $sizes: (
   }
 }
 
-// The image set switcher: a compact select between the preview and the tones.
+// Deprecated in 0.1.x: the set switcher was a native select here, whose popup opened away from the picker.
+// The emoji style is now a row in the settings menu (.#{$picker}-settings-sets). Kept so a host styling
+// the class sees no error; nothing renders it.
 .#{$picker}-set {
   flex: none;
   max-inline-size: 7rem;
@@ -762,6 +764,18 @@ $sizes: (
   border-radius: 999px;
   // A tint of the text colour rather than --hover, so it stays visible on the raised surface in either theme.
   background: color-mix(in srgb, var(--_lep-fg) 8%, transparent);
+}
+
+// The emoji style row: up to five set names, so it wraps rather than squeezing them, and squares off to match.
+.#{$picker}-settings-sets {
+  flex-wrap: wrap;
+  gap: 0.15rem;
+  border-radius: calc(var(--_lep-cell-radius) + 0.2rem);
+
+  > .#{$picker}-settings-theme {
+    border-radius: var(--_lep-cell-radius);
+    white-space: nowrap;
+  }
 }
 
 .#{$picker}-settings-theme {
@@ -1059,6 +1073,20 @@ $sizes: (
     inline-size: auto;
     min-inline-size: 1.875rem;
     max-inline-size: 2.75rem;
+  }
+
+  // A kaomoji or symbol group's name keeps the width of its word: the 44px square above cut "Surprising" into
+  // its neighbours. Same height as the icon tabs, so the bar does not change height between the tabs.
+  .#{$picker}-tabs > .#{$picker}-tab:has(> .#{$picker}-tab-label) {
+    inline-size: auto;
+    padding-inline: 0.75rem;
+  }
+}
+
+// A touch screen with no hover has no keyboard to speak of: the shortcut list is noise in its settings menu.
+@media (hover: none) and (pointer: coarse) {
+  .#{$picker}-settings :is(.#{$picker}-settings-keys, .#{$picker}-shortcuts) {
+    display: none;
   }
 }
 

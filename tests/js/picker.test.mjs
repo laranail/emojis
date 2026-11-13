@@ -6,7 +6,7 @@ import { payload } from './fixture.mjs';
 globalThis.__laranailEmojiNoAutoInit = true;
 
 const module = await import('../../resources/assets/scripts/picker.ts');
-const { Picker, StaticSource, ApiSource, memoryStore, localStorageStore, fold, charOf, withTone, search, sortItems, recordRecent, orderRecent, parseOptions, autoInit, byVersion, detectMaxVersion, buildSections, searchSections, capPayload, insertText, indexPayload, customCode, mountElement, readRecent, clampTone, clampColumns, searchCustom, rovingIndex, computePosition, parsePlacement, readFeatures, kindsOf, textSections, searchText, spySections, imageUrl, drawsImage, toneForms, IMAGE_RULES, parseShortcut, matchesShortcut, shortcutLabel, shortcutList, caretRect } = module;
+const { Picker, StaticSource, ApiSource, memoryStore, localStorageStore, fold, charOf, withTone, search, sortItems, recordRecent, orderRecent, parseOptions, autoInit, byVersion, detectMaxVersion, buildSections, searchSections, capPayload, insertText, indexPayload, customCode, mountElement, readRecent, clampTone, clampColumns, searchCustom, rovingIndex, computePosition, parsePlacement, readFeatures, kindsOf, textSections, searchText, spySections, imageUrl, drawsImage, toneForms, IMAGE_RULES, parseShortcut, matchesShortcut, shortcutLabel, shortcutList, caretRect, searchResults, resultText, resolveStyle, setLabel } = module;
 
 const root = resolve(import.meta.dirname, '../..');
 const flush = () => new Promise((r) => setTimeout(r, 0));
@@ -1269,16 +1269,77 @@ describe('image sets, the full catalogue and per-person tones (phase 4)', () => 
     const host = document.createElement('div');
     document.body.append(host);
     await Picker.create(host, { inline: true, store, maxVersion: null, searchDelay: 0, features: { setSwitcher: true } }).source(new StaticSource(data)).mount();
-    const select = host.querySelector('.laranail-emoji-picker-set');
+    // No native select: its popup opened away from the picker. The style is a radio row in the settings menu.
+    expect(host.querySelector('select')).toBeNull();
+    host.querySelector('.laranail-emoji-picker-gear').click();
+    const styles = document.querySelector('.laranail-emoji-picker-settings-sets');
 
-    expect([...select.options].map((o) => o.textContent)).toEqual(['Native', 'Twemoji', 'Noto']);
+    expect([...styles.querySelectorAll('[role="radio"]')].map((o) => o.textContent)).toEqual(['Native', 'Twemoji', 'Noto']);
+    expect(styles.querySelector('[aria-checked="true"]').textContent).toBe('Native');
     expect(host.querySelector('[aria-label="grinning face"] img')).toBeNull();
 
-    select.value = 'noto';
-    select.dispatchEvent(new Event('change'));
+    styles.querySelector('[data-laranail-emoji-set="noto"]').click();
 
     expect(store.get('set')).toBe('noto');
     expect(host.querySelector('[aria-label="grinning face"] img').getAttribute('src')).toBe('https://cdn.example/noto/emoji_u1f600.svg');
+  });
+
+  it('says when a search stopped at its limit: "200+ results", not "200 results"', () => {
+    const strings = { noResults: 'none', results: '{count} results', resultsOne: '1 result' };
+    const many = Array.from({ length: 5 }, (_, i) => ({ emoji: 'x', hexcode: `1F60${i}`, name: `smile ${i}`, shortcode: `s${i}`, keywords: [], version: 1 }));
+    const sections = [{ slug: 'a', label: 'A', items: many }];
+    const capped = searchResults(sections, 'smile', { search: 'Search', custom: 'Custom' }, 3);
+    const whole = searchResults(sections, 'smile', { search: 'Search', custom: 'Custom' }, 5);
+
+    expect(capped[0].items).toHaveLength(3);
+    expect(capped[0].more).toBe(true);
+    expect(whole[0].more).toBe(false);
+    expect(resultText(strings, 3, true)).toBe('3+ results');
+    expect(resultText(strings, 1, true)).toBe('1+ results');
+    expect(resultText(strings, 3)).toBe('3 results');
+  });
+
+  it('resolves the emoji style: a picker set to images shows its own set, and Native there means the device\'s emoji', () => {
+    const tw = { set: 'twemoji' };
+    const noto = { set: 'noto' };
+
+    expect(resolveStyle(null, [tw, noto], tw, 'image')).toEqual({ set: 'twemoji', mode: 'image' });
+    expect(resolveStyle(null, [tw, noto], tw, 'auto')).toEqual({ set: 'native', mode: 'auto' });
+    expect(resolveStyle('native', [tw, noto], tw, 'image')).toEqual({ set: 'native', mode: 'auto' });
+    expect(resolveStyle('native', [tw, noto], tw, 'native')).toEqual({ set: 'native', mode: 'native' });
+    expect(resolveStyle('noto', [tw, noto], tw, 'auto')).toEqual({ set: 'noto', mode: 'image' });
+    expect(resolveStyle('gone', [tw, noto], tw, 'auto')).toEqual({ set: 'native', mode: 'auto' });
+    expect(resolveStyle('<img>', [], null, 'image')).toEqual({ set: 'native', mode: 'image' });
+    expect(setLabel('openmoji')).toBe('OpenMoji');
+    expect(setLabel('newset')).toBe('Newset');
+  });
+
+  it('keeps the style choice when the settings are off: the gear opens the style row alone', async () => {
+    const store = memoryStore();
+    const data = { ...payload(), images: twemoji, imageSets: [twemoji, { ...twemoji, set: 'openmoji' }] };
+    document.body.replaceChildren();
+    const host = document.createElement('div');
+    document.body.append(host);
+    await Picker.create(host, { inline: true, store, maxVersion: null, searchDelay: 0, features: { setSwitcher: true, settings: false } }).source(new StaticSource(data)).mount();
+    const gear = host.querySelector('.laranail-emoji-picker-gear');
+
+    expect(gear.hidden).toBe(false);
+    gear.click();
+    const menu = document.querySelector('.laranail-emoji-picker-settings');
+
+    expect(menu.querySelector('.laranail-emoji-picker-settings-themes:not(.laranail-emoji-picker-settings-sets)')).toBeNull();
+    expect(menu.querySelector('.laranail-emoji-picker-settings-clear')).toBeNull();
+    expect(menu.querySelector('.laranail-emoji-picker-shortcuts')).toBeNull();
+    expect([...menu.querySelectorAll('[role="radio"]')].map((o) => o.textContent)).toEqual(['Native', 'Twemoji', 'OpenMoji']);
+  });
+
+  it('hides a settings-off gear when the payload offers no set to switch to', async () => {
+    document.body.replaceChildren();
+    const host = document.createElement('div');
+    document.body.append(host);
+    await Picker.create(host, { inline: true, store: memoryStore(), maxVersion: null, searchDelay: 0, features: { setSwitcher: true, settings: false } }).source(new StaticSource(payload())).mount();
+
+    expect(host.querySelector('.laranail-emoji-picker-gear').hidden).toBe(true);
   });
 
   it('knows each emoji\'s toned forms, one person or two', () => {

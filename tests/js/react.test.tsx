@@ -356,8 +356,15 @@ describe('EmojiPicker (React) phase 4', () => {
     fireEvent.error(screen.getByRole('gridcell', { name: 'melting face' }).querySelector('img')!);
     expect(screen.getByRole('gridcell', { name: 'melting face' }).textContent).toBe('🫠');
 
-    fireEvent.change(screen.getByRole('combobox', { name: 'Emoji style' }), { target: { value: 'openmoji' } });
+    // The style is chosen in the settings menu, a row of radios, not a native select.
+    expect(document.querySelector('select')).toBeNull();
+    fireEvent.click(screen.getByRole('button', { name: 'Settings' }));
+    const styles = screen.getByRole('radiogroup', { name: 'Emoji style' });
+    expect([...styles.querySelectorAll('[role="radio"]')].map((r) => r.textContent)).toEqual(['Native', 'Noto', 'OpenMoji']);
+    expect(styles.querySelector('[aria-checked="true"]')?.textContent).toBe('Native');
+    fireEvent.click(screen.getByRole('radio', { name: 'OpenMoji' }));
     expect(store.get('set')).toBe('openmoji');
+    fireEvent.keyDown(document.activeElement ?? document.body, { key: 'Escape' });
     expect(screen.getByRole('gridcell', { name: 'grinning face' }).querySelector('img')?.getAttribute('src')).toBe('https://cdn.example/openmoji/1F600.svg');
 
     fireEvent.contextMenu(screen.getByRole('gridcell', { name: 'waving hand' }));

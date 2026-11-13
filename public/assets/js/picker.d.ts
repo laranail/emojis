@@ -233,12 +233,15 @@ export interface PickerEvents {
     };
 }
 /** One rendered block: Frequently used, a Unicode group, the custom emoji, or a group of kaomoji or symbols. */
-export type PickerSection = {
+export type PickerSection = 
+/** `more`: a search section cut at its limit, so it holds the first of more matches. */
+{
     slug: string;
     label: string;
     custom?: false;
     text?: false;
     items: PickerEmoji[];
+    more?: boolean;
 }
 /** Frequently used, when it holds custom emoji beside Unicode ones. */
  | {
@@ -260,6 +263,7 @@ export type PickerSection = {
     custom?: false;
     text: true;
     items: PickerText[];
+    more?: boolean;
 };
 export interface ParsedOptions {
     target: string | null;
@@ -392,8 +396,8 @@ export declare function capPayload(data: PickerPayload, cap: string | null | und
  * of the term must match somewhere.
  */
 export declare function search(items: PickerEmoji[], term: string, limit?: number): PickerEmoji[];
-/** "No emoji found", "1 result", "12 results". */
-export declare function resultText(strings: Pick<PickerStrings, 'noResults' | 'results' | 'resultsOne'>, count: number): string;
+/** "No emoji found", "1 result", "12 results"; "200+ results" when the search stopped at its limit. */
+export declare function resultText(strings: Pick<PickerStrings, 'noResults' | 'results' | 'resultsOne'>, count: number, more?: boolean): string;
 /** The custom emoji whose name or label matches every word of a term, name prefix first. */
 export declare function searchCustom(items: PickerCustom[], term: string): PickerCustom[];
 /** A tone from anywhere (an attribute, storage, a prop): 0–5, and 0 for anything else. */
@@ -718,11 +722,32 @@ export interface SettingsMenuOptions {
     recents: boolean;
     onClearRecents: () => void;
     shortcuts: Array<[string, string]>;
+    /** The image sets to choose between, as [value, label], native first; the style row is left out when empty. */
+    sets?: Array<[string, string]>;
+    /** The set in effect ('native' for the device's own emoji). */
+    set?: string;
+    onSet?: (set: string) => void;
+    /** Only the style row: the page switched the settings off but kept the set switcher. */
+    styleOnly?: boolean;
     /** Open on the shortcut list (the ? key). */
     focusShortcuts?: boolean;
     rtl?: boolean;
     onClose?: () => void;
 }
+/**
+ * The emoji style in effect, from the user's stored choice: a set's name draws every emoji from that set;
+ * 'native' draws the device's own (and, as in auto, an image for what it cannot draw); nothing stored keeps
+ * the page's render option. `set` is the choice the settings menu shows as checked: a picker the page set to
+ * images shows its own set, not "Native".
+ */
+export declare function resolveStyle(stored: unknown, sets: PickerImageSet[], fallback: PickerImageSet | null, render: RenderMode): {
+    set: string;
+    mode: RenderMode;
+};
+/** A set's display name. */
+export declare function setLabel(set: string): string;
+/** The style choices for the settings menu: the device's own emoji, then each set. Empty when there are none. */
+export declare function setChoices(sets: PickerImageSet[], strings: Pick<PickerStrings, 'native'>): Array<[string, string]>;
 /**
  * The settings menu behind the picker's gear button: the theme (Auto, Light, Dark) when the page has not
  * fixed one, clearing Frequently used, and the keyboard shortcuts. A dialog beside the button, with the
@@ -826,7 +851,6 @@ export declare class Picker {
     private raw;
     private support;
     private closeToneMenu;
-    private switcher;
     private gear;
     private closeSettings;
     /** A popover's grid is built the first time it opens, not on page load. */
@@ -882,6 +906,8 @@ export declare class Picker {
     private get imageSet();
     /** How cells draw: the option, unless the set switcher picked a set (then every emoji from it). */
     private get renderMode();
+    /** The style in effect: resolveStyle() over the stored choice, when the set switcher is on. */
+    private style;
     /** The payload capped for this device, falling back to images where the mode allows. */
     private capped;
     private reload;
@@ -905,7 +931,9 @@ export declare class Picker {
     private scheduleSearch;
     private render;
     private sections;
-    /** The image set switcher: native emoji, then each set the payload offers. Hidden when it offers none. */
+    /** The set the user chose, when the payload still offers it; 'native' otherwise. */
+    private chosenSet;
+    /** With settings off, the gear is there only for the set switcher, so it hides when there is no set. */
     private renderSwitcher;
     /** The settings menu, beside the gear: theme, clearing recents, and the keyboard shortcuts. */
     openSettings(focusShortcuts?: boolean): void;
