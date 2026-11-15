@@ -30,7 +30,7 @@ final class ConfiguredExtensions
             $custom = (array) $custom;
 
             if (array_key_exists('url', $custom)) {
-                throw new InvalidArgumentException("laranail.emojis.extend.custom.{$name}.url was renamed to image in 0.2.0; it now also accepts a data URI.");
+                throw new InvalidArgumentException("laranail.emojis.extend.custom.{$name}.url was renamed to image; it also accepts a data URI.");
             }
 
             $emojis->addCustom(

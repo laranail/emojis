@@ -2,7 +2,7 @@ name: Publish to npm
 
 # Publishes @laranail/emojis-picker for a release tag. Its own workflow, not a job in release.yml, for two reasons:
 # a failed npm publish never touches the Composer release, and it can be started by hand for a tag that already
-# exists (`gh workflow run npm-publish.yml -f tag=v0.5.0`) using the workflow as it is on main. Re-running a
+# exists (`gh workflow run npm-publish.yml -f tag=v0.1.0 -f version=0.1.0`) using the workflow as it is on main. Re-running a
 # tag's run uses the workflow file as it was at the tag, so a fix here could never reach that tag that way.
 #
 # Off until the repository variable NPM_PUBLISH is 'true'. Authenticates by npm trusted publishing (configure
@@ -16,19 +16,18 @@ name: Publish to npm
 # A tag push publishes to the registry the repository variable PUBLISH_REGISTRY names (npm when unset).
 
 # Dispatch only, deliberately. The Composer package is on a single moving `v0.1.0`, and a registry version is
-# immutable: publishing 0.1.0 from that tag would freeze the JavaScript package at whatever that first push
-# contained, because every later move would find the version already there and skip. It also cannot take the
-# `latest` tag while 0.8.2 is published, so a tag push failed outright. A JavaScript release is therefore its
-# own decision, with its own increasing version, built from the tag as it is now:
-# `gh workflow run npm-publish.yml -f tag=v0.1.0 -f version=0.9.0 -f registry=github`.
+# immutable: publishing a version from that tag would freeze the JavaScript package at whatever that first push
+# contained, because every later move would find the version already there and skip. A JavaScript release is
+# therefore its own decision, with its own increasing version, built from the tag as it is now:
+# `gh workflow run npm-publish.yml -f tag=v0.1.0 -f version=0.1.1 -f registry=github`.
 on:
   workflow_dispatch:
     inputs:
       tag:
-        description: 'An existing release tag to publish, e.g. v0.5.0'
+        description: 'An existing release tag to publish, e.g. v0.1.0'
         required: true
       version:
-        description: 'The JavaScript version to publish, e.g. 0.9.0; empty takes it from the tag'
+        description: 'The JavaScript version to publish, e.g. 0.1.1; empty takes it from the tag'
         required: false
         default: ''
       registry:

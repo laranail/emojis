@@ -248,7 +248,7 @@ The picker is built to cost nothing until it is used:
   off the main thread.
 
 Measured in Chromium with the full catalogue (1,923 emoji): an inline picker paints in about 60 ms cold and
-15–40 ms warm (it was 156 and 36–40 ms in 0.6.0); a closed popover mounts in under a millisecond (6–12 ms);
+15–40 ms warm (it was 156 and 36–40 ms in earlier builds); a closed popover mounts in under a millisecond (6–12 ms);
 a search takes about 0.4 ms.
 
 For the smallest pages, turn the API on so the payload is fetched and cached by the browser once rather than
@@ -403,13 +403,13 @@ const picker = useEmojiPicker({ source, locale: 'fr', onSelect });
 render agree; changing `userKey` or `store` reads them again. Both adapters are thin over the same pure
 functions, so the two cannot behave differently. React 19 is a peer dependency; nothing else is.
 
-The package is `@laranail/emojis-picker`, with the version of the Composer package: `.` is the vanilla module,
-`./react` the React adapter, `./styles.css` the picker stylesheet. `.github/workflows/npm-publish.yml`
-publishes it on every release tag once publishing is switched on for the repository (the `NPM_PUBLISH`
-variable), to the registry the `PUBLISH_REGISTRY` variable names: `npm`, the default, or `github` for GitHub
-Packages. To build it from a checkout instead: `npm run build:react && npm run types && npm pack`.
+The package is `@laranail/emojis-picker`, with its own version line, independent of the Composer package's
+moving `v0.1.0` (see [release](../release.md)): `.` is the vanilla module, `./react` the React adapter,
+`./styles.css` the picker stylesheet. `.github/workflows/npm-publish.yml` publishes it when started by hand,
+naming the tag to build from, the version and the registry: `npm`, or `github` for GitHub Packages. To build it from a checkout instead: `npm run build:react && npm run types && npm pack`.
 
-**Where it is published today.** npm has 0.5.0 only. 0.5.1 onwards are on GitHub Packages
+**Where it is published today.** GitHub Packages, from `0.1.0`. npm holds only an old `0.5.0`, deprecated in
+favour of GitHub Packages
 (`npm.pkg.github.com`), because npm cannot take a publish from this repository without a token yet: it was
 created after 2026-07-15, so GitHub issues it immutable OIDC subjects (`repo:laranail@<id>/emojis@<id>:…`),
 which npm's trusted publishing does not accept ([npm/cli#9969](https://github.com/npm/cli/issues/9969)); the
