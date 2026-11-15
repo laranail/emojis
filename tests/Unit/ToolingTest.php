@@ -198,8 +198,8 @@ it('refuses anything that is not an npm token before it reaches GitHub, and neve
     'a copied page'     => [str_repeat("SECRET page text, not a token\n", 70)],
     'a token ID'        => ['SECRET-0f8e2c1a-4b7d-4e2a-9c3b-1d2e3f4a5b6c'],
     'a truncated token' => ['npm_' . 'SECRETabc'],
-    'two tokens'        => ['npm_' . "SECRETabcdefghijklmnopqrstuvwxyz0123\nnpm_" . 'SECRETabcdefghijklmnopqrstuvwxyz0123'],
-    'an ellipsis'       => ['npm_' . "SECRETabcdefghijklmnopqrstuvwxyz\u{2026}"],
+    'two tokens'        => ['npm_' . 'SECRET' . implode('', range('a', 'z')) . "0123\nnpm_" . 'SECRET' . implode('', range('a', 'z')) . '0123'],
+    'an ellipsis'       => ['npm_' . 'SECRET' . implode('', range('a', 'z')) . "\u{2026}"],
 ]);
 
 it('removes the invisible characters a copied page carries, and names a stray character without the token', function (string $input, int $exit, string $expected): void {
@@ -218,10 +218,10 @@ it('removes the invisible characters a copied page carries, and names a stray ch
         ->and($output)->toContain($expected)
         ->and($output)->not->toContain('SECRET');
 })->with([
-    'a zero-width space'          => ['npm_' . "SECRETabc\u{200B}defghijklmnopqrstuvwxyz0123", 3, 'removed invisible characters from the paste: U+200B'],
-    'a byte-order mark'           => ["\u{FEFF}npm_" . 'SECRETabcdefghijklmnopqrstuvwxyz0123', 3, 'U+FEFF'],
-    'non-breaking spaces'         => ["\u{00A0}npm_" . "SECRETabcdefghijklmnopqrstuvwxyz0123\u{00A0}\n", 3, 'could not reach'],
-    'a non-breaking space inside' => ['npm_' . "SECRETabcdefghij\u{00A0}klmnopqrstuvwxyz0123", 2, 'contains U+00A0'],
+    'a zero-width space'          => ['npm_' . 'SECRETabc' . "\u{200B}" . implode('', range('d', 'z')) . '0123', 3, 'removed invisible characters from the paste: U+200B'],
+    'a byte-order mark'           => ["\u{FEFF}npm_" . 'SECRET' . implode('', range('a', 'z')) . '0123', 3, 'U+FEFF'],
+    'non-breaking spaces'         => ["\u{00A0}npm_" . 'SECRET' . implode('', range('a', 'z')) . "0123\u{00A0}\n", 3, 'could not reach'],
+    'a non-breaking space inside' => ['npm_' . 'SECRET' . implode('', range('a', 'j')) . "\u{00A0}" . implode('', range('k', 'z')) . '0123', 2, 'contains U+00A0'],
 ]);
 
 it('takes the registry as its first argument and refuses anything it does not know', function (): void {
@@ -250,7 +250,7 @@ it('takes the registry as its first argument and refuses anything it does not kn
         ->and($run('--registry=pypi')[0])->toBe(64);
 });
 
-it('builds the release notes for the moving tag without swallowing the withdrawn history', function (): void {
+it('builds the release notes for the moving tag from its one CHANGELOG section', function (): void {
     $root = dirname(__DIR__, 2);
     $changelog = (string) file_get_contents($root . '/CHANGELOG.md');
     $workflow = (string) file_get_contents($root . '/.github/workflows/release.yml');
@@ -286,17 +286,15 @@ it('builds the release notes for the moving tag without swallowing the withdrawn
 
     $notes = implode("\n", $section('## [0.1.0]'));
     $unreleased = trim(implode("\n", $section('## [Unreleased]')));
-    $demoted = preg_match_all('/^### \[0\.\d+\.\d+\] - /m', $changelog);
+    $versions = preg_match_all('/^#{2,3} \[\d+\.\d+\.\d+\]/m', $changelog);
 
-    // The heading that ends the notes keeps its bracket on purpose: without it the extractor runs on and
-    // every withdrawn section ships as the release notes for v0.1.0.
-    expect($changelog)->toContain("\n## [Internal history] (not published)\n")
-        ->and(trim($notes))->not->toBe('', 'release.yml refuses a tag whose section is empty')
-        ->and($notes)->not->toContain('### [0.8.2]')
-        ->and($notes)->not->toContain('### [0.1.0]')
+    // One version section: the package was reset to a single v0.1.0 on 2026-11-15 and the withdrawn
+    // entries were removed, so the notes are the whole 0.1.0 section and nothing else.
+    expect(trim($notes))->not->toBe('', 'release.yml refuses a tag whose section is empty')
+        ->and($notes)->toContain('### Added')
+        ->and($changelog)->not->toContain('Internal history')
         ->and($unreleased)->toBe('', 'release.yml refuses a tag while [Unreleased] has entries')
-        // Non-vacuity: the withdrawn tags are still in the file, demoted rather than deleted.
-        ->and($demoted)->toBe(13);
+        ->and($versions)->toBe(1);
 });
 
 it('never publishes the JavaScript package from a tag, because registry versions are immutable', function (): void {
@@ -332,9 +330,8 @@ it('never publishes the JavaScript package from a tag, because registry versions
         ->and($workflow)->not->toContain("tags:\n")
         // release.yml still fires on the tag: the Composer release is unaffected, and that must stay true.
         ->and((string) file_get_contents($root . '/.github/workflows/release.yml'))->toContain('tags:')
-        // The README names a constraint the registry can actually resolve, which is not the Composer line.
-        ->and($readme)->toContain('@laranail/emojis-picker@^0.9')
-        ->and($readme)->not->toContain('@laranail/emojis-picker@^0.1')
+        // The README names a constraint the registry can actually resolve: 0.1.0 is the first published version.
+        ->and($readme)->toContain('@laranail/emojis-picker@^0.1')
         // The JS version is its own input, checked for shape, so a release need not cut a Composer tag.
         ->and($workflow)->toContain("      version:\n")
         ->and($workflow)->toContain('version="${INPUT_VERSION:-${tag#v}}"')

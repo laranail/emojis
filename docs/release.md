@@ -15,14 +15,9 @@ Three places name the live line and must agree: the newest `## [X.Y.Z]` section 
 the `dev-main` branch alias in `composer.json` (`0.1.x-dev`), and the `composer require` commands in
 `README.md` and `docs/installation.md`. `tests/Unit/DocumentationTest.php` fails when they drift.
 
-**The README's `npm install @laranail/emojis-picker` constraint is not one of them**, and must not be
-made to track this line — it reads `^0.9`. That package versions independently, for the reason under
-*What the moving tag costs* below, and `DocumentationTest` asserts the constraint is well formed and
-*not* following the Composer line, rather than asserting it matches.
-
-The 13 tags cut between 2026-09-26 and 2026-10-20 (`v0.1.0` through `v0.8.2`) were withdrawn when
-the package returned to this model. Their entries are kept in `CHANGELOG.md` under
-`## [Internal history] (not published)`, relabelled rather than deleted.
+**The README's `npm install @laranail/emojis-picker` constraint is not one of them.** It reads `^0.1`
+today because the JavaScript package also starts at `0.1.0`, but that package versions independently,
+for the reason under *What the moving tag costs* below, so the two are free to drift apart.
 
 ### What the moving tag costs, and what to tell consumers
 
@@ -44,15 +39,11 @@ requires every tag to be an ancestor of `main` and the branch-alias line to have
 which a freshly moved `v0.1.0` satisfies — but it will never tell you a move is due. Treat a
 "release due" warning on this repository as "move the tag".
 
-**The JavaScript package cannot follow the moving tag, and does not try to.** GitHub Packages holds
-`@laranail/emojis-picker` up to 0.8.2 and a published version there is immutable, so publishing `0.1.0`
-from a moving tag would freeze the package at whatever the first push contained — every later move would
-find the version already present and skip it. It also cannot take the `latest` tag while 0.8.2 is
-published: a tag push failed with *"Cannot implicitly apply the \"latest\" tag because previously
-published version 0.8.2 is higher than the new version 0.1.0"*. So `npm-publish.yml` is
-`workflow_dispatch` only, the README's npm constraint is `^0.9` rather than `^0.1`, and a JavaScript
-release is its own decision with its own increasing version, built from whatever `v0.1.0` points at
-when it runs. `version` names it; without it the version is the tag's, which suits only a tag that never moves:
+**The JavaScript package cannot follow the moving tag, and does not try to.** A published registry
+version is immutable, so publishing a version from a moving tag would freeze the package at whatever the
+first push contained — every later move would find the version already present and skip it. So
+`npm-publish.yml` is `workflow_dispatch` only, and a JavaScript release is its own decision with its own
+increasing version (`0.1.0`, then `0.1.1`, …), built from whatever `v0.1.0` points at when it runs. `version` names it; without it the version is the tag's, which suits only a tag that never moves:
 
 ```bash
 gh workflow run npm-publish.yml --repo laranail/emojis -f tag=v0.1.0 -f version=<next> -f registry=github
