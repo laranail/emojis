@@ -198,8 +198,8 @@ it('refuses anything that is not an npm token before it reaches GitHub, and neve
     'a copied page'     => [str_repeat("SECRET page text, not a token\n", 70)],
     'a token ID'        => ['SECRET-0f8e2c1a-4b7d-4e2a-9c3b-1d2e3f4a5b6c'],
     'a truncated token' => ['npm_' . 'SECRETabc'],
-    'two tokens'        => ['npm_' . 'SECRET' . implode(range('a', 'z')) . "0123\nnpm_" . 'SECRET' . implode(range('a', 'z')) . '0123'],
-    'an ellipsis'       => ['npm_' . 'SECRET' . implode(range('a', 'z')) . "\u{2026}"],
+    'two tokens'        => ['npm_' . 'SECRET' . implode('', range('a', 'z')) . "0123\nnpm_" . 'SECRET' . implode('', range('a', 'z')) . '0123'],
+    'an ellipsis'       => ['npm_' . 'SECRET' . implode('', range('a', 'z')) . "\u{2026}"],
 ]);
 
 it('removes the invisible characters a copied page carries, and names a stray character without the token', function (string $input, int $exit, string $expected): void {
@@ -218,10 +218,10 @@ it('removes the invisible characters a copied page carries, and names a stray ch
         ->and($output)->toContain($expected)
         ->and($output)->not->toContain('SECRET');
 })->with([
-    'a zero-width space'          => ['npm_' . 'SECRETabc' . "\u{200B}" . implode(range('d', 'z')) . '0123', 3, 'removed invisible characters from the paste: U+200B'],
-    'a byte-order mark'           => ["\u{FEFF}npm_" . 'SECRET' . implode(range('a', 'z')) . '0123', 3, 'U+FEFF'],
-    'non-breaking spaces'         => ["\u{00A0}npm_" . 'SECRET' . implode(range('a', 'z')) . "0123\u{00A0}\n", 3, 'could not reach'],
-    'a non-breaking space inside' => ['npm_' . 'SECRET' . implode(range('a', 'j')) . "\u{00A0}" . implode(range('k', 'z')) . '0123', 2, 'contains U+00A0'],
+    'a zero-width space'          => ['npm_' . 'SECRETabc' . "\u{200B}" . implode('', range('d', 'z')) . '0123', 3, 'removed invisible characters from the paste: U+200B'],
+    'a byte-order mark'           => ["\u{FEFF}npm_" . 'SECRET' . implode('', range('a', 'z')) . '0123', 3, 'U+FEFF'],
+    'non-breaking spaces'         => ["\u{00A0}npm_" . 'SECRET' . implode('', range('a', 'z')) . "0123\u{00A0}\n", 3, 'could not reach'],
+    'a non-breaking space inside' => ['npm_' . 'SECRET' . implode('', range('a', 'j')) . "\u{00A0}" . implode('', range('k', 'z')) . '0123', 2, 'contains U+00A0'],
 ]);
 
 it('takes the registry as its first argument and refuses anything it does not know', function (): void {
