@@ -5,6 +5,7 @@ declare(strict_types=1);
 use Illuminate\Support\Facades\Artisan;
 use Simtabi\Laranail\Emojis\Core\Emojis;
 use Illuminate\Support\Facades\Validator;
+use Simtabi\Laranail\Emojis\Tests\TestCase;
 use Simtabi\Laranail\Emojis\Core\Image\EmojiImage;
 use Simtabi\Laranail\Emojis\Core\Image\ImageStore;
 use Simtabi\Laranail\Emojis\Core\Exceptions\InvalidImage;
@@ -66,4 +67,28 @@ it('accepts strict base64 and refuses anything else', function (): void {
     expect(EmojiImage::fromBase64(PIXEL_PNG)->src)->toStartWith('data:image/png;base64,')
         ->and(static fn (): EmojiImage => EmojiImage::fromBase64(PIXEL_PNG . '!'))->toThrow(InvalidImage::class)
         ->and(static fn (): EmojiImage => EmojiImage::fromBase64(PIXEL_PNG, 'image/gif'))->toThrow(InvalidImage::class);
+});
+
+it('serves local image copies from a path on the current host, keeping a subdirectory install', function (): void {
+    $manifest = public_path('vendor/laranail/emojis/images/twemoji/' . ImageStore::MANIFEST);
+    $created = ! is_file($manifest);
+
+    if ($created) {
+        @mkdir(dirname($manifest), 0o775, true);
+        file_put_contents($manifest, '{}');
+    }
+
+    try {
+        TestCase::$bootConfig = ['laranail.emojis.images.source' => 'local', 'laranail.emojis.images.set' => 'twemoji', 'app.url' => 'https://boot.example.com/app'];
+        $this->refreshApplication();
+
+        // Built once at boot under a long-running worker, so it must not name the boot host.
+        expect(app(Emojis::class)->get('rocket')->imageUrl('twemoji'))->toStartWith('/app/vendor/laranail/emojis/images/twemoji/');
+    } finally {
+        TestCase::$bootConfig = [];
+
+        if ($created) {
+            unlink($manifest);
+        }
+    }
 });

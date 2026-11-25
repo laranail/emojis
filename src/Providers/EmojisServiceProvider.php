@@ -199,9 +199,16 @@ final class EmojisServiceProvider extends PackageServiceProvider
         $urls = $options->imageBaseUrls;
 
         if ($options->imageSource === ImageSource::Local) {
+            // Built once, at boot, and kept for a long-running worker's life: so no host unless ASSET_URL names
+            // one (a CDN). Otherwise a path on whatever host the page is on, under APP_URL's subdirectory.
+            $config = $app->make(ConfigRepository::class);
+            $assetUrl = $config->get('app.asset_url');
+            $appPath = parse_url((string) $config->get('app.url', ''), PHP_URL_PATH);
+            $prefix = is_string($assetUrl) && $assetUrl !== '' ? null : rtrim(is_string($appPath) ? $appPath : '', '/') . '/';
+
             foreach (ImageSetName::cases() as $set) {
                 if (! isset($urls[$set->value]) && is_file(self::imageRoot() . '/' . $set->value . '/' . ImageStore::MANIFEST)) {
-                    $urls[$set->value] = asset(ImageStore::publicPath($set->value));
+                    $urls[$set->value] = $prefix === null ? asset(ImageStore::publicPath($set->value)) : $prefix . ImageStore::publicPath($set->value);
                 }
             }
         }
