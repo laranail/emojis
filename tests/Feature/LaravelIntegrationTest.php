@@ -206,6 +206,21 @@ it('rejects hidden characters and enforces the emoji policy', function (): void 
         ->and(Validator::make(['v' => '🚀'], ['v' => [new EmojiPolicyRule(EmojiPolicy::only('1F44D'))]])->errors()->first('v'))->toBe('The v field contains emoji that are not allowed here.');
 });
 
+it('rejects invalid UTF-8 under the emoji policy rule, as the other emoji rules do', function (): void {
+    expect(Validator::make(['v' => "\xFF\xFE"], ['v' => [new EmojiPolicyRule]])->passes())->toBeFalse()
+        ->and(Validator::make(['v' => "ok \xC3"], ['v' => [new EmojiPolicyRule(EmojiPolicy::only('1F44D'))]])->passes())->toBeFalse()
+        ->and(Validator::make(['v' => 'plain text'], ['v' => [new EmojiPolicyRule]])->passes())->toBeTrue();
+});
+
+it('validates a reaction the way the security docs show: one emoji, from the allowed pair', function (): void {
+    $rules = ['v' => ['required', new SingleEmoji, new EmojiPolicyRule(EmojiPolicy::only('1F44D', '1F44E'))]];
+
+    expect(Validator::make(['v' => '👍'], $rules)->passes())->toBeTrue()
+        ->and(Validator::make(['v' => 'hello'], $rules)->passes())->toBeFalse()
+        ->and(Validator::make(['v' => '🚀'], $rules)->passes())->toBeFalse()
+        ->and(Validator::make(['v' => '👍👎'], $rules)->passes())->toBeFalse();
+});
+
 it('reads the default policy from config', function (): void {
     config()->set('laranail.emojis.policy', ['deny_groups' => ['flags']]);
     app()->forgetInstance(Emojis::class);

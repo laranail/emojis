@@ -68,12 +68,15 @@ Set a default in `config('laranail.emojis.policy')` — see [configuration](../c
 ## Validation
 
 ```php
-use Simtabi\Laranail\Emojis\Laravel\Rules\{NoHiddenCharacters, EmojiPolicyRule};
+use Simtabi\Laranail\Emojis\Laravel\Rules\{NoHiddenCharacters, EmojiPolicyRule, SingleEmoji};
 
 'username' => ['required', new NoHiddenCharacters],          // reject instead of cleaning
 'bio' => ['nullable', new EmojiPolicyRule],                  // the configured policy
-'reaction' => ['required', new EmojiPolicyRule(EmojiPolicy::only('1F44D', '1F44E'))],
+'reaction' => ['required', new SingleEmoji, new EmojiPolicyRule(EmojiPolicy::only('1F44D', '1F44E'))],
 ```
+
+`EmojiPolicyRule` checks the emoji a value contains and rejects invalid UTF-8; text with no emoji passes it.
+Add `SingleEmoji` or `OnlyEmoji` when the field must hold emoji, as the `reaction` line does.
 
 ## Command line
 
