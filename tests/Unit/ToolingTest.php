@@ -250,53 +250,96 @@ it('takes the registry as its first argument and refuses anything it does not kn
         ->and($run('--registry=pypi')[0])->toBe(64);
 });
 
-it('builds the release notes from the version\'s own CHANGELOG section, and refuses a tag with unreleased entries', function (): void {
-    $root = dirname(__DIR__, 2);
-    $changelog = (string) file_get_contents($root . '/CHANGELOG.md');
-    $workflow = (string) file_get_contents($root . '/.github/workflows/release.yml');
+/**
+ * release.yml's "Extract this version's changelog section" step, exactly as the workflow runs it, so the
+ * tests below exercise the real script rather than a copy of its logic.
+ */
+function releaseNotesScript(): string
+{
+    $workflow = (string) file_get_contents(dirname(__DIR__, 2) . '/.github/workflows/release.yml');
+    $steps = Symfony\Component\Yaml\Yaml::parse($workflow)['jobs']['release']['steps'] ?? [];
 
-    // release.yml ends a section at the next line starting "## [". Assert the delimiter it really uses,
-    // so a change there fails here rather than at the next tag push.
-    expect($workflow)->toContain('f && /^## \[/ { exit }');
-
-    /** @return list<string> the lines release.yml would take for this heading */
-    $section = static function (string $heading) use ($changelog): array {
-        $lines = explode("\n", $changelog);
-        $taken = [];
-        $in = false;
-
-        foreach ($lines as $line) {
-            if (str_starts_with($line, $heading)) {
-                $in = true;
-
-                continue;
-            }
-
-            if ($in && str_starts_with($line, '## [')) {
-                break;
-            }
-
-            if ($in) {
-                $taken[] = $line;
-            }
+    foreach ($steps as $step) {
+        if (($step['id'] ?? null) === 'changelog') {
+            return (string) $step['run'];
         }
+    }
 
-        return $taken;
-    };
+    return '';
+}
 
-    preg_match_all('/^## \[(\d+\.\d+\.\d+)\]/m', $changelog, $versions);
+/** @return array{int, string, string} exit code, combined output, the GITHUB_OUTPUT it wrote */
+function runReleaseNotes(string $changelog, string $tag): array
+{
+    $dir = sys_get_temp_dir() . '/laranail-emojis-release-' . bin2hex(random_bytes(4));
+    mkdir($dir);
+    file_put_contents($dir . '/CHANGELOG.md', $changelog);
+    file_put_contents($dir . '/extract.sh', releaseNotesScript());
+    $process = proc_open(['/bin/bash', 'extract.sh'], [1 => ['pipe', 'w'], 2 => ['pipe', 'w']], $pipes, $dir, ['PATH' => (string) getenv('PATH'), 'GITHUB_REF_NAME' => $tag, 'GITHUB_OUTPUT' => $dir . '/out']);
+    $output = stream_get_contents($pipes[1]) . stream_get_contents($pipes[2]);
+    $exit = proc_close($process);
+    $written = is_file($dir . '/out') ? (string) file_get_contents($dir . '/out') : '';
+    array_map(unlink(...), glob($dir . '/*') ?: []);
+    rmdir($dir);
 
-    // Release tags are final (2026-11-17), so changes collect under [Unreleased] between releases and are
-    // moved into the new version's section when it is cut. Every released section must carry notes, and
-    // release.yml must keep refusing a tag while [Unreleased] still has entries, since those would ship
-    // without being in the notes.
-    expect($versions[1])->toContain('0.1.0')
-        ->and($section('## [0.1.0]'))->toContain('### Added')
-        ->and($changelog)->not->toContain('Internal history')
-        ->and($workflow)->toContain('still has entries under [Unreleased]');
+    return [$exit, $output, $written];
+}
 
-    foreach ($versions[1] as $version) {
-        expect(trim(implode("\n", $section('## [' . $version . ']'))))->not->toBe('', "release.yml refuses a tag whose section ({$version}) is empty");
+const RELEASE_FIXTURE = "# Changelog\n\n## [Unreleased]\n\n## [0.1.10] - 2026-12-08\n\n### Fixed\n\n- ten\n\n## [0.1.1] - 2026-12-01\n\n### Fixed\n\n- one\n\n## [0.1.0] - 2026-11-15\n\n### Added\n\n- first\n";
+
+it('takes a release\'s notes from its own CHANGELOG section, and an rc\'s from its final version\'s', function (string $tag, string $expected, string $absent): void {
+    if (PHP_OS_FAMILY === 'Windows' || ! is_executable('/bin/bash')) {
+        $this->markTestSkipped('release.yml runs on ubuntu; the step is a bash script.');
+    }
+
+    expect(releaseNotesScript())->toContain('GITHUB_OUTPUT');
+
+    [$exit, $output, $written] = runReleaseNotes(RELEASE_FIXTURE, $tag);
+
+    expect($exit)->toBe(0, $output)
+        ->and($written)->toContain('- ' . $expected)
+        ->and($written)->not->toContain('- ' . $absent);
+})->with([
+    'final'                      => ['v0.1.1', 'one', 'ten'],
+    'release candidate'          => ['v0.1.1-rc.2', 'one', 'first'],
+    'beta'                       => ['v0.1.10-beta.1', 'ten', 'one'],
+    'dots are not wildcards'     => ['v0.1.0', 'first', 'one'],
+]);
+
+it('refuses a tag while [Unreleased] has entries, or when its version has no section', function (string $changelog, string $tag, string $reason): void {
+    if (PHP_OS_FAMILY === 'Windows' || ! is_executable('/bin/bash')) {
+        $this->markTestSkipped('release.yml runs on ubuntu; the step is a bash script.');
+    }
+
+    [$exit, $output, $written] = runReleaseNotes($changelog, $tag);
+
+    expect($exit)->toBe(1)
+        ->and($output)->toContain($reason)
+        ->and($written)->toBe('');
+})->with([
+    'unreleased entries' => [str_replace("## [Unreleased]\n", "## [Unreleased]\n\n### Fixed\n\n- not yet released\n", RELEASE_FIXTURE), 'v0.1.10', 'still has entries under [Unreleased]'],
+    'no section'         => [RELEASE_FIXTURE, 'v0.1.2', 'no section for 0.1.2'],
+    'rc of no section'   => [RELEASE_FIXTURE, 'v0.2.0-rc.1', 'no section for 0.2.0'],
+]);
+
+it('marks a suffixed tag as a pre-release that never becomes Latest', function (): void {
+    $steps = Symfony\Component\Yaml\Yaml::parseFile(dirname(__DIR__, 2) . '/.github/workflows/release.yml')['jobs']['release']['steps'];
+    $publish = array_values(array_filter($steps, static fn (array $step): bool => ($step['name'] ?? '') === 'Publish'))[0]['with'] ?? [];
+
+    expect($publish['prerelease'] ?? null)->toBe("\${{ contains(github.ref_name, '-') }}")
+        ->and($publish['make_latest'] ?? null)->toBe("\${{ !contains(github.ref_name, '-') }}");
+});
+
+it('keeps every released CHANGELOG section non-empty, so each tag has notes', function (): void {
+    $changelog = (string) file_get_contents(dirname(__DIR__, 2) . '/CHANGELOG.md');
+    preg_match_all('/^## \[(\d+\.\d+\.\d+)\][^\n]*\n(.*?)(?=^## \[|\z)/ms', $changelog, $sections, PREG_SET_ORDER);
+
+    expect($sections)->not->toBeEmpty()
+        ->and(array_column($sections, 1))->toContain('0.1.0')
+        ->and($changelog)->not->toContain('Internal history');
+
+    foreach ($sections as [, $version, $body]) {
+        expect(trim($body))->not->toBe('', "the [{$version}] section is empty");
     }
 });
 
