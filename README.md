@@ -38,8 +38,8 @@ npm install @laranail/emojis-picker@^0.1
 ```
 
 **The JavaScript package versions independently of the Composer package.** Both start at `0.1.0`, but
-registry versions are immutable, so the JavaScript package cannot follow a tag that moves: each JavaScript
-release gets its own increasing version, and the Composer package's moving `v0.1.0` publishes none. The
+registry versions are immutable and the Composer package's tags are not published to npm: each JavaScript
+release is its own decision, with its own increasing version. The
 picker's code is the same in both.
 
 See [installing from GitHub Packages](docs/tools/picker.md#installing-from-github-packages).
@@ -84,7 +84,7 @@ Hosted at <https://opensource.simtabi.com/documentation/laranail/emojis/>.
 - [Configuration](docs/configuration.md) — every key in `config/laranail/emojis.php`
 - [Modes and conversion](docs/modes.md) — the conversion matrix and how degradation works
 - [Architecture](docs/architecture.md) — the scanner, the dataset, failure handling, and why
-- [Release](docs/release.md) — versioning, the moving tag, and refreshing the dataset
+- [Release](docs/release.md) — versioning, final tags and pre-releases, and refreshing the dataset
 
 ### Reference
 

@@ -406,7 +406,7 @@ render agree; changing `userKey` or `store` reads them again. Both adapters are 
 functions, so the two cannot behave differently. React 19 is a peer dependency; nothing else is.
 
 The package is `@laranail/emojis-picker`, with its own version line, independent of the Composer package's
-moving `v0.1.0` (see [release](../release.md)): `.` is the vanilla module, `./react` the React adapter,
+releases (see [release](../release.md)): `.` is the vanilla module, `./react` the React adapter,
 `./styles.css` the picker stylesheet. `.github/workflows/npm-publish.yml` publishes it when started by hand,
 naming the tag to build from, the version and the registry: `npm`, or `github` for GitHub Packages. To build it from a checkout instead: `npm run build:react && npm run types && npm pack`.
 

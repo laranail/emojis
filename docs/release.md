@@ -4,22 +4,67 @@ How `laranail/emojis` is versioned and released, and how the dataset moves to a 
 
 ## Versioning
 
-The package carries **one tag, `v0.1.0`, and moves it** on each change, which is the laranail
-family's pre-1.0 model. Consumers require `^0.1`:
+**Release tags are final** (laranail rule, 2026-11-17). Every release gets its own `vX.Y.Z` tag on a merged
+commit of `main`, and a tag is never moved, deleted or reused: the next fix is the next number. Consumers
+require `^0.1`, which takes every `0.1.x` release:
 
 ```bash
 composer require laranail/emojis:^0.1
 ```
+
+| Kind | Tag | Notes come from |
+|---|---|---|
+| Final | `v0.1.1` | `## [0.1.1]` |
+| Pre-release | `v0.1.1-rc.1` (also `-alpha.N`, `-beta.N`) | `## [0.1.1]`, the final version's section |
+
+A pre-release is published as a GitHub pre-release and never becomes Latest. Composer resolves it only for
+a consumer who opts in (`@rc`, or `minimum-stability` with `prefer-stable`).
 
 Three places name the live line and must agree: the newest `## [X.Y.Z]` section in `CHANGELOG.md`,
 the `dev-main` branch alias in `composer.json` (`0.1.x-dev`), and the `composer require` commands in
 `README.md` and `docs/installation.md`. `tests/Unit/DocumentationTest.php` fails when they drift.
 
 **The README's `npm install @laranail/emojis-picker` constraint is not one of them.** It reads `^0.1`
-today because the JavaScript package also starts at `0.1.0`, but that package versions independently,
-for the reason under *What the moving tag costs* below, so the two are free to drift apart.
+today because the JavaScript package also starts at `0.1.0`, but that package versions independently
+(each JavaScript release is its own decision, published by hand), so the two are free to drift apart.
 
-### What the moving tag costs, and what to tell consumers
+## Releasing
+
+This repository is not on the weekly release train, so it releases by hand on the train's rules: an rc
+first, then the final on the rc's commit.
+
+1. Land changes on `main` through pull requests. Each one adds its lines under `## [Unreleased]` in
+   `CHANGELOG.md`.
+2. Open a release pull request that renames `## [Unreleased]` to `## [X.Y.Z] - <date>` and adds a new,
+   empty `## [Unreleased]` above it. Merge it once CI is green.
+3. Tag the merge commit as a release candidate, then the final on the same commit once it is approved:
+
+   ```bash
+   git -C ~/Artisan/projects/opensource/laranail/packages/emojis tag v0.1.1-rc.1 <merge-sha>
+   git -C ~/Artisan/projects/opensource/laranail/packages/emojis push origin v0.1.1-rc.1
+   git -C ~/Artisan/projects/opensource/laranail/packages/emojis tag v0.1.1 <merge-sha>
+   git -C ~/Artisan/projects/opensource/laranail/packages/emojis push origin v0.1.1
+   ```
+
+4. `release.yml` builds each release from the tag. It refuses a tag while `[Unreleased]` still has
+   entries, since those would ship without being in the notes, and a tag whose version has no section.
+   `tests/Unit/ToolingTest.php` runs that step's script as written, against fixture changelogs.
+5. **Check the release is published**, not only that the run is green (see the history below for why):
+
+   ```bash
+   gh release view v0.1.1 --repo laranail/emojis --json isDraft,isPrerelease,targetCommitish,publishedAt
+   ```
+
+A fix to an older line is made on `main` first; for the older line, cut `release/X.Y` from its tag,
+cherry-pick, and tag `vX.Y.(Z+1)` there.
+
+## Before 2026-11-17: the moving tag
+
+Until release tags became final, the package carried one tag, `v0.1.0`, and moved it on each change,
+the laranail family's old pre-1.0 model. What follows records what that cost, because a consumer who
+installed during that time can still be affected.
+
+### What the moving tag cost, and what to tell consumers
 
 **A moved tag does not reach a consumer who has already fetched it.** Composer caches the dist
 archive per package *reference*, and the reference is the tag name, which never changes — so
@@ -59,7 +104,9 @@ or deletion of `v*`, so `git push --force origin v0.1.0` is rejected with `GH013
 protected ref` (measured 2026-11-13). A move goes through `package-tools`' `reset-release-tags.py`, which
 lifts that ruleset for the one operation and restores it, so the protection holds the rest of the time.
 
-## Releasing
+### How a tag was moved
+
+Kept for the record; do not follow it for a new release.
 
 1. Land the change on `main` through a pull request; CI must be green.
 2. Rewrite the `## [0.1.0]` section in `CHANGELOG.md` so it describes the code the tag will point

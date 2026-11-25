@@ -15,6 +15,9 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/),
 
 ### Changed
 
+- Release tags are final: each release gets its own number, with release candidates first, and
+  `docs/release.md` describes the process. The moving-`v0.1.0` history is kept there for consumers who
+  installed during it.
 - Test tooling: Pest 5 (with its arch and Laravel plugins) and PHPUnit 13. Development only; nothing an
   application installs changes.
 - Local image copies (`images.source = local`) are served from a path on the page's host, under `APP_URL`'s
@@ -36,6 +39,8 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/),
 - `build-dataset` times out stalled downloads and re-fetches a corrupt cached source with `--fetch`.
 - Rector 2.9 removed the early-return set this package's config named; the static analysis job ran no
   rule until it was dropped.
+- `release.yml` failed on a pre-release tag (`v0.1.1-rc.1` looked for a `[0.1.1-rc.1]` section); a
+  pre-release now takes its notes from its final version's section and is published as a pre-release.
 
 ### Security
 
