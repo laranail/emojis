@@ -4,10 +4,12 @@ declare(strict_types=1);
 
 namespace Simtabi\Laranail\Emojis\Laravel\View\Components;
 
+use Illuminate\Routing\Router;
 use Illuminate\View\Component;
 use Illuminate\Support\HtmlString;
 use Simtabi\Laranail\Emojis\Core\Emojis;
 use Illuminate\View\ComponentAttributeBag;
+use Illuminate\Contracts\Routing\UrlGenerator;
 use Simtabi\Laranail\Emojis\Laravel\View\PickerData;
 use Simtabi\Laranail\Emojis\Laravel\View\PickerConfig;
 use Simtabi\Laranail\Emojis\Laravel\View\PickerPayloads;
@@ -42,6 +44,9 @@ final class Picker extends Component
         private readonly PickerPayloads $payloads,
         private readonly PickerData $written,
         private readonly PickerConfig $config,
+        private readonly ConfigRepository $settings,
+        private readonly Router $router,
+        private readonly UrlGenerator $url,
         public ?string $target = null,
         public ?string $locale = null,
         public bool $inline = false,
@@ -83,8 +88,8 @@ final class Picker extends Component
         $resolved = $this->emojis->locales()->resolve($this->locale);
         $c = $this->config;
         // A keyed API answers a browser with 401, so a picker pointed at it would never load: embed instead.
-        $api = filter_var(config('laranail.emojis.api.enabled'), FILTER_VALIDATE_BOOLEAN) && app('router')->has('laranail.emojis.api.picker')
-            && ! GuardApi::requiresKey(app(ConfigRepository::class));
+        $api = filter_var($this->settings->get('laranail.emojis.api.enabled'), FILTER_VALIDATE_BOOLEAN) && $this->router->has('laranail.emojis.api.picker')
+            && ! GuardApi::requiresKey($this->settings);
         $block = '';
         $source = [];
 
@@ -93,7 +98,7 @@ final class Picker extends Component
         if ($api && $c->delivery !== 'inline') {
             // Relative, so it is fetched from the host the page is on (tenant subdomains, www and apex,
             // preview domains), not APP_URL's, which would be cross-origin there.
-            $source['source'] = route('laranail.emojis.api.picker', absolute: false);
+            $source['source'] = $this->url->route('laranail.emojis.api.picker', [], false);
         } else {
             $source['payload'] = PickerData::elementId($resolved);
             $block = $this->written->block($resolved, $this->payloads);
