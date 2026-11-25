@@ -102,6 +102,17 @@ php artisan laranail::emojis.images verify twemoji    # exit 1 if any file chang
 'images' => ['set' => 'twemoji', 'source' => 'local'],
 ```
 
+The image URLs are absolute, built from the application URL when the package boots, because emails,
+queued notifications and pickers on other origins (through the API) need a full URL. An application
+served on several hosts (tenant subdomains, preview domains) that wants each page to load its own copy
+sets the base URL itself, as a path:
+
+```php
+'images' => ['source' => 'local', 'base_urls' => ['twemoji' => '/vendor/laranail/emojis/images/twemoji']],
+```
+
+Only do that when every page and API consumer is on the same origin as the images.
+
 Nothing is bundled in the package — the four sets are 9.8 MB (Twemoji), 12.6 MB (OpenMoji), 40.7 MB (Noto)
 and 122 MB (Fluent) — so `install` downloads the set once. Every file must match the SHA-256 this package
 ships for the pinned version, or it is refused and nothing is written for it; accepted files are sanitised

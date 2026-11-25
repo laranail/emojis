@@ -20,8 +20,6 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/),
   installed during it.
 - Test tooling: Pest 5 (with its arch and Laravel plugins) and PHPUnit 13. Development only; nothing an
   application installs changes.
-- Local image copies (`images.source = local`) are served from a path on the page's host, under `APP_URL`'s
-  subdirectory, instead of a URL fixed at boot; `ASSET_URL` is still used when set.
 - The picker embeds its payload, instead of fetching it, while `api.keys` is set: a browser page cannot
   send the key. The doctor check says so.
 - Warnings are logged once per distinct value and at most 32 per subject per worker.
