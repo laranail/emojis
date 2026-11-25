@@ -62,8 +62,10 @@ use Simtabi\Laranail\Package\Tools\Support\Resilience\FailurePolicy;
  * `@laranailEmojis(...)`, commands `laranail::emojis.*`.
  *
  * Emojis is a worker-wide singleton. That is safe under Octane because every registration is frozen once
- * the application has booted, and the locale is read from the application on each call rather than
- * captured here.
+ * the application has booted, and the locale is read on each call rather than captured here. It is read from
+ * the translator, not from app()->getLocale(): Octane gives each request a cloned config, so the application
+ * this singleton was built with never sees a request's setLocale(), while the translator is shared and set
+ * per request.
  *
  * @internal Auto-discovered framework wiring; not part of the public API.
  */
@@ -125,7 +127,7 @@ final class EmojisServiceProvider extends PackageServiceProvider
                 terminal: $app->make(TerminalProbe::class),
                 html: $app->make(HtmlFactory::class),
                 custom: $app->make(CustomEmojiRegistry::class),
-                currentLocale: is_string($pinned) && $pinned !== '' ? null : $app->getLocale(...),
+                currentLocale: is_string($pinned) && $pinned !== '' ? null : static fn (): string => $app->make('translator')->getLocale(),
                 images: $app->make(ImageSets::class),
             );
         });

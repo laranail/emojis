@@ -72,8 +72,10 @@ through `laranail/package-tools`' `FailurePolicy`, so they reach the exception h
 ## Why one instance per worker?
 
 `Emojis` is a container singleton. It holds only data derived from the immutable dataset and from
-registrations that are frozen once the application has booted; the locale is read from the application on
-every call. Under Octane nothing a request does can change what the next request sees.
+registrations that are frozen once the application has booted; the locale is read from the translator on
+every call. It is not read from the application: Octane gives each request a cloned configuration, so the
+application the singleton was built with would never see a request's `App::setLocale()`, while the shared
+translator is set per request. Under Octane nothing a request does can change what the next request sees.
 
 ---
 

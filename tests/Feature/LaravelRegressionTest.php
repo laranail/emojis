@@ -98,3 +98,28 @@ it('passes the doctor with the default image set', function (): void {
 it('passes the doctor whatever shortcode delimiters are configured', function (): void {
     expect(new DatasetCheck(Emojis::create(['shortcodes' => ['delimiters' => ['{', '}']]]))->run()->status)->toBe(DoctorStatus::Pass);
 });
+
+it('follows the request locale, including in an Octane-style request sandbox', function (): void {
+    $emojis = app(Emojis::class);
+    expect($emojis->get('rocket')->name())->toBe('rocket');
+
+    // Octane gives each request a clone of the application with its own cloned config
+    // (CreateConfigurationSandbox), while the Emojis singleton was built before it.
+    $sandbox = clone app();
+    $sandbox->instance('config', clone app('config'));
+    $sandbox->setLocale('fr');
+
+    try {
+        expect($sandbox->make(Emojis::class)->get('rocket')->name())->toBe('fusée');
+    } finally {
+        $sandbox->setLocale('en');
+    }
+
+    app()->setLocale('fr');
+
+    try {
+        expect($emojis->get('rocket')->name())->toBe('fusée');
+    } finally {
+        app()->setLocale('en');
+    }
+});
