@@ -6,6 +6,7 @@ use Simtabi\Laranail\Emojis\Core\Enums\Group;
 use Simtabi\Laranail\Emojis\Core\Security\Threat;
 use Simtabi\Laranail\Emojis\Core\Enums\EmojiVersion;
 use Simtabi\Laranail\Emojis\Core\Security\EmojiPolicy;
+use Simtabi\Laranail\Emojis\Core\Exceptions\InvalidPolicy;
 
 /** Hide bytes after a carrier character the way "emoji smuggling" does: one variation selector per byte. */
 function smuggleInVariationSelectors(string $carrier, string $payload): string
@@ -154,6 +155,34 @@ it('builds a policy from config strings', function (): void {
         ->and($policy->maxVersion)->toBe(EmojiVersion::V15_0)
         ->and($policy->allowUnknown)->toBeFalse();
 });
+
+it('reads allow_unknown and allow_custom the way env() and config files write booleans', function (mixed $value, bool $expected): void {
+    $policy = EmojiPolicy::fromArray(['allow_unknown' => $value, 'allow_custom' => $value]);
+
+    expect($policy->allowUnknown)->toBe($expected)
+        ->and($policy->allowCustom)->toBe($expected);
+})->with([
+    'false'          => [false, false],
+    'int 0'          => [0, false],
+    "string '0'"     => ['0', false],
+    "string 'false'" => ['false', false],
+    "string 'off'"   => ['off', false],
+    "string 'no'"    => ['no', false],
+    'true'           => [true, true],
+    'int 1'          => [1, true],
+    "string 'true'"  => ['true', true],
+    'null (unset)'   => [null, true],
+]);
+
+it('refuses an allow_unknown or allow_custom it cannot read as a boolean, rather than allowing', function (string $key, mixed $value): void {
+    expect(fn (): EmojiPolicy => EmojiPolicy::fromArray([$key => $value]))
+        ->toThrow(InvalidPolicy::class, $key);
+})->with([
+    'allow_unknown: maybe' => ['allow_unknown', 'maybe'],
+    'allow_custom: 2'      => ['allow_custom', 2],
+    'allow_unknown: array' => ['allow_unknown', ['no']],
+    'allow_custom: empty'  => ['allow_custom', ''],
+]);
 
 it('removes the deprecated format controls, shorthand format controls and stray Mongolian selectors', function (): void {
     $input = "a\u{206A}b\u{206F}c\u{1BCA0}d\u{1BCA3}e\u{180B}f\u{180F}g";
