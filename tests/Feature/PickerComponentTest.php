@@ -10,6 +10,7 @@ use Simtabi\Laranail\Emojis\Core\Emojis;
 use Illuminate\View\ComponentAttributeBag;
 use Simtabi\Laranail\Emojis\Tests\TestCase;
 use Illuminate\Contracts\Translation\Translator;
+use Simtabi\Laranail\Emojis\Core\Picker\PickerPayload;
 use Simtabi\Laranail\Emojis\Laravel\View\PickerConfig;
 use Simtabi\Laranail\Emojis\Core\Picker\PayloadBuilder;
 use Simtabi\Laranail\Emojis\Laravel\Doctor\PickerCheck;
@@ -236,6 +237,44 @@ it('caches the payload, under a key that changes with what the payload depends o
 
     expect($cache->getStore()->all())->toHaveCount(2)
         ->and(array_column($after->custom, 'name'))->toBe(['partyparrot']);
+});
+
+it('rebuilds the cached payload when the active emoticons change', function (): void {
+    $cache = new Repository(new ArrayStore(serializesValues: true));
+    $payloads = static fn (Emojis $emojis): PickerPayloads => new PickerPayloads($emojis, new PayloadBuilder($emojis), app('translator'), $cache);
+    $emoticonsOf = static function (PickerPayload $payload, string $hexcode): array {
+        foreach ($payload->groups as $group) {
+            foreach ($group['emoji'] as $entry) {
+                if ($entry['hexcode'] === $hexcode) {
+                    return $entry['emoticons'] ?? [];
+                }
+            }
+        }
+
+        return [];
+    };
+
+    $hexcode = emojis()->fromEmoticon(':)')?->hexcode;
+    expect($hexcode)->not->toBeNull();
+
+    $before = $payloads(Emojis::create(terminal: new EnvTerminalProbe(override: true)))->payload('en');
+    $after = $payloads(Emojis::create(['input' => ['disabled_emoticons' => [':)']]], terminal: new EnvTerminalProbe(override: true)))->payload('en');
+
+    expect($emoticonsOf($before, (string) $hexcode))->toContain(':)')
+        ->and($emoticonsOf($after, (string) $hexcode))->not->toContain(':)');
+});
+
+it('serves the cached payload from a cache that refuses to unserialize objects', function (): void {
+    // cache.serializable_classes = false: a cached object comes back as __PHP_Incomplete_Class, so the
+    // payload must be cached in a form that survives it, or every request rebuilds it.
+    $cache = new Repository(new ArrayStore(serializesValues: true, serializableClasses: false));
+    $emojis = Emojis::create(terminal: new EnvTerminalProbe(override: true));
+    $first = new PickerPayloads($emojis, new PayloadBuilder($emojis), app('translator'), $cache)->payload('en');
+    $stored = array_column($cache->getStore()->all(), 'value');
+
+    expect($stored)->toHaveCount(1)
+        ->and($stored[0])->not->toBeInstanceOf(__PHP_Incomplete_Class::class)
+        ->and(new PickerPayloads($emojis, new PayloadBuilder($emojis), app('translator'), $cache)->payload('en'))->toEqual($first);
 });
 
 it('gives the Livewire textarea a name and an accessible name, and locks the locale', function (): void {
