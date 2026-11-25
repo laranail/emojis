@@ -6,6 +6,7 @@ namespace Simtabi\Laranail\Emojis\Core\Image;
 
 use InvalidArgumentException;
 use Simtabi\Laranail\Emojis\Core\Support\ConfigInt;
+use Simtabi\Laranail\Emojis\Core\Support\ConfigBool;
 
 /**
  * Limits applied to every image a caller supplies — a data URI, base64, a file or a URL. The defaults suit
@@ -18,7 +19,8 @@ use Simtabi\Laranail\Emojis\Core\Support\ConfigInt;
  *
  * A root-relative URL (`/img/a.png`) names the app's own origin, so the reader's browser sends it the app's
  * cookies: a user-supplied `/logout` or admin GET is a cross-site request forgery. It is accepted when no
- * `hosts` are listed, as before, and refused once `hosts` narrows URLs, unless `relative` opts in.
+ * `hosts` are listed, as before, and refused once `hosts` narrows URLs, unless `relative` opts in. Images the
+ * application configures itself (`extend.custom`, `extend.images`) are trusted with root-relative URLs.
  */
 final readonly class ImagePolicy
 {
@@ -59,12 +61,27 @@ final readonly class ImagePolicy
             maxSvgElements: $int('max_svg_elements', 20_000),
             hosts: $hosts,
             allowUrls: ! array_key_exists('urls', $config) || $config['urls'] === true,
-            allowRelative: is_bool($config['relative'] ?? null) ? $config['relative'] : null,
+            allowRelative: self::relative($config['relative'] ?? null),
         );
+    }
+
+    /** The same policy with root-relative URLs allowed: for images the application configures itself. */
+    public function withRelativeAllowed(): self
+    {
+        return new self($this->maxBytes, $this->maxDimension, $this->allowSvg, $this->maxSvgElements, $this->hosts, $this->allowUrls, true);
     }
 
     public function allowsRelative(): bool
     {
         return $this->allowRelative ?? $this->hosts === [];
+    }
+
+    private static function relative(mixed $value): ?bool
+    {
+        if ($value === null) {
+            return null;
+        }
+
+        return ConfigBool::read($value) ?? throw new InvalidArgumentException('images.custom.relative must be a boolean or null.');
     }
 }

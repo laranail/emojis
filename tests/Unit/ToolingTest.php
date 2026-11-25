@@ -300,10 +300,10 @@ it('takes a release\'s notes from its own CHANGELOG section, and an rc\'s from i
         ->and($written)->toContain('- ' . $expected)
         ->and($written)->not->toContain('- ' . $absent);
 })->with([
-    'final'                      => ['v0.1.1', 'one', 'ten'],
-    'release candidate'          => ['v0.1.1-rc.2', 'one', 'first'],
-    'beta'                       => ['v0.1.10-beta.1', 'ten', 'one'],
-    'dots are not wildcards'     => ['v0.1.0', 'first', 'one'],
+    'final'                  => ['v0.1.1', 'one', 'ten'],
+    'release candidate'      => ['v0.1.1-rc.2', 'one', 'first'],
+    'beta'                   => ['v0.1.10-beta.1', 'ten', 'one'],
+    'dots are not wildcards' => ['v0.1.0', 'first', 'one'],
 ]);
 
 it('refuses a tag while [Unreleased] has entries, or when its version has no section', function (string $changelog, string $tag, string $reason): void {

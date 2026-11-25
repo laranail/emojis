@@ -44,7 +44,8 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/),
 
 - A root-relative custom image URL (`/logout`, an admin GET) skipped `images.custom.hosts`, so every
   reader's browser sent that request to the application with their cookies. With `hosts` set, root-relative
-  URLs are now refused unless `images.custom.relative` is `true`.
+  URLs users supply are now refused unless `images.custom.relative` is `true`. Images in `extend.custom`
+  and `extend.images` are the application's own config and keep accepting them.
 - `policy.allow_unknown` and `policy.allow_custom` read `0`, `'0'` and `'false'` as allow, so a configured
   deny did nothing. They now read booleans the way `env()` writes them, and refuse anything else.
 - `EmojiPolicyRule` rejects invalid UTF-8, as the other emoji rules do.

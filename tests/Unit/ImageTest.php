@@ -175,6 +175,33 @@ it('reads images.custom.relative from config', function (): void {
         ->and(ImagePolicy::fromArray(['relative' => false])->allowsRelative())->toBeFalse();
 });
 
+it('accepts a root-relative image the application configures itself, even with a hosts list', function (): void {
+    // extend.custom and extend.images are the developer's own files; the hosts rule is for images users supply.
+    $emojis = Emojis::create([
+        'images' => ['custom' => ['hosts' => ['cdn.example.com']]],
+        'extend' => ['custom' => ['partyparrot' => ['image' => '/img/party.png']], 'images' => ['rocket' => '/img/rocket.png']],
+    ]);
+
+    expect($emojis->customEmoji('partyparrot')?->image->src)->toBe('/img/party.png')
+        ->and($emojis->customImage($emojis->get('rocket'))?->src)->toBe('/img/rocket.png')
+        ->and(static fn (): EmojiImage => $emojis->image('/img/party.png'))->toThrow(InvalidImage::class, 'root-relative');
+});
+
+it('reads images.custom.relative strictly, as the policy switches are read', function (mixed $value, ?bool $expected): void {
+    expect(ImagePolicy::fromArray(['hosts' => ['cdn.example.com'], 'relative' => $value])->allowRelative)->toBe($expected);
+})->with([
+    'unset'          => [null, null],
+    'true'           => [true, true],
+    "string 'true'"  => ['true', true],
+    "string '1'"     => ['1', true],
+    'int 0'          => [0, false],
+    "string 'false'" => ['false', false],
+]);
+
+it('refuses an images.custom.relative it cannot read as a boolean', function (): void {
+    expect(static fn (): ImagePolicy => ImagePolicy::fromArray(['relative' => 'maybe']))->toThrow(InvalidArgumentException::class, 'relative');
+});
+
 it('never puts the refused input into the exception message', function (): void {
     try {
         EmojiImage::fromDataUri('data:image/png;base64,' . base64_encode('<script>secret-payload</script>'));

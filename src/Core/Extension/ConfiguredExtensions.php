@@ -6,6 +6,7 @@ namespace Simtabi\Laranail\Emojis\Core\Extension;
 
 use InvalidArgumentException;
 use Simtabi\Laranail\Emojis\Core\Emojis;
+use Simtabi\Laranail\Emojis\Core\Image\EmojiImage;
 
 /**
  * Applies the registration half of a config array — `extend.custom`, `extend.images`, `extend.shortcodes`,
@@ -25,6 +26,9 @@ final class ConfiguredExtensions
     public static function apply(Emojis $emojis, array $config): Emojis
     {
         $extend = (array) ($config['extend'] ?? []);
+        // The application's own config, not user input: root-relative image paths are its own to choose.
+        $policy = $emojis->options()->imagePolicy->withRelativeAllowed();
+        $configured = static fn (mixed $value): EmojiImage => EmojiImage::from(self::string($value), $policy);
 
         foreach ((array) ($extend['custom'] ?? []) as $name => $custom) {
             $custom = (array) $custom;
@@ -35,7 +39,7 @@ final class ConfiguredExtensions
 
             $emojis->addCustom(
                 (string) $name,
-                self::string($custom['image'] ?? ''),
+                $configured($custom['image'] ?? ''),
                 isset($custom['fallback']) ? self::string($custom['fallback']) : null,
                 array_values(array_map(self::string(...), (array) ($custom['aliases'] ?? []))),
                 isset($custom['label']) ? self::string($custom['label']) : null,
@@ -43,7 +47,7 @@ final class ConfiguredExtensions
         }
 
         foreach ((array) ($extend['images'] ?? []) as $emoji => $image) {
-            $emojis->useImage((string) $emoji, self::string($image));
+            $emojis->useImage((string) $emoji, $configured($image));
         }
 
         foreach ((array) ($extend['shortcodes'] ?? []) as $code => $emoji) {

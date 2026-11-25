@@ -10,6 +10,7 @@ use Simtabi\Laranail\Emojis\Core\Enums\Group;
 use Simtabi\Laranail\Emojis\Core\Enums\Subgroup;
 use Simtabi\Laranail\Emojis\Core\Support\ConfigInt;
 use Simtabi\Laranail\Emojis\Core\Enums\EmojiVersion;
+use Simtabi\Laranail\Emojis\Core\Support\ConfigBool;
 use Simtabi\Laranail\Emojis\Core\Exceptions\InvalidPolicy;
 
 /**
@@ -189,15 +190,7 @@ final readonly class EmojiPolicy
             return true;
         }
 
-        $flag = is_bool($value) || is_int($value) || is_string($value)
-            ? filter_var($value, FILTER_VALIDATE_BOOLEAN, FILTER_NULL_ON_FAILURE)
-            : null;
-
-        if ($flag === null || (is_int($value) && $value !== 0 && $value !== 1) || $value === '') {
-            throw InvalidPolicy::notABoolean($key, $value);
-        }
-
-        return $flag;
+        return ConfigBool::read($value) ?? throw InvalidPolicy::notABoolean($key, $value);
     }
 
     /**
