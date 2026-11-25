@@ -140,7 +140,14 @@ final readonly class ImageStore
         $ok = 0;
 
         foreach ($manifest['files'] as $path => $hash) {
-            $target = $this->target($set, $path);
+            try {
+                $target = $this->target($set, $path);
+            } catch (RuntimeException) {
+                // A manifest naming a path outside the set was edited after install(): report it, never read it.
+                $changed[] = $path;
+
+                continue;
+            }
 
             if (! is_file($target)) {
                 $missing[] = $path;
