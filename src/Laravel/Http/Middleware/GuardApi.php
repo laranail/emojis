@@ -26,6 +26,15 @@ final readonly class GuardApi
 {
     public function __construct(private ConfigRepository $config) {}
 
+    /**
+     * Whether the API needs a key. A browser page cannot send one, so the picker embeds its payload instead
+     * of fetching it from a keyed API (the Picker component and its doctor check ask this).
+     */
+    public static function requiresKey(ConfigRepository $config): bool
+    {
+        return self::strings($config->get('laranail.emojis.api.keys', [])) !== [];
+    }
+
     public function handle(Request $request, Closure $next): Response
     {
         $keys = $this->keys();
@@ -44,6 +53,18 @@ final readonly class GuardApi
         }
 
         return $this->harden($response, $request);
+    }
+
+    /**
+     * A list from config: an array, or a comma-separated string (as an env value arrives); blanks dropped.
+     *
+     * @return list<string>
+     */
+    private static function strings(mixed $value): array
+    {
+        $items = is_string($value) ? explode(',', $value) : (is_array($value) ? $value : []);
+
+        return array_values(array_filter(array_map(static fn (mixed $item): string => is_string($item) ? trim($item) : '', $items), static fn (string $item): bool => $item !== ''));
     }
 
     /** @param list<string> $keys */
@@ -94,24 +115,12 @@ final readonly class GuardApi
     /** @return list<string> */
     private function keys(): array
     {
-        return $this->strings($this->config->get('laranail.emojis.api.keys', []));
+        return self::strings($this->config->get('laranail.emojis.api.keys', []));
     }
 
     /** @return list<string> */
     private function origins(): array
     {
-        return array_map(static fn (string $origin): string => rtrim($origin, '/'), $this->strings($this->config->get('laranail.emojis.api.allowed_origins', [])));
-    }
-
-    /**
-     * A list from config: an array, or a comma-separated string (as an env value arrives); blanks dropped.
-     *
-     * @return list<string>
-     */
-    private function strings(mixed $value): array
-    {
-        $items = is_string($value) ? explode(',', $value) : (is_array($value) ? $value : []);
-
-        return array_values(array_filter(array_map(static fn (mixed $item): string => is_string($item) ? trim($item) : '', $items), static fn (string $item): bool => $item !== ''));
+        return array_map(static fn (string $origin): string => rtrim($origin, '/'), self::strings($this->config->get('laranail.emojis.api.allowed_origins', [])));
     }
 }

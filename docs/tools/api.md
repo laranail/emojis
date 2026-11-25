@@ -68,7 +68,8 @@ fails when a route is missing from it.
   Blade picker shares.
 - **Throttled per client IP** by default. Behind a proxy or load balancer, configure Laravel's
   `TrustProxies`, or every client shares the proxy's address and its limit.
-- **API keys, for another server.** Set `LARANAIL_EMOJIS_API_KEYS` (comma-separated, so a key can be rotated
+- **API keys, for another server.** A browser page cannot send a key, so while keys are set the Blade picker
+  embeds its payload instead of fetching it. Set `LARANAIL_EMOJIS_API_KEYS` (comma-separated, so a key can be rotated
   by adding the new one before removing the old). A request without a matching
   `Authorization: Bearer <key>` is a 401 with `WWW-Authenticate: Bearer`. Keys are compared in constant
   time. A keyed response is `Cache-Control: private` and `Vary: Authorization`, whatever `cache_headers`

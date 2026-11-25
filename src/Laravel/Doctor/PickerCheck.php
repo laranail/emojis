@@ -8,6 +8,7 @@ use Throwable;
 use Illuminate\Contracts\Config\Repository;
 use Simtabi\Laranail\Emojis\Laravel\View\PickerConfig;
 use Simtabi\Laranail\Emojis\Laravel\View\PickerPayloads;
+use Simtabi\Laranail\Emojis\Laravel\Http\Middleware\GuardApi;
 use Simtabi\Laranail\Package\Tools\Services\Doctor\DoctorCheck;
 use Simtabi\Laranail\Package\Tools\Services\Doctor\DoctorResult;
 
@@ -51,6 +52,10 @@ final readonly class PickerCheck implements DoctorCheck
 
         if ($config->delivery === 'api' && ! $api) {
             return DoctorResult::warn("picker.delivery is api but the API is off, so the payload ({$size}) is embedded instead. Set LARANAIL_EMOJIS_API=true, or delivery to inline.", ['bytes' => $bytes]);
+        }
+
+        if ($api && $config->delivery !== 'inline' && GuardApi::requiresKey($settings)) {
+            return DoctorResult::warn("The API needs a key (api.keys), which a browser page cannot send, so the picker embeds its payload ({$size}) instead of fetching it. Set picker.delivery to inline to make that explicit.", ['bytes' => $bytes]);
         }
 
         // The dataset has no coverage for JoyPixels, so the payload cannot say which images it lacks: the picker

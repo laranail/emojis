@@ -139,10 +139,12 @@ config, and a `data-laranail-emoji-*` attribute wins over both.
   `[data-theme]` ancestor.
 - **`delivery`** decides where the payload comes from. `auto` uses the API when it is enabled and embeds
   otherwise; `inline` always embeds; `api` always fetches, and falls back to embedding while the API is off.
+  It also embeds while `api.keys` is set: a browser page cannot send the key, so a keyed API would answer
+  the picker with 401.
 - A value of the wrong type takes the built-in default rather than reaching the browser.
 
 `php artisan laranail::package-tools.doctor` checks the picker too: it warns when a large payload is embedded
-in every page and when `delivery` is `api` with the API off.
+in every page, when `delivery` is `api` with the API off, and when API keys make the picker embed instead.
 
 ## The popover
 

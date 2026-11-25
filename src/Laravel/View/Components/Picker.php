@@ -11,6 +11,8 @@ use Illuminate\View\ComponentAttributeBag;
 use Simtabi\Laranail\Emojis\Laravel\View\PickerData;
 use Simtabi\Laranail\Emojis\Laravel\View\PickerConfig;
 use Simtabi\Laranail\Emojis\Laravel\View\PickerPayloads;
+use Simtabi\Laranail\Emojis\Laravel\Http\Middleware\GuardApi;
+use Illuminate\Contracts\Config\Repository as ConfigRepository;
 
 /**
  * <x-laranail-emojis::picker target="#message" />
@@ -80,7 +82,9 @@ final class Picker extends Component
         $extra ??= new ComponentAttributeBag;
         $resolved = $this->emojis->locales()->resolve($this->locale);
         $c = $this->config;
-        $api = filter_var(config('laranail.emojis.api.enabled'), FILTER_VALIDATE_BOOLEAN) && app('router')->has('laranail.emojis.api.picker');
+        // A keyed API answers a browser with 401, so a picker pointed at it would never load: embed instead.
+        $api = filter_var(config('laranail.emojis.api.enabled'), FILTER_VALIDATE_BOOLEAN) && app('router')->has('laranail.emojis.api.picker')
+            && ! GuardApi::requiresKey(app(ConfigRepository::class));
         $block = '';
         $source = [];
 

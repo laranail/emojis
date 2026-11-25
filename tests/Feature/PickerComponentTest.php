@@ -337,6 +337,23 @@ it('has a doctor check that warns about a large embedded payload and about api d
         ->and($fetched->message)->toContain('from the API');
 });
 
+it('embeds the payload instead of fetching it when the API needs a key the browser cannot send', function (): void {
+    TestCase::$bootConfig = ['laranail.emojis.api.enabled' => true, 'laranail.emojis.api.keys' => 'k1', 'laranail.emojis.picker.delivery' => 'auto'];
+    $this->refreshApplication();
+
+    // The keyed API answers 401 to a browser, so a picker pointed at it would never load.
+    expect($this->get('/laranail/emojis/api/v1/picker')->status())->toBe(401)
+        ->and(Blade::render('<x-laranail-emojis::picker />'))->toContain('application/json')->not->toContain('data-laranail-emoji-source');
+});
+
+it('has a doctor check that warns when API keys force the picker to embed its payload', function (): void {
+    $settings = new Illuminate\Config\Repository(['laranail' => ['emojis' => ['api' => ['enabled' => true, 'keys' => 'k1,k2']]]]);
+    $result = new PickerCheck(app(PickerPayloads::class), PickerConfig::fromArray(['delivery' => 'api']), $settings)->run();
+
+    expect($result->status)->toBe(DoctorStatus::Warn)
+        ->and($result->message)->toContain('api.keys');
+});
+
 it('carries the image set by default, none for native rendering, and every switchable set for the switcher', function (): void {
     $default = payloadIn(Blade::render('<x-laranail-emojis::picker />'));
 

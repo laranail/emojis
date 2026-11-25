@@ -52,7 +52,7 @@ Grouped by concern; each group's keys are listed once.
 | `picker.features.settings`, `picker.features.autocomplete`, `picker.features.english_keywords` | `true`, `false`, `false` | The gear with theme, clearing recents and shortcuts; `:shortcode` suggestions in the field; English keywords in other locales' search. |
 | `picker.shortcut` | `'Mod+Shift+.'` | The key combination that opens the picker from its field; `null` for none. |
 | `picker.features.per_person_tones`, `picker.features.set_switcher` | `true`, `false` | The tone menu (a tone for each person), and a native/Twemoji/Noto/OpenMoji choice in the settings menu. |
-| `picker.delivery` | `'auto'` | `inline` embeds the payload, `api` fetches it (falls back to inline while the API is off), `auto` fetches when the API is on. |
+| `picker.delivery` | `'auto'` | `inline` embeds the payload, `api` fetches it (falls back to inline while the API is off or needs a key), `auto` fetches when the API is on and open. |
 
 Outside Laravel, `Emojis::create()` takes the same array:
 
