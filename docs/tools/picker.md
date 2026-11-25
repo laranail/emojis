@@ -139,10 +139,12 @@ config, and a `data-laranail-emoji-*` attribute wins over both.
   `[data-theme]` ancestor.
 - **`delivery`** decides where the payload comes from. `auto` uses the API when it is enabled and embeds
   otherwise; `inline` always embeds; `api` always fetches, and falls back to embedding while the API is off.
+  It also embeds while `api.keys` is set: a browser page cannot send the key, so a keyed API would answer
+  the picker with 401.
 - A value of the wrong type takes the built-in default rather than reaching the browser.
 
 `php artisan laranail::package-tools.doctor` checks the picker too: it warns when a large payload is embedded
-in every page and when `delivery` is `api` with the API off.
+in every page, when `delivery` is `api` with the API off, and when API keys make the picker embed instead.
 
 ## The popover
 
@@ -404,7 +406,7 @@ render agree; changing `userKey` or `store` reads them again. Both adapters are 
 functions, so the two cannot behave differently. React 19 is a peer dependency; nothing else is.
 
 The package is `@laranail/emojis-picker`, with its own version line, independent of the Composer package's
-moving `v0.1.0` (see [release](../release.md)): `.` is the vanilla module, `./react` the React adapter,
+releases (see [release](../release.md)): `.` is the vanilla module, `./react` the React adapter,
 `./styles.css` the picker stylesheet. `.github/workflows/npm-publish.yml` publishes it when started by hand,
 naming the tag to build from, the version and the registry: `npm`, or `github` for GitHub Packages. To build it from a checkout instead: `npm run build:react && npm run types && npm pack`.
 

@@ -68,12 +68,15 @@ Set a default in `config('laranail.emojis.policy')` — see [configuration](../c
 ## Validation
 
 ```php
-use Simtabi\Laranail\Emojis\Laravel\Rules\{NoHiddenCharacters, EmojiPolicyRule};
+use Simtabi\Laranail\Emojis\Laravel\Rules\{NoHiddenCharacters, EmojiPolicyRule, SingleEmoji};
 
 'username' => ['required', new NoHiddenCharacters],          // reject instead of cleaning
 'bio' => ['nullable', new EmojiPolicyRule],                  // the configured policy
-'reaction' => ['required', new EmojiPolicyRule(EmojiPolicy::only('1F44D', '1F44E'))],
+'reaction' => ['required', new SingleEmoji, new EmojiPolicyRule(EmojiPolicy::only('1F44D', '1F44E'))],
 ```
+
+`EmojiPolicyRule` checks the emoji a value contains and rejects invalid UTF-8; text with no emoji passes it.
+Add `SingleEmoji` or `OnlyEmoji` when the field must hold emoji, as the `reaction` line does.
 
 ## Command line
 
@@ -102,6 +105,10 @@ The reader's browser does fetch them, though. When users supply the image — a 
 reaction — a URL they choose is a tracking pixel: every reader's IP and user agent reach that host. Narrow it
 with `images.custom.hosts`, or set `images.custom.urls` to `false` so only inline images are accepted and
 stored.
+
+A root-relative URL (`/logout`, `/admin/...`) points at your own origin, so every reader's browser requests
+it with their cookies. Once `images.custom.hosts` is set, root-relative URLs are refused too; set
+`images.custom.relative` to `true` if your own paths should still be accepted.
 
 Images installed with `laranail::emojis.images install` are verified file by file against the SHA-256 this
 package ships, so a changed or compromised CDN file is refused. See

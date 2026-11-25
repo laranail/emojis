@@ -1243,7 +1243,15 @@ export class ApiSource implements PickerSource {
   private static inflight = new Map<string, Promise<PickerPayload>>();
 
   load(locale?: string | null, signal?: AbortSignal): Promise<PickerPayload> {
-    const key = `${this.url}\u0000${locale ?? ''}\u0000${JSON.stringify(this.init.headers ?? null)}`;
+    let key: string;
+
+    try {
+      key = `${this.url}\u0000${locale ?? ''}\u0000${ApiSource.credentialKey(this.init)}`;
+    } catch (error) {
+      // Invalid headers throw in new Headers(); surface that as a rejected load, as fetch() itself would.
+      return Promise.reject(error);
+    }
+
     let shared = ApiSource.inflight.get(key);
 
     if (!shared) {
@@ -1270,6 +1278,20 @@ export class ApiSource implements PickerSource {
       signal.addEventListener('abort', abort, { once: true });
       shared.then(resolve, reject).finally(() => signal.removeEventListener('abort', abort));
     });
+  }
+
+  /**
+   * What a request carries that makes it someone's: its headers (as a Headers instance, an array of pairs or
+   * an object, names case-folded and sorted) and its credentials mode. Two sources differing in either never
+   * share a request, so one key's payload cannot be handed to another.
+   */
+  private static credentialKey(init: RequestInit): string {
+    // Names are folded here too: browsers' Headers does it, but not every implementation (happy-dom does not).
+    const headers = [...new Headers(init.headers ?? undefined).entries()]
+      .map(([name, value]): [string, string] => [name.toLowerCase(), value])
+      .sort(([a], [b]) => (a < b ? -1 : a > b ? 1 : 0));
+
+    return JSON.stringify([init.credentials ?? null, headers]);
   }
 
   /** Forgets every shared request, so the next load fetches again (after a locale's data changed, or in tests). */

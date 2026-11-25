@@ -10,6 +10,8 @@ use Simtabi\Laranail\Emojis\Core\Enums\Group;
 use Simtabi\Laranail\Emojis\Core\Enums\Subgroup;
 use Simtabi\Laranail\Emojis\Core\Support\ConfigInt;
 use Simtabi\Laranail\Emojis\Core\Enums\EmojiVersion;
+use Simtabi\Laranail\Emojis\Core\Support\ConfigBool;
+use Simtabi\Laranail\Emojis\Core\Exceptions\InvalidPolicy;
 
 /**
  * Which emoji a piece of user content may contain, and how many — the "safety" half of sanitising, as
@@ -89,8 +91,8 @@ final readonly class EmojiPolicy
             allowOnly: self::normalise($strings($config['allow_only'] ?? [])),
             deny: self::normalise($strings($config['deny'] ?? [])),
             maxVersion: is_string($config['max_version'] ?? null) ? EmojiVersion::from($config['max_version']) : null,
-            allowUnknown: ($config['allow_unknown'] ?? true) !== false,
-            allowCustom: ($config['allow_custom'] ?? true) !== false,
+            allowUnknown: self::flag($config, 'allow_unknown'),
+            allowCustom: self::flag($config, 'allow_custom'),
             maxEmojis: ConfigInt::read($config['max_emojis'] ?? null, null),
             replacement: is_string($config['replacement'] ?? null) ? $config['replacement'] : null,
         );
@@ -171,6 +173,24 @@ final readonly class EmojiPolicy
     {
         return $this->allowGroups === [] && $this->denyGroups === [] && $this->denySubgroups === [] && $this->allowOnly === []
             && $this->deny === [] && ! $this->maxVersion instanceof EmojiVersion && $this->allowUnknown && $this->allowCustom && $this->maxEmojis === null;
+    }
+
+    /**
+     * An allow_* switch, read the way env() and config files write booleans: true/false, 1/0, "true"/"false",
+     * "on"/"off", "yes"/"no". Unset means allow. Anything else throws, because reading a typo as "allow"
+     * would silently turn a deny off.
+     *
+     * @param array<string, mixed> $config
+     */
+    private static function flag(array $config, string $key): bool
+    {
+        $value = $config[$key] ?? null;
+
+        if ($value === null) {
+            return true;
+        }
+
+        return ConfigBool::read($value) ?? throw InvalidPolicy::notABoolean($key, $value);
     }
 
     /**

@@ -7,6 +7,51 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/),
 
 ## [Unreleased]
 
+### Added
+
+- `images.custom.relative` (`ImagePolicy::$allowRelative`, `allowsRelative()`): whether root-relative image
+  URLs are accepted. Unset, they are accepted only while `images.custom.hosts` is empty — see Security.
+- `InvalidPolicy`, thrown when `policy.allow_unknown` or `policy.allow_custom` is not a boolean.
+
+### Changed
+
+- Release tags are final: each release gets its own number, with release candidates first, and
+  `docs/release.md` describes the process. The moving-`v0.1.0` history is kept there for consumers who
+  installed during it.
+- Test tooling: Pest 5 (with its arch and Laravel plugins) and PHPUnit 13. Development only; nothing an
+  application installs changes.
+- The picker embeds its payload, instead of fetching it, while `api.keys` is set: a browser page cannot
+  send the key. The doctor check says so.
+- Warnings are logged once per distinct value and at most 32 per subject per worker, with one line saying
+  when further ones for a subject are suppressed.
+
+### Fixed
+
+- Under Octane, names now follow the request's `App::setLocale()`; the boot locale was used before.
+- An unknown `?locale=` value is no longer kept in memory for the worker's life.
+- The picker payload cache is keyed on the active emoticons and the package version, so disabling an
+  emoticon or upgrading no longer serves a stale payload for up to a day.
+- The picker payload cache hits again when `cache.serializable_classes` is `false`.
+- The picker script no longer shares one API request between sources sending different credentials.
+- `AsEmojiText` reads back an emoji written without its U+FE0F exactly as written.
+- `laranail::emojis.images verify` reports a tampered manifest path as changed instead of crashing.
+- `build-dataset` times out stalled downloads and re-fetches a corrupt cached source with `--fetch`.
+- Rector 2.9 removed the early-return set this package's config named; the static analysis job ran no
+  rule until it was dropped.
+- `release.yml` failed on a pre-release tag (`v0.1.1-rc.1` looked for a `[0.1.1-rc.1]` section); a
+  pre-release now takes its notes from its final version's section and is published as a pre-release.
+
+### Security
+
+- A root-relative custom image URL (`/logout`, an admin GET) skipped `images.custom.hosts`, so every
+  reader's browser sent that request to the application with their cookies. With `hosts` set, root-relative
+  URLs users supply are now refused unless `images.custom.relative` is `true`. Images in `extend.custom`
+  and `extend.images` are the application's own config and keep accepting them.
+- `policy.allow_unknown` and `policy.allow_custom` read `0`, `'0'` and `'false'` as allow, so a configured
+  deny did nothing. They now read booleans the way `env()` writes them, and refuse anything else.
+- `EmojiPolicyRule` rejects invalid UTF-8, as the other emoji rules do.
+- The release workflow grants write access to its job only, and its checkout no longer keeps the token.
+
 ## [0.1.0] - 2026-11-15
 
 The first release. The package carries one tag, `v0.1.0`, and moves it on each change; consumers require

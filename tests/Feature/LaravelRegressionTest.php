@@ -2,6 +2,7 @@
 
 declare(strict_types=1);
 
+use Illuminate\Container\Container;
 use Illuminate\Database\Eloquent\Model;
 use Simtabi\Laranail\Emojis\Core\Emojis;
 use Simtabi\Laranail\Emojis\Laravel\BladeDirective;
@@ -97,4 +98,63 @@ it('passes the doctor with the default image set', function (): void {
 
 it('passes the doctor whatever shortcode delimiters are configured', function (): void {
     expect(new DatasetCheck(Emojis::create(['shortcodes' => ['delimiters' => ['{', '}']]]))->run()->status)->toBe(DoctorStatus::Pass);
+});
+
+it('follows the request locale, including in an Octane-style request sandbox', function (): void {
+    $emojis = app(Emojis::class);
+    expect($emojis->get('rocket')->name())->toBe('rocket');
+
+    // Octane gives each request a clone of the application with its own cloned config
+    // (CreateConfigurationSandbox), while the Emojis singleton was built before it.
+    $sandbox = clone app();
+    $sandbox->instance('config', clone app('config'));
+    $sandbox->setLocale('fr');
+
+    try {
+        expect($sandbox->make(Emojis::class)->get('rocket')->name())->toBe('fusée');
+    } finally {
+        $sandbox->setLocale('en');
+    }
+
+    app()->setLocale('fr');
+
+    try {
+        expect($emojis->get('rocket')->name())->toBe('fusée');
+    } finally {
+        app()->setLocale('en');
+    }
+});
+
+it('follows the request locale when the translator is first resolved inside the request sandbox', function (): void {
+    // In a worker the singleton can be built before anything resolves the translator; Octane then resolves it
+    // inside each request's sandbox, which it makes the current container instance.
+    $base = app();
+    $emojis = $base->make(Emojis::class);
+    $base->forgetInstance('translator');
+
+    $sandbox = clone $base;
+    $sandbox->instance('config', clone $base['config']);
+    Container::setInstance($sandbox);
+
+    try {
+        $sandbox->setLocale('fr');
+
+        expect($emojis->get('rocket')->name())->toBe('fusée');
+    } finally {
+        Container::setInstance($base);
+        $base->forgetInstance('translator');
+    }
+});
+
+it('reads back a minimally-qualified emoji exactly as written, without adding a variation selector', function (): void {
+    $emojis = app(Emojis::class);
+    // Face in clouds written without the U+FE0F its fully-qualified form carries.
+    $written = "a\u{1F636}\u{200D}\u{1F32B}b";
+    $stored = AsEmojiText::encode($written, $emojis);
+
+    expect(AsEmojiText::decode($stored, $emojis))->toBe($written)
+        ->and(preg_match('/[\x{10000}-\x{10FFFF}]/u', $stored))->toBe(0);
+
+    // The fully-qualified form still takes its readable ASCII code.
+    expect(AsEmojiText::encode("\u{1F636}\u{200D}\u{1F32B}\u{FE0F}", $emojis))->toStartWith(':')->not->toContain('U+');
 });

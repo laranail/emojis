@@ -9,6 +9,7 @@ use Override;
 use Livewire\Livewire;
 use InvalidArgumentException;
 use Livewire\LivewireManager;
+use Illuminate\Container\Container;
 use Illuminate\Support\Facades\Route;
 use Simtabi\Laranail\Emojis\Core\Emojis;
 use Simtabi\Laranail\Emojis\Core\Options;
@@ -62,8 +63,10 @@ use Simtabi\Laranail\Package\Tools\Support\Resilience\FailurePolicy;
  * `@laranailEmojis(...)`, commands `laranail::emojis.*`.
  *
  * Emojis is a worker-wide singleton. That is safe under Octane because every registration is frozen once
- * the application has booted, and the locale is read from the application on each call rather than
- * captured here.
+ * the application has booted, and the locale is read on each call rather than captured here. It is read from
+ * the current container's translator, not from the application this singleton was built with: Octane gives
+ * each request a sandbox (a clone with its own config) and makes it the current container instance, so the
+ * boot application never sees a request's setLocale(), and may not even share its translator.
  *
  * @internal Auto-discovered framework wiring; not part of the public API.
  */
@@ -125,7 +128,7 @@ final class EmojisServiceProvider extends PackageServiceProvider
                 terminal: $app->make(TerminalProbe::class),
                 html: $app->make(HtmlFactory::class),
                 custom: $app->make(CustomEmojiRegistry::class),
-                currentLocale: is_string($pinned) && $pinned !== '' ? null : $app->getLocale(...),
+                currentLocale: is_string($pinned) && $pinned !== '' ? null : static fn (): string => Container::getInstance()->make('translator')->getLocale(),
                 images: $app->make(ImageSets::class),
             );
         });

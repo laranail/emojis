@@ -10,6 +10,7 @@ use Simtabi\Laranail\Emojis\Core\Emojis;
 use Illuminate\View\ComponentAttributeBag;
 use Simtabi\Laranail\Emojis\Tests\TestCase;
 use Illuminate\Contracts\Translation\Translator;
+use Simtabi\Laranail\Emojis\Core\Picker\PickerPayload;
 use Simtabi\Laranail\Emojis\Laravel\View\PickerConfig;
 use Simtabi\Laranail\Emojis\Core\Picker\PayloadBuilder;
 use Simtabi\Laranail\Emojis\Laravel\Doctor\PickerCheck;
@@ -238,6 +239,62 @@ it('caches the payload, under a key that changes with what the payload depends o
         ->and(array_column($after->custom, 'name'))->toBe(['partyparrot']);
 });
 
+it('rebuilds the cached payload when the active emoticons change', function (): void {
+    $cache = new Repository(new ArrayStore(serializesValues: true));
+    $payloads = static fn (Emojis $emojis): PickerPayloads => new PickerPayloads($emojis, new PayloadBuilder($emojis), app('translator'), $cache);
+    $emoticonsOf = static function (PickerPayload $payload, string $hexcode): array {
+        foreach ($payload->groups as $group) {
+            foreach ($group['emoji'] as $entry) {
+                if ($entry['hexcode'] === $hexcode) {
+                    return $entry['emoticons'] ?? [];
+                }
+            }
+        }
+
+        return [];
+    };
+
+    $hexcode = emojis()->fromEmoticon(':)')?->hexcode;
+    expect($hexcode)->not->toBeNull();
+
+    $before = $payloads(Emojis::create(terminal: new EnvTerminalProbe(override: true)))->payload('en');
+    $after = $payloads(Emojis::create(['input' => ['disabled_emoticons' => [':)']]], terminal: new EnvTerminalProbe(override: true)))->payload('en');
+
+    expect($emoticonsOf($before, (string) $hexcode))->toContain(':)')
+        ->and($emoticonsOf($after, (string) $hexcode))->not->toContain(':)');
+});
+
+it('serves the cached payload from a cache that refuses to unserialize objects', function (): void {
+    // cache.serializable_classes = false: a cached object comes back as __PHP_Incomplete_Class, so the
+    // payload must be cached in a form that survives it, or every request rebuilds it.
+    $cache = new Repository(new ArrayStore(serializesValues: true, serializableClasses: false));
+    $emojis = Emojis::create(terminal: new EnvTerminalProbe(override: true));
+    $first = new PickerPayloads($emojis, new PayloadBuilder($emojis), app('translator'), $cache)->payload('en');
+    $stored = array_column($cache->getStore()->all(), 'value');
+
+    expect($stored)->toHaveCount(1)
+        ->and($stored[0])->not->toBeInstanceOf(__PHP_Incomplete_Class::class)
+        ->and(new PickerPayloads($emojis, new PayloadBuilder($emojis), app('translator'), $cache)->payload('en'))->toEqual($first);
+});
+
+it('replaces a cached payload it cannot read, instead of rebuilding it on every request', function (): void {
+    $cache = new Repository(new ArrayStore);
+    $emojis = Emojis::create(terminal: new EnvTerminalProbe(override: true));
+    $payloads = static fn (): PickerPayloads => new PickerPayloads($emojis, new PayloadBuilder($emojis), app('translator'), $cache);
+    $first = $payloads()->payload('en');
+
+    // An entry written by another version, or corrupted: an array the payload cannot be built from.
+    foreach (array_keys($cache->getStore()->all()) as $key) {
+        $cache->put($key, ['dataset' => 'stale'], 86_400);
+    }
+
+    expect($payloads()->payload('en'))->toEqual($first);
+
+    foreach ($cache->getStore()->all() as $entry) {
+        expect($entry['value'])->toHaveKey('groups');
+    }
+});
+
 it('gives the Livewire textarea a name and an accessible name, and locks the locale', function (): void {
     Livewire::test(EmojiPicker::class, ['name' => 'body', 'placeholder' => 'Say hi'])
         ->assertSeeHtml('name="body"')
@@ -335,6 +392,23 @@ it('has a doctor check that warns about a large embedded payload and about api d
         ->and($api->message)->toContain('the API is off')
         ->and($fetched->status)->toBe(DoctorStatus::Pass)
         ->and($fetched->message)->toContain('from the API');
+});
+
+it('embeds the payload instead of fetching it when the API needs a key the browser cannot send', function (): void {
+    TestCase::$bootConfig = ['laranail.emojis.api.enabled' => true, 'laranail.emojis.api.keys' => 'k1', 'laranail.emojis.picker.delivery' => 'auto'];
+    $this->refreshApplication();
+
+    // The keyed API answers 401 to a browser, so a picker pointed at it would never load.
+    expect($this->get('/laranail/emojis/api/v1/picker')->status())->toBe(401)
+        ->and(Blade::render('<x-laranail-emojis::picker />'))->toContain('application/json')->not->toContain('data-laranail-emoji-source');
+});
+
+it('has a doctor check that warns when API keys force the picker to embed its payload', function (): void {
+    $settings = new Illuminate\Config\Repository(['laranail' => ['emojis' => ['api' => ['enabled' => true, 'keys' => 'k1,k2']]]]);
+    $result = new PickerCheck(app(PickerPayloads::class), PickerConfig::fromArray(['delivery' => 'api']), $settings)->run();
+
+    expect($result->status)->toBe(DoctorStatus::Warn)
+        ->and($result->message)->toContain('api.keys');
 });
 
 it('carries the image set by default, none for native rendering, and every switchable set for the switcher', function (): void {

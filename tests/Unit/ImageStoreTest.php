@@ -76,6 +76,19 @@ it('detects a file changed on disk after installation', function (): void {
     expect($store->verify('twemoji'))->toMatchArray(['ok' => 0, 'changed' => ['1f680.svg'], 'missing' => ['1f44b.svg']]);
 });
 
+it('reports a tampered manifest path as changed instead of crashing', function (): void {
+    [$emojis, $root, $bodies] = storeFixture();
+    $store = new ImageStore($emojis, $root, static fn (array $urls): array => array_map(static fn (string $u): ?string => $bodies[$u] ?? null, array_combine($urls, $urls)));
+    $store->install('twemoji');
+
+    $file = $root . '/twemoji/' . ImageStore::MANIFEST;
+    $manifest = json_decode((string) file_get_contents($file), true);
+    $manifest['files']['../../../etc/passwd'] = str_repeat('0', 64);
+    file_put_contents($file, json_encode($manifest));
+
+    expect($store->verify('twemoji'))->toMatchArray(['ok' => 2, 'changed' => ['../../../etc/passwd'], 'missing' => []]);
+});
+
 it('ships verification hashes for the four redistributable sets only', function (): void {
     $store = emojis()->dataset();
 

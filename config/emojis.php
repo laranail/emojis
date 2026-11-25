@@ -34,6 +34,7 @@ return [
             'max_svg_elements' => 20000,  // elements an SVG may hold before it is refused
             'urls'             => true,   // false accepts only inline images; a URL a user supplies can track readers
             'hosts'            => [],     // allowed https hosts for image URLs; empty allows any
+            'relative'         => null,   // root-relative URLs (/img/a.png); null allows them only while hosts is empty
         ],
     ],
 

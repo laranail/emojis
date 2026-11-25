@@ -13,12 +13,13 @@ name: Publish to npm
 # The registry input publishes to GitHub Packages (npm.pkg.github.com) instead, with the run's own GITHUB_TOKEN:
 # no npm account or secret involved, and the fallback .dev/tools/npm-release uses when npm will not take a token.
 # GitHub Packages always requires authentication to install, even for a public package (see docs/tools/picker.md).
-# A tag push publishes to the registry the repository variable PUBLISH_REGISTRY names (npm when unset).
+# Without the registry input it publishes to the registry the repository variable PUBLISH_REGISTRY names (npm when
+# unset).
 
-# Dispatch only, deliberately. The Composer package is on a single moving `v0.1.0`, and a registry version is
-# immutable: publishing a version from that tag would freeze the JavaScript package at whatever that first push
-# contained, because every later move would find the version already there and skip. A JavaScript release is
-# therefore its own decision, with its own increasing version, built from the tag as it is now:
+# Dispatch only, deliberately. The Composer and npm versions are independent: the Composer package was on a
+# moving `v0.1.0` until release tags became final (2026-11-17), and a registry version is immutable, so the npm
+# package already sits on versions the Composer tags never had. A JavaScript release is therefore its own
+# decision, with its own increasing version, built from the tag it names:
 # `gh workflow run npm-publish.yml -f tag=v0.1.0 -f version=0.1.1 -f registry=github`.
 on:
   workflow_dispatch:
@@ -71,9 +72,8 @@ jobs:
             echo "::error::'$tag' is not a release tag (vX.Y.Z)." >&2
             exit 1
           fi
-          # The JavaScript package versions on its own: the Composer package sits on a moving v0.1.0, and a
-          # registry version is immutable, so a JS release names its own increasing version and is built
-          # from whatever the tag points at now.
+          # The JavaScript package versions on its own, independently of the Composer tags: a registry version
+          # is immutable, so a JS release names its own increasing version and is built from the tag it names.
           version="${INPUT_VERSION:-${tag#v}}"
           if ! printf '%s' "$version" | grep -Eq '^[0-9]+\.[0-9]+\.[0-9]+(-[0-9A-Za-z.-]+)?$'; then
             echo "::error::'$version' is not a version (X.Y.Z)." >&2
@@ -98,7 +98,7 @@ jobs:
           npm run types
           npm test
 
-      # The npm version is the Composer version: one tag, two registries.
+      # The version comes from the dispatch input, not the tag: the Composer and npm versions are independent.
       - name: Set the version and pack
         env:
           VERSION: ${{ steps.tag.outputs.version }}

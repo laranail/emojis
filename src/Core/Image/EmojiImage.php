@@ -154,6 +154,10 @@ final readonly class EmojiImage implements Stringable
                 throw InvalidImage::badUrl('protocol-relative URLs are not allowed');
             }
 
+            if (! $policy->allowsRelative()) {
+                throw InvalidImage::badUrl('root-relative URLs are refused while images.custom.hosts is set (images.custom.relative opts in)');
+            }
+
             return new self($url, null, null, null, null);
         }
 

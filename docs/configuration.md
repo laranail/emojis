@@ -26,6 +26,7 @@ Grouped by concern; each group's keys are listed once.
 | `images.custom.max_svg_elements` | `20000` | Elements an SVG may hold before it is refused. |
 | `images.custom.urls` | `true` | Accept image URLs. `false` accepts only inline images (data URI, base64, file) — see [security](tools/security.md#images-you-supply). |
 | `images.custom.hosts` | `[]` | Hosts an image URL may name; empty allows any `https://` host. |
+| `images.custom.relative` | `null` | Root-relative image URLs (`/img/a.png`) users supply. `null` accepts them only while `hosts` is empty; `true` keeps them with a `hosts` list. They point at your own origin, so a user-supplied one is sent with your readers' cookies. Images in `extend.custom` and `extend.images` are your own config and always accept them. A value that is not a boolean throws. |
 | `output.name_template` | `'[{name}]'` | `Mode::Name` output; must contain `{name}`. |
 | `output.tag_template` | `'[{tag}]'` | `Mode::Tag` output; must contain `{tag}`. See [status tags](tools/tags.md). |
 | `output.auto_fallback` | `'ascii'` | What `Mode::Auto` becomes when the terminal cannot draw emoji. |
@@ -51,7 +52,7 @@ Grouped by concern; each group's keys are listed once.
 | `picker.features.settings`, `picker.features.autocomplete`, `picker.features.english_keywords` | `true`, `false`, `false` | The gear with theme, clearing recents and shortcuts; `:shortcode` suggestions in the field; English keywords in other locales' search. |
 | `picker.shortcut` | `'Mod+Shift+.'` | The key combination that opens the picker from its field; `null` for none. |
 | `picker.features.per_person_tones`, `picker.features.set_switcher` | `true`, `false` | The tone menu (a tone for each person), and a native/Twemoji/Noto/OpenMoji choice in the settings menu. |
-| `picker.delivery` | `'auto'` | `inline` embeds the payload, `api` fetches it (falls back to inline while the API is off), `auto` fetches when the API is on. |
+| `picker.delivery` | `'auto'` | `inline` embeds the payload, `api` fetches it (falls back to inline while the API is off or needs a key), `auto` fetches when the API is on and open. |
 
 Outside Laravel, `Emojis::create()` takes the same array:
 

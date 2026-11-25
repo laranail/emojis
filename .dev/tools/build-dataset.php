@@ -102,6 +102,24 @@ if (in_array('--lock', $args, true)) {
     exit(0);
 }
 
+// --connect-timeout and --max-time: without them a stalled CDN held the job until its own timeout (25 or 90
+// minutes). --retry-all-errors: plain --retry skips a reset connection, which jsDelivr answers bursts with; the
+// CI sync-check downloads ~80 files cold and failed on exactly that (2026-09-28).
+// GitHub API listings go out authenticated when GITHUB_TOKEN is set (lib/GitHubAuth.php): unauthenticated,
+// a CI runner shares a 60-an-hour limit with every other job on its IP and gets 403.
+$download = static function (string $id, array $source, string $file) use ($fail): void {
+    @mkdir(dirname($file), 0o775, true);
+    [$auth, $cleanup] = GitHubAuth::curlArguments($source['url']);
+
+    try {
+        exec(sprintf('curl -sSfL --connect-timeout 10 --max-time 120 --retry 5 --retry-all-errors --retry-delay 2%s -o %s %s 2>&1', $auth, escapeshellarg($file), escapeshellarg($source['url'])), $out, $code);
+    } finally {
+        $cleanup();
+    }
+
+    $code === 0 || $fail("download of {$id} failed: " . implode(' ', $out));
+};
+
 foreach ($lock as $id => $source) {
     $file = CACHE . '/' . $source['path'];
 
@@ -116,23 +134,19 @@ foreach ($lock as $id => $source) {
             $fail("source {$id} is not cached at {$file}; run with --fetch");
         }
 
-        @mkdir(dirname($file), 0o775, true);
-        // --retry-all-errors: plain --retry skips a reset connection, which jsDelivr answers bursts with; the
-        // CI sync-check downloads ~80 files cold and failed on exactly that (2026-09-28).
-        // GitHub API listings go out authenticated when GITHUB_TOKEN is set (lib/GitHubAuth.php): unauthenticated,
-        // a CI runner shares a 60-an-hour limit with every other job on its IP and gets 403.
-        [$auth, $cleanup] = GitHubAuth::curlArguments($source['url']);
-
-        try {
-            exec(sprintf('curl -sSfL --retry 5 --retry-all-errors --retry-delay 2%s -o %s %s 2>&1', $auth, escapeshellarg($file), escapeshellarg($source['url'])), $out, $code);
-        } finally {
-            $cleanup();
-        }
-
-        $code === 0 || $fail("download of {$id} failed: " . implode(' ', $out));
+        $download($id, $source, $file);
     }
 
     $actual = SourceHash::of($source['url'], $file);
+
+    // A cached file that no longer matches (a download cut short, a corrupted cache) would fail every later
+    // run; with --fetch it is fetched once more before giving up.
+    if ($actual !== $source['sha256'] && $fetch) {
+        unlink($file);
+        $download($id, $source, $file);
+        $actual = SourceHash::of($source['url'], $file);
+    }
+
     $actual === $source['sha256'] || $fail("sha256 mismatch for {$id}: expected {$source['sha256']}, got {$actual}");
 }
 

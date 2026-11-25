@@ -481,6 +481,12 @@ export declare class ApiSource implements PickerSource {
      */
     private static inflight;
     load(locale?: string | null, signal?: AbortSignal): Promise<PickerPayload>;
+    /**
+     * What a request carries that makes it someone's: its headers (as a Headers instance, an array of pairs or
+     * an object, names case-folded and sorted) and its credentials mode. Two sources differing in either never
+     * share a request, so one key's payload cannot be handed to another.
+     */
+    private static credentialKey;
     /** Forgets every shared request, so the next load fetches again (after a locale's data changed, or in tests). */
     static clear(): void;
     private fetch;
