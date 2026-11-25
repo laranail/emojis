@@ -250,7 +250,7 @@ it('takes the registry as its first argument and refuses anything it does not kn
         ->and($run('--registry=pypi')[0])->toBe(64);
 });
 
-it('builds the release notes for the moving tag from its one CHANGELOG section', function (): void {
+it('builds the release notes from the version\'s own CHANGELOG section, and refuses a tag with unreleased entries', function (): void {
     $root = dirname(__DIR__, 2);
     $changelog = (string) file_get_contents($root . '/CHANGELOG.md');
     $workflow = (string) file_get_contents($root . '/.github/workflows/release.yml');
@@ -284,17 +284,20 @@ it('builds the release notes for the moving tag from its one CHANGELOG section',
         return $taken;
     };
 
-    $notes = implode("\n", $section('## [0.1.0]'));
-    $unreleased = trim(implode("\n", $section('## [Unreleased]')));
-    $versions = preg_match_all('/^#{2,3} \[\d+\.\d+\.\d+\]/m', $changelog);
+    preg_match_all('/^## \[(\d+\.\d+\.\d+)\]/m', $changelog, $versions);
 
-    // One version section: the package was reset to a single v0.1.0 on 2026-11-15 and the withdrawn
-    // entries were removed, so the notes are the whole 0.1.0 section and nothing else.
-    expect(trim($notes))->not->toBe('', 'release.yml refuses a tag whose section is empty')
-        ->and($notes)->toContain('### Added')
+    // Release tags are final (2026-11-17), so changes collect under [Unreleased] between releases and are
+    // moved into the new version's section when it is cut. Every released section must carry notes, and
+    // release.yml must keep refusing a tag while [Unreleased] still has entries, since those would ship
+    // without being in the notes.
+    expect($versions[1])->toContain('0.1.0')
+        ->and($section('## [0.1.0]'))->toContain('### Added')
         ->and($changelog)->not->toContain('Internal history')
-        ->and($unreleased)->toBe('', 'release.yml refuses a tag while [Unreleased] has entries')
-        ->and($versions)->toBe(1);
+        ->and($workflow)->toContain('still has entries under [Unreleased]');
+
+    foreach ($versions[1] as $version) {
+        expect(trim(implode("\n", $section('## [' . $version . ']'))))->not->toBe('', "release.yml refuses a tag whose section ({$version}) is empty");
+    }
 });
 
 it('never publishes the JavaScript package from a tag, because registry versions are immutable', function (): void {
