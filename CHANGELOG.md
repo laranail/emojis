@@ -15,6 +15,8 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/),
 
 ### Changed
 
+- `laranail/package-tools` is required at `^0.1.13`, the first release with the `AssertsNoFacadeCalls` guard
+  the test suite now uses.
 - The picker, scripts and styles Blade components take the config repository, router, URL generator and
   Vite through their constructors instead of calling `config()`, `app()`, `route()` and `asset()`. The
   remaining helper calls, in rules, casts, doctor checks and the Blade directive, which are built with
