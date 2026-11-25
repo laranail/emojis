@@ -8,6 +8,7 @@ use Illuminate\View\Component;
 use Illuminate\Foundation\Vite;
 use Illuminate\Support\HtmlString;
 use Simtabi\Laranail\Emojis\Core\Emojis;
+use Illuminate\Contracts\Routing\UrlGenerator;
 use Simtabi\Laranail\Emojis\Core\Exceptions\DatasetException;
 
 /**
@@ -21,17 +22,19 @@ use Simtabi\Laranail\Emojis\Core\Exceptions\DatasetException;
 final class Scripts extends Component
 {
     public function __construct(
+        private readonly Vite $vite,
+        private readonly UrlGenerator $url,
         public ?string $nonce = null,
         public bool $link = false,
     ) {}
 
     public function render(): HtmlString
     {
-        $nonce = $this->nonce ?? (app()->bound(Vite::class) ? app(Vite::class)->cspNonce() : null);
+        $nonce = $this->nonce ?? $this->vite->cspNonce();
         $attribute = $nonce === null || $nonce === '' ? '' : ' nonce="' . e($nonce) . '"';
 
         if ($this->link) {
-            return new HtmlString('<script type="module" src="' . e(asset(Styles::PUBLISHED_PATH . '/js/picker.js')) . "\"{$attribute}></script>");
+            return new HtmlString('<script type="module" src="' . e($this->url->asset(Styles::PUBLISHED_PATH . '/js/picker.js')) . "\"{$attribute}></script>");
         }
 
         $path = Emojis::assetPath('js/picker.js');

@@ -50,8 +50,10 @@ final class ConsoleEmojiCatalogue implements EmojiCatalogue
             return $this->emojis;
         }
 
+        // @facade-call-exempt: laranail/console's EmojisBridge builds this adapter with new
         if (function_exists('app') && app()->bound(Emojis::class)) {
             /** @var Emojis */
+            // @facade-call-exempt: laranail/console's EmojisBridge builds this adapter with new
             return app(Emojis::class);
         }
 

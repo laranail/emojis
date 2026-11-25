@@ -8,6 +8,7 @@ use Illuminate\View\Component;
 use Illuminate\Foundation\Vite;
 use Illuminate\Support\HtmlString;
 use Simtabi\Laranail\Emojis\Core\Emojis;
+use Illuminate\Contracts\Routing\UrlGenerator;
 
 /**
  * <x-laranail-emojis::styles />                     inline the emoji stylesheet once, in <head>
@@ -25,6 +26,8 @@ final class Styles extends Component
 
     public function __construct(
         private readonly Emojis $emojis,
+        private readonly Vite $vite,
+        private readonly UrlGenerator $url,
         public ?string $nonce = null,
         public bool $link = false,
         public bool $picker = false,
@@ -32,14 +35,14 @@ final class Styles extends Component
 
     public function render(): HtmlString
     {
-        $nonce = $this->nonce ?? (function_exists('app') && app()->bound(Vite::class) ? app(Vite::class)->cspNonce() : null);
+        $nonce = $this->nonce ?? $this->vite->cspNonce();
         $attribute = $nonce === null || $nonce === '' ? '' : ' nonce="' . e($nonce) . '"';
 
         $names = $this->picker ? ['emojis', 'picker'] : ['emojis'];
 
         if ($this->link) {
             return new HtmlString(implode("\n", array_map(
-                static fn (string $name): string => '<link rel="stylesheet" href="' . e(asset(self::PUBLISHED_PATH . "/css/{$name}.css")) . "\"{$attribute}>",
+                fn (string $name): string => '<link rel="stylesheet" href="' . e($this->url->asset(self::PUBLISHED_PATH . "/css/{$name}.css")) . "\"{$attribute}>",
                 $names,
             )));
         }

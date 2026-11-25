@@ -29,6 +29,7 @@ final class BladeDirective
             return new HtmlString('');
         }
 
+        // @facade-call-exempt: called statically from compiled Blade, so nothing can be injected
         return new HtmlString((string) app(Emojis::class)->text($text)->toHtml(Mode::from($mode)));
     }
 }

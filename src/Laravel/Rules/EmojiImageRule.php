@@ -25,6 +25,7 @@ final readonly class EmojiImageRule implements ValidationRule
 
     public function validate(string $attribute, mixed $value, Closure $fail): void
     {
+        // @facade-call-exempt: a rule is built with new by the caller; tests and callers may inject Emojis
         $emojis = $this->emojis ?? app(Emojis::class);
 
         try {

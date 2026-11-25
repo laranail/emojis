@@ -38,8 +38,11 @@ final readonly class PickerCheck implements DoctorCheck
     public function run(): DoctorResult
     {
         try {
+            // @facade-call-exempt: package-tools' DoctorService builds checks with new; tests inject through the constructor
             $payloads = $this->payloads ?? app(PickerPayloads::class);
+            // @facade-call-exempt: package-tools' DoctorService builds checks with new; tests inject through the constructor
             $config = $this->config ?? app(PickerConfig::class);
+            // @facade-call-exempt: package-tools' DoctorService builds checks with new; tests inject through the constructor
             $settings = $this->settings ?? app(Repository::class);
             $payload = $payloads->payload();
             $bytes = strlen(json_encode($payload, JSON_UNESCAPED_UNICODE | JSON_THROW_ON_ERROR));

@@ -27,6 +27,7 @@ abstract class EmojiRule implements ValidationRule
         }
 
         try {
+            // @facade-call-exempt: a rule is built with new by the caller, so the container cannot inject it
             $text = app(Emojis::class)->text($value)->from(Mode::Unicode);
         } catch (InvalidInput) {
             $fail($this->message())->translate();
