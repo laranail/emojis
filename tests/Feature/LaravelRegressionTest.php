@@ -123,3 +123,16 @@ it('follows the request locale, including in an Octane-style request sandbox', f
         app()->setLocale('en');
     }
 });
+
+it('reads back a minimally-qualified emoji exactly as written, without adding a variation selector', function (): void {
+    $emojis = app(Emojis::class);
+    // Face in clouds written without the U+FE0F its fully-qualified form carries.
+    $written = "a\u{1F636}\u{200D}\u{1F32B}b";
+    $stored = AsEmojiText::encode($written, $emojis);
+
+    expect(AsEmojiText::decode($stored, $emojis))->toBe($written)
+        ->and(preg_match('/[\x{10000}-\x{10FFFF}]/u', $stored))->toBe(0);
+
+    // The fully-qualified form still takes its readable ASCII code.
+    expect(AsEmojiText::encode("\u{1F636}\u{200D}\u{1F32B}\u{FE0F}", $emojis))->toStartWith(':')->not->toContain('U+');
+});

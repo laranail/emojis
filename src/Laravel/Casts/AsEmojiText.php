@@ -21,6 +21,7 @@ use Illuminate\Contracts\Database\Eloquent\CastsAttributes;
  * | Written          | Stored        |
  * |------------------|---------------|
  * | an emoji         | `:rocket:` — its ASCII code, which always resolves back to that emoji |
+ * | an emoji in another form than the dataset's (e.g. without its U+FE0F) | each code point, as below |
  * | `:` typed        | `\:`          |
  * | `\` typed        | `\\`          |
  * | any other character above U+FFFF (an emoji newer than the dataset, a rare CJK ideograph) | `:U+1FAE8:` |
@@ -46,7 +47,11 @@ final class AsEmojiText implements CastsAttributes
                 continue;
             }
 
-            $out .= self::escape(substr($text, $cursor, $match->offset - $cursor)) . ':' . $match->emoji->asciiCode . ':';
+            $written = substr($text, $match->offset, $match->length);
+            // An emoji written in another form than the dataset's (minimally qualified, without its U+FE0F) is
+            // stored code point by code point, so it reads back as written rather than in the canonical form.
+            $code = $written === $match->emoji->char ? ':' . $match->emoji->asciiCode . ':' : self::escape($written);
+            $out .= self::escape(substr($text, $cursor, $match->offset - $cursor)) . $code;
             $cursor = $match->offset + $match->length;
         }
 
