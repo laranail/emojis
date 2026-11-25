@@ -2,6 +2,7 @@
 
 declare(strict_types=1);
 
+use Illuminate\Container\Container;
 use Illuminate\Database\Eloquent\Model;
 use Simtabi\Laranail\Emojis\Core\Emojis;
 use Simtabi\Laranail\Emojis\Laravel\BladeDirective;
@@ -121,6 +122,27 @@ it('follows the request locale, including in an Octane-style request sandbox', f
         expect($emojis->get('rocket')->name())->toBe('fusée');
     } finally {
         app()->setLocale('en');
+    }
+});
+
+it('follows the request locale when the translator is first resolved inside the request sandbox', function (): void {
+    // In a worker the singleton can be built before anything resolves the translator; Octane then resolves it
+    // inside each request's sandbox, which it makes the current container instance.
+    $base = app();
+    $emojis = $base->make(Emojis::class);
+    $base->forgetInstance('translator');
+
+    $sandbox = clone $base;
+    $sandbox->instance('config', clone $base['config']);
+    Container::setInstance($sandbox);
+
+    try {
+        $sandbox->setLocale('fr');
+
+        expect($emojis->get('rocket')->name())->toBe('fusée');
+    } finally {
+        Container::setInstance($base);
+        $base->forgetInstance('translator');
     }
 });
 
