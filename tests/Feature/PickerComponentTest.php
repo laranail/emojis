@@ -277,6 +277,24 @@ it('serves the cached payload from a cache that refuses to unserialize objects',
         ->and(new PickerPayloads($emojis, new PayloadBuilder($emojis), app('translator'), $cache)->payload('en'))->toEqual($first);
 });
 
+it('replaces a cached payload it cannot read, instead of rebuilding it on every request', function (): void {
+    $cache = new Repository(new ArrayStore);
+    $emojis = Emojis::create(terminal: new EnvTerminalProbe(override: true));
+    $payloads = static fn (): PickerPayloads => new PickerPayloads($emojis, new PayloadBuilder($emojis), app('translator'), $cache);
+    $first = $payloads()->payload('en');
+
+    // An entry written by another version, or corrupted: an array the payload cannot be built from.
+    foreach (array_keys($cache->getStore()->all()) as $key) {
+        $cache->put($key, ['dataset' => 'stale'], 86_400);
+    }
+
+    expect($payloads()->payload('en'))->toEqual($first);
+
+    foreach ($cache->getStore()->all() as $entry) {
+        expect($entry['value'])->toHaveKey('groups');
+    }
+});
+
 it('gives the Livewire textarea a name and an accessible name, and locks the locale', function (): void {
     Livewire::test(EmojiPicker::class, ['name' => 'body', 'placeholder' => 'Say hi'])
         ->assertSeeHtml('name="body"')

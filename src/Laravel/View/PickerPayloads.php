@@ -63,17 +63,26 @@ final class PickerPayloads
             englishKeywords: $this->config->enabled('english_keywords'),
         ));
 
+        if (! $this->cache instanceof CacheRepository) {
+            return $this->built[$key] = $build();
+        }
+
         try {
-            $payload = $this->cache instanceof CacheRepository
-                ? $this->rehydrate($this->cache->remember($key, 86_400, static fn (): array => get_object_vars($build())))
-                : $build();
+            $payload = $this->rehydrate($this->cache->remember($key, 86_400, static fn (): array => get_object_vars($build())));
+
+            if (! $payload instanceof PickerPayload) {
+                // An entry this code cannot read (another version's, or corrupted) would otherwise be rebuilt
+                // around on every request until it expires: replace it.
+                $payload = $build();
+                $this->cache->put($key, get_object_vars($payload), 86_400);
+            }
         } catch (Throwable) {
             // A cache that cannot hold the payload (too large for a memcached item, a store that is down)
             // must not take the picker with it.
             $payload = $build();
         }
 
-        return $this->built[$key] = $payload ?? $build();
+        return $this->built[$key] = $payload;
     }
 
     /**
