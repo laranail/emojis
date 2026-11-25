@@ -47,8 +47,9 @@ use Simtabi\Laranail\Emojis\Core\Extension\ConfiguredExtensions;
  *     $emojis = Emojis::create(['locale' => ['default' => 'fr'], 'images' => ['set' => 'noto']]);
  *     $emojis->text('Bonjour :wave:')->toEmoji();            // "Bonjour 👋"
  *
- * Inside Laravel the container builds one per request scope from config/emojis.php, and the facade,
- * the `emoji()` helper and the Blade component all resolve it.
+ * Inside Laravel the container builds one per worker (a singleton) from config/laranail/emojis.php, and the
+ * facade, the `emoji()` helper and the Blade component all resolve it. That is safe under Octane: it holds
+ * nothing a request changes, and reads the request's locale on each call.
  *
  * Everything is instance-scoped — custom emoji, image sets, caches — so two instances never share state.
  * Macros (Macroable) are the one process-global seam, as in Laravel.
