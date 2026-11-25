@@ -22,7 +22,8 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/),
   application installs changes.
 - The picker embeds its payload, instead of fetching it, while `api.keys` is set: a browser page cannot
   send the key. The doctor check says so.
-- Warnings are logged once per distinct value and at most 32 per subject per worker.
+- Warnings are logged once per distinct value and at most 32 per subject per worker, with one line saying
+  when further ones for a subject are suppressed.
 
 ### Fixed
 
