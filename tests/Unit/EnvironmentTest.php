@@ -114,7 +114,32 @@ it('keeps neither memory nor log lines without bound when every request names a 
 
     expect(count($cached))->toBeLessThanOrEqual(count($store->availableLocales()))
         ->and($logger->lines)->toBeGreaterThan(0)
-        ->and($logger->lines)->toBeLessThanOrEqual(Psr3FailureReporter::DISTINCT_WARNINGS_PER_SUBJECT);
+        ->and($logger->lines)->toBeLessThanOrEqual(Psr3FailureReporter::DISTINCT_WARNINGS_PER_SUBJECT + 1);
+});
+
+it('says once that further warnings for a subject are suppressed, rather than going quiet', function (): void {
+    $logger = new class extends AbstractLogger
+    {
+        /** @var list<string> */
+        public array $messages = [];
+
+        public function log($level, string|Stringable $message, array $context = []): void
+        {
+            $this->messages[] = $message . ' ' . ($context['locale'] ?? '');
+        }
+    };
+
+    $emojis = Emojis::create(reporter: new Psr3FailureReporter($logger));
+
+    for ($i = 0; $i < Psr3FailureReporter::DISTINCT_WARNINGS_PER_SUBJECT + 10; $i++) {
+        $emojis->get('rocket')->name('qx-y' . $i);
+    }
+
+    $notices = array_values(array_filter($logger->messages, static fn (string $m): bool => str_contains($m, 'suppressed')));
+
+    expect($logger->messages)->toHaveCount(Psr3FailureReporter::DISTINCT_WARNINGS_PER_SUBJECT + 1)
+        ->and($notices)->toHaveCount(1)
+        ->and($notices[0])->toContain('locale-not-shipped');
 });
 
 it('degrades, records and continues when a shipped locale shard is broken', function (): void {

@@ -49,6 +49,10 @@ final class LaravelFailureReporter implements FailureReporter
         // is resolved for every emoji a search ranks, and forwarding each call wrote thousands of identical
         // warnings per request.
         if (! $this->warnings->first($subject, $context)) {
+            if ($this->warnings->suppressedNow($subject)) {
+                FailurePolicy::warn(self::PREFIX . $subject . ':suppressed', ['limit' => WarningLedger::DISTINCT_PER_SUBJECT]);
+            }
+
             return;
         }
 

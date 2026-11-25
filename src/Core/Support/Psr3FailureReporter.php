@@ -62,6 +62,10 @@ final class Psr3FailureReporter implements FailureReporter
     public function warn(string $subject, array $context = []): void
     {
         if (! $this->warnings->first($subject, $context)) {
+            if ($this->warnings->suppressedNow($subject)) {
+                $this->log('warning', "laranail/emojis further [{$subject}] warnings suppressed for this worker", ['subject' => $subject, 'decision' => 'suppressed', 'limit' => WarningLedger::DISTINCT_PER_SUBJECT]);
+            }
+
             return;
         }
 
