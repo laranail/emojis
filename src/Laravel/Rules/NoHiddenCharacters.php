@@ -20,6 +20,7 @@ final class NoHiddenCharacters implements ValidationRule
 {
     public function validate(string $attribute, mixed $value, Closure $fail): void
     {
+        // @facade-call-exempt: a rule is built with new by the caller, so the container cannot inject it
         if (! is_string($value) || ! app(Emojis::class)->sanitize($value)->isSafe()) {
             $fail('laranail/emojis::validation.no_hidden_characters')->translate();
         }

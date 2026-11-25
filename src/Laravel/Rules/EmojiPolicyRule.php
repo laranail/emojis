@@ -30,6 +30,7 @@ final readonly class EmojiPolicyRule implements ValidationRule
             return;
         }
 
+        // @facade-call-exempt: a rule is built with new by the caller, so the container cannot inject it
         $emojis = app(Emojis::class);
         $report = $emojis->sanitize($value)->policy($this->policy ?? $emojis->options()->policy)->report();
 

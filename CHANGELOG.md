@@ -15,6 +15,10 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/),
 
 ### Changed
 
+- The picker, scripts and styles Blade components take the config repository, router, URL generator and
+  Vite through their constructors instead of calling `config()`, `app()`, `route()` and `asset()`. The
+  remaining helper calls, in rules, casts, doctor checks and the Blade directive, which are built with
+  `new`, are marked with their reason, and a test fails on any new unmarked one.
 - Release tags are final: each release gets its own number, with release candidates first, and
   `docs/release.md` describes the process. The moving-`v0.1.0` history is kept there for consumers who
   installed during it.

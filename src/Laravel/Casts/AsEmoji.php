@@ -22,6 +22,7 @@ final class AsEmoji implements CastsAttributes
 {
     public function get(Model $model, string $key, mixed $value, array $attributes): ?Emoji
     {
+        // @facade-call-exempt: Eloquent builds casts itself, so the container cannot inject them
         return is_string($value) && $value !== '' ? app(Emojis::class)->fromHexcode($value) : null;
     }
 
@@ -31,6 +32,7 @@ final class AsEmoji implements CastsAttributes
             return null;
         }
 
+        // @facade-call-exempt: Eloquent builds casts itself, so the container cannot inject them
         $emoji = $value instanceof Emoji ? $value : (is_string($value) ? app(Emojis::class)->find($value) : null);
 
         if ($emoji === null) {

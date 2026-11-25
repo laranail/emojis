@@ -102,11 +102,13 @@ final class AsEmojiText implements CastsAttributes
 
     public function get(Model $model, string $key, mixed $value, array $attributes): ?string
     {
+        // @facade-call-exempt: Eloquent builds casts itself, so the container cannot inject them
         return is_string($value) ? self::decode($value, app(Emojis::class)) : null;
     }
 
     public function set(Model $model, string $key, mixed $value, array $attributes): ?string
     {
+        // @facade-call-exempt: Eloquent builds casts itself, so the container cannot inject them
         return is_string($value) ? self::encode($value, app(Emojis::class)) : null;
     }
 

@@ -32,6 +32,7 @@ final readonly class DatasetCheck implements DoctorCheck
     public function run(): DoctorResult
     {
         try {
+            // @facade-call-exempt: package-tools' DoctorService builds checks with new; tests inject through the constructor
             $emojis = $this->emojis ?? app(Emojis::class);
             $count = $emojis->all()->count();
             // Written with the configured delimiters, which is what the scanner reads.
