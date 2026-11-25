@@ -148,8 +148,8 @@ it('names the current release line wherever a version line is written', function
             ->and(array_unique($constraints[1]))->toBe([$line], $page);
     }
 
-    // The npm package no longer carries the Composer version: a registry version is immutable and cannot
-    // follow a moving tag, so the two lines are independent (README says so, .github/workflows/npm-publish.yml
+    // The npm package no longer carries the Composer version: a registry version is immutable, and the npm
+    // package already holds versions the Composer tags never had, so the two lines are independent (README says so, .github/workflows/npm-publish.yml
     // explains why). Assert the constraint is present, resolvable-looking and NOT silently tracking $line,
     // and that the README still tells the reader the lines differ -- dropping that sentence is the drift.
     preg_match_all('/@laranail\/emojis-picker@\^([\d.]+)/', (string) file_get_contents("{$root}/README.md"), $npm);

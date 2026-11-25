@@ -37,7 +37,7 @@ jobs:
           restore-keys: composer-static-
 
       - name: Drop cached laranail archives
-        # laranail/* resolve through a single moving v0.1.0 tag, so a restored archive can be stale while
+        # laranail/* packages have shipped on a moving v0.1.0 tag, so a restored archive can be stale while
         # composer reports success. Everything else is immutable per version and stays cached.
         shell: bash
         run: rm -rf "$(composer config cache-files-dir)/laranail"

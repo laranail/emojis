@@ -2,6 +2,8 @@
 
 declare(strict_types=1);
 
+use Symfony\Component\Yaml\Yaml;
+
 // The development tools under .dev/ do not ship, but they gate what does: these checks keep them honest.
 
 it('lists every generator once, so regenerate and sync-check cannot drift apart', function (): void {
@@ -257,7 +259,7 @@ it('takes the registry as its first argument and refuses anything it does not kn
 function releaseNotesScript(): string
 {
     $workflow = (string) file_get_contents(dirname(__DIR__, 2) . '/.github/workflows/release.yml');
-    $steps = Symfony\Component\Yaml\Yaml::parse($workflow)['jobs']['release']['steps'] ?? [];
+    $steps = Yaml::parse($workflow)['jobs']['release']['steps'] ?? [];
 
     foreach ($steps as $step) {
         if (($step['id'] ?? null) === 'changelog') {
@@ -285,7 +287,7 @@ function runReleaseNotes(string $changelog, string $tag): array
     return [$exit, $output, $written];
 }
 
-const RELEASE_FIXTURE = "# Changelog\n\n## [Unreleased]\n\n## [0.1.10] - 2026-12-08\n\n### Fixed\n\n- ten\n\n## [0.1.1] - 2026-12-01\n\n### Fixed\n\n- one\n\n## [0.1.0] - 2026-11-15\n\n### Added\n\n- first\n";
+const RELEASE_FIXTURE = "# Changelog\n\n## [Unreleased]\n\n## [0.1.10] - 2026-12-08\n\n### Fixed\n\n- ten\n\n## [0.1.1] - 2026-12-01\n\n### Fixed\n\n- one\n\n## [0x1x0] - 2026-11-14\n\n### Fixed\n\n- wild\n\n## [0.1.0] - 2026-11-15\n\n### Added\n\n- first\n";
 
 it('takes a release\'s notes from its own CHANGELOG section, and an rc\'s from its final version\'s', function (string $tag, string $expected, string $absent): void {
     if (PHP_OS_FAMILY === 'Windows' || ! is_executable('/bin/bash')) {
@@ -300,10 +302,11 @@ it('takes a release\'s notes from its own CHANGELOG section, and an rc\'s from i
         ->and($written)->toContain('- ' . $expected)
         ->and($written)->not->toContain('- ' . $absent);
 })->with([
-    'final'                  => ['v0.1.1', 'one', 'ten'],
-    'release candidate'      => ['v0.1.1-rc.2', 'one', 'first'],
-    'beta'                   => ['v0.1.10-beta.1', 'ten', 'one'],
-    'dots are not wildcards' => ['v0.1.0', 'first', 'one'],
+    'final'             => ['v0.1.1', 'one', 'ten'],
+    'release candidate' => ['v0.1.1-rc.2', 'one', 'first'],
+    'beta'              => ['v0.1.10-beta.1', 'ten', 'one'],
+    // [0x1x0] sits above [0.1.0] and matches only if the dots in 0.1.0 are regex wildcards.
+    'dots are not wildcards' => ['v0.1.0', 'first', 'wild'],
 ]);
 
 it('refuses a tag while [Unreleased] has entries, or when its version has no section', function (string $changelog, string $tag, string $reason): void {
@@ -323,7 +326,7 @@ it('refuses a tag while [Unreleased] has entries, or when its version has no sec
 ]);
 
 it('marks a suffixed tag as a pre-release that never becomes Latest', function (): void {
-    $steps = Symfony\Component\Yaml\Yaml::parseFile(dirname(__DIR__, 2) . '/.github/workflows/release.yml')['jobs']['release']['steps'];
+    $steps = Yaml::parseFile(dirname(__DIR__, 2) . '/.github/workflows/release.yml')['jobs']['release']['steps'];
     $publish = array_values(array_filter($steps, static fn (array $step): bool => ($step['name'] ?? '') === 'Publish'))[0]['with'] ?? [];
 
     expect($publish['prerelease'] ?? null)->toBe("\${{ contains(github.ref_name, '-') }}")
@@ -348,9 +351,9 @@ it('never publishes the JavaScript package from a tag, because registry versions
     $workflow = (string) file_get_contents($root . '/.github/workflows/npm-publish.yml');
     $readme = (string) file_get_contents($root . '/README.md');
 
-    // The Composer tag moves. A registry version does not, so publishing from the tag would freeze the package
-    // at its first push and cannot take `latest` while a higher version is published -- a tag push failed on
-    // exactly that. Only the dispatch may publish.
+    // The Composer and npm versions are independent: a registry version is immutable, and publishing from a
+    // tag push cannot take `latest` while a higher npm version is published -- a tag push failed on exactly
+    // that. Only the dispatch may publish.
     // `on:`'s children and the `jobs:` keys share the same indentation, so walk the block from the `on:` line
     // to the next line in column zero rather than matching on indentation alone.
     $triggers = [];
