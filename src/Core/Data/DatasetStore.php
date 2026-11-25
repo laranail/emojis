@@ -36,8 +36,16 @@ final class DatasetStore
     /** @var array<string, array<string, mixed>> */
     private array $shards = [];
 
-    /** @var array<string, array{names: array<array-key, string>, keywords: array<array-key, string>}|null> */
+    /**
+     * Shipped locales only, so the cache is bounded by what ships; an unknown tag is answered without being
+     * remembered (a long-running worker can be asked for any number of them).
+     *
+     * @var array<string, array{names: array<array-key, string>, keywords: array<array-key, string>}|null>
+     */
     private array $locales = [];
+
+    /** @var array<string, int>|null */
+    private ?array $shipped = null;
 
     public function __construct(private readonly string $directory) {}
 
@@ -355,7 +363,11 @@ final class DatasetStore
         }
 
         if (preg_match('/^[A-Za-z]{2,3}(?:-[A-Za-z0-9]{2,8})*$/', $locale) !== 1) {
-            return $this->locales[$locale] = null;
+            return null;
+        }
+
+        if (! isset(($this->shipped ??= array_flip($this->availableLocales()))[$locale])) {
+            return null;
         }
 
         $file = $this->directory . '/locales/' . $locale . '.php';

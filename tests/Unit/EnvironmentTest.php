@@ -91,6 +91,32 @@ it('reports each unshipped locale once, not just the first', function (): void {
     expect($logger->locales)->toBe(['tlh', 'qya']);
 });
 
+it('keeps neither memory nor log lines without bound when every request names a new unknown locale', function (): void {
+    // A long-running worker serving ?locale=<anything> must not grow with each distinct value.
+    $logger = new class extends AbstractLogger
+    {
+        public int $lines = 0;
+
+        public function log($level, string|Stringable $message, array $context = []): void
+        {
+            $this->lines++;
+        }
+    };
+
+    $store = DatasetStore::packaged();
+    $emojis = Emojis::create(reporter: new Psr3FailureReporter($logger), data: $store);
+
+    for ($i = 0; $i < 2000; $i++) {
+        $emojis->get('rocket')->name('qx-x' . $i);
+    }
+
+    $cached = new ReflectionProperty(DatasetStore::class, 'locales')->getValue($store);
+
+    expect(count($cached))->toBeLessThanOrEqual(count($store->availableLocales()))
+        ->and($logger->lines)->toBeGreaterThan(0)
+        ->and($logger->lines)->toBeLessThanOrEqual(Psr3FailureReporter::DISTINCT_WARNINGS_PER_SUBJECT);
+});
+
 it('degrades, records and continues when a shipped locale shard is broken', function (): void {
     $dir = sys_get_temp_dir() . '/laranail-emojis-' . bin2hex(random_bytes(4));
     mkdir($dir . '/locales', 0o775, true);

@@ -21,13 +21,18 @@ use Simtabi\Laranail\Emojis\Core\Contracts\FailureReporter;
  */
 final class Psr3FailureReporter implements FailureReporter
 {
+    /** The most distinct warnings logged for one subject per worker; see WarningLedger. */
+    public const int DISTINCT_WARNINGS_PER_SUBJECT = WarningLedger::DISTINCT_PER_SUBJECT;
+
     /** @var array<string, string> */
     private array $degraded = [];
 
-    /** @var array<string, true> */
-    private array $warned = [];
+    private readonly WarningLedger $warnings;
 
-    public function __construct(private readonly LoggerInterface $logger = new NullLogger) {}
+    public function __construct(private readonly LoggerInterface $logger = new NullLogger)
+    {
+        $this->warnings = new WarningLedger;
+    }
 
     /**
      * What makes two warnings the same one: the subject and its context. Keying on the subject alone
@@ -56,13 +61,10 @@ final class Psr3FailureReporter implements FailureReporter
 
     public function warn(string $subject, array $context = []): void
     {
-        $key = self::warningKey($subject, $context);
-
-        if (isset($this->warned[$key])) {
+        if (! $this->warnings->first($subject, $context)) {
             return;
         }
 
-        $this->warned[$key] = true;
         $this->log('warning', "laranail/emojis tolerated anomaly [{$subject}]", ['subject' => $subject, 'decision' => 'tolerated', ...$context]);
     }
 
