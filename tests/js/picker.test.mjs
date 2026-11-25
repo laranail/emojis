@@ -275,6 +275,22 @@ describe('sources', () => {
     fetch.mockRestore();
   });
 
+  it('rejects, rather than throws, when the request headers are invalid', async () => {
+    // Browsers' Headers throws a TypeError on an invalid name; happy-dom's does not, so stand one in.
+    const fetch = vi.spyOn(globalThis, 'fetch').mockResolvedValue(new Response(JSON.stringify({ data: payload() }), { status: 200 }));
+    vi.stubGlobal('Headers', class { constructor() { throw new TypeError('Invalid header name'); } });
+    let result;
+
+    try {
+      expect(() => { result = new ApiSource('/api/v1', { headers: { 'Bad Header': 'x' } }).load('en'); }).not.toThrow();
+      await expect(result).rejects.toThrow('Invalid header name');
+      expect(fetch).not.toHaveBeenCalled();
+    } finally {
+      vi.unstubAllGlobals();
+      fetch.mockRestore();
+    }
+  });
+
   it('aborts one picker\'s load without failing the request the others share', async () => {
     const fetch = vi.spyOn(globalThis, 'fetch').mockImplementation(async () => new Response(JSON.stringify({ data: payload() }), { status: 200 }));
     const controller = new AbortController();

@@ -1243,7 +1243,15 @@ export class ApiSource implements PickerSource {
   private static inflight = new Map<string, Promise<PickerPayload>>();
 
   load(locale?: string | null, signal?: AbortSignal): Promise<PickerPayload> {
-    const key = `${this.url}\u0000${locale ?? ''}\u0000${ApiSource.credentialKey(this.init)}`;
+    let key: string;
+
+    try {
+      key = `${this.url}\u0000${locale ?? ''}\u0000${ApiSource.credentialKey(this.init)}`;
+    } catch (error) {
+      // Invalid headers throw in new Headers(); surface that as a rejected load, as fetch() itself would.
+      return Promise.reject(error);
+    }
+
     let shared = ApiSource.inflight.get(key);
 
     if (!shared) {
