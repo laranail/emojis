@@ -155,6 +155,26 @@ it('references https and root-relative URLs without fetching them, and refuses e
     expect(static fn (): EmojiImage => EmojiImage::fromUrl('https://other.example/a.png', new ImagePolicy(hosts: ['cdn.example.com'])))->toThrow(InvalidImage::class, 'allowed list');
 });
 
+it('keeps root-relative URLs inside a hosts allow-list unless the app opts in', function (): void {
+    $narrowed = new ImagePolicy(hosts: ['cdn.example.com']);
+
+    // A same-origin path would send every reader's cookies to the app itself (/logout, an admin GET).
+    foreach (['/logout', '/admin/users/1/delete?x', '/img/rocket.svg'] as $url) {
+        expect(static fn (): EmojiImage => EmojiImage::fromUrl($url, $narrowed))->toThrow(InvalidImage::class, 'root-relative');
+    }
+
+    expect(EmojiImage::fromUrl('/img/rocket.svg', new ImagePolicy(hosts: ['cdn.example.com'], allowRelative: true))->src)->toBe('/img/rocket.svg')
+        ->and(EmojiImage::fromUrl('/img/rocket.svg')->src)->toBe('/img/rocket.svg')
+        ->and(EmojiImage::fromUrl('https://cdn.example.com/a.png', $narrowed)->src)->toBe('https://cdn.example.com/a.png');
+});
+
+it('reads images.custom.relative from config', function (): void {
+    expect(ImagePolicy::fromArray(['hosts' => ['cdn.example.com']])->allowsRelative())->toBeFalse()
+        ->and(ImagePolicy::fromArray(['hosts' => ['cdn.example.com'], 'relative' => true])->allowsRelative())->toBeTrue()
+        ->and(ImagePolicy::fromArray([])->allowsRelative())->toBeTrue()
+        ->and(ImagePolicy::fromArray(['relative' => false])->allowsRelative())->toBeFalse();
+});
+
 it('never puts the refused input into the exception message', function (): void {
     try {
         EmojiImage::fromDataUri('data:image/png;base64,' . base64_encode('<script>secret-payload</script>'));

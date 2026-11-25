@@ -103,6 +103,10 @@ reaction — a URL they choose is a tracking pixel: every reader's IP and user a
 with `images.custom.hosts`, or set `images.custom.urls` to `false` so only inline images are accepted and
 stored.
 
+A root-relative URL (`/logout`, `/admin/...`) points at your own origin, so every reader's browser requests
+it with their cookies. Once `images.custom.hosts` is set, root-relative URLs are refused too; set
+`images.custom.relative` to `true` if your own paths should still be accepted.
+
 Images installed with `laranail::emojis.images install` are verified file by file against the SHA-256 this
 package ships, so a changed or compromised CDN file is refused. See
 [images](images.md#serving-from-your-own-origin).

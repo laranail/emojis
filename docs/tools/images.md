@@ -146,7 +146,7 @@ Every image goes through the same checks, configured under `images.custom`:
 | Type | sniffed from the content; a declared type (data URI, argument) must agree with it. PNG, GIF, JPEG, WebP, SVG only |
 | Dimensions | read from the header, never by decoding pixels, at most `max_dimension` (1024 px), so a decompression bomb is refused cheaply |
 | SVG | sanitised (below), or refused entirely with `'svg' => false` |
-| URL | `https://` or root-relative only; no credentials, whitespace, quotes, backslashes or `//`; optionally only `hosts`. Never fetched by the package |
+| URL | `https://` or root-relative only; no credentials, whitespace, quotes, backslashes or `//`; optionally only `hosts` (which also refuses root-relative unless `relative` is `true`). Never fetched by the package |
 
 Embedded images are re-encoded as a base64 data URI, so the bytes that render are the bytes that were
 checked. The exception message names the rule that failed and never contains the input.

@@ -26,6 +26,7 @@ Grouped by concern; each group's keys are listed once.
 | `images.custom.max_svg_elements` | `20000` | Elements an SVG may hold before it is refused. |
 | `images.custom.urls` | `true` | Accept image URLs. `false` accepts only inline images (data URI, base64, file) — see [security](tools/security.md#images-you-supply). |
 | `images.custom.hosts` | `[]` | Hosts an image URL may name; empty allows any `https://` host. |
+| `images.custom.relative` | `null` | Root-relative image URLs (`/img/a.png`). `null` accepts them only while `hosts` is empty; set `true` to keep them with a `hosts` list. They point at your own origin, so a user-supplied one is sent with your readers' cookies. |
 | `output.name_template` | `'[{name}]'` | `Mode::Name` output; must contain `{name}`. |
 | `output.tag_template` | `'[{tag}]'` | `Mode::Tag` output; must contain `{tag}`. See [status tags](tools/tags.md). |
 | `output.auto_fallback` | `'ascii'` | What `Mode::Auto` becomes when the terminal cannot draw emoji. |
